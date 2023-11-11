@@ -1,69 +1,88 @@
 # IMT-3A-PROCOM-ERP
 
-## Recommandations
+## Description
+TODO
 
-### Git Workflow TODO
-This project follows a specific Git workflow to ensure code quality and efficient collaboration.
-The main branches in this repository are:
+## Metadata
+- **Timestamp**: 2023-11-02
+- **Last update**: 2023-11-11
+- **Status**: In development
+- **Current Version**: 0.0.1-SNAPSHOT
+- **Supported Platforms**: Windows (Linux and macOS untested)
+- **Development Environment**:
+  - Intellij IDEA 2023.1
+  - Visual Studio Code
+  - NeoVim
+- **Programming languages**:
+  - HTML5 / CCS3 / JavaScript (ECMA Script TODO)
+  - Java 17 or 18
+  - SQL (PostgreSQL)
+- **Libraries / Frameworks / Platforms**:
+  - React JS
+  - Spring Boot 3 framework (Java version with Apache Maven 4.0)
+  - PostgreSQL
+  - Docker
+- **Compatibility Issues** : None known at this time
 
-- **master**: This branch is for production-ready code.
-  All the code in this branch is deployed to the production environment.
-- **development**: This branch is for the integration of new features.
-  After a feature is implemented and tested thoroughly, it gets merged into this branch.
-
-For the development of new features, we follow a feature-branch workflow:
-
-1. For each new feature, a new branch is created from the 'development' branch, named depending on the feature.
-2. The feature is developed on this new branch.
-3. Unit tests are written and run to ensure that the feature works as expected.
-4. Once the feature is tested and ready, it gets merged back into the 'development' branch.
-5. Integration tests are run on the 'development' branch.
-6. If all tests pass, the 'development' branch gets merged into the 'master' branch, and the feature is deployed to production.
-
-We also encourage the following best practices:
-
-- Always pull the latest changes from the 'development' branch before starting work on a new feature.
-- Commit small, atomic changes that implement a single feature or fix a specific issue.
-- Write clear, informative commit messages that describe the changes made.
-- When you're ready to merge your feature branch back into the 'development' branch, use a pull request so that your code can be reviewed by others.
-
-By following these practices, we can ensure that our codebase remains clean and organised,
-and that each feature is fully tested before it's deployed.
-
-### Documentation
-In order to maintain consistency and clarity across the project, we have adopted ...
-
-[Here]() is an example of documentation.
+## Repository architecture
 
 ```
+IMT-3A-PROCOM-ERP/                     this repository
+├── README.md                          this document
+├── BACKLOG.md                         actions to realise (features, releases, fixes, etc)
+├── CONTRIBUTING.md                    explain how to contribute to the project, by respecting some rules
+├── CHANGELOG.md                       tracked changes in the project's lifecycle
+├── docker-compose.yml                 Docker containers build script to simulate the project
+├── pom.xml                            Maven parent configuration file for all backend services (modules)
+├── .env                               environment variables of the projet
+├── .github/                           used by GitHub for CI/CD processes
+│   ├── CODEOWNERS                     detail which team-member has to review which part of the repository changes
+│   └── workflows/                     all CI/CD auto-running tasks depending on the triggered event
+│       └── ...
+├── src/                               all the source code of the project
+│   ├── frontend/                      code for the UI
+│   │   └── react-project/             subproject with frontend code
+│   ├── backend/                       code for microservices
+│   │   ├── service-1/                 one service
+│   │   │   ├── Dockerfile             Docker container for the service
+│   │   │   ├── pom.xml                Maven child configuration file for the service
+│   │   │   ├── src/                   backend source code
+│   │   │   └── ...
+│   │   └── service-n/                 another service
+│   │       └── ...
+│   └── databases/                     
+│       ├── db-1/
+│       │   └── ...
+│       └── db-n/
+│           └── ...
+└── docs/
+    └── workflows/
+        ├── workflow-git-new-feature.png
+        ├── workflow-git-new-release.png
+        └── workflow-git-hotfix.png
 ```
 
-### Updating
-When you update anything in the project, it is recommended to update :
-- All [README.md](README.md) sections impacted by new changes
-- [requirements.txt](requirements.txt)when you add new librairies or
-  change current ones.
+## Organisation functioning
+TODO
 
-### Adding features
+## Contributing
+[CONTRIBUTING.md](CONTRIBUTING.md) file explains how to contribute to the project,
+and what are the contributing rules.
 
+## Roadmap
+The different steps to follow are described in the [BACKLOG.md](BACKLOG.md) file.
+They are assigned by the Product Owner of the project (see [Contributors](#contributors) section)
 
 ## Licences
-This project is the exclusive property of [...](). All rights reserved.  
-The source code and associated documentation of this project cannot be copied, reproduced, modified, posted, or
-redistributed without explicit permission from [...]().  
-Ask **...** for more details.
-
-The [...]() code from [...](...) that we used in this
-project is licensed under the license ....  
-The terms of this licence can be found on [...]().
+NA
 
 ## Acknowledgements
 Many thanks to the different contributors for their contribution to the project.
 Find their names and missions in [Contributors](#contributors) section.
 
 ## Contributors
-- Thibaut RUZICKA: *Role*
-- Gaël CUDENNEC: *Role*
-- Antoine DAGORN: *Role*
-- Arthur MAQUIN: *Role*
-- Aïna DIROU: *Role*
+- Thibaut RUZICKA: *Role* TODO
+- Gaël CUDENNEC: *Role* TODO
+- Antoine DAGORN: *Role* TODO
+- Arthur MAQUIN: *Role* TODO
+- Aïna DIROU: *Role* TODO
