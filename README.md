@@ -15,7 +15,7 @@ TODO
   - [Neovim](https://neovim.io)
 - **Programming languages**:
   - HTML5 / CCS3 / JavaScript
-  - Java 17 or 18
+  - Java 17
   - SQL (PostgreSQL 13)
 - **Libraries / Frameworks / Platforms**:
   - [NPM](https://www.npmjs.com)
@@ -93,8 +93,8 @@ Many thanks to the different contributors for their contribution to the project.
 Find their names and missions in [Contributors](#contributors) section.
 
 ## Contributors
-- Thibaut RUZICKA: *Role* TODO
-- Gaël CUDENNEC: *Role* TODO
-- Antoine DAGORN: *Role* TODO
-- Arthur MAQUIN: *Role* TODO
-- Aïna DIROU: *Role* TODO
+- BOPS: *Role* TODO
+- maestro-bene: *Role* TODO
+- Antoine: *Role* TODO
+- ArthurMaquinImt: *Role* TODO
+- yunea: *Role* TODO
