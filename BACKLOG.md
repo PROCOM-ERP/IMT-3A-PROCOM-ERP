@@ -11,7 +11,7 @@ Bugs unfixed and current tasks appeared as
 - **Status**: In development
 - **Current Version**: 0.0.1-SNAPSHOT
 
-## Features to implement
+## Rules about features
 The different features to implement have a unique formatted identifier.
 For instance: feature-{group identifier}-{priority level}-{3-digits number from 001 to 999}.
 This identifier can be used in the [GitHub Issues](https://github.com/PROCOM-ERP/IMT-3A-PROCOM-ERP/issues) to see
@@ -35,9 +35,9 @@ Groups of features are described with a unique 3-letters identifier.
 Priority level for features follows the [MoSCoW method](https://fr.wikipedia.org/wiki/Méthode_MoSCoW).
 `MH`, `SH`, `CH`, `WH` are the codes used in the feature identifier. 
 
-### Versions
+## Features and versions
 
-#### \[0.0.1-SNAPSHOT] - YYYY-MM-DD
+### \[0.0.1-SNAPSHOT] - YYYY-MM-DD
 
 
 ## Suggestions
