@@ -1,11 +1,18 @@
 # Contributing
 
-This guide explains how to contribute to the project `IMT-3A-PROCOM-ERP` as a `PROCOM-ERP` organisation's member.
+## Description
+This guide explains how to contribute to the project [IMT-3A-PROCOM-ERP](https://github.com/PROCOM-ERP/IMT-3A-PROCOM-ERP),
+as a [PROCOM-ERP GitHub organisation](https://github.com/PROCOM-ERP)'s member.
+
+## Metadata
+- **Timestamp**: 2023-11-11
+- **Last update**: 2023-11-12
 
 ## Development environment setup
 
 ### Join the organisation
-To join the `PROCOM-ERP` organisation, you have to accept an invitation from the organisation's administrator.
+To join the [PROCOM-ERP GitHub organisation](https://github.com/PROCOM-ERP),
+you have to accept an invitation from the organisation's administrator.
 If you don't receive the invitation yet, please contact the GitHub manager on
 [Discord](https://discord.com/channels/1157244196332245096/1159476398155640872),
 by prefixing the message with the tag `@Github`.  
@@ -21,12 +28,18 @@ Choose `Token Authentication` and the previous personal token you just created.
 
 ### Install the dependencies
 Depending on the part of the project you are working on, 
-there is a specific protocol to follow in order to run the code.
+there is a specific protocol to follow in order to install the related dependencies.
 
 #### Frontend
 TODO
+
 #### Backend
-TODO
+[Apache Maven](https://maven.apache.org/index.html) is used as the package manager for the backend part of the project.
+Follow those steps to install all the backend dependencies:
+1. Download [Apache Maven 3.95](https://maven.apache.org/download.cgi) bin (zip or tar.gz)
+2. Follow the [official guide](https://maven.apache.org/install.html) to install it
+3. Move to the project root directory in the console
+4. Run `mvn dependency:resolve`
 
 ## Contributing
 
@@ -40,8 +53,9 @@ When all features are ready to make a stable version, a release is created, foll
 [new release workflow diagram](docs/workflows/workflow-git-new-release.png).
 
 ### Hotfix production version
-If a production stable version has any problem, the hotfix branch is created from the `master` to fix it,
-following the [hotfix workflow diagram](docs/workflows/workflow-git-hotfix.png).
+If a production stable version has any problem, the `hotfix` branch is created from the `master` to fix it, 
+identified with the date (YYYY-MM-DD), and following the 
+[hotfix workflow diagram](docs/workflows/workflow-git-hotfix.png).
 
 ## Rules and recommandations
 This project follows specific rules to ensure code quality and efficient collaboration.
@@ -94,10 +108,31 @@ In order to maintain consistency and clarity across the project, some documentat
 TODO
 
 #### Java documentation
-TODO
-[Here]() is an example of documentation.
-```
+Java code documentation follows [JavaDoc standards](https://developer.atlassian.com/server/confluence/javadoc-standards/)
+For instance:
+```java
+public class MathOperations {
+    
+    /**
+     * Calculates the sum of two integers.
+     * This method provides a quick way to add two integer numbers.
+     *
+     * @param a the first integer to add
+     * @param b the second integer to add
+     * @return the sum of the two integers
+     * @throws IllegalArgumentException if either of the integers is negative
+     */
+    public int add(int a, int b) throws IllegalArgumentException {
+        if (a < 0 || b < 0) {
+            throw new IllegalArgumentException("Both integers must be non-negative.");
+        }
+        return a + b;
+    }
+    
+}
 ```
 
 ## Communicate with the team
-TODO
+To talk with the different project contributors,
+a [Discord server](https://discord.com/channels/1157244196332245096)
+is available with dedicated channels, depending on the action to realise.
