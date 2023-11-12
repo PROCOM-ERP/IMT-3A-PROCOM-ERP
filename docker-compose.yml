@@ -1,0 +1,83 @@
+version: "3.8"
+
+# +-----------------------------------------------------------------------------+
+# | Services section                                                            |
+# +-----------------------------------------------------------------------------+
+services:
+
+  # +---------------------------------------------------------------------------+
+  # | Database containers section (mask: 10.200.1.64/26)                        |
+  # +---------------------------------------------------------------------------+
+  postgres_procom_erp_: # TODO
+    container_name: postgres_procom_erp_ # TODO
+    hostname: postgres_procom_erp_ # TODO
+    image: postgres:13
+    environment:
+      POSTGRES_USER: pguser     # TODO
+      POSTGRES_PASSWORD: pgpwd  # TODO
+      POSTGRES_DB: db_name      # TODO
+    ports:
+      - "5432:5432"             # TODO
+    networks:
+      vnet_procom_erp:
+        ipv4_address: 10.200.1.65 # TODO
+    volumes:
+      - postgres-procom-erp-id-data:/var/lib/postgresql/data
+      # - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+
+  # +---------------------------------------------------------------------------+
+  # | Backend containers section (mask: 10.200.1.128/26)                        |
+  # +---------------------------------------------------------------------------+
+  springboot_procom_erp_: # TODO
+    container_name: springboot_procom_erp_ # TODO
+    hostname: springboot_procom_erp_ # TODO
+    build:
+      context: ./backend  # TODO
+      dockerfile: ./Dockerfile # TODO
+    ports:
+      - "8000:8000"   # TODO
+    environment:
+      DATABASE_URL: postgres://pguser:pgpwd@db/db_name # TODO
+    depends_on:
+      - "postgres_procom_erp_"  # TODO
+    networks:
+      vnet_procom_erp:
+        ipv4_address: 10.200.1.129 # TODO
+    volumes:
+      - ./target:/app # TODO
+
+
+  # +---------------------------------------------------------------------------+
+  # | Frontend containers section (mask: 10.200.1.192/26)                       |
+  # +---------------------------------------------------------------------------+
+  react_procom_erp_:
+    container_name: react_procom_erp_ # TODO
+    hostname: react_procom_erp_ # TODO
+    build:
+      context: ./frontend  # TODO
+      dockerfile: ./Dockerfile  # TODO
+    ports:
+      - "80:80"  # TODO
+    depends_on:
+      - "springboot_procom_erp_"
+    networks:
+      vnet_procom_erp:
+        ipv4_address: 10.200.1.193 # TODO
+    volumes:
+      - ./src/frontend:/app # TODO
+
+
+# +-----------------------------------------------------------------------------+
+# | Networks section                                                            |
+# +-----------------------------------------------------------------------------+
+networks:
+  vnet_procom_erp:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.200.1.0/24
+
+volumes:
+  postgres-procom-erp-id-data:  # TODO
+ 
