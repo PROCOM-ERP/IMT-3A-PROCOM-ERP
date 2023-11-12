@@ -1,0 +1,23 @@
+# default team for everything
+* @PROCOM-ERP/global-owner
+
+# frontend and subdirectories
+/src/frontend/ @PROCOM-ERP/frontend-owner
+
+# backend and subdirectories
+/src/backend/ @PROCOM-ERP/backend-owner
+
+# databases and subdirectories
+/src/databases/ @PROCOM-ERP/databases-owner
+
+# test files and Github CI Actions
+/src/backend/**/test/ @PROCOM-ERP/product-owner
+/.github/workflows/ @PROCOM-ERP/product-owner
+
+# system files
+*.env @PROCOM-ERP/system-owner
+docker-compose.yml @PROCOM-ERP/system-owner
+Dockerfile @PROCOM-ERP/system-owner
+
+# documentation
+*.md @PROCOM-ERP/doc-owner
