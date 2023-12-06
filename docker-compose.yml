@@ -8,76 +8,106 @@ services:
   # +---------------------------------------------------------------------------+
   # | Database containers section (mask: 10.200.1.64/26)                        |
   # +---------------------------------------------------------------------------+
-  postgres_procom_erp_: # TODO
-    container_name: postgres_procom_erp_ # TODO
-    hostname: postgres_procom_erp_ # TODO
+  postgres-procom-erp-auth-service:
+    container_name: ${DB_AUTH_SERVICE_HOSTNAME}
+    hostname: ${DB_AUTH_SERVICE_HOSTNAME}
     image: postgres:13
     environment:
-      POSTGRES_USER: pguser     # TODO
-      POSTGRES_PASSWORD: pgpwd  # TODO
-      POSTGRES_DB: db_name      # TODO
+      POSTGRES_USER: ${DB_AUTH_SERVICE_USER}
+      POSTGRES_PASSWORD: ${DB_AUTH_SERVICE_PASSWORD}
+      POSTGRES_DB: ${DB_AUTH_SERVICE_DB}
+    expose:
+      - "${DB_AUTH_SERVICE_PORT_INT}"
     ports:
-      - "5432:5432"             # TODO
+      - "${DB_AUTH_SERVICE_PORT_EXT}:${DB_AUTH_SERVICE_PORT_INT}"
     networks:
-      vnet_procom_erp:
-        ipv4_address: 10.200.1.65 # TODO
+      vnet-procom-erp:
+        ipv4_address: ${DB_AUTH_SERVICE_IP_INT}
     volumes:
-      - postgres-procom-erp-id-data:/var/lib/postgresql/data
-      # - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - db-procom-erp-auth-service-data:/var/lib/postgresql/data
+      - ${DB_AUTH_SERVICE_PATH}/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ${DB_AUTH_SERVICE_PATH}/postgresql.conf:/etc/postgresql/postgresql.conf
+    command: -c 'config_file=/etc/postgresql/postgresql.conf'
+
+  # +---------------------------------------------------------------------------+
+
+  postgres-procom-erp-dir-service:
+    container_name: ${DB_DIR_SERVICE_HOSTNAME}
+    hostname: ${DB_DIR_SERVICE_HOSTNAME}
+    image: postgres:13
+    environment:
+      POSTGRES_USER: ${DB_DIR_SERVICE_USER}
+      POSTGRES_PASSWORD: ${DB_DIR_SERVICE_PASSWORD}
+      POSTGRES_DB: ${DB_DIR_SERVICE_DB}
+    expose:
+      - "${DB_DIR_SERVICE_PORT_INT}"
+    ports:
+      - "${DB_DIR_SERVICE_PORT_EXT}:${DB_DIR_SERVICE_PORT_INT}"
+    networks:
+      vnet-procom-erp:
+        ipv4_address: ${DB_DIR_SERVICE_IP_INT}
+    volumes:
+      - db-procom-erp-dir-service-data:/var/lib/postgresql/data
+      - ${DB_DIR_SERVICE_PATH}/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ${DB_DIR_SERVICE_PATH}/postgresql.conf:/etc/postgresql/postgresql.conf
+    command: -c 'config_file=/etc/postgresql/postgresql.conf'
 
 
   # +---------------------------------------------------------------------------+
   # | Backend containers section (mask: 10.200.1.128/26)                        |
   # +---------------------------------------------------------------------------+
-  springboot_procom_erp_: # TODO
-    container_name: springboot_procom_erp_ # TODO
-    hostname: springboot_procom_erp_ # TODO
+  springboot-procom-erp-auth-service:
+    container_name: ${BACKEND_AUTH_SERVICE_HOSTNAME}
+    hostname: ${BACKEND_AUTH_SERVICE_HOSTNAME}
     build:
-      context: ./backend  # TODO
-      dockerfile: ./Dockerfile # TODO
+      context: ${BACKEND_AUTH_SERVICE_PATH}
+      dockerfile: ./Dockerfile
     ports:
-      - "8000:8000"   # TODO
-    environment:
-      DATABASE_URL: postgres://pguser:pgpwd@db/db_name # TODO
+      - "${BACKEND_AUTH_SERVICE_PORT_EXT}:${BACKEND_AUTH_SERVICE_PORT_INT}"
+    env_file: ./.env
     depends_on:
-      - "postgres_procom_erp_"  # TODO
+      - "postgres-procom-erp-auth-service"
     networks:
-      vnet_procom_erp:
-        ipv4_address: 10.200.1.129 # TODO
+      vnet-procom-erp:
+        ipv4_address: ${BACKEND_AUTH_SERVICE_IP_INT}
     volumes:
-      - ./target:/app # TODO
+      - ${BACKEND_AUTH_SERVICE_PATH}/target:/app
+
+  # +---------------------------------------------------------------------------+
+
+  springboot-procom-erp-dir-service:
+    container_name: ${BACKEND_DIR_SERVICE_HOSTNAME}
+    hostname: ${BACKEND_DIR_SERVICE_HOSTNAME}
+    build:
+      context: ${BACKEND_DIR_SERVICE_PATH}
+      dockerfile: ./Dockerfile
+    ports:
+      - "${BACKEND_DIR_SERVICE_PORT_EXT}:${BACKEND_DIR_SERVICE_PORT_INT}"
+    env_file: ./.env
+    depends_on:
+      - "postgres-procom-erp-dir-service"
+    networks:
+      vnet-procom-erp:
+        ipv4_address: ${BACKEND_DIR_SERVICE_IP_INT}
+    volumes:
+      - ${BACKEND_DIR_SERVICE_PATH}/target:/app
 
 
   # +---------------------------------------------------------------------------+
   # | Frontend containers section (mask: 10.200.1.192/26)                       |
   # +---------------------------------------------------------------------------+
-  react_procom_erp_:
-    container_name: react_procom_erp_ # TODO
-    hostname: react_procom_erp_ # TODO
-    build:
-      context: ./frontend  # TODO
-      dockerfile: ./Dockerfile  # TODO
-    ports:
-      - "80:80"  # TODO
-    depends_on:
-      - "springboot_procom_erp_"
-    networks:
-      vnet_procom_erp:
-        ipv4_address: 10.200.1.193 # TODO
-    volumes:
-      - ./src/frontend:/app # TODO
 
 
 # +-----------------------------------------------------------------------------+
 # | Networks section                                                            |
 # +-----------------------------------------------------------------------------+
 networks:
-  vnet_procom_erp:
+  vnet-procom-erp:
     driver: bridge
     ipam:
       config:
-        - subnet: 10.200.1.0/24
+        - subnet: ${NETWORK_PROCOM_ERP}
 
 volumes:
-  postgres-procom-erp-id-data:  # TODO
- 
+  db-procom-erp-auth-service-data:
+  db-procom-erp-dir-service-data:
