@@ -31,26 +31,26 @@ services:
 
   # +---------------------------------------------------------------------------+
 
-  postgres-procom-erp-dir-service:
-    container_name: ${DB_DIR_SERVICE_HOSTNAME}
-    hostname: ${DB_DIR_SERVICE_HOSTNAME}
-    image: postgres:13
-    environment:
-      POSTGRES_USER: ${DB_DIR_SERVICE_USER}
-      POSTGRES_PASSWORD: ${DB_DIR_SERVICE_PASSWORD}
-      POSTGRES_DB: ${DB_DIR_SERVICE_DB}
-    expose:
-      - "${DB_DIR_SERVICE_PORT_INT}"
-    ports:
-      - "${DB_DIR_SERVICE_PORT_EXT}:${DB_DIR_SERVICE_PORT_INT}"
-    networks:
-      vnet-procom-erp:
-        ipv4_address: ${DB_DIR_SERVICE_IP_INT}
-    volumes:
-      - db-procom-erp-dir-service-data:/var/lib/postgresql/data
-      - ${DB_DIR_SERVICE_PATH}/init.sql:/docker-entrypoint-initdb.d/init.sql
-      - ${DB_DIR_SERVICE_PATH}/postgresql.conf:/etc/postgresql/postgresql.conf
-    command: -c 'config_file=/etc/postgresql/postgresql.conf'
+#  postgres-procom-erp-dir-service:
+#    container_name: ${DB_DIR_SERVICE_HOSTNAME}
+#    hostname: ${DB_DIR_SERVICE_HOSTNAME}
+#    image: postgres:13
+#    environment:
+#      POSTGRES_USER: ${DB_DIR_SERVICE_USER}
+#      POSTGRES_PASSWORD: ${DB_DIR_SERVICE_PASSWORD}
+#      POSTGRES_DB: ${DB_DIR_SERVICE_DB}
+#    expose:
+#      - "${DB_DIR_SERVICE_PORT_INT}"
+#    ports:
+#      - "${DB_DIR_SERVICE_PORT_EXT}:${DB_DIR_SERVICE_PORT_INT}"
+#    networks:
+#      vnet-procom-erp:
+#        ipv4_address: ${DB_DIR_SERVICE_IP_INT}
+#    volumes:
+#      - db-procom-erp-dir-service-data:/var/lib/postgresql/data
+#      - ${DB_DIR_SERVICE_PATH}/init.sql:/docker-entrypoint-initdb.d/init.sql
+#      - ${DB_DIR_SERVICE_PATH}/postgresql.conf:/etc/postgresql/postgresql.conf
+#    command: -c 'config_file=/etc/postgresql/postgresql.conf'
 
 
   # +---------------------------------------------------------------------------+
@@ -75,22 +75,22 @@ services:
 
   # +---------------------------------------------------------------------------+
 
-  springboot-procom-erp-dir-service:
-    container_name: ${BACKEND_DIR_SERVICE_HOSTNAME}
-    hostname: ${BACKEND_DIR_SERVICE_HOSTNAME}
-    build:
-      context: ${BACKEND_DIR_SERVICE_PATH}
-      dockerfile: ./Dockerfile
-    ports:
-      - "${BACKEND_DIR_SERVICE_PORT_EXT}:${BACKEND_DIR_SERVICE_PORT_INT}"
-    env_file: ./.env
-    depends_on:
-      - "postgres-procom-erp-dir-service"
-    networks:
-      vnet-procom-erp:
-        ipv4_address: ${BACKEND_DIR_SERVICE_IP_INT}
-    volumes:
-      - ${BACKEND_DIR_SERVICE_PATH}/target:/app
+#  springboot-procom-erp-dir-service:
+#    container_name: ${BACKEND_DIR_SERVICE_HOSTNAME}
+#    hostname: ${BACKEND_DIR_SERVICE_HOSTNAME}
+#    build:
+#      context: ${BACKEND_DIR_SERVICE_PATH}
+#      dockerfile: ./Dockerfile
+#    ports:
+#      - "${BACKEND_DIR_SERVICE_PORT_EXT}:${BACKEND_DIR_SERVICE_PORT_INT}"
+#    env_file: ./.env
+#    depends_on:
+#      - "postgres-procom-erp-dir-service"
+#    networks:
+#      vnet-procom-erp:
+#        ipv4_address: ${BACKEND_DIR_SERVICE_IP_INT}
+#    volumes:
+#      - ${BACKEND_DIR_SERVICE_PATH}/target:/app
 
 
   # +---------------------------------------------------------------------------+
