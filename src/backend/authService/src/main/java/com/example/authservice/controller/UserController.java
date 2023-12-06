@@ -3,6 +3,11 @@ package com.example.authservice.controller;
 import com.example.authservice.dto.UserRequestDto;
 import com.example.authservice.dto.UserResponseDto;
 import com.example.authservice.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -24,6 +29,13 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
+    @Operation(operationId = "createUser", tags = {"users"}, summary = "POST ", description =
+            "")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "New User created correctly", content = {
+                    @Content(mediaType = "application/json", schema =
+                    @Schema(implementation = String.class) )}),
+    })
     public ResponseEntity<String> createUser(@RequestBody UserRequestDto userRequestDto) {
         // create and save the new user and get the response DTO version
         UserResponseDto savedUser = userService.createUserFromRequestDTO(userRequestDto);

@@ -7,20 +7,12 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@OpenAPIDefinition(
-        info = @Info(
-            title = "AuthService",
-            description =
-                    "Service to register users with password and roles.\n" +
-                    "It allows to get JWT token for future connections to other services, by logging with BasicAuth.",
-            version = "0.0.1-SNAPSHOT"
-        ),
-        tags = {
-            @Tag(name = "hello"),
-            @Tag(name = "users"),
-            @Tag(name = "login")
-        }
-)
+@OpenAPIDefinition(info = @Info(title = "AuthService", version = "0.0.1-SNAPSHOT", description =
+                "Service to register users with password and roles.<br>" +
+                "It allows to get JWT token for future connections to other services, by logging with BasicAuth." ),
+        tags = {@Tag(name = "hello"),
+                @Tag(name = "login"),
+                @Tag(name = "users")} )
 public class AuthServiceApplication {
 
     public static void main(String[] args) {
