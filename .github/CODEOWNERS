@@ -15,9 +15,13 @@
 /.github/workflows/ @PROCOM-ERP/product-owner
 
 # system files
-*.env @PROCOM-ERP/system-owner
-docker-compose.yml @PROCOM-ERP/system-owner
 Dockerfile @PROCOM-ERP/system-owner
+*.env @PROCOM-ERP/system-owner
+*.xml @PROCOM-ERP/system-owner
+*.yml @PROCOM-ERP/system-owner
+*.properties @PROCOM-ERP/system-owner
+*.sh @PROCOM-ERP/system-owner
+*.p12 @PROCOM-ERP/system-owner
 
 # documentation
 *.md @PROCOM-ERP/doc-owner
