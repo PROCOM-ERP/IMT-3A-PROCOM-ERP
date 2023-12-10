@@ -6,6 +6,8 @@ import com.example.authservice.model.Role;
 import com.example.authservice.model.User;
 import com.example.authservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataAccessException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +23,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public UserResponseDto createUserFromRequestDTO(UserRequestDto userRequestDto) {
+    public Optional<?> createUserFromRequestDTO(UserRequestDto userRequestDto) {
         // create user
         Integer indexUser = userRepository.getNextValIndexUser();
         User user = User.builder()
@@ -34,9 +36,15 @@ public class UserService {
                 .timestamp(LocalDate.now())
                 .build();
 
-        // return response DTO
-        User savedUser = userRepository.save(user);
-        return userToResponseDto(savedUser);
+        // try to save user and return the DTO version
+        try {
+            User savedUser = userRepository.save(user);
+            return Optional.of(userToResponseDto(savedUser));
+        } catch (DataAccessException | IllegalArgumentException e) {
+            return Optional.of(e);
+        } catch (Exception e) {
+            return Optional.empty();
+        }
     }
 
     public List<UserResponseDto> getAllUsers() {
@@ -52,19 +60,23 @@ public class UserService {
     }
 
     public Optional<UserResponseDto> updateUserById(String idUser, UserRequestDto userRequestDto) {
-        // get user
-        Optional<User> userOptional = userRepository.findById(idUser);
-        if (userOptional.isEmpty())
-            return Optional.empty();
-        User user = userOptional.get();
 
-        // modify only non-null attributes
-        if (userRequestDto.getPassword() != null)
-            user.setPassword(passwordEncoder.encode(userRequestDto.getPassword()));
+        // check if user exists
+        Optional<User> user = userRepository.findById(idUser);
+        if (user.isEmpty()) {
+            return Optional.empty();
+        }
+
+        // check whether this is an attempt to change the password
+        String currentUserId = SecurityContextHolder.getContext().getAuthentication().getName();
+        int row = 0;
+        if (userRequestDto.getPassword() != null && currentUserId.equals(idUser)) {
+            String password = passwordEncoder.encode(userRequestDto.getPassword());
+            row = userRepository.updateUserPasswordByIdUser(idUser, password);
+        }
 
         // update user
-        int row = userRepository.updateUserByIdUser(idUser, user.getPassword());
-        return row > 0 ? Optional.of(userToResponseDto(user)) : Optional.empty();
+        return row > 0 ? Optional.of(userToResponseDto(user.get())) : Optional.empty();
     }
 
     private String generateIdUserFromIndex(Integer indexUser) {
