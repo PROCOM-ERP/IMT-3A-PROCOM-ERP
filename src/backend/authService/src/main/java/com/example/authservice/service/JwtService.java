@@ -31,7 +31,7 @@ public class JwtService {
     private final JwtEncoder jwtEncoder;
     private final EmployeeRepository employeeRepository;
 
-    private final Logger logger = LoggerFactory.getLogger(JwtService.class);
+    //private final Logger logger = LoggerFactory.getLogger(JwtService.class);
 
     public String generateJwtToken(Authentication authentication)
             throws InsufficientAuthenticationException, AccessDeniedException {
@@ -41,7 +41,7 @@ public class JwtService {
                 .orElseThrow(() -> new InsufficientAuthenticationException(""));
         // get role names
         List<String> roles =  employee.getRoles().stream().map(Role::getName).toList();
-        logger.info("Roles in Repository : " + roles);
+        //logger.info("Roles in Repository : " + roles);
         if (roles.isEmpty()) {
             throw new AccessDeniedException("");
         }

@@ -1,5 +1,6 @@
 package com.example.authservice.utils;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -35,6 +36,11 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(NoSuchElementException.class) // Http 404
     public ResponseEntity<String> handleNoSuchElementExceptions() {
         return ResponseEntity.notFound().build();
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class) // Http 422
+    public ResponseEntity<String> handleDataIntegrityViolationExceptions() {
+        return ResponseEntity.unprocessableEntity().build();
     }
 
 }

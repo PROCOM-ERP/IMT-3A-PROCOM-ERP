@@ -17,14 +17,14 @@ public class CustomJwtAuthenticationConverter implements Converter<Jwt, Abstract
 
     private final String jwtClaimRoles;
     private final RoleService roleService;
-    private final Logger logger = LoggerFactory.getLogger(CustomJwtAuthenticationConverter.class);
+    //private final Logger logger = LoggerFactory.getLogger(CustomJwtAuthenticationConverter.class);
 
     @Override
     public AbstractAuthenticationToken convert(Jwt jwt) {
         List<String> roles = jwt.getClaimAsStringList(jwtClaimRoles);
-        logger.info("Roles in Jwt claims : " + roles);
+        //logger.info("Roles in Jwt claims : " + roles);
         List<String> permissions = roleService.getRolesPermissions(roles);
-        logger.info("Related permissions : " + permissions);
+        //logger.info("Related permissions : " + permissions);
         return new JwtAuthenticationToken(jwt, permissionsToAuthorities(permissions));
     }
 

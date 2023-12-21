@@ -27,26 +27,24 @@ public class AuthController {
     }
 
     @PostMapping( Path.JWT)
-    @Operation(operationId = "getJwtToken", tags = {"auth"},
-            summary = "GET Jwt encrypted token ", description =
-            "GET Jwt encrypted token from AuthService")
+    @Operation(operationId = "generateJwtToken", tags = {"auth"},
+            summary = "Create Jwt encrypted token ", description =
+            "Create Jwt encrypted token, by providing Basic authentication (username, password)")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Jwt token acquired correctly", content = {
-                    @Content(mediaType = "application/json", schema =
-                    @Schema(implementation = String.class) )}),
-            @ApiResponse(responseCode = "401", description = "Unauthorized to get token", content = {
-                    @Content(mediaType = "application/json", schema =
-                    @Schema(implementation = String.class) )}),
-            @ApiResponse(responseCode = "403", description = "Forbidden to get token because of no roles", content = {
-                    @Content(mediaType = "application/json", schema =
-                    @Schema(implementation = String.class) )})})
-    public ResponseEntity<String> getJwtToken(Authentication authentication) {
-        try {
-            String jwtToken = jwtService.generateJwtToken(authentication);
-            return ResponseEntity.ok(jwtToken);
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
+            @ApiResponse(responseCode = "200", description =
+                    "Jwt token acquired correctly",
+                    content = {@Content(mediaType = "application/json")} ),
+            @ApiResponse(responseCode = "401", description =
+                    "Unauthorized to get token",
+                    content = {@Content(mediaType = "application/json")} ),
+            @ApiResponse(responseCode = "403", description =
+                    "Forbidden to get token because of no roles",
+                    content = {@Content(mediaType = "application/json")} ),
+            @ApiResponse(responseCode = "500", description =
+                    "Uncontrolled error appeared",
+                    content = {@Content(mediaType = "application/json")} )})
+    public ResponseEntity<String> generateJwtToken(Authentication authentication) {
+        return ResponseEntity.ok(jwtService.generateJwtToken(authentication));
     }
 
 }
