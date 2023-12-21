@@ -23,7 +23,10 @@ public class HelloController {
             @ApiResponse(responseCode = "200", description =
                     "Hello World message got correctly",
                     content = {@Content(mediaType = "application/json", schema =
-                    @Schema(implementation = String.class) )})})
+                    @Schema(implementation = String.class))} ),
+            @ApiResponse(responseCode = "500", description =
+                    "Uncontrolled error appeared",
+                    content = {@Content(mediaType = "application/json")} )})
     public ResponseEntity<String> getHello() {
         return ResponseEntity.ok("Hello, World !");
     }
