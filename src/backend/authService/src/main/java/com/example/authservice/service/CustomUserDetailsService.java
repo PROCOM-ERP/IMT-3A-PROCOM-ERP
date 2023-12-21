@@ -1,38 +1,28 @@
 package com.example.authservice.service;
 
-import com.example.authservice.model.User;
-import com.example.authservice.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import com.example.authservice.model.Employee;
+import com.example.authservice.repository.EmployeeRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final EmployeeRepository employeeRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> user = userRepository.findById(username);
-        return user.map(value -> new org.springframework.security.core.userdetails.User(
-                value.getIdUser(), value.getPassword(),
-                getGrantedAuthorities(value.getRole().getRole()
-                )))
-                .orElseGet(null);
-    }
-
-    private List<GrantedAuthority> getGrantedAuthorities(String role) {
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority(role.toLowerCase()));
-        return authorities;
+        Optional<Employee> employee = employeeRepository.findById(username);
+        return employee.map(
+                e -> new User(username, e.getPassword(), Collections.emptyList()))
+                .orElseGet(() -> new User(username, "", Collections.emptyList()));
     }
 }
