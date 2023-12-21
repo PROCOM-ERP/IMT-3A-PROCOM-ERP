@@ -35,7 +35,7 @@ public class AuthController {
                     "Jwt token acquired correctly",
                     content = {@Content(mediaType = "application/json")} ),
             @ApiResponse(responseCode = "401", description =
-                    "Unauthorized to access this URL with this HTTP method",
+                    "Unauthorized to access this URL because Basis authentication failed",
                     content = {@Content(mediaType = "application/json")} ),
             @ApiResponse(responseCode = "403", description =
                     "Forbidden to get token because of no roles are available for the authenticated employee",
