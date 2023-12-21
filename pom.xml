@@ -70,6 +70,13 @@
                 <version>${spring-boot.version}</version>
             </dependency>
             <dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>${spring-cloud.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+            <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>${lombok.version}</version>
@@ -141,6 +148,7 @@
     <!-- Each Spring Boot project in src/backend/ as services -->
     <modules>
         <module>src/backend/authService</module>
+        <module>src/backend/gatewayService</module>
     </modules>
 
 </project>
