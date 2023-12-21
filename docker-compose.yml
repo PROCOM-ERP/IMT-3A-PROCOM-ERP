@@ -65,6 +65,7 @@ services:
     env_file: ./.env
     depends_on:
       - "postgres-procom-erp-auth-service"
+      - "procom-erp-rabbitmq"
     networks:
       vnet-procom-erp:
         ipv4_address: ${BACKEND_AUTH_SERVICE_IP_INT}
@@ -89,6 +90,14 @@ services:
     volumes:
       - ${BACKEND_GATEWAY_SERVICE_PATH}/target:/app
       - ${BACKEND_GATEWAY_SERVICE_PATH}/${BACKEND_GATEWAY_SERVICE_HTTPS_KEY_STORE}:/${BACKEND_GATEWAY_SERVICE_HTTPS_KEY_STORE}
+
+  # +---------------------------------------------------------------------------+
+
+  procom-erp-rabbitmq:
+    image: "rabbitmq:3-management"
+    ports:
+      - "5672:5672"
+      - "15672:15672"
 
   # +---------------------------------------------------------------------------+
   # | Frontend containers section (mask: 10.200.1.192/26)                       |
