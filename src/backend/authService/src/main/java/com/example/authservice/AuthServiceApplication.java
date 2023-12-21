@@ -12,7 +12,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
                 "It allows to get JWT token for future connections to other services, by logging with BasicAuth." ),
         tags = {@Tag(name = "hello"),
                 @Tag(name = "auth"),
-                @Tag(name = "employees")} )
+                @Tag(name = "employees"),
+                @Tag(name = "roles")} )
 public class AuthServiceApplication {
 
     public static void main(String[] args) {

@@ -35,10 +35,10 @@ public class AuthController {
                     "Jwt token acquired correctly",
                     content = {@Content(mediaType = "application/json")} ),
             @ApiResponse(responseCode = "401", description =
-                    "Unauthorized to get token",
+                    "Unauthorized to access this URL with this HTTP method",
                     content = {@Content(mediaType = "application/json")} ),
             @ApiResponse(responseCode = "403", description =
-                    "Forbidden to get token because of no roles",
+                    "Forbidden to get token because of no roles are available for the authenticated employee",
                     content = {@Content(mediaType = "application/json")} ),
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",

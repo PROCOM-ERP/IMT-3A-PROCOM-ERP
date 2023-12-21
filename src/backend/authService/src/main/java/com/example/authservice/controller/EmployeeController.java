@@ -5,6 +5,7 @@ import com.example.authservice.dto.EmployeeResponseDto;
 import com.example.authservice.model.Path;
 import com.example.authservice.service.EmployeeService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -37,10 +38,12 @@ public class EmployeeController {
                     "The request body is badly structured or formatted",
                     content = {@Content(mediaType = "application/json") }),
             @ApiResponse(responseCode = "401", description =
-                    "Unauthorized to create an employee",
+                    "Roles in Jwt token are insufficient to authorize the access to this URL",
                     content = {@Content(mediaType = "application/json") }),
             @ApiResponse(responseCode = "422", description =
-                    "Attribute values don't respect integrity constraints",
+                    "Attribute values don't respect integrity constraints.<br>" +
+                    "Password : 12 characters, 1 uppercase letter, 1 lowercase letter, 1 digit, 1 special character in (@#$%^&+=!.*).<br>" +
+                    "Roles : retrieve roles information (roles section) to know which one are available",
                     content = {@Content(mediaType = "application/json")} ),
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
@@ -69,7 +72,7 @@ public class EmployeeController {
                     content = {@Content(mediaType = "application/json",
                     schema = @Schema(type = "array", implementation = EmployeeResponseDto.class))} ),
             @ApiResponse(responseCode = "401", description =
-                    "Unauthorized to get employees information",
+                    "Roles in Jwt token are insufficient to authorize the access to this URL",
                     content = {@Content(mediaType = "application/json")} ),
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
@@ -81,17 +84,19 @@ public class EmployeeController {
     @GetMapping(Path.EMPLOYEE_ID)
     @Operation(operationId = "getEmployee", tags = {"employees"},
             summary = "Retrieve one employee information", description =
-            "Retrieve one employee information, by providing its id (username).")
+            "Retrieve one employee information, by providing its id (username).",
+            parameters = {@Parameter(name = "idEmployee", description =
+            "The employee username (6 characters identifier)")})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description =
                     "Employee information retrieved correctly",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = EmployeeResponseDto.class))} ),
             @ApiResponse(responseCode = "401", description =
-                    "Unauthorized to get employee information",
+                    "Roles in Jwt token are insufficient to authorize the access to this URL",
                     content = {@Content(mediaType = "application/json")} ),
             @ApiResponse(responseCode = "404", description =
-                    "Employee information not found",
+                    "Employee not found",
                     content = {@Content(mediaType = "application/json")} ),
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
@@ -101,6 +106,31 @@ public class EmployeeController {
     }
 
     @PatchMapping(Path.EMPLOYEE_ID_PASSWORD)
+    @Operation(operationId = "updateEmployeePassword", tags = {"employees"},
+            summary = "Update an employee password", description =
+            "Update an employee password. Only available for the employee itself.",
+            parameters = {@Parameter(name = "idEmployee", description =
+            "The employee username (6 characters identifier)")})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description =
+                    "Employee password updated correctly",
+                    content = {@Content(mediaType = "application/json")} ),
+            @ApiResponse(responseCode = "401", description =
+                    "Roles in Jwt token are insufficient to authorize the access to this URL",
+                    content = {@Content(mediaType = "application/json")} ),
+            @ApiResponse(responseCode = "403", description =
+                    "Authenticated employee cannot update an other employee password",
+                    content = {@Content(mediaType = "application/json")} ),
+            @ApiResponse(responseCode = "404", description =
+                    "Employee not found",
+                    content = {@Content(mediaType = "application/json")} ),
+            @ApiResponse(responseCode = "422", description =
+                    "Attribute values don't respect integrity constraints.<br>" +
+                            "Password : 12 characters, 1 uppercase letter, 1 lowercase letter, 1 digit, 1 special character in (@#$%^&+=!.*).<br>",
+                    content = {@Content(mediaType = "application/json")} ),
+            @ApiResponse(responseCode = "500", description =
+                    "Uncontrolled error appeared",
+                    content = {@Content(mediaType = "application/json")} )})
     public ResponseEntity<String> updateEmployeePassword(@PathVariable String idEmployee,
                                                          @RequestBody String password) {
         employeeService.updateEmployeePassword(idEmployee, password);
@@ -108,6 +138,29 @@ public class EmployeeController {
     }
 
     @PatchMapping(Path.EMPLOYEE_ID_ROLES)
+    @Operation(operationId = "updateEmployeeRoles", tags = {"employees"},
+            summary = "Update an employee roles", description =
+            "Update an employee roles, by providing a list of all the new ones.<br>" +
+            "Previous ones will be deleted. Only available for admins.",
+            parameters = {@Parameter(name = "idEmployee", description =
+            "The employee username (6 characters identifier)")})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description =
+                    "Employee roles updated correctly",
+                    content = {@Content(mediaType = "application/json")} ),
+            @ApiResponse(responseCode = "401", description =
+                    "Roles in Jwt token are insufficient to authorize the access to this URL",
+                    content = {@Content(mediaType = "application/json")} ),
+            @ApiResponse(responseCode = "404", description =
+                    "Employee not found",
+                    content = {@Content(mediaType = "application/json")} ),
+            @ApiResponse(responseCode = "422", description =
+                    "Attribute values don't respect integrity constraints.<br>" +
+                    "Roles : retrieve roles information (roles section) to know which one are available",
+                    content = {@Content(mediaType = "application/json")} ),
+            @ApiResponse(responseCode = "500", description =
+                    "Uncontrolled error appeared",
+                    content = {@Content(mediaType = "application/json")} )})
     public ResponseEntity<String> updateEmployeeRoles(@PathVariable String idEmployee,
                                                       @RequestBody List<String> roles) {
         employeeService.updateEmployeeRoles(idEmployee, roles);
