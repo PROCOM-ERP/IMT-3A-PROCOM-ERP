@@ -10,6 +10,7 @@ public enum Permission {
     CanModifyEmployeeRoles,
     CanModifyRolePermissions,
     CanReadEmployee,
+    CanReadPermission,
     CanReadRole
 
 }

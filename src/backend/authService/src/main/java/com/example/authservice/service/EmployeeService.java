@@ -57,8 +57,7 @@ public class EmployeeService {
     }
 
     public List<EmployeeResponseDto> getAllEmployees() {
-        List<Employee> employees = employeeRepository.findAll();
-        return employees.stream()
+        return employeeRepository.findAll().stream()
                 .map(EmployeeService::modelToResponseDto)
                 .toList();
     }
@@ -91,9 +90,8 @@ public class EmployeeService {
         }
     }
 
-    @Transactional
-    public void updateEmployeeRoles(String idEmployee, List<String> roles) throws
-            NoSuchElementException {
+    public void updateEmployeeRoles(String idEmployee, List<String> roles)
+            throws NoSuchElementException {
 
         // check if employee exists
         Employee employee = employeeRepository.findById(idEmployee).orElseThrow();

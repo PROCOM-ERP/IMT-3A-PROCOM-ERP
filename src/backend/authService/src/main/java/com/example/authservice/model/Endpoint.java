@@ -21,7 +21,11 @@ public enum Endpoint {
     PATCH_V1_ROLES_PERMISSIONS(HttpMethod.PATCH, Path.V1_ROLES_ANYONE_PERMISSIONS, Permission.CanModifyRolePermissions),
     PATCH_V1_ROLES_ENABLE(HttpMethod.PATCH, Path.V1_ROLES_ANYONE_ENABLE, Permission.CanDeactivateRole),
 
-    GET_V1_HELLO(HttpMethod.GET, Path.V1_HELLO, null);
+    GET_V1_PERMISSIONS(HttpMethod.GET, Path.V1_PERMISSIONS, Permission.CanReadPermission),
+
+    GET_V1_HELLO(HttpMethod.GET, Path.V1_HELLO, null),
+
+    GET_V1_DOCS(HttpMethod.GET, Path.V1_DOCS_ANYTHING, null);
 
     private final HttpMethod httpMethod;
     private final String path;

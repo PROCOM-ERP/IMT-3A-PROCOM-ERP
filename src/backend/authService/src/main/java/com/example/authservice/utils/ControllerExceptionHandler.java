@@ -1,5 +1,8 @@
 package com.example.authservice.utils;
 
+import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,13 +11,18 @@ import org.springframework.security.authentication.InsufficientAuthenticationExc
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.Arrays;
 import java.util.NoSuchElementException;
 
 @RestControllerAdvice
+@RequiredArgsConstructor
 public class ControllerExceptionHandler {
 
+    private final Logger logger = LoggerFactory.getLogger(ControllerExceptionHandler.class);
+
     @ExceptionHandler(Exception.class) // Http 500
-    public ResponseEntity<String> handleAllExceptions() {
+    public ResponseEntity<String> handleAllExceptions(Exception e) {
+        logger.error(Arrays.toString(e.getStackTrace()));
         return ResponseEntity.internalServerError().build();
     }
 

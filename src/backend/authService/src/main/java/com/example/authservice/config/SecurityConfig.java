@@ -48,7 +48,7 @@ public class SecurityConfig {
     private final EndpointService endpointService;
     private final RoleService roleService;
 
-    private final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
+    //private final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
 
     @Bean
     @Order(1)
@@ -85,11 +85,11 @@ public class SecurityConfig {
                         HttpMethod httpMethod = endpoint.getHttpMethod();
                         String path = endpoint.getPath();
                         if (endpoint.getPermission() == null) {
-                            logger.info(httpMethod + " " + path + " -> PERMIT");
+                            //logger.info(httpMethod + " " + path + " : PERMIT");
                             auth.requestMatchers(httpMethod, path).permitAll();
                         } else {
                             String permission = endpoint.getPermission().name();
-                            logger.info(httpMethod + " " + path + " : " + permission);
+                            //logger.info(httpMethod + " " + path + " : " + permission);
                             auth.requestMatchers(httpMethod, path).hasAuthority(permission);
                         }
                     });

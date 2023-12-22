@@ -97,5 +97,6 @@ VALUES ('admin', 'CanCreateEmployee'),
        ('admin', 'CanReadRole'),
        ('admin', 'CanModifyRolePermissions'),
        ('admin', 'CanDeactivateRole'),
+       ('admin', 'CanReadPermission'),
        ('employee', 'CanReadEmployee'),
        ('employee', 'CanModifyEmployeePassword');

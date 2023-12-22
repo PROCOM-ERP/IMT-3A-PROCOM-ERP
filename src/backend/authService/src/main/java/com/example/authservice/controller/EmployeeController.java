@@ -141,7 +141,8 @@ public class EmployeeController {
     @Operation(operationId = "updateEmployeeRoles", tags = {"employees"},
             summary = "Update an employee roles", description =
             "Update an employee roles, by providing a list of all the new ones.<br>" +
-            "Previous ones will be deleted. Only available for admins.",
+            "Previous ones will be deleted.<br>" +
+            "Only available for admins.",
             parameters = {@Parameter(name = "idEmployee", description =
             "The employee username (6 characters identifier)")})
     @ApiResponses(value = {

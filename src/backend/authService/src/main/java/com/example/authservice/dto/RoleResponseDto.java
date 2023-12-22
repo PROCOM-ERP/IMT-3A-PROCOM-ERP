@@ -11,9 +11,10 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class RoleRequestDto {
+public class RoleResponseDto {
 
     private String name;
     private Set<String> permissions;
+    private Set<String> employees;
 
 }
