@@ -10,20 +10,6 @@
 -- | Create table                                                                                 |
 -- +----------------------------------------------------------------------------------------------+
 
-CREATE TABLE employees
-(
-    id CHAR(6) UNIQUE NOT NULL,
-    creation DATE NOT NULL DEFAULT current_timestamp,
-    enable BOOLEAN NOT NULL DEFAULT true,
-
-    CONSTRAINT pk_employees PRIMARY KEY (id),
-
-    CONSTRAINT check_employees_id
-        CHECK (employees.id ~* '[A-Z][0-9]{5}')
-);
-
--- +----------------------------------------------------------------------------------------------+
-
 CREATE TABLE roles
 (
     name VARCHAR(32) UNIQUE NOT NULL,
@@ -47,13 +33,61 @@ CREATE TABLE role_permissions
 );
 
 -- +----------------------------------------------------------------------------------------------+
--- | Insert into                                                                                  |
+
+CREATE TABLE organisations
+(
+    id SERIAL UNIQUE NOT NULL,
+    name VARCHAR(255) UNIQUE NOT NULL,
+    address VARCHAR(255) NOT NULL,
+
+    CONSTRAINT pk_organisations
+        PRIMARY KEY (id)
+);
+
 -- +----------------------------------------------------------------------------------------------+
 
-INSERT INTO employees (id)
-VALUES ('A00001'),
-       ('A00002');
+CREATE TABLE services
+(
+    id SERIAL UNIQUE NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    address VARCHAR(255) NOT NULL,
+    organisation INT NOT NULL,
 
+    CONSTRAINT pk_services
+        PRIMARY KEY (id),
+    CONSTRAINT fk_services_table_organisations
+        FOREIGN KEY (organisation) REFERENCES organisations(id)
+            ON UPDATE CASCADE
+);
+
+-- +----------------------------------------------------------------------------------------------+
+
+CREATE TABLE employees
+(
+    id CHAR(6) UNIQUE NOT NULL,
+    creation DATE NOT NULL DEFAULT current_timestamp,
+    enable BOOLEAN NOT NULL DEFAULT true,
+    last_name VARCHAR(255) NOT NULL,
+    first_name VARCHAR(255) NOT NULL,
+    email VARCHAR(320) UNIQUE NOT NULL,
+    phone_number VARCHAR(24),
+    service INT NOT NULL,
+
+    CONSTRAINT pk_employees
+        PRIMARY KEY (id),
+    CONSTRAINT fk_employees_table_services
+        FOREIGN KEY (service) REFERENCES services(id)
+            ON UPDATE CASCADE,
+    CONSTRAINT check_employees_id
+        CHECK (employees.id ~* '[A-Z][0-9]{5}'),
+    CONSTRAINT check_employees_email
+        CHECK (employees.email ~* '^[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,62}[a-zA-Z0-9])?@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z]{2,})+$'),
+    CONSTRAINT check_employees_phone_number
+        CHECK (employees.phone_number ~* '^\+((?:9[679]|8[0357-9]|6[7-9]|5[09]|42|3[578]|2[1-689])\d|9[0-58]|8[1246]|6[0-6]|5[1-8]|4[013-9]|3[0-469]|2[07]|[017])\W?\d\W?\d\W?\d\W?\d\W?\d\W?\d\W?\d\W?\d\W?(\d{1,2})$')
+);
+
+-- +----------------------------------------------------------------------------------------------+
+-- | Insert into                                                                                  |
 -- +----------------------------------------------------------------------------------------------+
 
 INSERT INTO roles (name)
