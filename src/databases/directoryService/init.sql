@@ -32,16 +32,34 @@ CREATE TABLE role_permissions
             ON UPDATE CASCADE ON DELETE CASCADE
 );
 
+CREATE TABLE addresses
+(
+    id SERIAL UNIQUE NOT NULL,
+    number INT,
+    street VARCHAR(255) NOT NULL,
+    city VARCHAR(100) NOT NULL,
+    state VARCHAR(100),
+    country VARCHAR(100) NOT NULL,
+    postal_code VARCHAR(20) NOT NULL,
+    info TEXT,
+
+    CONSTRAINT pk_addresses PRIMARY KEY (id)
+);
+
+
 -- +----------------------------------------------------------------------------------------------+
 
 CREATE TABLE organisations
 (
     id SERIAL UNIQUE NOT NULL,
     name VARCHAR(255) UNIQUE NOT NULL,
-    address VARCHAR(255) NOT NULL,
+    address INT UNIQUE NOT NULL,
 
     CONSTRAINT pk_organisations
-        PRIMARY KEY (id)
+        PRIMARY KEY (id),
+    CONSTRAINT fk_organisations_table_addresses
+        FOREIGN KEY (address) REFERENCES addresses(id)
+            ON UPDATE CASCADE
 );
 
 -- +----------------------------------------------------------------------------------------------+
@@ -50,11 +68,14 @@ CREATE TABLE services
 (
     id SERIAL UNIQUE NOT NULL,
     name VARCHAR(255) NOT NULL,
-    address VARCHAR(255) NOT NULL,
+    address INT NOT NULL,
     organisation INT NOT NULL,
 
     CONSTRAINT pk_services
         PRIMARY KEY (id),
+    CONSTRAINT fk_services_table_addresses
+        FOREIGN KEY (address) REFERENCES addresses(id)
+            ON UPDATE CASCADE,
     CONSTRAINT fk_services_table_organisations
         FOREIGN KEY (organisation) REFERENCES organisations(id)
             ON UPDATE CASCADE
