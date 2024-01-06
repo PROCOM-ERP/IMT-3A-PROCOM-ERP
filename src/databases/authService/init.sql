@@ -10,32 +10,93 @@
 -- | Create table                                                                                 |
 -- +----------------------------------------------------------------------------------------------+
 
--- Création de la table 'roles'
+CREATE TABLE employees
+(
+    id CHAR(6) UNIQUE NOT NULL,
+    id_employee_gen SERIAL UNIQUE NOT NULL,
+    password VARCHAR(128) NOT NULL,
+    creation DATE NOT NULL DEFAULT current_timestamp,
+    enable BOOLEAN NOT NULL DEFAULT true,
+
+    CONSTRAINT pk_employees PRIMARY KEY (id),
+
+    CONSTRAINT check_employees_id
+        CHECK (employees.id ~* '[A-Z][0-9]{5}')
+);
+
+-- +----------------------------------------------------------------------------------------------+
+
 CREATE TABLE roles
 (
-    role VARCHAR(50) UNIQUE NOT NULL,
+    name VARCHAR(32) UNIQUE NOT NULL,
+    enable BOOLEAN NOT NULL DEFAULT true,
 
-    CONSTRAINT pk_roles PRIMARY KEY (role)
+    CONSTRAINT pk_roles PRIMARY KEY (name)
 );
 
--- Création de la table 'users'
-CREATE TABLE users
+-- +----------------------------------------------------------------------------------------------+
+
+CREATE TABLE role_permissions
 (
-    index_user SERIAL UNIQUE NOT NULL,
-    id_user CHAR(6) UNIQUE NOT NULL,
-    password VARCHAR(128) NOT NULL,
-    role VARCHAR(50) NOT NULL,
-    timestamp DATE NOT NULL,
+    role VARCHAR(32) NOT NULL,
+    permission VARCHAR(64) NOT NULL,
 
-    CONSTRAINT pk_users PRIMARY KEY (id_user),
-    CONSTRAINT fk_users_role FOREIGN KEY(role) REFERENCES roles(role),
-
-    CONSTRAINT check_users_id
-        CHECK (users.id_user ~* '[A-Z][0-9]{5}')
+    CONSTRAINT pk_role_permissions
+        PRIMARY KEY (role, permission),
+    CONSTRAINT fk_role_permissions_table_roles
+        FOREIGN KEY (role) REFERENCES roles(name)
+            ON UPDATE CASCADE ON DELETE CASCADE
 );
 
--- Insertion de rôles par défaut
-INSERT INTO roles (role) VALUES ('user'), ('admin');
+-- +----------------------------------------------------------------------------------------------+
 
-INSERT INTO users (id_user, password, role, timestamp)
-VALUES ('A00001', '$2a$10$MAxOfcOCypgcExmZjSp/Fu1rMBbepSZPGDX9y4u1XLkKipYsrVcnK', 'admin', '2023-11-23');
+CREATE TABLE join_employees_roles
+(
+    employee CHAR(6) NOT NULL,
+    role VARCHAR(32) NOT NULL,
+
+    CONSTRAINT pk_join_employees_roles
+        PRIMARY KEY (employee, role),
+    CONSTRAINT fk_join_employees_roles_table_employees
+        FOREIGN KEY (employee) REFERENCES employees(id)
+            ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT fk_join_employees_roles_table_roles
+        FOREIGN KEY (role) REFERENCES roles(name)
+            ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+-- +----------------------------------------------------------------------------------------------+
+-- | Insert into                                                                                  |
+-- +----------------------------------------------------------------------------------------------+
+
+INSERT INTO employees (id, password)
+VALUES ('A00001', '$2a$10$MAxOfcOCypgcExmZjSp/Fu1rMBbepSZPGDX9y4u1XLkKipYsrVcnK'),
+       ('A00002', '$2a$10$MAxOfcOCypgcExmZjSp/Fu1rMBbepSZPGDX9y4u1XLkKipYsrVcnK');
+
+-- +----------------------------------------------------------------------------------------------+
+
+INSERT INTO roles (name)
+VALUES ('employee'),
+       ('admin');
+
+-- +----------------------------------------------------------------------------------------------+
+
+INSERT INTO join_employees_roles (employee, role)
+VALUES ('A00001', 'admin'),
+       ('A00001', 'employee'),
+       ('A00002', 'employee');
+
+-- +----------------------------------------------------------------------------------------------+
+
+INSERT INTO role_permissions (role, permission)
+VALUES ('admin', 'CanCreateEmployee'),
+       ('admin', 'CanReadEmployee'),
+       ('admin', 'CanModifyEmployeeRoles'),
+       ('admin', 'CanDeactivateEmployee'),
+       ('admin', 'CanCreateRole'),
+       ('admin', 'CanReadRole'),
+       ('admin', 'CanModifyRolePermissions'),
+       ('admin', 'CanDeactivateRole'),
+       ('admin', 'CanReadPermission'),
+       ('employee', 'CanReadEmployee'),
+       ('employee', 'CanModifyEmployeePassword');

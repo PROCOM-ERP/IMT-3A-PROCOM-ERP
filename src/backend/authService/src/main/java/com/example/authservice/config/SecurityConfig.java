@@ -1,9 +1,14 @@
 package com.example.authservice.config;
 
+import com.example.authservice.model.Endpoint;
+import com.example.authservice.service.EndpointService;
 import com.example.authservice.service.CustomUserDetailsService;
+import com.example.authservice.service.RoleService;
 import com.example.authservice.utils.CustomJwtAuthenticationConverter;
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,28 +31,30 @@ import org.springframework.security.web.savedrequest.NullRequestCache;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.time.Duration;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
-
-    private final String roleAdmin = "admin";
-    private final String roleUser = "user";
 
     @Value("${security.jwt.secretkey}")
     private String jwtKey;
 
-    @Value("${security.jwt.rolekey}")
-    private String roleKey;
+    @Value("${security.jwt.claim.roles}")
+    private String jwtClaimRoles;
 
-    @Autowired
-    private CustomUserDetailsService customUserDetailsService;
+    private final CustomUserDetailsService customUserDetailsService;
+    private final EndpointService endpointService;
+    private final RoleService roleService;
+
+    //private final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
 
     @Bean
     @Order(1)
     public SecurityFilterChain basicfilterChain(HttpSecurity http) throws Exception {
         return http
-                .securityMatcher("api/v1/login/**")
+                .securityMatcher("api/v1/auth/**")
                 // specify CORS and CSRF
                 .cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
@@ -64,6 +71,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain jwtfilterChain(HttpSecurity http) throws Exception {
+        List<Endpoint> endpoints = endpointService.getAllEndpoints();
         return http
                 // specify CORS and CSRF
                 .cors(AbstractHttpConfigurer::disable)
@@ -73,16 +81,24 @@ public class SecurityConfig {
                 .requestCache((cache) -> cache.requestCache(new NullRequestCache()))
                 // permissions
                 .authorizeHttpRequests((auth) -> {
-                    auth.requestMatchers(HttpMethod.GET, "/api/v1/hello").permitAll();
-                    auth.requestMatchers(HttpMethod.GET, "/api/docs/**").permitAll();
-                    auth.requestMatchers(HttpMethod.POST, "/api/v1/users/**").hasAnyAuthority(roleAdmin);
-                    auth.requestMatchers(HttpMethod.PUT, "/api/v1/users/**").hasAnyAuthority(roleAdmin, roleUser);
-                    auth.requestMatchers(HttpMethod.GET, "/api/v1/users/**").hasAnyAuthority(roleAdmin, roleUser);
+                    endpoints.forEach(endpoint -> {
+                        HttpMethod httpMethod = endpoint.getHttpMethod();
+                        String path = endpoint.getPath();
+                        if (endpoint.getPermission() == null) {
+                            //logger.info(httpMethod + " " + path + " : PERMIT");
+                            auth.requestMatchers(httpMethod, path).permitAll();
+                        } else {
+                            String permission = endpoint.getPermission().name();
+                            //logger.info(httpMethod + " " + path + " : " + permission);
+                            auth.requestMatchers(httpMethod, path).hasAuthority(permission);
+                        }
+                    });
                     auth.anyRequest().authenticated();
                 })
                 // authentication methods
                 .oauth2ResourceServer((oauth2) -> oauth2.jwt(jwtConfigurer ->
-                        jwtConfigurer.jwtAuthenticationConverter(new CustomJwtAuthenticationConverter(roleKey))))
+                        jwtConfigurer.jwtAuthenticationConverter(
+                                new CustomJwtAuthenticationConverter(jwtClaimRoles, roleService))))
                 // finalize the build
                 .build();
     }
@@ -114,7 +130,6 @@ public class SecurityConfig {
         SecretKeySpec secretKey = new SecretKeySpec(this.jwtKey.getBytes(), 0, this.jwtKey.getBytes().length,"RSA");
         NimbusJwtDecoder jwtDecoder = NimbusJwtDecoder.withSecretKey(secretKey).macAlgorithm(MacAlgorithm.HS256).build();
         jwtDecoder.setJwtValidator(new JwtTimestampValidator(Duration.ZERO)); // no clock skew
-
         return jwtDecoder;
     }
 }
