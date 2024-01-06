@@ -59,7 +59,7 @@ CREATE TABLE organisations
         PRIMARY KEY (id),
     CONSTRAINT fk_organisations_table_addresses
         FOREIGN KEY (address) REFERENCES addresses(id)
-            ON UPDATE CASCADE
+            ON UPDATE CASCADE ON DELETE SET NULL
 );
 
 -- +----------------------------------------------------------------------------------------------+
@@ -68,17 +68,17 @@ CREATE TABLE services
 (
     id SERIAL UNIQUE NOT NULL,
     name VARCHAR(255) NOT NULL,
-    address INT NOT NULL,
-    organisation INT NOT NULL,
+    address INT,
+    organisation INT,
 
     CONSTRAINT pk_services
         PRIMARY KEY (id),
     CONSTRAINT fk_services_table_addresses
         FOREIGN KEY (address) REFERENCES addresses(id)
-            ON UPDATE CASCADE,
+            ON UPDATE CASCADE ON DELETE SET NULL,
     CONSTRAINT fk_services_table_organisations
         FOREIGN KEY (organisation) REFERENCES organisations(id)
-            ON UPDATE CASCADE
+            ON UPDATE CASCADE  ON DELETE SET NULL
 );
 
 -- +----------------------------------------------------------------------------------------------+
@@ -92,13 +92,13 @@ CREATE TABLE employees
     first_name VARCHAR(255) NOT NULL,
     email VARCHAR(320) UNIQUE NOT NULL,
     phone_number VARCHAR(24),
-    service INT NOT NULL,
+    service INT,
 
     CONSTRAINT pk_employees
         PRIMARY KEY (id),
     CONSTRAINT fk_employees_table_services
         FOREIGN KEY (service) REFERENCES services(id)
-            ON UPDATE CASCADE,
+            ON UPDATE CASCADE ON DELETE SET NULL,
     CONSTRAINT check_employees_id
         CHECK (employees.id ~* '[A-Z][0-9]{5}'),
     CONSTRAINT check_employees_email
