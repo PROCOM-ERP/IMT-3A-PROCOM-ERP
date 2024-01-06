@@ -1,5 +1,8 @@
 package com.example.directoryservice.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -15,6 +18,9 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "addresses", schema = "public")
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "addresses_id_gen")
@@ -22,8 +28,9 @@ public class Address {
     @Column(name = "id", nullable = false)
     private Integer id;
 
+    @Builder.Default
     @Column(name = "number")
-    private Integer number;
+    private Integer number = null;
 
     @Size(max = 255)
     @NotNull
@@ -35,9 +42,10 @@ public class Address {
     @Column(name = "city", nullable = false, length = 100)
     private String city;
 
+    @Builder.Default
     @Size(max = 100)
     @Column(name = "state", length = 100)
-    private String state;
+    private String state = null;
 
     @Size(max = 100)
     @NotNull
@@ -53,11 +61,15 @@ public class Address {
     @Column(name = "info", length = Integer.MAX_VALUE)
     private String info = null;
 
+    @Builder.Default
+    @JsonIgnoreProperties(value = {"address", "services"})
     @OneToOne(mappedBy = "address")
-    private Organisation organisation;
+    private Organisation organisation = null;
 
     @Builder.Default
-    @OneToMany(mappedBy = "address")
-    private Set<Service> services = new LinkedHashSet<>();
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "services", joinColumns = @JoinColumn(name = "address"))
+    @Column(name = "id")
+    private Set<Integer> services = new LinkedHashSet<>();
 
 }
