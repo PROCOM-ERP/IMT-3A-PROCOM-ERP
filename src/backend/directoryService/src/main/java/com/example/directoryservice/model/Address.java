@@ -18,9 +18,6 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "addresses", schema = "public")
-@JsonIdentityInfo(
-        generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "id")
 public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "addresses_id_gen")

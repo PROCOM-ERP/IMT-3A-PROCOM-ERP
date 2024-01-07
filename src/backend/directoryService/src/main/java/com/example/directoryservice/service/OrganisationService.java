@@ -21,7 +21,8 @@ public class OrganisationService {
     private final AddressRepository addressRepository;
 
     @Transactional
-    public String createOrganisation(OrganisationRequestDto organisationRequestDto) {
+    public String createOrganisation(OrganisationRequestDto organisationRequestDto)
+            throws DataIntegrityViolationException {
         // create new entity
         Organisation organisation = Organisation.builder()
                 .name(organisationRequestDto.getName())
@@ -51,7 +52,7 @@ public class OrganisationService {
                 .orElseThrow();
     }
 
-    public void updateOrganisationAddressById(Integer idOrganisation, Integer idAddress) {
+    public void updateOrganisationAddressById(Integer idOrganisation, Integer idAddress) throws NoSuchElementException {
         // try to update the address
         int row = organisationRepository.updateAddressById(idOrganisation, idAddress);
 
@@ -61,7 +62,7 @@ public class OrganisationService {
         }
     }
 
-    public void updateOrganisationAddressByName(String name, Integer idAddress) {
+    public void updateOrganisationAddressByName(String name, Integer idAddress) throws NoSuchElementException {
         // try to update the address
         int row = organisationRepository.updateAddressByName(name, idAddress);
 

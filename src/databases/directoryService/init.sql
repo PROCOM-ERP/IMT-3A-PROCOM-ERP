@@ -53,7 +53,7 @@ CREATE TABLE organisations
 (
     id SERIAL UNIQUE NOT NULL,
     name VARCHAR(255) UNIQUE NOT NULL,
-    address INT UNIQUE NOT NULL,
+    address INT UNIQUE,
 
     CONSTRAINT pk_organisations
         PRIMARY KEY (id),
