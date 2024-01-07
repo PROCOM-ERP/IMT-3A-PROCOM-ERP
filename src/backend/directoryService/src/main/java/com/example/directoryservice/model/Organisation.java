@@ -1,5 +1,6 @@
 package com.example.directoryservice.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -33,13 +34,16 @@ public class Organisation {
     private String name;
 
     @NotNull
+    @JsonIgnoreProperties(value = {"organisation", "services"})
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.SET_NULL)
     @JoinColumn(name = "address", nullable = false)
     private Address address;
 
     @Builder.Default
-    @OneToMany(mappedBy = "organisation")
-    private Set<Service> services = new LinkedHashSet<>();
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "services", joinColumns = @JoinColumn(name = "organisation"))
+    @Column(name = "id")
+    private Set<Integer> services = new LinkedHashSet<>();
 
 }
