@@ -43,13 +43,14 @@ public class ServiceService {
                 .toList();
     }
 
-    public ServiceResponseDto getService(Integer idService) {
+    public ServiceResponseDto getService(Integer idService) throws NoSuchElementException {
         return serviceRepository.findById(idService)
                 .map(ServiceService::modelToResponseDto)
                 .orElseThrow();
     }
 
-    public void updateServiceAddress(Integer idService, Integer idAddress) throws NoSuchElementException {
+    public void updateServiceAddress(Integer idService, Integer idAddress)
+            throws NoSuchElementException, DataIntegrityViolationException {
         // try to update the address
         int row = serviceRepository.updateAddressById(idService, idAddress);
 
@@ -59,7 +60,8 @@ public class ServiceService {
         }
     }
 
-    public void updateServiceOrganisation(Integer idService, Integer idOrganisation) throws NoSuchElementException {
+    public void updateServiceOrganisation(Integer idService, Integer idOrganisation)
+            throws NoSuchElementException, DataIntegrityViolationException {
         // try to update the address
         int row = serviceRepository.updateOrganisationById(idService, idOrganisation);
 

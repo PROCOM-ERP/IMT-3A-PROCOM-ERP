@@ -1,5 +1,8 @@
 package com.example.directoryservice.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -18,6 +21,9 @@ import java.time.LocalDate;
 @Table(name = "employees", schema = "public", indexes = {
         @Index(name = "employees_email_key", columnList = "email", unique = true)
 })
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 public class Employee {
     @Id
     @Size(max = 6)
@@ -54,6 +60,7 @@ public class Employee {
     @Column(name = "phone_number", length = 24)
     private String phoneNumber = null;
 
+    @JsonIgnoreProperties(value = {"organisation", "address", "employees"})
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.SET_NULL)
     @JoinColumn(name = "service")

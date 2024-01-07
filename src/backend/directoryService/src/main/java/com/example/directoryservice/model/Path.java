@@ -41,6 +41,7 @@ public class Path {
 
     public static final String V1_EMPLOYEES = V1 + EMPLOYEES;
     public static final String EMPLOYEE_ID = "/{idEmployee}";
+    public static final String EMPLOYEE_ID_OR_EMAIL = "/{idEmployeeOrEmail}";
     public static final String EMPLOYEE_ID_ENABLE = EMPLOYEE_ID + ENABLE;
     public static final String EMPLOYEE_ID_INFO = EMPLOYEE_ID + INFO;
     public static final String EMPLOYEE_ID_SERVICE = EMPLOYEE_ID + SERVICE;

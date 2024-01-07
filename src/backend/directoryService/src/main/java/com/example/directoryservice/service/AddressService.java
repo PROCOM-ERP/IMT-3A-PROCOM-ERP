@@ -44,7 +44,7 @@ public class AddressService {
                 .toList();
     }
 
-    public AddressResponseDto getAddress(Integer idAddress) {
+    public AddressResponseDto getAddress(Integer idAddress) throws NoSuchElementException {
         return addressRepository.findById(idAddress)
                 .map(AddressService::modelToResponseDto)
                 .orElseThrow();

@@ -40,7 +40,7 @@ public class OrganisationService {
                 .toList();
     }
 
-    public OrganisationResponseDto getOrganisationById(Integer idOrganisation) {
+    public OrganisationResponseDto getOrganisationById(Integer idOrganisation) throws NoSuchElementException {
         return organisationRepository.findById(idOrganisation)
                 .map(OrganisationService::modelToResponseDto)
                 .orElseThrow();
@@ -52,7 +52,8 @@ public class OrganisationService {
                 .orElseThrow();
     }
 
-    public void updateOrganisationAddressById(Integer idOrganisation, Integer idAddress) throws NoSuchElementException {
+    public void updateOrganisationAddressById(Integer idOrganisation, Integer idAddress)
+            throws NoSuchElementException, DataIntegrityViolationException {
         // try to update the address
         int row = organisationRepository.updateAddressById(idOrganisation, idAddress);
 
@@ -62,7 +63,8 @@ public class OrganisationService {
         }
     }
 
-    public void updateOrganisationAddressByName(String name, Integer idAddress) throws NoSuchElementException {
+    public void updateOrganisationAddressByName(String name, Integer idAddress)
+            throws NoSuchElementException, DataIntegrityViolationException {
         // try to update the address
         int row = organisationRepository.updateAddressByName(name, idAddress);
 
