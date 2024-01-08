@@ -65,7 +65,7 @@ services:
     env_file: ./.env
     depends_on:
       - "postgres-procom-erp-auth-service"
-      - "procom-erp-rabbitmq"
+      - "springboot-procom-erp-message-broker-service"
     networks:
       vnet-procom-erp:
         ipv4_address: ${BACKEND_AUTH_SERVICE_IP_INT}
@@ -93,11 +93,21 @@ services:
 
   # +---------------------------------------------------------------------------+
 
-  procom-erp-rabbitmq:
+  springboot-procom-erp-message-broker-service:
+    container_name: ${BACKEND_MESSAGE_BROKER_SERVICE_HOSTNAME}
+    hostname: ${BACKEND_MESSAGE_BROKER_SERVICE_HOSTNAME}
     image: "rabbitmq:3-management"
     ports:
-      - "5672:5672"
-      - "15672:15672"
+      - "${BACKEND_MESSAGE_BROKER_SERVICE_PORT_EXT}:${BACKEND_MESSAGE_BROKER_SERVICE_PORT_INT}"
+      - "${BACKEND_MESSAGE_BROKER_SERVICE_ADMIN_PORT_EXT}:${BACKEND_MESSAGE_BROKER_SERVICE_ADMIN_PORT_INT}"
+    environment:
+      - RABBITMQ_CONFIG_FILE=/etc/rabbitmq/rabbitmq.conf
+    env_file: ./.env
+    networks:
+      vnet-procom-erp:
+        ipv4_address: ${BACKEND_MESSAGE_BROKER_SERVICE_IP_INT}
+    volumes:
+      - ./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
 
   # +---------------------------------------------------------------------------+
   # | Frontend containers section (mask: 10.200.1.192/26)                       |
