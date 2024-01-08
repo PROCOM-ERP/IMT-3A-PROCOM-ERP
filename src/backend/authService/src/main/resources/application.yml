@@ -1,10 +1,10 @@
 server:
   port: ${BACKEND_AUTH_SERVICE_PORT_INT}
-  ssl:
-    key-store: /${BACKEND_AUTH_SERVICE_HTTPS_KEY_STORE}
-    key-store-password: ${BACKEND_AUTH_SERVICE_HTTPS_KEY_STORE_PASSWORD}
-    keyStoreType: PKCS12
-    keyAlias: ${BACKEND_AUTH_SERVICE_HTTPS_KEY_STORE_ALIAS}
+  # ssl:
+  #   key-store: /${BACKEND_AUTH_SERVICE_HTTPS_KEY_STORE}
+  #   key-store-password: ${BACKEND_AUTH_SERVICE_HTTPS_KEY_STORE_PASSWORD}
+  #   keyStoreType: PKCS12
+  #   keyAlias: ${BACKEND_AUTH_SERVICE_HTTPS_KEY_STORE_ALIAS}
 
 spring:
   profiles:
@@ -33,5 +33,4 @@ security:
       roles: jwtClaimRoles
     duration:
       minutes: 1
-
 # logging.level.com.example.authservice: INFO
