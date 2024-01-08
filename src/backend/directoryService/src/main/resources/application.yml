@@ -1,0 +1,38 @@
+server:
+  port: ${BACKEND_LOCAL_TEST_SERVICE_PORT_INT}
+  ssl:
+    key-store: /${BACKEND_LOCAL_TEST_SERVICE_HTTPS_KEY_STORE}
+    key-store-password: ${BACKEND_LOCAL_TEST_SERVICE_HTTPS_KEY_STORE_PASSWORD}
+    keyStoreType: PKCS12
+    keyAlias: ${BACKEND_LOCAL_TEST_SERVICE_HTTPS_KEY_STORE_ALIAS}
+
+spring:
+  profiles:
+    active: dev
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://${DB_LOCAL_TEST_SERVICE_HOSTNAME}:${DB_LOCAL_TEST_SERVICE_PORT_INT}/${DB_LOCAL_TEST_SERVICE_DB}
+    username: ${DB_LOCAL_TEST_SERVICE_USER}
+    password: ${DB_LOCAL_TEST_SERVICE_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: update
+  mvc:
+    servlet:
+      load-on-startup: 1
+
+springdoc:
+  api-docs:
+    path: /api/v1/docs/info
+  swagger-ui:
+    path: /api/v1/docs/swagger
+    default-models-expand-depth: -1
+    operations-sorter: method
+
+security:
+  jwt:
+    secretkey: MpoUIF+TE2QFX88Z3lliMeqqIX++xABtsIVJwTqE0fs=
+    claim:
+      roles: jwtClaimRoles
+
+# logging.level.com.example.directoryservice: INFO
