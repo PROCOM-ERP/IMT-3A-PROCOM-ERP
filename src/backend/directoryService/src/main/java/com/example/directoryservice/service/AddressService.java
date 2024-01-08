@@ -58,6 +58,7 @@ public class AddressService {
 
     private static AddressResponseDto modelToResponseDto(Address address) {
         return AddressResponseDto.builder()
+                .id(address.getId())
                 .number(address.getNumber())
                 .street(address.getStreet())
                 .city(address.getCity())

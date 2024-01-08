@@ -38,7 +38,6 @@ public class Organisation {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @JsonIgnoreProperties(value = {"organisation", "services"})
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.SET_NULL)
     @JoinColumn(name = "address", nullable = false)

@@ -1,6 +1,7 @@
 package com.example.directoryservice.dto;
 
 import com.example.directoryservice.model.Address;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,6 +17,7 @@ public class OrganisationResponseDto {
 
     private Integer id;
     private String name;
+    @JsonIgnoreProperties(value = {"organisation", "services", "hibernateLazyInitializer"})
     private Address address;
     private Set<Integer> services;
 

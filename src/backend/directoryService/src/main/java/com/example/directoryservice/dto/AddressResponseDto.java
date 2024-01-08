@@ -13,6 +13,7 @@ import java.util.Set;
 @Builder
 public class AddressResponseDto {
 
+    private Integer id;
     private Integer number;
     private String street;
     private String city;

@@ -60,7 +60,6 @@ public class Employee {
     @Column(name = "phone_number", length = 24)
     private String phoneNumber = null;
 
-    @JsonIgnoreProperties(value = {"organisation", "address", "employees"})
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.SET_NULL)
     @JoinColumn(name = "service")

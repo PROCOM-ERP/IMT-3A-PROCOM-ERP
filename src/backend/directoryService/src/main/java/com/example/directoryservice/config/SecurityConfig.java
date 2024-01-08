@@ -53,6 +53,7 @@ public class SecurityConfig {
                 .requestCache((cache) -> cache.requestCache(new NullRequestCache()))
                 // permissions
                 .authorizeHttpRequests((auth) -> {
+                    /*
                     endpoints.forEach(endpoint -> {
                         HttpMethod httpMethod = endpoint.getHttpMethod();
                         String path = endpoint.getPath();
@@ -66,8 +67,10 @@ public class SecurityConfig {
                         }
                     });
                     auth.anyRequest().authenticated();
+                     */
+                    auth.anyRequest().permitAll();
                 })
-                // authentication methods
+                // authentication method
                 .oauth2ResourceServer((oauth2) -> oauth2.jwt(jwtConfigurer ->
                         jwtConfigurer.jwtAuthenticationConverter(
                                 new CustomJwtAuthenticationConverter(jwtClaimRoles, roleService))))

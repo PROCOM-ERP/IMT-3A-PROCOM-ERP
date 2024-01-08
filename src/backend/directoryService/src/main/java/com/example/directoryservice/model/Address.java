@@ -59,7 +59,6 @@ public class Address {
     private String info = null;
 
     @Builder.Default
-    @JsonIgnoreProperties(value = {"address", "services"})
     @OneToOne(mappedBy = "address")
     private Organisation organisation = null;
 

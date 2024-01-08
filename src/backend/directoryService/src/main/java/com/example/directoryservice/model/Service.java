@@ -35,13 +35,11 @@ public class Service {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @JsonIgnoreProperties(value = {"organisation", "services"})
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.SET_NULL)
     @JoinColumn(name = "address")
     private Address address;
 
-    @JsonIgnoreProperties(value = {"address", "services"})
     @ManyToOne(fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.SET_NULL)
     @JoinColumn(name = "organisation")

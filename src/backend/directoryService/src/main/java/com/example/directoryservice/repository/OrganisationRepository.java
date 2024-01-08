@@ -28,7 +28,8 @@ public interface OrganisationRepository extends JpaRepository<Organisation, Inte
             "set address = :idAddress " +
             "where id = :idOrganisation",
             nativeQuery = true)
-    int updateAddressById(@NonNull @Param("id") Integer idOrganisation, @NonNull @Param("idAddress") Integer idAddress);
+    int updateAddressById(@NonNull @Param("idOrganisation") Integer idOrganisation,
+                          @NonNull @Param("idAddress") Integer idAddress);
 
     @Transactional
     @Modifying
@@ -37,7 +38,8 @@ public interface OrganisationRepository extends JpaRepository<Organisation, Inte
             "set address = :idAddress " +
             "where name = :name",
             nativeQuery = true)
-    int updateAddressByName(@NonNull @Param("name") String name, @NonNull @Param("idAddress") Integer idAddress);
+    int updateAddressByName(@NonNull @Param("name") String name,
+                            @NonNull @Param("idAddress") Integer idAddress);
 
 
 }

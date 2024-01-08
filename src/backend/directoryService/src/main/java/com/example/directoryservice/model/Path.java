@@ -24,10 +24,8 @@ public class Path {
     public static final String V1_ADDRESSES_ANYONE = V1_ADDRESSES + ANYONE;
 
     public static final String V1_ORGANISATIONS = V1 + ORGANISATIONS;
-    public static final String ORGANISATION_ID = "/{idOrganisation}";
-    public static final String ORGANISATION_NAME = "/{name}";
+    public static final String ORGANISATION_ID = "/{idOrName}";
     public static final String ORGANISATION_ID_ADDRESS = ORGANISATION_ID + ADDRESS;
-    public static final String ORGANISATION_NAME_ADDRESS = ORGANISATION_NAME + ADDRESS;
     public static final String V1_ORGANISATIONS_ANYONE = V1_ORGANISATIONS + ANYONE;
     public static final String V1_ORGANISATIONS_ANYONE_ADDRESS = V1_ORGANISATIONS_ANYONE + ADDRESS;
 

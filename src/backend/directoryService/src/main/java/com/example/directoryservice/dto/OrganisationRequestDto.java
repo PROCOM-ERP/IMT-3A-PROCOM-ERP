@@ -1,6 +1,5 @@
 package com.example.directoryservice.dto;
 
-import com.example.directoryservice.model.Address;
 import lombok.Getter;
 
 @Getter
