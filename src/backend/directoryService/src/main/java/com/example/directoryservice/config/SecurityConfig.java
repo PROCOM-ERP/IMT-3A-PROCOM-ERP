@@ -4,6 +4,7 @@ import com.example.directoryservice.model.Endpoint;
 import com.example.directoryservice.service.EndpointService;
 import com.example.directoryservice.service.RoleService;
 import com.example.directoryservice.utils.CustomJwtAuthenticationConverter;
+import com.example.directoryservice.utils.SharedKeyAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +19,7 @@ import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.*;
+import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.savedrequest.NullRequestCache;
 
@@ -29,6 +31,8 @@ import java.util.List;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+
+    @Value("${security.services.sharedkey}") private String sharedKey;
 
     @Value("${security.jwt.secretkey}")
     private String jwtKey;
@@ -72,6 +76,8 @@ public class SecurityConfig {
                         jwtConfigurer.jwtAuthenticationConverter(
                                 new CustomJwtAuthenticationConverter(jwtClaimRoles, roleService))))
                 // finalize the build
+                .addFilterBefore(new SharedKeyAuthenticationFilter(sharedKey, endpointService),
+                        BearerTokenAuthenticationFilter.class)
                 .build();
     }
 

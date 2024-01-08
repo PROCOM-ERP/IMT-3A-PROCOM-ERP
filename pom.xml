@@ -154,6 +154,7 @@
     <modules>
         <module>src/backend/authService</module>
         <module>src/backend/gatewayService</module>
+        <module>src/backend/directoryService</module>
     </modules>
 
 </project>

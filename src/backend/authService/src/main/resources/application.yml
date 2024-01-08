@@ -17,6 +17,9 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+  mvc:
+    servlet:
+      load-on-startup: 1
   rabbitmq:
     host: ${BACKEND_MESSAGE_BROKER_SERVICE_IP_INT}
     port: ${BACKEND_MESSAGE_BROKER_SERVICE_PORT_INT}
@@ -33,6 +36,8 @@ springdoc:
     operations-sorter: method
 
 security:
+  services:
+    sharedkey: MpoUIF+TE2QFX88Z3lliMeqqIX++xABtsIVJwTqE0fs=
   jwt:
     secretkey: MpoUIF+TE2QFX88Z3lliMeqqIX++xABtsIVJwTqE0fs=
     claim:
