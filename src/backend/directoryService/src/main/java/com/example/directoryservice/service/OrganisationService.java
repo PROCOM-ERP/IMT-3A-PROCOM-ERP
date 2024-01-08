@@ -56,11 +56,11 @@ public class OrganisationService {
                 .orElseThrow();
     }
 
-    public Optional<Organisation> getOrganisationById(Integer idOrganisation){
+    private Optional<Organisation> getOrganisationById(Integer idOrganisation){
         return organisationRepository.findById(idOrganisation);
     }
 
-    public Optional<Organisation> getOrganisationByName(String name) {
+    private Optional<Organisation> getOrganisationByName(String name) {
         return organisationRepository.findByName(name);
     }
 
@@ -77,32 +77,32 @@ public class OrganisationService {
         }
     }
 
-    public int updateOrganisationAddressById(Integer idOrganisation, Integer idAddress)
+    private int updateOrganisationAddressById(Integer idOrganisation, Integer idAddress)
             throws NoSuchElementException, DataIntegrityViolationException {
         // try to update the address
         return organisationRepository.updateAddressById(idOrganisation, idAddress);
     }
 
-    public int updateOrganisationAddressByName(String name, Integer idAddress)
+    private int updateOrganisationAddressByName(String name, Integer idAddress)
             throws NoSuchElementException, DataIntegrityViolationException {
         // try to update the address
         return organisationRepository.updateAddressByName(name, idAddress);
     }
 
     public void deleteOrganisation(String idOrName) throws NoSuchElementException {
-        if(StringUtils.isNumeric(idOrName))
+        if (StringUtils.isNumeric(idOrName))
             deleteOrganisationById(Integer.parseInt(idOrName));
         else
             deleteOrganisationByName(idOrName);
     }
 
-    public void deleteOrganisationById(Integer idOrganisation) throws NoSuchElementException {
+    private void deleteOrganisationById(Integer idOrganisation) throws NoSuchElementException {
         if (! organisationRepository.existsById(idOrganisation))
             throw new NoSuchElementException();
         organisationRepository.deleteById(idOrganisation);
     }
 
-    public void deleteOrganisationByName(String name) throws NoSuchElementException {
+    private void deleteOrganisationByName(String name) throws NoSuchElementException {
         if (! organisationRepository.existsByName(name))
             throw new NoSuchElementException();
         organisationRepository.deleteByName(name);

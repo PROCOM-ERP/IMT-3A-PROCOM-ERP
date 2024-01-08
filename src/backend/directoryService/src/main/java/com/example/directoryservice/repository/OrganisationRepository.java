@@ -1,8 +1,6 @@
 package com.example.directoryservice.repository;
 
-import com.example.directoryservice.model.Address;
 import com.example.directoryservice.model.Organisation;
-import io.micrometer.observation.ObservationFilter;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -19,7 +17,11 @@ public interface OrganisationRepository extends JpaRepository<Organisation, Inte
 
     boolean existsByName(@NonNull String name);
 
+    @Transactional
+    @Modifying
+    @Query("delete from Organisation o where o.name = :name")
     void deleteByName(@NonNull String name);
+
 
     @Transactional
     @Modifying
