@@ -112,8 +112,9 @@ CREATE TABLE employees
 -- +----------------------------------------------------------------------------------------------+
 
 INSERT INTO roles (name)
-VALUES ('employee'),
-       ('admin');
+VALUES ('admin'),
+       ('employee'),
+       ('HRManager');
 
 -- +----------------------------------------------------------------------------------------------+
 
@@ -122,4 +123,33 @@ VALUES ('admin', 'CanCreateRole'),
        ('admin', 'CanReadRole'),
        ('admin', 'CanModifyRolePermissions'),
        ('admin', 'CanDeactivateRole'),
-       ('admin', 'CanReadPermission');
+       ('admin', 'CanReadPermission'),
+       ('admin', 'CanCreateAddress'),
+       ('admin', 'CanReadAddress'),
+       ('admin', 'CanDeleteAddress'),
+       ('admin', 'CanCreateEmployee'),
+       ('admin', 'CanReadEmployee'),
+       ('admin', 'CanModifyEmployeeInfo'),
+       ('admin', 'CanModifyEmployeeService'),
+       ('admin', 'CanDeactivateEmployee'),
+       ('admin', 'CanCreateOrganisation'),
+       ('admin', 'CanReadOrganisation'),
+       ('admin', 'CanModifyOrganisationAddress'),
+       ('admin', 'CanDeleteOrganisation'),
+       ('admin', 'CanCreateService'),
+       ('admin', 'CanReadService'),
+       ('admin', 'CanModifyServiceAddress'),
+       ('admin', 'CanModifyServiceOrganisation'),
+       ('admin', 'CanDeleteService'),
+
+       ('employee', 'CanReadAddress'),
+       ('employee', 'CanReadEmployee'),
+       ('employee', 'CanModifyEmployeeInfo'),
+       ('employee', 'CanReadOrganisation'),
+       ('employee', 'CanReadService'),
+
+       ('HRManager', 'CanCreateAddress'),
+       ('HRManager', 'CanCreateEmployee'),
+       ('HRManager', 'CanModifyEmployeeService'),
+       ('HRManager', 'CanDeactivateEmployee'),
+       ('HRManager', 'CanModifyServiceAddress');
