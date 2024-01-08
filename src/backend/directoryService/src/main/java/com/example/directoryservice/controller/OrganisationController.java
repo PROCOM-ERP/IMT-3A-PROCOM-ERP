@@ -26,7 +26,7 @@ public class OrganisationController {
         // generate URI location to inform the client how to get information on the new entity
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
-                .path(Path.ORGANISATION_ID)
+                .path(Path.ORGANISATION_ID_OR_NAME)
                 .buildAndExpand(name)
                 .toUri();
         // send the response with 201 Http status
@@ -38,19 +38,19 @@ public class OrganisationController {
         return ResponseEntity.ok().body(organisationService.getAllOrganisations());
     }
 
-    @GetMapping(Path.ORGANISATION_ID)
+    @GetMapping(Path.ORGANISATION_ID_OR_NAME)
     public ResponseEntity<OrganisationResponseDto> getOrganisationById(@PathVariable String idOrName) {
         return ResponseEntity.ok().body(organisationService.getOrganisation(idOrName));
     }
 
-    @PatchMapping(Path.ORGANISATION_ID_ADDRESS)
+    @PatchMapping(Path.ORGANISATION_ID_OR_NAME_ADDRESS)
     public ResponseEntity<String> updateOrganisationAddressById(@PathVariable String idOrName,
                                                                 @RequestBody Integer idAddress) {
         organisationService.updateOrganisationAddress(idOrName, idAddress);
         return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping(Path.ORGANISATION_ID)
+    @DeleteMapping(Path.ORGANISATION_ID_OR_NAME)
     public ResponseEntity<String> deleteOrganisationById(@PathVariable String idOrName) {
         organisationService.deleteOrganisation(idOrName);
         return ResponseEntity.noContent().build();

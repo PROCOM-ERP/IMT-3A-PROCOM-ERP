@@ -24,8 +24,8 @@ public class Path {
     public static final String V1_ADDRESSES_ANYONE = V1_ADDRESSES + ANYONE;
 
     public static final String V1_ORGANISATIONS = V1 + ORGANISATIONS;
-    public static final String ORGANISATION_ID = "/{idOrName}";
-    public static final String ORGANISATION_ID_ADDRESS = ORGANISATION_ID + ADDRESS;
+    public static final String ORGANISATION_ID_OR_NAME = "/{idOrName}";
+    public static final String ORGANISATION_ID_OR_NAME_ADDRESS = ORGANISATION_ID_OR_NAME + ADDRESS;
     public static final String V1_ORGANISATIONS_ANYONE = V1_ORGANISATIONS + ANYONE;
     public static final String V1_ORGANISATIONS_ANYONE_ADDRESS = V1_ORGANISATIONS_ANYONE + ADDRESS;
 
@@ -38,11 +38,10 @@ public class Path {
     public static final String V1_SERVICES_ANYONE_ORGANISATION = V1_SERVICES_ANYONE + ORGANISATION;
 
     public static final String V1_EMPLOYEES = V1 + EMPLOYEES;
-    public static final String EMPLOYEE_ID = "/{idEmployee}";
-    public static final String EMPLOYEE_ID_OR_EMAIL = "/{idEmployeeOrEmail}";
-    public static final String EMPLOYEE_ID_ENABLE = EMPLOYEE_ID + ENABLE;
-    public static final String EMPLOYEE_ID_INFO = EMPLOYEE_ID + INFO;
-    public static final String EMPLOYEE_ID_SERVICE = EMPLOYEE_ID + SERVICE;
+    public static final String EMPLOYEE_ID_OR_EMAIL = "/{idOrEmail}";
+    public static final String EMPLOYEE_ID_OR_EMAIL_ENABLE = EMPLOYEE_ID_OR_EMAIL + ENABLE;
+    public static final String EMPLOYEE_ID_OR_EMAIL_INFO = EMPLOYEE_ID_OR_EMAIL + INFO;
+    public static final String EMPLOYEE_ID_OR_EMAIL_SERVICE = EMPLOYEE_ID_OR_EMAIL + SERVICE;
     public static final String V1_EMPLOYEES_ANYONE = V1_EMPLOYEES + ANYONE;
     public static final String V1_EMPLOYEES_ANYONE_ENABLE = V1_EMPLOYEES_ANYONE + ENABLE;
     public static final String V1_EMPLOYEES_ANYONE_INFO = V1_EMPLOYEES_ANYONE + INFO;

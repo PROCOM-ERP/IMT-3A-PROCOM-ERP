@@ -30,6 +30,20 @@ public interface EmployeeRepository extends JpaRepository<Employee, String>, Jpa
                        @NonNull @Param("email") String email,
                        @Param("phoneNumber") String phoneNumber);
 
+    @Transactional
+    @Modifying
+    @Query(value =
+            "update Employee e " +
+            "set e.lastName = :lastName, "+
+            "e.firstName = :firstName, "+
+            "e.email = :email, "+
+            "e.phoneNumber = :phoneNumber "+
+            "where e.email = :email")
+    int updateInfoByEmail(@NonNull @Param("email") String email,
+                          @NonNull @Param("lastName") String lastName,
+                          @NonNull @Param("firstName") String firstName,
+                          @Param("phoneNumber") String phoneNumber);
+
 
     @Transactional
     @Modifying
@@ -45,10 +59,30 @@ public interface EmployeeRepository extends JpaRepository<Employee, String>, Jpa
     @Modifying
     @Query(value =
             "update employees " +
+            "set service = :idService " +
+            "where email = :email",
+            nativeQuery = true)
+    int updateServiceByEmail(@NonNull @Param("email") String email,
+                             @NonNull @Param("idService") Integer idService);
+
+    @Transactional
+    @Modifying
+    @Query(value =
+            "update employees " +
             "set enable = :enable " +
             "where id = :idEmployee",
             nativeQuery = true)
     int updateEnableById(@NonNull @Param("idEmployee") String idEmployee,
                          @NonNull @Param("enable") Boolean enable);
+
+    @Transactional
+    @Modifying
+    @Query(value =
+            "update employees " +
+            "set enable = :enable " +
+            "where email = :email",
+            nativeQuery = true)
+    int updateEnableByEmail(@NonNull @Param("email") String email,
+                            @NonNull @Param("enable") Boolean enable);
 
 }

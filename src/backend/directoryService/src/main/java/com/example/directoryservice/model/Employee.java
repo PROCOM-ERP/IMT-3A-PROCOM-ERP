@@ -17,6 +17,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Getter
 @Setter
+@ToString
 @Entity
 @Table(name = "employees", schema = "public", indexes = {
         @Index(name = "employees_email_key", columnList = "email", unique = true)

@@ -17,6 +17,9 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+  mvc:
+    servlet:
+      load-on-startup: 1
 
 springdoc:
   api-docs:

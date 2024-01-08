@@ -102,9 +102,9 @@ CREATE TABLE employees
     CONSTRAINT check_employees_id
         CHECK (employees.id ~* '[A-Z][0-9]{5}'),
     CONSTRAINT check_employees_email
-        CHECK (employees.email ~* '^[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,62}[a-zA-Z0-9])?@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z]{2,})+$'),
+        CHECK (employees.email ~* '^[a-zA-Z0-9](?:[a-zA-Z0-9-._-]{0,62}[a-zA-Z0-9])?@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z]{2,})+$'),
     CONSTRAINT check_employees_phone_number
-        CHECK (employees.phone_number ~* '^\+((?:9[679]|8[0357-9]|6[7-9]|5[09]|42|3[578]|2[1-689])\d|9[0-58]|8[1246]|6[0-6]|5[1-8]|4[013-9]|3[0-469]|2[07]|[017])\W?\d\W?\d\W?\d\W?\d\W?\d\W?\d\W?\d\W?\d\W?(\d{1,2})$')
+        CHECK (employees.phone_number ~* '^(\+((?:9[679]|8[0357-9]|6[7-9]|5[09]|42|3[578]|2[1-689])\d|9[0-58]|8[1246]|6[0-6]|5[1-8]|4[013-9]|3[0-469]|2[07]|[17])|0)\W?\d\W?\d\W?\d\W?\d\W?\d\W?\d\W?\d\W?\d\W?(\d{1,2})$')
 );
 
 -- +----------------------------------------------------------------------------------------------+
