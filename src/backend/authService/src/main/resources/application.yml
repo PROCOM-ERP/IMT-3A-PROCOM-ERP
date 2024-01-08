@@ -17,6 +17,12 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+  rabbitmq:
+    host: ${BACKEND_MESSAGE_BROKER_SERVICE_IP_INT}
+    port: ${BACKEND_MESSAGE_BROKER_SERVICE_PORT_INT}
+    username: ${BACKEND_MESSAGE_BROKER_SERVICE_USERNAME}
+    password: ${BACKEND_MESSAGE_BROKER_SERVICE_PWD}
+    virtual-host: /
 
 springdoc:
   api-docs:
