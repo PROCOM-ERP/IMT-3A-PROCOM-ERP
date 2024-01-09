@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class RabbitMQReceiver {
 
-  @RabbitListener(queues = "employee-sec-exchange")
+  @RabbitListener(queues = "employee-sec-queue")
   public void receiveMessage(String message) {
     System.out.println("Received message about jwt: " + message);
     // Add logic to process the message

@@ -44,6 +44,7 @@ public class RabbitMQConfig {
   public Queue employeeEmailQueue() {
     return new Queue("employee-email-queue");
   }
+
   @Bean
   public Exchange rolesExchange() {
     return new DirectExchange("roles-exchange");
@@ -76,7 +77,7 @@ public class RabbitMQConfig {
   public Binding rolesNewBinding(Queue rolesNewQueue, Exchange rolesExchange) {
     return BindingBuilder.bind(rolesNewQueue)
         .to(rolesExchange)
-        .with("roles.init")
+        .with("roles.new")
         .noargs();
   }
 

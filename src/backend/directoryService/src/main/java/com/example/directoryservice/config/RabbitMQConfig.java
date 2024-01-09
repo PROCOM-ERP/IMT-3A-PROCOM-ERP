@@ -8,8 +8,8 @@ import org.springframework.context.annotation.Configuration;
 public class RabbitMQConfig {
 
   @Bean
-  public Exchange employeeExchange() {
-    return new DirectExchange("employee-exchange");
+  public Exchange rolesExchange() {
+    return new DirectExchange("roles-exchange");
   }
 
   @Bean
