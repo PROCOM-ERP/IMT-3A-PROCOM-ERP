@@ -12,11 +12,11 @@ public class RabbitMQService {
     this.rabbitTemplate = rabbitTemplate;
   }
 
-  public void sendMessage(String message) {
-    rabbitTemplate.convertAndSend("hello-exchange", "hello-key", message);
+  public void sendMessage(String exchange, String routingKey, String message) {
+    rabbitTemplate.convertAndSend(exchange, routingKey, message);
   }
 
-  public String receiveMessage() {
-    return (String)rabbitTemplate.receiveAndConvert("hello-queue");
+  public String receiveMessage(String queue) {
+    return (String)rabbitTemplate.receiveAndConvert(queue);
   }
 }

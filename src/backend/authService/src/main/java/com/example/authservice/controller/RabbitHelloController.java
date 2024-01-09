@@ -46,10 +46,11 @@ public class RabbitHelloController {
   public ResponseEntity<String>
   getHello() {
     // Send a message to RabbitMQ
-    rabbitMQService.sendMessage("Hello from AuthService!");
+    rabbitMQService.sendMessage("hello-exchange", "hello-key",
+                                "Hello from AuthService!");
 
     // Receive a message from RabbitMQ
-    String receivedMessage = rabbitMQService.receiveMessage();
+    String receivedMessage = rabbitMQService.receiveMessage("hello-queue");
 
     return ResponseEntity.ok("Hello, World! Received: " + receivedMessage);
   }
