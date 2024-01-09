@@ -33,4 +33,11 @@ public class RabbitMQReceiver {
         message);
     // Add logic to process the message
   }
+
+  @RabbitListener(queues = "employee-email-queue")
+  public void receiveEmployeeInfoMessage(String message) {
+    System.out.println(
+        "Received message of an update in employee information : " + message);
+    // Add logic to process the message
+  }
 }
