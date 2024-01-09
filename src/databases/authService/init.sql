@@ -35,6 +35,7 @@ CREATE TABLE roles
 (
     name VARCHAR(32) UNIQUE NOT NULL,
     enable BOOLEAN NOT NULL DEFAULT true,
+    counter INTEGER NOT NULL DEFAULT 1,
 
     CONSTRAINT pk_roles PRIMARY KEY (name)
 );

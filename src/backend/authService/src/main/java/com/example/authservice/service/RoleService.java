@@ -63,9 +63,26 @@ public class RoleService {
         roleRepository.save(role);
     }
 
+    public void updateRoleEnableCounter(String roleName, Boolean enable, Boolean setEnable) {
+        // check if role exists
+        Role role = roleRepository.findById(roleName).orElseThrow();
+        // set changes only if enable change
+        if (enable != role.getEnable()) {
+            // set enable
+            if (setEnable)
+                role.setEnable(enable);
+            // set counter
+            int deltaCounter = enable ? 1 : -1;
+            role.setCounter(role.getCounter() + deltaCounter);
+            // save
+            roleRepository.save(role);
+        }
+    }
+
     static RoleResponseDto modelToResponseDto(Role role) {
         return RoleResponseDto.builder()
                 .name(role.getName())
+                .enable(role.getEnable())
                 .permissions(role.getPermissions())
                 .employees(role.getEmployees().stream()
                         .map(Employee::getId)

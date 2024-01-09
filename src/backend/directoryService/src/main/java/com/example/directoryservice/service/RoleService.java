@@ -61,9 +61,22 @@ public class RoleService {
         roleRepository.save(role);
     }
 
+    public void updateRoleEnable(String roleName, Boolean enable) {
+        // check if role exists
+        Role role = roleRepository.findById(roleName).orElseThrow();
+        // set changes only if enable change
+        if (enable != role.getEnable()) {
+            // set enable
+            role.setEnable(enable);
+            // save
+            roleRepository.save(role);
+        }
+    }
+
     static RoleResponseDto modelToResponseDto(Role role) {
         return RoleResponseDto.builder()
                 .name(role.getName())
+                .enable(role.getEnable())
                 .permissions(role.getPermissions())
                 .build();
     }

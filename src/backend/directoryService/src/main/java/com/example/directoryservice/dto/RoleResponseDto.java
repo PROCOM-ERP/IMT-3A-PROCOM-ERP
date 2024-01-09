@@ -14,6 +14,7 @@ import java.util.Set;
 public class RoleResponseDto {
 
     private String name;
+    private Boolean enable;
     private Set<String> permissions;
 
 }

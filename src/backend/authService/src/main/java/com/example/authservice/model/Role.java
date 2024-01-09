@@ -33,6 +33,11 @@ public class Role {
     private Boolean enable = false;
 
     @Builder.Default
+    @NotNull
+    @Column(name = "counter", nullable = false)
+    private Integer counter = 1;
+
+    @Builder.Default
     @JsonIgnoreProperties("roles")
     @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
     private Set<Employee> employees = new LinkedHashSet<>();
