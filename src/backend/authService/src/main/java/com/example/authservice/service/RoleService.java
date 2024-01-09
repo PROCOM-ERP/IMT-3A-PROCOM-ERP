@@ -90,4 +90,11 @@ public class RoleService {
                 .build();
     }
 
+    static Role responseDtoToModel(RoleResponseDto roleResponseDto) {
+        return Role.builder()
+                .name(roleResponseDto.getName())
+                .enable(roleResponseDto.getEnable())
+                .build();
+    }
+
 }

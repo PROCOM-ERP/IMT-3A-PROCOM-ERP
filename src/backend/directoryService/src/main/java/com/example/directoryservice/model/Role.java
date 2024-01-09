@@ -29,7 +29,7 @@ public class Role {
     @Builder.Default
     @NotNull
     @Column(name = "enable", nullable = false)
-    private Boolean enable = false;
+    private Boolean enable = true;
 
     @Builder.Default
     @ElementCollection(fetch = FetchType.LAZY)

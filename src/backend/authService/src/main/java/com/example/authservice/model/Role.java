@@ -7,8 +7,10 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.hibernate.proxy.HibernateProxy;
 
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Builder
@@ -30,7 +32,7 @@ public class Role {
     @Builder.Default
     @NotNull
     @Column(name = "enable", nullable = false)
-    private Boolean enable = false;
+    private Boolean enable = true;
 
     @Builder.Default
     @NotNull
