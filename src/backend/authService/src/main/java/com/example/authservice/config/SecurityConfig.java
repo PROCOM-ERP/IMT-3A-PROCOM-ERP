@@ -1,10 +1,12 @@
 package com.example.authservice.config;
 
 import com.example.authservice.model.Endpoint;
+import com.example.authservice.repository.EmployeeRepository;
 import com.example.authservice.service.CustomUserDetailsService;
 import com.example.authservice.service.EndpointService;
 import com.example.authservice.service.RoleService;
 import com.example.authservice.utils.CustomJwtAuthenticationConverter;
+import com.example.authservice.utils.SharedKeyAuthenticationFilter;
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import java.time.Duration;
 import java.util.List;
@@ -29,6 +31,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.*;
+import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.savedrequest.NullRequestCache;
 
@@ -37,6 +40,8 @@ import org.springframework.security.web.savedrequest.NullRequestCache;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+  @Value("${security.services.sharedkey}") private String sharedKey;
+
   @Value("${security.jwt.secretkey}") private String jwtKey;
 
   @Value("${security.jwt.claim.roles}") private String jwtClaimRoles;
@@ -44,6 +49,7 @@ public class SecurityConfig {
   private final CustomUserDetailsService customUserDetailsService;
   private final EndpointService endpointService;
   private final RoleService roleService;
+  private final EmployeeRepository employeeRepository;
 
   // private final Logger logger =
   // LoggerFactory.getLogger(SecurityConfig.class);
@@ -51,63 +57,65 @@ public class SecurityConfig {
   @Bean
   @Order(1)
   public SecurityFilterChain basicfilterChain(HttpSecurity http)
-      throws Exception {
+          throws Exception {
     return http
-        .securityMatcher("api/v1/auth/**")
-        // specify CORS and CSRF
-        .cors(AbstractHttpConfigurer::disable)
-        .csrf(AbstractHttpConfigurer::disable)
-        // remove session and cookies in cache
-        .sessionManagement(
-            session
-            -> session.sessionCreationPolicy(SessionCreationPolicy.NEVER))
-        .requestCache((cache) -> cache.requestCache(new NullRequestCache()))
-        // permissions
-        .authorizeHttpRequests((auth) -> auth.anyRequest().authenticated())
-        // authentication methods
-        .httpBasic(Customizer.withDefaults())
-        // finalize the build
-        .build();
+            .securityMatcher("api/v1/auth/**")
+            // specify CORS and CSRF
+            .cors(AbstractHttpConfigurer::disable)
+            .csrf(AbstractHttpConfigurer::disable)
+            // remove session and cookies in cache
+            .sessionManagement(
+                    session
+                            -> session.sessionCreationPolicy(SessionCreationPolicy.NEVER))
+            .requestCache((cache) -> cache.requestCache(new NullRequestCache()))
+            // permissions
+            .authorizeHttpRequests((auth) -> auth.anyRequest().authenticated())
+            // authentication methods
+            .httpBasic(Customizer.withDefaults())
+            // finalize the build
+            .build();
   }
 
   @Bean
   public SecurityFilterChain jwtfilterChain(HttpSecurity http)
-      throws Exception {
+          throws Exception {
     List<Endpoint> endpoints = endpointService.getAllEndpoints();
     return http
-        // specify CORS and CSRF
-        .cors(AbstractHttpConfigurer::disable)
-        .csrf(AbstractHttpConfigurer::disable)
-        // remove session and cookies in cache
-        .sessionManagement(
-            session
-            -> session.sessionCreationPolicy(SessionCreationPolicy.NEVER))
-        .requestCache((cache) -> cache.requestCache(new NullRequestCache()))
-        // permissions
-        .authorizeHttpRequests((auth) -> {
-          endpoints.forEach(endpoint -> {
-            HttpMethod httpMethod = endpoint.getHttpMethod();
-            String path = endpoint.getPath();
-            if (endpoint.getPermission() == null) {
-              // logger.info(httpMethod + " " + path + " : PERMIT");
-              auth.requestMatchers(httpMethod, path).permitAll();
-            } else {
-              String permission = endpoint.getPermission().name();
-              // logger.info(httpMethod + " " + path + " : " + permission);
-              auth.requestMatchers(httpMethod, path).hasAuthority(permission);
-            }
-          });
-          auth.anyRequest().authenticated();
-        })
-        // authentication methods
-        .oauth2ResourceServer(
-            (oauth2)
-                -> oauth2.jwt(jwtConfigurer
-                              -> jwtConfigurer.jwtAuthenticationConverter(
-                                  new CustomJwtAuthenticationConverter(
-                                      jwtClaimRoles, roleService))))
-        // finalize the build
-        .build();
+            // specify CORS and CSRF
+            .cors(AbstractHttpConfigurer::disable)
+            .csrf(AbstractHttpConfigurer::disable)
+            // remove session and cookies in cache
+            .sessionManagement(
+                    session
+                            -> session.sessionCreationPolicy(SessionCreationPolicy.NEVER))
+            .requestCache((cache) -> cache.requestCache(new NullRequestCache()))
+            // permissions
+            .authorizeHttpRequests((auth) -> {
+              endpoints.forEach(endpoint -> {
+                HttpMethod httpMethod = endpoint.getHttpMethod();
+                String path = endpoint.getPath();
+                if (endpoint.getPermission() == null) {
+                  // logger.info(httpMethod + " " + path + " : PERMIT");
+                  auth.requestMatchers(httpMethod, path).permitAll();
+                } else {
+                  String permission = endpoint.getPermission().name();
+                  // logger.info(httpMethod + " " + path + " : " + permission);
+                  auth.requestMatchers(httpMethod, path).hasAuthority(permission);
+                }
+              });
+              auth.anyRequest().authenticated();
+            })
+            // authentication methods
+            .oauth2ResourceServer(
+                    (oauth2)
+                            -> oauth2.jwt(jwtConfigurer
+                            -> jwtConfigurer.jwtAuthenticationConverter(
+                            new CustomJwtAuthenticationConverter(
+                                    jwtClaimRoles, roleService, employeeRepository))))
+            // finalize the build
+            .addFilterBefore(new SharedKeyAuthenticationFilter(sharedKey, endpointService),
+                    BearerTokenAuthenticationFilter.class)
+            .build();
   }
 
   @Bean
@@ -118,11 +126,11 @@ public class SecurityConfig {
   @Bean
   public AuthenticationManager
   authenticationManager(HttpSecurity http, PasswordEncoder passwordEncoder)
-      throws Exception {
+          throws Exception {
     AuthenticationManagerBuilder authenticationManagerBuilder =
-        http.getSharedObject(AuthenticationManagerBuilder.class);
+            http.getSharedObject(AuthenticationManagerBuilder.class);
     authenticationManagerBuilder.userDetailsService(customUserDetailsService)
-        .passwordEncoder(passwordEncoder);
+            .passwordEncoder(passwordEncoder);
     return authenticationManagerBuilder.build();
   }
 
@@ -139,12 +147,12 @@ public class SecurityConfig {
   @Bean
   public JwtDecoder jwtDecoder() {
     SecretKeySpec secretKey = new SecretKeySpec(
-        this.jwtKey.getBytes(), 0, this.jwtKey.getBytes().length, "RSA");
+            this.jwtKey.getBytes(), 0, this.jwtKey.getBytes().length, "RSA");
     NimbusJwtDecoder jwtDecoder = NimbusJwtDecoder.withSecretKey(secretKey)
-                                      .macAlgorithm(MacAlgorithm.HS256)
-                                      .build();
+            .macAlgorithm(MacAlgorithm.HS256)
+            .build();
     jwtDecoder.setJwtValidator(
-        new JwtTimestampValidator(Duration.ZERO)); // no clock skew
+            new JwtTimestampValidator(Duration.ZERO)); // no clock skew
     return jwtDecoder;
   }
 }

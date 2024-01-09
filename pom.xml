@@ -24,6 +24,7 @@
         <lombok.version>1.18.30</lombok.version>
         <spring-cloud.version>2022.0.4</spring-cloud.version>
         <springdoc-openapi.version>2.2.0</springdoc-openapi.version>
+        <apache-http.version>5.3</apache-http.version>
 
         <postgres.version>42.6.0</postgres.version>
         <junit.version>5.9.3</junit.version>
@@ -32,6 +33,11 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.apache.httpcomponents.client5</groupId>
+                <artifactId>httpclient5</artifactId>
+                <version>${apache-http.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.springdoc</groupId>
                 <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
@@ -154,6 +160,7 @@
     <modules>
         <module>src/backend/authService</module>
         <module>src/backend/gatewayService</module>
+        <module>src/backend/directoryService</module>
     </modules>
 
 </project>

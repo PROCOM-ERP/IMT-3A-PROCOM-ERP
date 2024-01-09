@@ -6,6 +6,7 @@ public enum Permission {
     CanCreateRole,
     CanDeactivateEmployee,
     CanDeactivateRole,
+    CanModifyEmployeeEmail,
     CanModifyEmployeePassword,
     CanModifyEmployeeRoles,
     CanModifyRolePermissions,

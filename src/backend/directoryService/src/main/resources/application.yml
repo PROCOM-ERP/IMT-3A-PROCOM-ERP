@@ -1,25 +1,31 @@
 server:
-  port: ${BACKEND_LOCAL_TEST_SERVICE_PORT_INT}
-  ssl:
-    key-store: /${BACKEND_LOCAL_TEST_SERVICE_HTTPS_KEY_STORE}
-    key-store-password: ${BACKEND_LOCAL_TEST_SERVICE_HTTPS_KEY_STORE_PASSWORD}
-    keyStoreType: PKCS12
-    keyAlias: ${BACKEND_LOCAL_TEST_SERVICE_HTTPS_KEY_STORE_ALIAS}
+  port: ${BACKEND_DIR_SERVICE_PORT_INT}
+#  ssl:
+#    key-store: /${BACKEND_GATEWAY_SERVICE_HTTPS_KEY_STORE}
+#    key-store-password: ${BACKEND_GATEWAY_SERVICE_HTTPS_KEY_STORE_PASSWORD}
+#    keyStoreType: PKCS12
+#    keyAlias: ${BACKEND_GATEWAY_SERVICE_HTTPS_KEY_STORE_ALIAS}
 
 spring:
   profiles:
     active: dev
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://${DB_LOCAL_TEST_SERVICE_HOSTNAME}:${DB_LOCAL_TEST_SERVICE_PORT_INT}/${DB_LOCAL_TEST_SERVICE_DB}
-    username: ${DB_LOCAL_TEST_SERVICE_USER}
-    password: ${DB_LOCAL_TEST_SERVICE_PASSWORD}
+    url: jdbc:postgresql://${DB_DIR_SERVICE_HOSTNAME}:${DB_DIR_SERVICE_PORT_INT}/${DB_DIR_SERVICE_DB}
+    username: ${DB_DIR_SERVICE_USER}
+    password: ${DB_DIR_SERVICE_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: update
   mvc:
     servlet:
       load-on-startup: 1
+  rabbitmq:
+    host: ${BACKEND_MESSAGE_BROKER_SERVICE_IP_INT}
+    port: ${BACKEND_MESSAGE_BROKER_SERVICE_PORT_INT}
+    username: ${BACKEND_MESSAGE_BROKER_SERVICE_USERNAME}
+    password: ${BACKEND_MESSAGE_BROKER_SERVICE_PWD}
+    virtual-host: /
 
 springdoc:
   api-docs:
@@ -30,9 +36,11 @@ springdoc:
     operations-sorter: method
 
 security:
+  services:
+    sharedkey: ${SECURITY_SERVICES_SHARED_KEY}
   jwt:
-    secretkey: MpoUIF+TE2QFX88Z3lliMeqqIX++xABtsIVJwTqE0fs=
+    secretkey: ${SECURITY_JWT_SECRET_KEY}
     claim:
-      roles: jwtClaimRoles
+      roles: ${SECURITY_JWT_CLAIMS_KEY_ROLES}
 
 # logging.level.com.example.directoryservice: INFO

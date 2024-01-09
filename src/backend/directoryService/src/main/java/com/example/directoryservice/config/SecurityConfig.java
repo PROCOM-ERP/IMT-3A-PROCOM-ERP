@@ -1,9 +1,11 @@
 package com.example.directoryservice.config;
 
 import com.example.directoryservice.model.Endpoint;
+import com.example.directoryservice.repository.EmployeeRepository;
 import com.example.directoryservice.service.EndpointService;
 import com.example.directoryservice.service.RoleService;
 import com.example.directoryservice.utils.CustomJwtAuthenticationConverter;
+import com.example.directoryservice.utils.SharedKeyAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +20,7 @@ import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.*;
+import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.savedrequest.NullRequestCache;
 
@@ -30,6 +33,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+    @Value("${security.services.sharedkey}") private String sharedKey;
+
     @Value("${security.jwt.secretkey}")
     private String jwtKey;
 
@@ -38,6 +43,7 @@ public class SecurityConfig {
 
     private final EndpointService endpointService;
     private final RoleService roleService;
+    private final EmployeeRepository employeeRepository;
 
     //private final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
 
@@ -70,8 +76,10 @@ public class SecurityConfig {
                 // authentication method
                 .oauth2ResourceServer((oauth2) -> oauth2.jwt(jwtConfigurer ->
                         jwtConfigurer.jwtAuthenticationConverter(
-                                new CustomJwtAuthenticationConverter(jwtClaimRoles, roleService))))
+                                new CustomJwtAuthenticationConverter(jwtClaimRoles, roleService, employeeRepository))))
                 // finalize the build
+                .addFilterBefore(new SharedKeyAuthenticationFilter(sharedKey, endpointService),
+                        BearerTokenAuthenticationFilter.class)
                 .build();
     }
 

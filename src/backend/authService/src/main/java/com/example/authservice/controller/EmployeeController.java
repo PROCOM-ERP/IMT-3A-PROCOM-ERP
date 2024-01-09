@@ -126,7 +126,7 @@ public class EmployeeController {
                     content = {@Content(mediaType = "application/json")} ),
             @ApiResponse(responseCode = "422", description =
                     "Attribute values don't respect integrity constraints.<br>" +
-                            "Password : 12 characters, 1 uppercase letter, 1 lowercase letter, 1 digit, 1 special character in (@#$%^&+=!.*).<br>",
+                    "Password : 12 characters, 1 uppercase letter, 1 lowercase letter, 1 digit, 1 special character in (@#$%^&+=!.*).<br>",
                     content = {@Content(mediaType = "application/json")} ),
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
@@ -165,6 +165,66 @@ public class EmployeeController {
     public ResponseEntity<String> updateEmployeeRoles(@PathVariable String idEmployee,
                                                       @RequestBody List<String> roles) {
         employeeService.updateEmployeeRoles(idEmployee, roles);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping(Path.EMPLOYEE_ID_EMAIL)
+    @Operation(operationId = "updateEmployeeEmail", tags = {"employees"},
+            summary = "Update an employee email", description =
+            "Update an employee email, by providing the new one.<br>" +
+            "Only available for admins.",
+            parameters = {@Parameter(name = "idEmployee", description =
+            "The employee username (6 characters identifier)")})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description =
+                    "Employee email updated correctly",
+                    content = {@Content(mediaType = "application/json")} ),
+            @ApiResponse(responseCode = "401", description =
+                    "Roles in Jwt token are insufficient to authorize the access to this URL",
+                    content = {@Content(mediaType = "application/json")} ),
+            @ApiResponse(responseCode = "404", description =
+                    "Employee not found",
+                    content = {@Content(mediaType = "application/json")} ),
+            @ApiResponse(responseCode = "422", description =
+                    "Attribute values don't respect integrity constraints.<br>" +
+                    "Email : 63 characters for 'username', @, 63 for subdomain, and the rest for TLD. Maximum 320 characters.",
+                    content = {@Content(mediaType = "application/json")} ),
+            @ApiResponse(responseCode = "500", description =
+                    "Uncontrolled error appeared",
+                    content = {@Content(mediaType = "application/json")} )})
+    public ResponseEntity<String> updateEmployeeEmail(@PathVariable String idEmployee,
+                                                       @RequestBody String email) {
+        employeeService.updateEmployeeEmail(idEmployee, email);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping(Path.EMPLOYEE_ID_ENABLE)
+    @Operation(operationId = "updateEmployeeEmail", tags = {"employees"},
+            summary = "Enable or disable an employee", description =
+            "Enable or disable an employee, by providing a new enable value (true or false).<br>" +
+            "Only available for admins.",
+            parameters = {@Parameter(name = "idEmployee", description =
+                    "The employee username (6 characters identifier)")})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description =
+                    "Employee enable attribute updated correctly",
+                    content = {@Content(mediaType = "application/json")} ),
+            @ApiResponse(responseCode = "401", description =
+                    "Roles in Jwt token are insufficient to authorize the access to this URL",
+                    content = {@Content(mediaType = "application/json")} ),
+            @ApiResponse(responseCode = "404", description =
+                    "Employee not found",
+                    content = {@Content(mediaType = "application/json")} ),
+            @ApiResponse(responseCode = "422", description =
+                    "Attribute values don't respect integrity constraints.<br>" +
+                    "Enable : boolean value (true or false).",
+                    content = {@Content(mediaType = "application/json")} ),
+            @ApiResponse(responseCode = "500", description =
+                    "Uncontrolled error appeared",
+                    content = {@Content(mediaType = "application/json")} )})
+    public ResponseEntity<String> updateEmployeeEnable(@PathVariable String idEmployee,
+                                                       @RequestBody Boolean enable) {
+        employeeService.updateEmployeeEnable(idEmployee, enable);
         return ResponseEntity.noContent().build();
     }
 

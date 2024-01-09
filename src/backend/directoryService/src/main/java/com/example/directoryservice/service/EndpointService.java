@@ -15,4 +15,8 @@ public class EndpointService {
         return endpoints;
     }
 
+    public List<Endpoint> getPermitEndpoints() {
+        return endpoints.stream().filter(endpoint -> endpoint.getPermission() == null).toList();
+    }
+
 }
