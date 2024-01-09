@@ -40,7 +40,10 @@ public class JwtService {
         Employee employee = employeeRepository.findById(authentication.getName())
                 .orElseThrow(() -> new InsufficientAuthenticationException(""));
         // get role names
-        List<String> roles =  employee.getRoles().stream().map(Role::getName).toList();
+        List<String> roles =  employee.getRoles().stream()
+                .filter(role -> role.getCounter() > 0)
+                .map(Role::getName)
+                .toList();
         //logger.info("Roles in Repository : " + roles);
         if (roles.isEmpty()) {
             throw new AccessDeniedException("");

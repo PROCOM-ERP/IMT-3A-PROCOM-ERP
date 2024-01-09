@@ -154,3 +154,25 @@ VALUES ('admin', 'CanCreateRole'),
        ('HRManager', 'CanModifyEmployeeService'),
        ('HRManager', 'CanDeactivateEmployee'),
        ('HRManager', 'CanModifyServiceAddress');
+
+INSERT INTO addresses (number, street, city, country, postal_code)
+VALUES (1, 'rue de la Paix', 'Paris', 'France', '75000'),
+       (2, 'rue de la Paix', 'Paris', 'France', '75000');
+
+-- +----------------------------------------------------------------------------------------------+
+
+INSERT INTO organisations (name, address)
+VALUES ('Google', 1);
+
+-- +----------------------------------------------------------------------------------------------+
+
+INSERT INTO services (name, address, organisation)
+VALUES ('R&D', 2, 1),
+       ('HR', 1, 1);
+
+-- +----------------------------------------------------------------------------------------------+
+
+INSERT INTO employees (id, last_name, first_name, email, service)
+VALUES ('A00001', 'Bonnot', 'Jean', 'jean.bonnot@gmail.com', 1),
+       ('A00002', 'De La Compta', 'Séverine', 'severine.de-la-compta@gmail.com', 2);
+
