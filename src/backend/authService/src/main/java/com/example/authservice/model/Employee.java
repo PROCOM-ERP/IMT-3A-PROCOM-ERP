@@ -9,6 +9,7 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -42,14 +43,24 @@ public class Employee {
     private String password;
 
     @Builder.Default
+    @Size(max = 320)
+    @Column(name = "email", nullable = false, length = 320)
+    private String email = null;
+
+    @Builder.Default
     @NotNull
     @Column(name = "creation", nullable = false)
-    private LocalDate creation = LocalDate.now();
+    private LocalDateTime creation = LocalDateTime.now();
 
     @Builder.Default
     @NotNull
     @Column(name = "enable", nullable = false)
     private Boolean enable = true;
+
+    @Builder.Default
+    @NotNull
+    @Column(name = "jwt_min_creation", nullable = false)
+    private LocalDateTime jwtMinCreation = LocalDateTime.now();
 
     @Builder.Default
     @JsonIgnoreProperties(value = {"employees", "permissions", "enable"})

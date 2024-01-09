@@ -42,7 +42,7 @@ public class HelloController {
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
     public ResponseEntity<String> getHello() {
-        String directoryServiceUrl = "http://springboot-procom-erp-local-test-service:8098/api/v1/hello";
+        String directoryServiceUrl = "http://springboot-procom-erp-dir-service:8042/api/v1/hello";
 
         // Création des en-têtes HTTP
         HttpHeaders headers = new HttpHeaders();

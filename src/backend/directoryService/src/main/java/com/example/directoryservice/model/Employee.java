@@ -11,6 +11,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Builder
 @AllArgsConstructor
@@ -40,6 +41,11 @@ public class Employee {
     @NotNull
     @Column(name = "enable", nullable = false)
     private Boolean enable = true;
+
+    @Builder.Default
+    @NotNull
+    @Column(name = "jwt_min_creation", nullable = false)
+    private LocalDateTime jwtMinCreation = LocalDateTime.now();
 
     @Size(max = 255)
     @NotNull

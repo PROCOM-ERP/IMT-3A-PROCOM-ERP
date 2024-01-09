@@ -52,8 +52,6 @@ public class EmployeeService {
 
         // try to save employee with its roles and return its id
         return employeeRepository.save(employee).getId();
-
-
     }
 
     public List<EmployeeResponseDto> getAllEmployees() {
@@ -121,6 +119,7 @@ public class EmployeeService {
     static EmployeeResponseDto modelToResponseDto(Employee employee) {
         return EmployeeResponseDto.builder()
                 .id(employee.getId())
+                .email(employee.getEmail())
                 .roles(employee.getRoles().stream()
                         .map(Role::getName)
                         .collect(Collectors.toSet()))

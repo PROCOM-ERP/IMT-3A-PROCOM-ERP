@@ -1,6 +1,7 @@
 package com.example.authservice.config;
 
 import com.example.authservice.model.Endpoint;
+import com.example.authservice.repository.EmployeeRepository;
 import com.example.authservice.service.CustomUserDetailsService;
 import com.example.authservice.service.EndpointService;
 import com.example.authservice.service.RoleService;
@@ -48,6 +49,7 @@ public class SecurityConfig {
   private final CustomUserDetailsService customUserDetailsService;
   private final EndpointService endpointService;
   private final RoleService roleService;
+  private final EmployeeRepository employeeRepository;
 
   // private final Logger logger =
   // LoggerFactory.getLogger(SecurityConfig.class);
@@ -109,7 +111,7 @@ public class SecurityConfig {
                             -> oauth2.jwt(jwtConfigurer
                             -> jwtConfigurer.jwtAuthenticationConverter(
                             new CustomJwtAuthenticationConverter(
-                                    jwtClaimRoles, roleService))))
+                                    jwtClaimRoles, roleService, employeeRepository))))
             // finalize the build
             .addFilterBefore(new SharedKeyAuthenticationFilter(sharedKey, endpointService),
                     BearerTokenAuthenticationFilter.class)

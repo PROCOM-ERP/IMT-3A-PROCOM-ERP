@@ -30,27 +30,50 @@ services:
 
   # +-----------------------------------------------------------------------------+
 
-  # postgres-procom-erp-local-test-service:
-  #   container_name: ${DB_LOCAL_TEST_SERVICE_HOSTNAME}
-  #   hostname: ${DB_LOCAL_TEST_SERVICE_HOSTNAME}
-  #   image: postgres:13
-  #   environment:
-  #     POSTGRES_USER: ${DB_LOCAL_TEST_SERVICE_USER}
-  #     POSTGRES_PASSWORD: ${DB_LOCAL_TEST_SERVICE_PASSWORD}
-  #     POSTGRES_DB: ${DB_LOCAL_TEST_SERVICE_DB}
-  #   expose:
-  #     - "${DB_LOCAL_TEST_SERVICE_PORT_INT}"
-  #   ports:
-  #     - "${DB_LOCAL_TEST_SERVICE_PORT_EXT}:${DB_LOCAL_TEST_SERVICE_PORT_INT}"
-  #   networks:
-  #     vnet-procom-erp:
-  #       ipv4_address: ${DB_LOCAL_TEST_SERVICE_IP_INT}
-  #   volumes:
-  #     - db-procom-erp-local-test-service-data:/var/lib/postgresql/data
-  #     - ${DB_LOCAL_TEST_SERVICE_PATH}/init.sql:/docker-entrypoint-initdb.d/init.sql
-  #     - ${DB_LOCAL_TEST_SERVICE_PATH}/postgresql.conf:/etc/postgresql/postgresql.conf
-  #   command: -c 'config_file=/etc/postgresql/postgresql.conf'
-  #
+  postgres-procom-erp-dir-service:
+    container_name: ${DB_DIR_SERVICE_HOSTNAME}
+    hostname: ${DB_DIR_SERVICE_HOSTNAME}
+    image: postgres:13
+    environment:
+      POSTGRES_USER: ${DB_DIR_SERVICE_USER}
+      POSTGRES_PASSWORD: ${DB_DIR_SERVICE_PASSWORD}
+      POSTGRES_DB: ${DB_DIR_SERVICE_DB}
+    expose:
+      - "${DB_DIR_SERVICE_PORT_INT}"
+    ports:
+      - "${DB_DIR_SERVICE_PORT_EXT}:${DB_DIR_SERVICE_PORT_INT}"
+    networks:
+      vnet-procom-erp:
+        ipv4_address: ${DB_DIR_SERVICE_IP_INT}
+    volumes:
+      - db-procom-erp-dir-service-data:/var/lib/postgresql/data
+      - ${DB_DIR_SERVICE_PATH}/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ${DB_DIR_SERVICE_PATH}/postgresql.conf:/etc/postgresql/postgresql.conf
+    command: -c 'config_file=/etc/postgresql/postgresql.conf'
+
+  # +-----------------------------------------------------------------------------+
+
+#  postgres-procom-erp-local-test-service:
+#    container_name: ${DB_LOCAL_TEST_SERVICE_HOSTNAME}
+#    hostname: ${DB_LOCAL_TEST_SERVICE_HOSTNAME}
+#    image: postgres:13
+#    environment:
+#      POSTGRES_USER: ${DB_LOCAL_TEST_SERVICE_USER}
+#      POSTGRES_PASSWORD: ${DB_LOCAL_TEST_SERVICE_PASSWORD}
+#      POSTGRES_DB: ${DB_LOCAL_TEST_SERVICE_DB}
+#    expose:
+#      - "${DB_LOCAL_TEST_SERVICE_PORT_INT}"
+#    ports:
+#      - "${DB_LOCAL_TEST_SERVICE_PORT_EXT}:${DB_LOCAL_TEST_SERVICE_PORT_INT}"
+#    networks:
+#      vnet-procom-erp:
+#        ipv4_address: ${DB_LOCAL_TEST_SERVICE_IP_INT}
+#    volumes:
+#      - db-procom-erp-local-test-service-data:/var/lib/postgresql/data
+#      - ${DB_LOCAL_TEST_SERVICE_PATH}/init.sql:/docker-entrypoint-initdb.d/init.sql
+#      - ${DB_LOCAL_TEST_SERVICE_PATH}/postgresql.conf:/etc/postgresql/postgresql.conf
+#    command: -c 'config_file=/etc/postgresql/postgresql.conf'
+
   # +---------------------------------------------------------------------------+
   # | Backend containers section (mask: 10.200.1.128/26)                        |
   # +---------------------------------------------------------------------------+
@@ -110,6 +133,27 @@ services:
       - ./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
 
   # +---------------------------------------------------------------------------+
+
+  springboot-procom-erp-dir-service:
+    container_name: ${BACKEND_DIR_SERVICE_HOSTNAME}
+    hostname: ${BACKEND_DIR_SERVICE_HOSTNAME}
+    build:
+      context: ${BACKEND_DIR_SERVICE_PATH}
+      dockerfile: ./Dockerfile
+    ports:
+      - "${BACKEND_DIR_SERVICE_PORT_EXT}:${BACKEND_DIR_SERVICE_PORT_INT}"
+    env_file: ./.env
+    depends_on:
+      - "postgres-procom-erp-dir-service"
+      - "springboot-procom-erp-message-broker-service"
+    networks:
+      vnet-procom-erp:
+        ipv4_address: ${BACKEND_DIR_SERVICE_IP_INT}
+    volumes:
+      - ${BACKEND_DIR_SERVICE_PATH}/target:/app
+      - ${BACKEND_GATEWAY_SERVICE_PATH}/${BACKEND_GATEWAY_SERVICE_HTTPS_KEY_STORE}:/${BACKEND_GATEWAY_SERVICE_HTTPS_KEY_STORE}
+
+  # +---------------------------------------------------------------------------+
   # | Frontend containers section (mask: 10.200.1.192/26)                       |
   # +---------------------------------------------------------------------------+
 
@@ -125,4 +169,5 @@ networks:
 
 volumes:
   db-procom-erp-auth-service-data:
+  db-procom-erp-dir-service-data:
   #db-procom-erp-local-test-service-data:

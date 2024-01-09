@@ -15,13 +15,18 @@ CREATE TABLE employees
     id CHAR(6) UNIQUE NOT NULL,
     id_employee_gen SERIAL UNIQUE NOT NULL,
     password VARCHAR(128) NOT NULL,
-    creation DATE NOT NULL DEFAULT current_timestamp,
+    email VARCHAR(320) UNIQUE,
+    creation TIMESTAMP NOT NULL DEFAULT current_timestamp,
     enable BOOLEAN NOT NULL DEFAULT true,
+    jwt_min_creation TIMESTAMP NOT NULL DEFAULT current_timestamp,
 
     CONSTRAINT pk_employees PRIMARY KEY (id),
 
     CONSTRAINT check_employees_id
-        CHECK (employees.id ~* '[A-Z][0-9]{5}')
+        CHECK (employees.id ~* '[A-Z][0-9]{5}'),
+    CONSTRAINT check_employees_email
+        CHECK (employees.email ~* '^[a-zA-Z0-9](?:[a-zA-Z0-9-._-]{0,62}[a-zA-Z0-9])?@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z]{2,})+$')
+
 );
 
 -- +----------------------------------------------------------------------------------------------+

@@ -16,7 +16,7 @@ public class SharedKeyAuthenticationFilter implements Filter {
     private final String sharedKey;
 
     private final EndpointService endpointService;
-    private final Logger logger = LoggerFactory.getLogger(SharedKeyAuthenticationFilter.class);
+    //private final Logger logger = LoggerFactory.getLogger(SharedKeyAuthenticationFilter.class);
 
     public SharedKeyAuthenticationFilter(String sharedKey, EndpointService endpointService) {
         this.sharedKey = sharedKey;
@@ -26,17 +26,17 @@ public class SharedKeyAuthenticationFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
+
+        // retrieve all useful values from headers
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         String authHeader = httpRequest.getHeader("Authorization");
         String path = httpRequest.getRequestURI();
         HttpMethod httpMethod = HttpMethod.valueOf(httpRequest.getMethod());
-        logger.info("Authorization : " + authHeader);
 
+        // check if headers are valid to continue filtering operations
         if (isPermitAllEndpoint(path, httpMethod) || isBearerToken(authHeader) || isSharedKeyValid(authHeader)) {
-            logger.info("Authorization Result : Authorized");
             chain.doFilter(request, response);
         } else {
-            logger.info("Authorization Result : Unauthorized");
             ((HttpServletResponse) response).sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
         }
     }
@@ -50,8 +50,9 @@ public class SharedKeyAuthenticationFilter implements Filter {
     }
 
     private boolean isPermitAllEndpoint(String path, HttpMethod httpMethod) {
-        return endpointService.getPermitEndpoints().stream().anyMatch(endpoint ->
-                Objects.equals(endpoint.getPath(), path) &&
-                Objects.equals(endpoint.getHttpMethod().name(), httpMethod.name()));
+        return endpointService.getPermitEndpoints().stream().anyMatch(endpoint -> {
+            String regex = endpoint.getPath().replaceAll("\\*\\*", ".*").replaceAll("\\*", "[^/]*");
+            return path.matches(regex) && Objects.equals(endpoint.getHttpMethod().name(), httpMethod.name());
+        });
     }
 }

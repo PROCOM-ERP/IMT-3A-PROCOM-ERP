@@ -88,6 +88,7 @@ CREATE TABLE employees
     id CHAR(6) UNIQUE NOT NULL,
     creation DATE NOT NULL DEFAULT current_timestamp,
     enable BOOLEAN NOT NULL DEFAULT true,
+    jwt_min_creation TIMESTAMP NOT NULL DEFAULT current_timestamp,
     last_name VARCHAR(255) NOT NULL,
     first_name VARCHAR(255) NOT NULL,
     email VARCHAR(320) UNIQUE NOT NULL,

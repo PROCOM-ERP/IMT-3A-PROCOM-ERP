@@ -1,6 +1,7 @@
 package com.example.directoryservice.config;
 
 import com.example.directoryservice.model.Endpoint;
+import com.example.directoryservice.repository.EmployeeRepository;
 import com.example.directoryservice.service.EndpointService;
 import com.example.directoryservice.service.RoleService;
 import com.example.directoryservice.utils.CustomJwtAuthenticationConverter;
@@ -42,6 +43,7 @@ public class SecurityConfig {
 
     private final EndpointService endpointService;
     private final RoleService roleService;
+    private final EmployeeRepository employeeRepository;
 
     //private final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
 
@@ -74,7 +76,7 @@ public class SecurityConfig {
                 // authentication method
                 .oauth2ResourceServer((oauth2) -> oauth2.jwt(jwtConfigurer ->
                         jwtConfigurer.jwtAuthenticationConverter(
-                                new CustomJwtAuthenticationConverter(jwtClaimRoles, roleService))))
+                                new CustomJwtAuthenticationConverter(jwtClaimRoles, roleService, employeeRepository))))
                 // finalize the build
                 .addFilterBefore(new SharedKeyAuthenticationFilter(sharedKey, endpointService),
                         BearerTokenAuthenticationFilter.class)
