@@ -14,6 +14,7 @@ import java.util.Set;
 public class EmployeeRequestDto {
 
     private String password;
+    private String email;
     private Set<String> roles;
 
 }

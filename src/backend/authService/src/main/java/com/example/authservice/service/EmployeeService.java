@@ -8,6 +8,7 @@ import com.example.authservice.repository.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -42,6 +43,7 @@ public class EmployeeService {
         Employee employee = Employee.builder()
                 .id(generateIdEmployeeFromNextId(nextIdEmployee))
                 .idEmployeeGen(nextIdEmployee)
+                .email(employeeRequestDto.getEmail())
                 .password(passwordEncoder.encode(password))
                 .roles(employeeRequestDto.getRoles().stream()
                         .map(roleName -> Role.builder()
@@ -101,6 +103,29 @@ public class EmployeeService {
                 .collect(Collectors.toSet()));
         // save modifications
         employeeRepository.save(employee);
+    }
+
+    public void updateEmployeeEmail(String idEmployee, String email)
+            throws NoSuchElementException {
+
+        // try to update the email
+        int row =  employeeRepository.updateEmailById(idEmployee, email);
+
+        // check if only 1 row was modified
+        if (row != 1) {
+            throw new NoSuchElementException();
+        }
+    }
+
+    public void updateEmployeeEnable(String idEmployee, Boolean enable)
+            throws NoSuchElementException, DataIntegrityViolationException {
+        // try to update enable
+        int row = employeeRepository.updateEnableById(idEmployee, enable);
+
+        // check if only 1 row was modified
+        if (row != 1) {
+            throw new NoSuchElementException();
+        }
     }
 
     private String generateIdEmployeeFromNextId(Integer nextIdEmployee) {

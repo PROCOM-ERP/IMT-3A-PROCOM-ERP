@@ -97,6 +97,7 @@ INSERT INTO role_permissions (role, permission)
 VALUES ('admin', 'CanCreateEmployee'),
        ('admin', 'CanReadEmployee'),
        ('admin', 'CanModifyEmployeeRoles'),
+       ('admin', 'CanModifyEmployeeEmail'),
        ('admin', 'CanDeactivateEmployee'),
        ('admin', 'CanCreateRole'),
        ('admin', 'CanReadRole'),
