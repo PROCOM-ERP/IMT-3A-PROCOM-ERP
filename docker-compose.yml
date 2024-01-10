@@ -90,8 +90,8 @@ services:
       vnet-procom-erp:
         ipv4_address: ${BACKEND_MESSAGE_BROKER_SERVICE_IP_INT}
     volumes:
-      - ${SYSTEM_PATH}/rabbitmq.conf:${RABBIT_MQ_CONFIG}
-      - ${SYSTEM_PATH}/${SECURITY_TRUST_STORE}:/etc/rabbitmq/certs
+      - ${BACKEND_MESSAGE_BROKER_SERVICE_PATH}/config:${RABBIT_MQ_CONFIG}
+      - ${SYSTEM_PATH}:/etc/rabbitmq/certs
       - ${BACKEND_MESSAGE_BROKER_SERVICE_PATH}:/etc/rabbitmq/certs
 
   # +---------------------------------------------------------------------------+
@@ -112,9 +112,7 @@ services:
       - ${BACKEND_GATEWAY_SERVICE_PATH}/target:/app
       - ${BACKEND_GATEWAY_SERVICE_PATH}/gateway-service-keystore.p12:/certs/gateway-service-keystore.p12
       - ${SYSTEM_PATH}../security:/certs/all
-      - ${SYSTEM_PATH}/${SECURITY_TRUST_STORE}:/config
-      - ${SYSTEM_PATH}/${ENTRYPOINT}:/config
-      - ${SYSTEM_PATH}/wait-for-it.sh:/config
+      - ${SYSTEM_PATH}:/config
 
   # +---------------------------------------------------------------------------+
 
@@ -136,9 +134,7 @@ services:
     volumes:
       - ${BACKEND_AUTHENTICATION_SERVICE_PATH}/target:/app
       - ${BACKEND_AUTHENTICATION_SERVICE_PATH}/authentication-service-keystore.p12:/certs/authentication-service-keystore.p12
-      - ${SYSTEM_PATH}/${SECURITY_TRUST_STORE}:/config
-      - ${SYSTEM_PATH}/${ENTRYPOINT}:/config
-      - ${SYSTEM_PATH}/wait-for-it.sh:/config
+      - ${SYSTEM_PATH}:/config
 
   # +---------------------------------------------------------------------------+
 
@@ -160,9 +156,7 @@ services:
     volumes:
       - ${BACKEND_DIRECTORY_SERVICE_PATH}/target:/app
       - ${BACKEND_DIRECTORY_SERVICE_PATH}/directory-service-keystore.p12:/certs/directory-service-keystore.p12
-      - ${SYSTEM_PATH}/${SECURITY_TRUST_STORE}:/config
-      - ${SYSTEM_PATH}/${ENTRYPOINT}:/config
-      - ${SYSTEM_PATH}/wait-for-it.sh:/config
+      - ${SYSTEM_PATH}:/config
 
   # +---------------------------------------------------------------------------+
   # | Frontend containers section (mask: 10.200.1.192/26)                       |
