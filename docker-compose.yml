@@ -77,25 +77,22 @@ services:
   # +---------------------------------------------------------------------------+
   # | Backend containers section (mask: 10.200.1.128/26)                        |
   # +---------------------------------------------------------------------------+
-  springboot-procom-erp-authentication-service:
-    container_name: ${BACKEND_AUTHENTICATION_SERVICE_HOSTNAME}
-    hostname: ${BACKEND_AUTHENTICATION_SERVICE_HOSTNAME}
-    build:
-      context: ${BACKEND_AUTHENTICATION_SERVICE_PATH}
-      dockerfile: ./Dockerfile
+
+  springboot-procom-erp-message-broker-service:
+    container_name: ${BACKEND_MESSAGE_BROKER_SERVICE_HOSTNAME}
+    hostname: ${BACKEND_MESSAGE_BROKER_SERVICE_HOSTNAME}
+    image: "rabbitmq:3-management"
     ports:
-      - "${BACKEND_AUTHENTICATION_SERVICE_PORT_EXT}:${BACKEND_AUTHENTICATION_SERVICE_PORT_INT}"
+      - "${BACKEND_MESSAGE_BROKER_SERVICE_PORT_EXT}:${BACKEND_MESSAGE_BROKER_SERVICE_PORT_INT}"
+      - "${BACKEND_MESSAGE_BROKER_SERVICE_ADMIN_PORT_EXT}:${BACKEND_MESSAGE_BROKER_SERVICE_ADMIN_PORT_INT}"
     env_file: ./.env
-    depends_on:
-      - "postgres-procom-erp-authentication-service"
-      - "springboot-procom-erp-message-broker-service"
     networks:
       vnet-procom-erp:
-        ipv4_address: ${BACKEND_AUTHENTICATION_SERVICE_IP_INT}
+        ipv4_address: ${BACKEND_MESSAGE_BROKER_SERVICE_IP_INT}
     volumes:
-      - ${BACKEND_AUTHENTICATION_SERVICE_PATH}/target:/app
-      - ${BACKEND_AUTHENTICATION_SERVICE_PATH}/authentication-service-keystore.p12:/certs/authentication-service-keystore.p12
-      - ${SYSTEM_PATH}/*.jks:/config
+      - ${SYSTEM_PATH}/rabbitmq.conf:${RABBIT_MQ_CONFIG}
+      - ${SYSTEM_PATH}/${SECURITY_TRUST_STORE}:/etc/rabbitmq/certs
+      - ${BACKEND_MESSAGE_BROKER_SERVICE_PATH}:/etc/rabbitmq/certs
 
   # +---------------------------------------------------------------------------+
 
@@ -114,26 +111,34 @@ services:
     volumes:
       - ${BACKEND_GATEWAY_SERVICE_PATH}/target:/app
       - ${BACKEND_GATEWAY_SERVICE_PATH}/gateway-service-keystore.p12:/certs/gateway-service-keystore.p12
-      - ${SYSTEM_PATH}../security//:/certs/all
-      - ${SYSTEM_PATH}/*.jks:/config
+      - ${SYSTEM_PATH}../security:/certs/all
+      - ${SYSTEM_PATH}/${SECURITY_TRUST_STORE}:/config
+      - ${SYSTEM_PATH}/${ENTRYPOINT}:/config
+      - ${SYSTEM_PATH}/wait-for-it.sh:/config
 
   # +---------------------------------------------------------------------------+
 
-  springboot-procom-erp-message-broker-service:
-    container_name: ${BACKEND_MESSAGE_BROKER_SERVICE_HOSTNAME}
-    hostname: ${BACKEND_MESSAGE_BROKER_SERVICE_HOSTNAME}
-    image: "rabbitmq:3-management"
+  springboot-procom-erp-authentication-service:
+    container_name: ${BACKEND_AUTHENTICATION_SERVICE_HOSTNAME}
+    hostname: ${BACKEND_AUTHENTICATION_SERVICE_HOSTNAME}
+    build:
+      context: ${BACKEND_AUTHENTICATION_SERVICE_PATH}
+      dockerfile: ./Dockerfile
     ports:
-      - "${BACKEND_MESSAGE_BROKER_SERVICE_PORT_EXT}:${BACKEND_MESSAGE_BROKER_SERVICE_PORT_INT}"
-      - "${BACKEND_MESSAGE_BROKER_SERVICE_ADMIN_PORT_EXT}:${BACKEND_MESSAGE_BROKER_SERVICE_ADMIN_PORT_INT}"
+      - "${BACKEND_AUTHENTICATION_SERVICE_PORT_EXT}:${BACKEND_AUTHENTICATION_SERVICE_PORT_INT}"
     env_file: ./.env
+    depends_on:
+      - "postgres-procom-erp-authentication-service"
+      - "springboot-procom-erp-message-broker-service"
     networks:
       vnet-procom-erp:
-        ipv4_address: ${BACKEND_MESSAGE_BROKER_SERVICE_IP_INT}
+        ipv4_address: ${BACKEND_AUTHENTICATION_SERVICE_IP_INT}
     volumes:
-      - ${SYSTEM_PATH}/rabbitmq.conf:${RABBIT_MQ_CONFIG}
-      - ${SYSTEM_PATH}/*.jks:/etc/rabbitmq/certs
-      - ${BACKEND_MESSAGE_BROKER_SERVICE_PATH}/*.pem:/etc/rabbitmq/certs
+      - ${BACKEND_AUTHENTICATION_SERVICE_PATH}/target:/app
+      - ${BACKEND_AUTHENTICATION_SERVICE_PATH}/authentication-service-keystore.p12:/certs/authentication-service-keystore.p12
+      - ${SYSTEM_PATH}/${SECURITY_TRUST_STORE}:/config
+      - ${SYSTEM_PATH}/${ENTRYPOINT}:/config
+      - ${SYSTEM_PATH}/wait-for-it.sh:/config
 
   # +---------------------------------------------------------------------------+
 
@@ -155,7 +160,9 @@ services:
     volumes:
       - ${BACKEND_DIRECTORY_SERVICE_PATH}/target:/app
       - ${BACKEND_DIRECTORY_SERVICE_PATH}/directory-service-keystore.p12:/certs/directory-service-keystore.p12
-      - ${SYSTEM_PATH}/*.jks:/config
+      - ${SYSTEM_PATH}/${SECURITY_TRUST_STORE}:/config
+      - ${SYSTEM_PATH}/${ENTRYPOINT}:/config
+      - ${SYSTEM_PATH}/wait-for-it.sh:/config
 
   # +---------------------------------------------------------------------------+
   # | Frontend containers section (mask: 10.200.1.192/26)                       |
