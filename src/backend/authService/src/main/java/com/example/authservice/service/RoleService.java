@@ -4,6 +4,7 @@ import com.example.authservice.dto.RoleRequestDto;
 import com.example.authservice.dto.RoleResponseDto;
 import com.example.authservice.model.Employee;
 import com.example.authservice.model.Role;
+import com.example.authservice.repository.EmployeeRepository;
 import com.example.authservice.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -11,9 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,6 +21,7 @@ public class RoleService {
 
     private final RoleRepository roleRepository;
     private final PermissionService permissionService;
+    private final EmployeeRepository employeeRepository;
 
     // private final Logger logger = LoggerFactory.getLogger(RoleService.class);
 
@@ -34,6 +34,31 @@ public class RoleService {
                 .build();
 
         return roleRepository.save(role).getName();
+    }
+
+    public void saveExternalRoles(List<RoleResponseDto> roleDtos){
+        // get existing roles
+        List<Role> existingRoles = roleRepository.findAll();
+
+        // HashMap cast or existing roles
+        HashMap<String, Role> rolesHashMap = new HashMap<>();
+        existingRoles.forEach(role -> rolesHashMap.put(role.getName(), role));
+
+        // prepare roles to save
+        List<Role> rolesToSave = new LinkedList<>();
+        roleDtos.forEach(roleDto -> {
+            Role role = rolesHashMap.get(roleDto.getName());
+            if (role == null && roleDto.getEnable()) {
+                rolesToSave.add(Role.builder().name(roleDto.getName()).build());
+            } else if (role != null && roleDto.getEnable()) {
+                role.setCounter(role.getCounter() + 1);
+                role.setEnable(true);
+                rolesToSave.add(role);
+            }
+        });
+
+        // save
+        roleRepository.saveAll(rolesToSave);
     }
 
     public List<RoleResponseDto> getAllRoles() {
