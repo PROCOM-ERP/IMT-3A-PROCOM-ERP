@@ -15,7 +15,7 @@ generate_certificate() {
     openssl req -new -key "${service_name}-service.key" -out "${service_name}-service.csr" -subj "/C=FR/ST=France/L=Paris/O=Procom-ERP/OU=IT/CN=springboot-procom-erp-${service_name}-service"
 
     # Step 2: Sign the CSR with Your CA
-    openssl x509 -req -days 365 -in "${service_name}-service.csr" -CA procom-erp-ca.crt -CAkey procom-erp-ca.key -out "${service_name}-service.crt"
+    openssl x509 -req -days 365 -in "${service_name}-service.csr" -CA "${ca_crt}" -CAkey "${ca_key}" -out "${service_name}-service.crt"
 
     expect <<EOF
 spawn openssl pkcs12 -export -in "${service}-service.crt" -inkey "${service}-service.key" -out "${service}-service-keystore.p12" -name "${service}"
@@ -53,16 +53,20 @@ EOF
 
 # Step 4: Check if CA files exist or generate them if needed
 if [ ! -f "./CA/procom-erp-ca.crt" ] || [ ! -f "./CA/procom-erp-ca.key" ]; then
+    ca_crt="procom-erp-ca.crt"
+    ca_key="procom-erp-ca.key"
     # Generate the Root Key
     openssl genrsa -out procom-erp-ca.key 4096
 
     # Create and Self-Sign the Root Certificate
     openssl req -new -x509 -days 3650 -key procom-erp-ca.key -out procom-erp-ca.crt -subj "/C=FR/ST=France/L=Paris/O=Procom-ERP/OU=IT/CN=Procom-ERP"
-    echo "New CA files generated."
     
     # Create a trust store for the services to trust
     keytool -importcert -noprompt -alias ca_cert -file procom-erp-ca.crt -keystore procom-erp-truststore.jks --store-pass "super-secure-password-for-trust-store" >/dev/null 2>&1
-
+    echo "New CA files generated."
+else
+    ca_crt="./CA/procom-erp-ca.crt"
+    ca_key="./CA/procom-erp-ca.key"
 fi
 
 # Prompt for the number of services
@@ -90,14 +94,14 @@ for ((i=0; i<num_services; i++)); do
 done
 
 # Step 6: Convert CA certificate to .pem
-openssl x509 -inform der -in procom-erp-ca.crt -out procom-erp-ca.pem
+openssl x509 -inform der -in "${ca_crt}" -out procom-erp-ca.pem
 
 # Move the CA's keys and certificates to the CA directory
 ca_dir="./CA"
 mkdir -p "${ca_dir}"
 mv procom-erp-truststore.jks "../system/"
 cp procom-erp-ca.pem "../system/procom-erp-ca.pem"
-mv procom-erp-ca.key procom-erp-ca.crt procom-erp-ca.pem "${ca_dir}/"
+mv "${ca_key}" "${ca_crt}" procom-erp-ca.pem "${ca_dir}/"
 
 echo "CA's keys and certificates moved to ${ca_dir}"
 
