@@ -133,7 +133,7 @@ services:
     volumes:
       - ${SYSTEM_PATH}/rabbitmq.conf:${RABBIT_MQ_CONFIG}
       - ${SYSTEM_PATH}/*.jks:/etc/rabbitmq/certs
-      - ${SYSTEM_PATH}/*.pem:/etc/rabbitmq/certs
+      - ${BACKEND_MESSAGE_BROKER_SERVICE_PATH}/*.pem:/etc/rabbitmq/certs
 
   # +---------------------------------------------------------------------------+
 
