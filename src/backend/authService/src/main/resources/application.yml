@@ -1,12 +1,12 @@
 server:
   port: ${BACKEND_AUTH_SERVICE_PORT_INT}
-#  ssl:
-#    key-store: /${BACKEND_GATEWAY_SERVICE_HTTPS_KEY_STORE}
-#    key-store-password: ${BACKEND_GATEWAY_SERVICE_HTTPS_KEY_STORE_PASSWORD}
-#    keyStoreType: PKCS12
-#    keyAlias: ${BACKEND_GATEWAY_SERVICE_HTTPS_KEY_STORE_ALIAS}
-#    trust-store: /${BACKEND_GATEWAY_SERVICE_HTTPS_KEY_STORE}
-#    trust-store-password: ${BACKEND_GATEWAY_SERVICE_HTTPS_KEY_STORE_PASSWORD}
+  ssl:
+    key-store: ${BACKEND_AUTH_SERVICE_HTTPS_KEY_STORE}
+    key-store-password: ${BACKEND_AUTH_SERVICE_HTTPS_KEY_STORE_PASSWORD}
+    keyStoreType: PKCS12
+    keyAlias: ${BACKEND_AUTH_SERVICE_HTTPS_KEY_STORE_ALIAS}
+    trust-store: ${SECURITY_TRUST_STORE_PATH}
+    trust-store-password: ${SECURITY_TRUST_STORE_PASSWORD}
 
 spring:
   profiles:
@@ -26,7 +26,7 @@ spring:
     host: ${BACKEND_MESSAGE_BROKER_SERVICE_IP_INT}
     port: ${BACKEND_MESSAGE_BROKER_SERVICE_PORT_INT}
     username: ${BACKEND_MESSAGE_BROKER_SERVICE_USERNAME}
-    password: ${BACKEND_MESSAGE_BROKER_SERVICE_PWD}
+    password: ${BACKEND_MESSAGE_BROKER_SERVICE_PASSWORD}
     virtual-host: /
 
 springdoc:

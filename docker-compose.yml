@@ -94,7 +94,7 @@ services:
         ipv4_address: ${BACKEND_AUTH_SERVICE_IP_INT}
     volumes:
       - ${BACKEND_AUTH_SERVICE_PATH}/target:/app
-      - ${BACKEND_GATEWAY_SERVICE_PATH}/${BACKEND_GATEWAY_SERVICE_HTTPS_KEY_STORE}:/${BACKEND_GATEWAY_SERVICE_HTTPS_KEY_STORE}
+      - ${BACKEND_AUTH_SERVICE_PATH}/procom-erp-auth-service-keystore.p12:/certs/procom-erp-auth-service-keystore.p12
       - ${SYSTEM_PATH}/:/config
 
   # +---------------------------------------------------------------------------+
@@ -113,7 +113,8 @@ services:
         ipv4_address: ${BACKEND_GATEWAY_SERVICE_IP_INT}
     volumes:
       - ${BACKEND_GATEWAY_SERVICE_PATH}/target:/app
-      - ${BACKEND_GATEWAY_SERVICE_PATH}/${BACKEND_GATEWAY_SERVICE_HTTPS_KEY_STORE}:/${BACKEND_GATEWAY_SERVICE_HTTPS_KEY_STORE}
+      - ${BACKEND_GATEWAY_SERVICE_PATH}/procom-erp-gateway-service-keystore.p12:/certs/procom-erp-gateway-service-keystore.p12
+      - ${SYSTEM_PATH}/../security:/certs/all
       - ${SYSTEM_PATH}/:/config
 
   # +---------------------------------------------------------------------------+
@@ -125,14 +126,13 @@ services:
     ports:
       - "${BACKEND_MESSAGE_BROKER_SERVICE_PORT_EXT}:${BACKEND_MESSAGE_BROKER_SERVICE_PORT_INT}"
       - "${BACKEND_MESSAGE_BROKER_SERVICE_ADMIN_PORT_EXT}:${BACKEND_MESSAGE_BROKER_SERVICE_ADMIN_PORT_INT}"
-    environment:
-      - RABBITMQ_CONFIG_FILE=/etc/rabbitmq/rabbitmq.conf
     env_file: ./.env
     networks:
       vnet-procom-erp:
         ipv4_address: ${BACKEND_MESSAGE_BROKER_SERVICE_IP_INT}
     volumes:
-      - ./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+      - ./src/system/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+      - ${SYSTEM_PATH}/:/etc/rabbitmq/certs
 
   # +---------------------------------------------------------------------------+
 
@@ -153,7 +153,7 @@ services:
         ipv4_address: ${BACKEND_DIR_SERVICE_IP_INT}
     volumes:
       - ${BACKEND_DIR_SERVICE_PATH}/target:/app
-      - ${BACKEND_GATEWAY_SERVICE_PATH}/${BACKEND_GATEWAY_SERVICE_HTTPS_KEY_STORE}:/${BACKEND_GATEWAY_SERVICE_HTTPS_KEY_STORE}
+      - ${BACKEND_DIR_SERVICE_PATH}/procom-erp-directory-service-keystore.p12:/certs/procom-erp-directory-service-keystore.p12
       - ${SYSTEM_PATH}/:/config
 
   # +---------------------------------------------------------------------------+

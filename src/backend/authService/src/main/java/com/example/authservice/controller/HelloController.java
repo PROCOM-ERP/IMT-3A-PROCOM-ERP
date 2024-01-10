@@ -24,40 +24,49 @@ import org.springframework.web.client.RestTemplate;
 @RequiredArgsConstructor
 public class HelloController {
 
-    @Value("${security.services.sharedkey}") private String sharedKey;
+  @Value("${security.services.sharedkey}") private String sharedKey;
 
-    private final RestTemplate restTemplate;
-    private final Logger logger = LoggerFactory.getLogger(HelloController.class);
+  private final RestTemplate restTemplate;
+  private final Logger logger = LoggerFactory.getLogger(HelloController.class);
 
-    @GetMapping
-    @Operation(operationId = "getHello", tags = {"hello"},
-            summary = "GET Hello World !", description =
-            "GET Hello World ! from AuthService")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description =
-                    "Hello World message got correctly",
-                    content = {@Content(mediaType = "application/json", schema =
-                    @Schema(implementation = String.class))} ),
-            @ApiResponse(responseCode = "500", description =
-                    "Uncontrolled error appeared",
-                    content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<String> getHello() {
-        String directoryServiceUrl = "http://springboot-procom-erp-dir-service:8042/api/v1/hello";
+  @GetMapping
+  @Operation(operationId = "getHello", tags = {"hello"},
+             summary = "GET Hello World !",
+             description = "GET Hello World ! from AuthService")
+  @ApiResponses(
+      value =
+      {
+        @ApiResponse(responseCode = "200",
+                     description = "Hello World message got correctly",
+                     content =
+                     {
+                       @Content(mediaType = "application/json",
+                                schema = @Schema(implementation = String.class))
+                     })
+        ,
+            @ApiResponse(responseCode = "500",
+                         description = "Uncontrolled error appeared",
+                         content = { @Content(mediaType = "application/json") })
+      })
+  public ResponseEntity<String>
+  getHello() {
+    String directoryServiceUrl =
+        "https://springboot-procom-erp-dir-service:8042/api/v1/hello";
 
-        // Création des en-têtes HTTP
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", sharedKey);
-        logger.info("Authorization : " + headers.get("Authorization"));
+    // Création des en-têtes HTTP
+    HttpHeaders headers = new HttpHeaders();
+    headers.set("Authorization", sharedKey);
+    logger.info("Authorization : " + headers.get("Authorization"));
 
-        // Création de l'entité HTTP avec les en-têtes
-        HttpEntity<String> entity = new HttpEntity<>(headers);
+    // Création de l'entité HTTP avec les en-têtes
+    HttpEntity<String> entity = new HttpEntity<>(headers);
 
-        // Envoi de la requête avec RestTemplate
-        ResponseEntity<String> response = restTemplate.exchange(
-                directoryServiceUrl, HttpMethod.GET, entity, String.class);
+    // Envoi de la requête avec RestTemplate
+    ResponseEntity<String> response = restTemplate.exchange(
+        directoryServiceUrl, HttpMethod.GET, entity, String.class);
 
-        return ResponseEntity.ok("Hello, World ! Response from Directory Service: " + response.getBody());
-    }
-
-
+    return ResponseEntity.ok(
+        "Hello, World ! Response from Directory Service: " +
+        response.getBody());
+  }
 }
