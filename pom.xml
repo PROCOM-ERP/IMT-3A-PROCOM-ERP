@@ -163,7 +163,7 @@
 
     <!-- Each Spring Boot project in src/backend/ as services -->
     <modules>
-        <module>src/backend/authService</module>
+        <module>src/backend/authenticationService</module>
         <module>src/backend/gatewayService</module>
         <module>src/backend/directoryService</module>
     </modules>
