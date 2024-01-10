@@ -1,6 +1,6 @@
-package com.example.authservice.utils;
+package com.example.directoryservice.utils;
 
-import com.example.authservice.model.Path;
+import com.example.directoryservice.model.Path;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
@@ -23,7 +23,7 @@ public class CustomHttpRequestBuilder {
 
     private final Environment env;
 
-    private final String thisServiceGatewayPath = "/auth";
+    private final String thisServiceGatewayPath = "/dir";
 
     public String buildPath(String version, String resource) {
         return String.format("%s%s%s%s", Path.API, thisServiceGatewayPath, version, resource);

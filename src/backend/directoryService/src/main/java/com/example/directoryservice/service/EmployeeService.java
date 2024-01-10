@@ -109,6 +109,22 @@ public class EmployeeService {
         }
     }
 
+    public void updateAllEmployeesJwtMinCreation() {
+        // try to update jwtMinCreation
+        employeeRepository.updatAllJwtMinCreation();
+    }
+
+    public void updateEmployeeJwtMinCreation(String idEmployee) throws NoSuchElementException {
+        // try to update jwtMinCreation
+        int row = employeeRepository.updateJwtMinCreationById(idEmployee);
+
+        // check if only 1 row was modified
+        if (row != 1) {
+            throw new NoSuchElementException();
+        }
+
+    }
+
     public void updateEmployeeEnable(String idOrEmail, Boolean enable)
             throws NoSuchElementException, DataIntegrityViolationException {
         // try to update enable

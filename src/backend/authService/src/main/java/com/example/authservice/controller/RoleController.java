@@ -163,7 +163,7 @@ public class RoleController {
                     content = {@Content(mediaType = "application/json")} )})
     public ResponseEntity<String> updateRoleEnableCounter(@PathVariable String role,
                                                           @RequestBody Boolean enable) {
-        roleService.updateRoleEnableCounter(role, enable, true);
+        roleService.updateRoleEnableCounter(role, enable);
         return ResponseEntity.noContent().build();
     }
 }

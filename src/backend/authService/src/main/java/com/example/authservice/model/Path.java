@@ -2,7 +2,8 @@ package com.example.authservice.model;
 
 public class Path {
 
-  public static final String V1 = "/api/v1";
+  public static final String API = "/api";
+  public static final String V1 = "/v1";
   public static final String ANYONE = "/*";
   public static final String ANYTHING = "/**";
   public static final String HELLO = "/hello";
@@ -16,7 +17,7 @@ public class Path {
   public static final String PERMISSIONS = "/permissions";
   public static final String AUTH = "/auth";
 
-  public static final String V1_EMPLOYEES = V1 + EMPLOYEES;
+  public static final String V1_EMPLOYEES = API + V1 + EMPLOYEES;
   public static final String EMPLOYEE_ID = "/{idEmployee}";
   public static final String EMPLOYEE_ID_ROLES = EMPLOYEE_ID + ROLES;
   public static final String EMPLOYEE_ID_PASSWORD = EMPLOYEE_ID + PASSWORD;
@@ -29,7 +30,7 @@ public class Path {
   public static final String V1_EMPLOYEES_ANYONE_EMAIL = V1_EMPLOYEES_ANYONE + EMAIL;
   public static final String V1_EMPLOYEES_ANYONE_ENABLE = V1_EMPLOYEES_ANYONE + ENABLE;
 
-  public static final String V1_ROLES = V1 + ROLES;
+  public static final String V1_ROLES = API + V1 + ROLES;
   public static final String ROLE_NAME = "/{role}";
   public static final String ROLE_NAME_PERMISSIONS = ROLE_NAME + PERMISSIONS;
   public static final String ROLE_NAME_ENABLE = ROLE_NAME + ENABLE;
@@ -39,13 +40,13 @@ public class Path {
           V1_ROLES_ANYONE + PERMISSIONS;
   public static final String V1_ROLES_ANYONE_ENABLE = V1_ROLES_ANYONE + ENABLE;
 
-  public static final String V1_PERMISSIONS = V1 + PERMISSIONS;
+  public static final String V1_PERMISSIONS = API + V1 + PERMISSIONS;
 
-  public static final String V1_AUTH = V1 + AUTH;
+  public static final String V1_AUTH = API + V1 + AUTH;
   public static final String JWT = "/jwt";
 
-  public static final String V1_HELLO = V1 + HELLO;
-  public static final String V1_RABBITHELLO = V1 + RABBITHELLO;
+  public static final String V1_HELLO = API + V1 + HELLO;
+  public static final String V1_RABBITHELLO = API + V1 + RABBITHELLO;
 
-  public static final String V1_DOCS_ANYTHING = V1 + DOCS + ANYTHING;
+  public static final String V1_DOCS_ANYTHING = API + V1 + DOCS + ANYTHING;
 }

@@ -2,7 +2,8 @@ package com.example.directoryservice.model;
 
 public class Path {
 
-    public static final String V1 = "/api/v1";
+    public static final String API = "/api";
+    public static final String V1 = "/v1";
     public static final String ANYONE = "/*";
     public static final String ANYTHING = "/**";
     public static final String HELLO = "/hello";
@@ -19,17 +20,17 @@ public class Path {
     public static final String ROLES = "/roles";
     public static final String PERMISSIONS = "/permissions";
 
-    public static final String V1_ADDRESSES = V1 + ADDRESSES;
+    public static final String V1_ADDRESSES = API + V1 + ADDRESSES;
     public static final String ADDRESS_ID = "/{idAddress}";
     public static final String V1_ADDRESSES_ANYONE = V1_ADDRESSES + ANYONE;
 
-    public static final String V1_ORGANISATIONS = V1 + ORGANISATIONS;
+    public static final String V1_ORGANISATIONS = API + V1 + ORGANISATIONS;
     public static final String ORGANISATION_ID_OR_NAME = "/{idOrName}";
     public static final String ORGANISATION_ID_OR_NAME_ADDRESS = ORGANISATION_ID_OR_NAME + ADDRESS;
     public static final String V1_ORGANISATIONS_ANYONE = V1_ORGANISATIONS + ANYONE;
     public static final String V1_ORGANISATIONS_ANYONE_ADDRESS = V1_ORGANISATIONS_ANYONE + ADDRESS;
 
-    public static final String V1_SERVICES = V1 + SERVICES;
+    public static final String V1_SERVICES = API + V1 + SERVICES;
     public static final String SERVICE_ID = "/{idService}";
     public static final String SERVICE_ID_ADDRESS = SERVICE_ID + ADDRESS;
     public static final String SERVICE_ID_ORGANISATION = SERVICE_ID + ORGANISATION;
@@ -37,7 +38,7 @@ public class Path {
     public static final String V1_SERVICES_ANYONE_ADDRESS = V1_SERVICES_ANYONE + ADDRESS;
     public static final String V1_SERVICES_ANYONE_ORGANISATION = V1_SERVICES_ANYONE + ORGANISATION;
 
-    public static final String V1_EMPLOYEES = V1 + EMPLOYEES;
+    public static final String V1_EMPLOYEES = API + V1 + EMPLOYEES;
     public static final String EMPLOYEE_ID_OR_EMAIL = "/{idOrEmail}";
     public static final String EMPLOYEE_ID_OR_EMAIL_ENABLE = EMPLOYEE_ID_OR_EMAIL + ENABLE;
     public static final String EMPLOYEE_ID_OR_EMAIL_INFO = EMPLOYEE_ID_OR_EMAIL + INFO;
@@ -47,7 +48,7 @@ public class Path {
     public static final String V1_EMPLOYEES_ANYONE_INFO = V1_EMPLOYEES_ANYONE + INFO;
     public static final String V1_EMPLOYEES_ANYONE_SERVICE = V1_EMPLOYEES_ANYONE + SERVICE;
 
-    public static final String V1_ROLES = V1 + ROLES;
+    public static final String V1_ROLES = API + V1 + ROLES;
     public static final String ROLE_NAME = "/{role}";
     public static final String ROLE_NAME_ENABLE = ROLE_NAME + ENABLE;
     public static final String ROLE_NAME_PERMISSIONS = ROLE_NAME + PERMISSIONS;
@@ -55,10 +56,10 @@ public class Path {
     public static final String V1_ROLES_ANYONE_ENABLE = V1_ROLES_ANYONE + ENABLE;
     public static final String V1_ROLES_ANYONE_PERMISSIONS = V1_ROLES_ANYONE + PERMISSIONS;
 
-    public static final String V1_PERMISSIONS = V1 + PERMISSIONS;
+    public static final String V1_PERMISSIONS = API + V1 + PERMISSIONS;
 
-    public static final String V1_HELLO = V1 + HELLO;
+    public static final String V1_HELLO = API + V1 + HELLO;
 
-    public static final String V1_DOCS_ANYTHING = V1 + DOCS + ANYTHING;
+    public static final String V1_DOCS_ANYTHING = API + V1 + DOCS + ANYTHING;
 
 }

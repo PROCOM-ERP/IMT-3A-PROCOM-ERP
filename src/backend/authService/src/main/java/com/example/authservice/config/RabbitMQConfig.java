@@ -12,23 +12,8 @@ import org.springframework.context.annotation.Configuration;
 public class RabbitMQConfig {
 
   @Bean
-  public Jackson2JsonMessageConverter customJackson2MessageConverter() {
-    return new Jackson2JsonMessageConverter();
-  }
-
-  @Bean
-  public RabbitTemplate rabbitTemplate(final ConnectionFactory connectionFactory) {
-    final RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
-    rabbitTemplate.setMessageConverter(customJackson2MessageConverter());
-    return rabbitTemplate;
-  }
-
-  @Bean
-  public SimpleRabbitListenerContainerFactory rabbitListenerContainerFactory(ConnectionFactory connectionFactory) {
-    SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
-    factory.setConnectionFactory(connectionFactory);
-    factory.setMessageConverter(customJackson2MessageConverter());
-    return factory;
+  public RabbitTemplate rabbitTemplate() {
+    return new RabbitTemplate();
   }
 
   @Bean
@@ -50,7 +35,7 @@ public class RabbitMQConfig {
   }
 
   @Bean
-  public Queue rolesEnableModifyQueue() {
+  public Queue roleEnableModifyQueue() {
     return new Queue("role-enable-modify-queue");
   }
 
@@ -70,13 +55,18 @@ public class RabbitMQConfig {
   }
 
   @Bean
-  public Exchange rolesExchange() {
+  public DirectExchange rolesExchange() {
     return new DirectExchange("roles-exchange");
   }
 
   @Bean
-  public Exchange employeeInfoExchange() {
+  public TopicExchange employeeInfoExchange() {
     return new TopicExchange("employee-info-exchange");
+  }
+
+  @Bean
+  public FanoutExchange employeeSecExchange() {
+    return new FanoutExchange("employee-sec-exchange");
   }
 
   @Bean
@@ -89,9 +79,9 @@ public class RabbitMQConfig {
   }
 
   @Bean
-  public Binding rolesEnableModifyBinding(Queue rolesEnableModifyQueue,
+  public Binding rolesEnableModifyBinding(Queue roleEnableModifyQueue,
                                           Exchange rolesExchange) {
-    return BindingBuilder.bind(rolesEnableModifyQueue)
+    return BindingBuilder.bind(roleEnableModifyQueue)
         .to(rolesExchange)
         .with("role.enable.modify")
         .noargs();

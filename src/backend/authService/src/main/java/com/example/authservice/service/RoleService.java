@@ -1,6 +1,7 @@
 package com.example.authservice.service;
 
 import com.example.authservice.dto.RoleRequestDto;
+import com.example.authservice.dto.RoleResponseAQMPDto;
 import com.example.authservice.dto.RoleResponseDto;
 import com.example.authservice.model.Employee;
 import com.example.authservice.model.Role;
@@ -21,7 +22,6 @@ public class RoleService {
 
     private final RoleRepository roleRepository;
     private final PermissionService permissionService;
-    private final EmployeeRepository employeeRepository;
 
     // private final Logger logger = LoggerFactory.getLogger(RoleService.class);
 
@@ -36,7 +36,7 @@ public class RoleService {
         return roleRepository.save(role).getName();
     }
 
-    public void saveExternalRoles(List<RoleResponseDto> roleDtos){
+    public void saveAllExternalRoles(List<RoleResponseAQMPDto> roleDtos){
         // get existing roles
         List<Role> existingRoles = roleRepository.findAll();
 
@@ -47,18 +47,25 @@ public class RoleService {
         // prepare roles to save
         List<Role> rolesToSave = new LinkedList<>();
         roleDtos.forEach(roleDto -> {
-            Role role = rolesHashMap.get(roleDto.getName());
-            if (role == null && roleDto.getEnable()) {
-                rolesToSave.add(Role.builder().name(roleDto.getName()).build());
-            } else if (role != null && roleDto.getEnable()) {
-                role.setCounter(role.getCounter() + 1);
-                role.setEnable(true);
-                rolesToSave.add(role);
-            }
+            if (roleDto.getEnable())
+                rolesToSave.add(createOrUpdateRole(
+                        roleDto.getName(),
+                        rolesHashMap.get(roleDto.getName())));
         });
 
         // save
         roleRepository.saveAll(rolesToSave);
+    }
+
+    public void saveNewExternalRole(String roleName) {
+        // check if role exists
+        Role role = roleRepository.findById(roleName).orElse(null);
+
+        // prepare role to save
+        role = createOrUpdateRole(roleName, role);
+
+        // save
+        roleRepository.save(role);
     }
 
     public List<RoleResponseDto> getAllRoles() {
@@ -88,19 +95,24 @@ public class RoleService {
         roleRepository.save(role);
     }
 
-    public void updateRoleEnableCounter(String roleName, Boolean enable, Boolean setEnable) {
+    public void updateRoleEnableCounter(String roleName, Boolean enable) {
         // check if role exists
         Role role = roleRepository.findById(roleName).orElseThrow();
-        // set changes only if enable change
-        if (enable != role.getEnable()) {
-            // set enable
-            if (setEnable)
-                role.setEnable(enable);
-            // set counter
-            int deltaCounter = enable ? 1 : -1;
-            role.setCounter(role.getCounter() + deltaCounter);
-            // save
-            roleRepository.save(role);
+        // set counter
+        int deltaCounter = enable ? 1 : -1;
+        role.setCounter(role.getCounter() + deltaCounter);
+        role.setEnable(role.getCounter() > 0);
+        // save
+        roleRepository.save(role);
+    }
+
+    private Role createOrUpdateRole(String name, Role role) {
+        if (role == null)
+            return Role.builder().name(name).build();
+        else {
+            role.setCounter(role.getCounter() + 1);
+            role.setEnable(true);
+            return role;
         }
     }
 
