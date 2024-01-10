@@ -68,6 +68,7 @@ for dir in ./*; do
 done
 
 mv "../system/procom-erp-truststore.jks" "${archive_dir}"
+rm "../system/procom-erp-ca.pem"
     
 # Notify the user
 echo "Specific files created by the script moved to ${archive_dir}"

@@ -96,6 +96,7 @@ openssl x509 -inform der -in procom-erp-ca.crt -out procom-erp-ca.pem
 ca_dir="./CA"
 mkdir -p "${ca_dir}"
 mv procom-erp-truststore.jks "../system/"
+cp procom-erp-ca.pem "../system/procom-erp-ca.pem"
 mv procom-erp-ca.key procom-erp-ca.crt procom-erp-ca.pem "${ca_dir}/"
 
 echo "CA's keys and certificates moved to ${ca_dir}"

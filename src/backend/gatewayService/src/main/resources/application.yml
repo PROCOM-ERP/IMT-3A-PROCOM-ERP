@@ -9,13 +9,13 @@ spring:
           useInsecureTrustManager: true
       routes:
         - id: authentication-service
-          uri: https://${BACKEND_AUTH_SERVICE_IP_INT}:${BACKEND_AUTH_SERVICE_PORT_INT}
+          uri: https://${BACKEND_AUTHENTICATION_SERVICE_IP_INT}:${BACKEND_AUTHENTICATION_SERVICE_PORT_INT}
           predicates:
             - Path=/api/auth/**
           filters:
             - RewritePath=/api/auth/(?<segment>.*), /api/$\{segment}
         - id: directory-service
-          uri: https://${BACKEND_DIR_SERVICE_IP_INT}:${BACKEND_DIR_SERVICE_PORT_INT}
+          uri: https://${BACKEND_DIRECTORY_SERVICE_IP_INT}:${BACKEND_DIRECTORY_SERVICE_PORT_INT}
           predicates:
             - Path=/api/dir/**
           filters:
