@@ -20,9 +20,9 @@ generate_certificate() {
     expect <<EOF
 spawn openssl pkcs12 -export -in "${service}-service.crt" -inkey "${service}-service.key" -out "${service}-service-keystore.p12" -name "${service}"
 expect "Enter Export Password:"
-send "procom-erp-directory-${service}-secure-keystore\r"
+send "procom-erp-${service}-service-secure-keystore\r"
 expect "Verifying - Enter Export Password:"
-send "procom-erp-directory-${service}-secure-keystore\r"
+send "procom-erp-${service}-service-secure-keystore\r"
 expect eof
 EOF
     
@@ -36,10 +36,10 @@ EOF
         expect <<EOF
 spawn openssl pkcs12 -in "${service}-service-keystore.p12" -clcerts -nokeys -nodes -out "${service}-service-certificate.pem"
 expect "Enter Import Password:"
-send "procom-erp-directory-${service}-secure-keystore\r"
+send "procom-erp-${service}-service-secure-keystore\r"
 spawn openssl pkcs12 -in "${service}-service-keystore.p12" -nocerts -nodes -out "${service}-service-key.pem"
 expect "Enter Import Password:"
-send "procom-erp-directory-${service}-secure-keystore\r"
+send "procom-erp-${service}-service-secure-keystore\r"
 expect eof
 EOF
         mv "${service}-service-key.pem" "${service_dir}/"
