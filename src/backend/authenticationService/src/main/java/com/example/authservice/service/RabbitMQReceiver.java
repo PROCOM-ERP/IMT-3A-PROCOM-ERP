@@ -6,12 +6,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class RabbitMQReceiver {
 
-  @RabbitListener(queues = "hello-queue")
-  public void receiveMessage(String message) {
-    System.out.println("Received message: " + message);
-    // Add logic to process the message
-  }
-
   @RabbitListener(queues = "role-enable-modify-queue")
   public void receiveRoleEnableModifyMessage(String message) {
     System.out.println(

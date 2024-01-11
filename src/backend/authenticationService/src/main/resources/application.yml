@@ -1,21 +1,21 @@
 server:
-  port: ${BACKEND_AUTH_SERVICE_PORT_INT}
-#  ssl:
-#    key-store: /${BACKEND_GATEWAY_SERVICE_HTTPS_KEY_STORE}
-#    key-store-password: ${BACKEND_GATEWAY_SERVICE_HTTPS_KEY_STORE_PASSWORD}
-#    keyStoreType: PKCS12
-#    keyAlias: ${BACKEND_GATEWAY_SERVICE_HTTPS_KEY_STORE_ALIAS}
-#    trust-store: /${BACKEND_GATEWAY_SERVICE_HTTPS_KEY_STORE}
-#    trust-store-password: ${BACKEND_GATEWAY_SERVICE_HTTPS_KEY_STORE_PASSWORD}
+  port: ${BACKEND_AUTHENTICATION_SERVICE_PORT_INT}
+  ssl:
+    key-store: ${BACKEND_AUTHENTICATION_SERVICE_HTTPS_KEY_STORE}
+    key-store-password: ${BACKEND_AUTHENTICATION_SERVICE_HTTPS_KEY_STORE_PASSWORD}
+    keyStoreType: PKCS12
+    keyAlias: ${BACKEND_AUTHENTICATION_SERVICE_HTTPS_KEY_STORE_ALIAS}
+    trust-store: ${SECURITY_TRUST_STORE_PATH}
+    trust-store-password: ${SECURITY_TRUST_STORE_PASSWORD}
 
 spring:
   profiles:
     active: dev
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://${DB_AUTH_SERVICE_HOSTNAME}:${DB_AUTH_SERVICE_PORT_INT}/${DB_AUTH_SERVICE_DB}
-    username: ${DB_AUTH_SERVICE_USER}
-    password: ${DB_AUTH_SERVICE_PASSWORD}
+    url: jdbc:postgresql://${DB_AUTHENTICATION_SERVICE_HOSTNAME}:${DB_AUTHENTICATION_SERVICE_PORT_INT}/${DB_AUTHENTICATION_SERVICE_DB}
+    username: ${DB_AUTHENTICATION_SERVICE_USER}
+    password: ${DB_AUTHENTICATION_SERVICE_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: update
@@ -26,7 +26,7 @@ spring:
     host: ${BACKEND_MESSAGE_BROKER_SERVICE_IP_INT}
     port: ${BACKEND_MESSAGE_BROKER_SERVICE_PORT_INT}
     username: ${BACKEND_MESSAGE_BROKER_SERVICE_USERNAME}
-    password: ${BACKEND_MESSAGE_BROKER_SERVICE_PWD}
+    password: ${BACKEND_MESSAGE_BROKER_SERVICE_PASSWORD}
     virtual-host: /
 
 springdoc:
