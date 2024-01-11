@@ -70,7 +70,7 @@ public class HelloController {
   public ResponseEntity<String>
   getHello() {
     String directoryServiceUrl =
-        "https://springboot-procom-erp-dir-service:8042/api/v1/hello";
+        "https://springboot-procom-erp-directory-service:8042/api/v1/hello";
 
     // Création des en-têtes HTTP
     HttpHeaders headers = new HttpHeaders();
