@@ -40,4 +40,10 @@ public interface EmployeeRepository extends JpaRepository<Employee, String>, Jpa
     int updateEnableById(@NonNull @Param("idEmployee") String idEmployee,
                          @NonNull @Param("enable") Boolean enable);
 
+    @Transactional
+    @Modifying
+    @Query("update Employee e " +
+            "set e.jwtMinCreation = current_timestamp ")
+    void updateAllJwtMinCreation();
+
 }

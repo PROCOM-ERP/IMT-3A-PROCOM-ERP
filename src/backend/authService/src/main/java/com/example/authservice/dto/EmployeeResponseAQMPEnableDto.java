@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class EmployeeRequestAQMPEnableDto {
+public class EmployeeResponseAQMPEnableDto {
 
     private String id;
     private Boolean enable;

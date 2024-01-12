@@ -1,10 +1,12 @@
 package com.example.authservice.service;
 
+import com.example.authservice.dto.EmployeeResponseAQMPEnableDto;
 import com.example.authservice.dto.EmployeeRequestDto;
 import com.example.authservice.dto.EmployeeResponseDto;
 import com.example.authservice.model.Employee;
 import com.example.authservice.model.Role;
 import com.example.authservice.repository.EmployeeRepository;
+import com.example.authservice.utils.RabbitMQSender;
 import lombok.RequiredArgsConstructor;
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
@@ -27,6 +29,7 @@ public class EmployeeService {
             "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!.*])(?=\\S+$).{12,}$";
 
     private final EmployeeRepository employeeRepository;
+    private final RabbitMQSender rabbitMQSender;
     private final PasswordEncoder passwordEncoder;
 
     // private final Logger logger = LoggerFactory.getLogger(EmployeeService.class);
@@ -69,6 +72,16 @@ public class EmployeeService {
                 .orElseThrow();
     }
 
+    public EmployeeResponseAQMPEnableDto getEmployeeEnable(String idEmployee)
+            throws NoSuchElementException {
+        return employeeRepository.findById(idEmployee)
+                .map(employee -> EmployeeResponseAQMPEnableDto.builder()
+                        .id(employee.getId())
+                        .enable(employee.getEnable())
+                        .build())
+                .orElseThrow();
+    }
+
     public void updateEmployeePassword(String idEmployee, String password)
             throws AccessDeniedException, NoSuchElementException {
 
@@ -88,6 +101,10 @@ public class EmployeeService {
         if (row != 1) {
             throw new NoSuchElementException();
         }
+
+        // send message to other services to update jwt_min_creation for current employee
+        rabbitMQSender.sendEmployeeJwtDisableOldMessage(idEmployee);
+
     }
 
     public void updateEmployeeRoles(String idEmployee, List<String> roles)
@@ -103,6 +120,9 @@ public class EmployeeService {
                 .collect(Collectors.toSet()));
         // save modifications
         employeeRepository.save(employee);
+
+        // send message to other services to update jwt_min_creation for current employee
+        rabbitMQSender.sendEmployeeJwtDisableOldMessage(idEmployee);
     }
 
     public void updateEmployeeEmail(String idEmployee, String email)
@@ -126,6 +146,9 @@ public class EmployeeService {
         if (row != 1) {
             throw new NoSuchElementException();
         }
+
+        // send message to other services to update jwt_min_creation for current employee
+        rabbitMQSender.sendEmployeeEnableModify(idEmployee);
     }
 
     private String generateIdEmployeeFromNextId(Integer nextIdEmployee) {

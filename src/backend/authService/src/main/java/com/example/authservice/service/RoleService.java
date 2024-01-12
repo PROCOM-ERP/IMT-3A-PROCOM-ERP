@@ -7,9 +7,8 @@ import com.example.authservice.model.Employee;
 import com.example.authservice.model.Role;
 import com.example.authservice.repository.EmployeeRepository;
 import com.example.authservice.repository.RoleRepository;
+import com.example.authservice.utils.RabbitMQSender;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +21,8 @@ public class RoleService {
 
     private final RoleRepository roleRepository;
     private final PermissionService permissionService;
+    private final EmployeeRepository employeeRepository;
+    private final RabbitMQSender rabbitMQSender;
 
     // private final Logger logger = LoggerFactory.getLogger(RoleService.class);
 
@@ -55,9 +56,13 @@ public class RoleService {
 
         // save
         roleRepository.saveAll(rolesToSave);
+
+        // send message to other services to update all jwt_min_creation
+        employeeRepository.updateAllJwtMinCreation();
+        rabbitMQSender.sendEmployeesJwtDisableOldMessage();
     }
 
-    public void saveNewExternalRole(String roleName) {
+    public void saveExternalRole(String roleName) {
         // check if role exists
         Role role = roleRepository.findById(roleName).orElse(null);
 
@@ -66,6 +71,10 @@ public class RoleService {
 
         // save
         roleRepository.save(role);
+
+        // send message to other services to update all jwt_min_creation
+        employeeRepository.updateAllJwtMinCreation();
+        rabbitMQSender.sendEmployeesJwtDisableOldMessage();
     }
 
     public List<RoleResponseDto> getAllRoles() {
@@ -104,6 +113,10 @@ public class RoleService {
         role.setEnable(role.getCounter() > 0);
         // save
         roleRepository.save(role);
+
+        // send message to other services to update all jwt_min_creation
+        employeeRepository.updateAllJwtMinCreation();
+        rabbitMQSender.sendEmployeesJwtDisableOldMessage();
     }
 
     private Role createOrUpdateRole(String name, Role role) {

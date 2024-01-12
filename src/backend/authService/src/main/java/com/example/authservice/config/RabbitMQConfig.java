@@ -1,10 +1,7 @@
 package com.example.authservice.config;
 
 import org.springframework.amqp.core.*;
-import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
-import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -79,8 +76,8 @@ public class RabbitMQConfig {
   }
 
   @Bean
-  public Binding rolesEnableModifyBinding(Queue roleEnableModifyQueue,
-                                          Exchange rolesExchange) {
+  public Binding roleEnableModifyBinding(Queue roleEnableModifyQueue,
+                                         Exchange rolesExchange) {
     return BindingBuilder.bind(roleEnableModifyQueue)
         .to(rolesExchange)
         .with("role.enable.modify")

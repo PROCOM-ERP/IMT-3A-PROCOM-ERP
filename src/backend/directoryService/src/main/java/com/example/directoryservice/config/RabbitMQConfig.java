@@ -14,17 +14,17 @@ public class RabbitMQConfig {
   }
 
   @Bean
-  public Exchange rolesExchange() {
+  public DirectExchange rolesExchange() {
     return new DirectExchange("roles-exchange");
   }
 
   @Bean
-  public Exchange employeeSecExchange() {
+  public FanoutExchange employeeSecExchange() {
     return new FanoutExchange("employee-sec-exchange");
   }
 
   @Bean
-  public Exchange employeeInfoExchange() {
+  public TopicExchange employeeInfoExchange() {
     return new TopicExchange("employee-info-exchange");
   }
 
