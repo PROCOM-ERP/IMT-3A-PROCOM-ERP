@@ -1,6 +1,7 @@
-package com.example.directoryservice.model;
+package com.example.authenticationservice.model;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -30,6 +31,16 @@ public class Role {
     @NotNull
     @Column(name = "enable", nullable = false)
     private Boolean enable = true;
+
+    @Builder.Default
+    @NotNull
+    @Column(name = "counter", nullable = false)
+    private Integer counter = 1;
+
+    @Builder.Default
+    @JsonIgnoreProperties("roles")
+    @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
+    private Set<Employee> employees = new LinkedHashSet<>();
 
     @Builder.Default
     @ElementCollection(fetch = FetchType.LAZY)

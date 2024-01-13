@@ -1,6 +1,7 @@
 package com.example.directoryservice.config;
 
 import org.springframework.amqp.core.*;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -8,17 +9,22 @@ import org.springframework.context.annotation.Configuration;
 public class RabbitMQConfig {
 
   @Bean
-  public Exchange rolesExchange() {
+  public RabbitTemplate rabbitTemplate() {
+    return new RabbitTemplate();
+  }
+
+  @Bean
+  public DirectExchange rolesExchange() {
     return new DirectExchange("roles-exchange");
   }
 
   @Bean
-  public Exchange employeeSecExchange() {
+  public FanoutExchange employeeSecExchange() {
     return new FanoutExchange("employee-sec-exchange");
   }
 
   @Bean
-  public Exchange employeeInfoExchange() {
+  public TopicExchange employeeInfoExchange() {
     return new TopicExchange("employee-info-exchange");
   }
 

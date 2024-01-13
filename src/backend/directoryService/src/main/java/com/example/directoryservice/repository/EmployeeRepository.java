@@ -44,7 +44,6 @@ public interface EmployeeRepository extends JpaRepository<Employee, String>, Jpa
                           @NonNull @Param("firstName") String firstName,
                           @Param("phoneNumber") String phoneNumber);
 
-
     @Transactional
     @Modifying
     @Query(value =
@@ -84,5 +83,22 @@ public interface EmployeeRepository extends JpaRepository<Employee, String>, Jpa
             nativeQuery = true)
     int updateEnableByEmail(@NonNull @Param("email") String email,
                             @NonNull @Param("enable") Boolean enable);
+
+    @Transactional
+    @Modifying
+    @Query(value =
+            "update employees " +
+            "set jwt_min_creation = current_timestamp",
+            nativeQuery = true)
+    void updatAllJwtMinCreation();
+
+    @Transactional
+    @Modifying
+    @Query(value =
+            "update employees " +
+            "set jwt_min_creation = current_timestamp " +
+            "where id = :idEmployee",
+            nativeQuery = true)
+    int updateJwtMinCreationById(@NonNull @Param("idEmployee") String idEmployee);
 
 }

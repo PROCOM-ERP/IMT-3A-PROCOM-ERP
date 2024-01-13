@@ -10,7 +10,7 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>authService</artifactId>
+    <artifactId>authenticationService</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>

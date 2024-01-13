@@ -4,6 +4,7 @@ import com.example.directoryservice.dto.RoleRequestDto;
 import com.example.directoryservice.dto.RoleResponseDto;
 import com.example.directoryservice.model.Role;
 import com.example.directoryservice.repository.RoleRepository;
+import com.example.directoryservice.utils.RabbitMQSender;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +21,7 @@ public class RoleService {
 
     private final RoleRepository roleRepository;
     private final PermissionService permissionService;
+    private final RabbitMQSender rabbitMQSender;
 
     // private final Logger logger = LoggerFactory.getLogger(RoleService.class);
 
@@ -31,7 +33,12 @@ public class RoleService {
                 .permissions(new LinkedHashSet<>(roleRequestDto.getPermissions()))
                 .build();
 
-        return roleRepository.save(role).getName();
+        String roleName = roleRepository.save(role).getName();
+
+        // send message to auth service to create role
+        rabbitMQSender.sendRolesNewMessage(roleName);
+
+        return roleName;
     }
 
     public List<RoleResponseDto> getAllRoles() {
@@ -70,6 +77,8 @@ public class RoleService {
             role.setEnable(enable);
             // save
             roleRepository.save(role);
+            // send message to auth service to update role enable field
+            rabbitMQSender.sendRoleEnableModifyMessage(roleName);
         }
     }
 
