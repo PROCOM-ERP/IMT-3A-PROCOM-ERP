@@ -100,9 +100,10 @@ services:
   springboot-procom-erp-gateway-service:
     container_name: ${BACKEND_GATEWAY_SERVICE_HOSTNAME}
     hostname: ${BACKEND_GATEWAY_SERVICE_HOSTNAME}
-    build:
-      context: ${BACKEND_GATEWAY_SERVICE_PATH}
-      dockerfile: ./Dockerfile
+    image: ${JAVA_IMAGE}
+    expose:
+      - ${BACKEND_GATEWAY_SERVICE_PORT_INT}
+    entrypoint: ${ENTRYPOINT}
     ports:
       - "${BACKEND_GATEWAY_SERVICE_PORT_EXT}:${BACKEND_GATEWAY_SERVICE_PORT_INT}"
     env_file: ./.env
@@ -120,11 +121,10 @@ services:
   springboot-procom-erp-authentication-service:
     container_name: ${BACKEND_AUTHENTICATION_SERVICE_HOSTNAME}
     hostname: ${BACKEND_AUTHENTICATION_SERVICE_HOSTNAME}
-    build:
-      context: ${BACKEND_AUTHENTICATION_SERVICE_PATH}
-      dockerfile: ./Dockerfile
-    ports:
-      - "${BACKEND_AUTHENTICATION_SERVICE_PORT_EXT}:${BACKEND_AUTHENTICATION_SERVICE_PORT_INT}"
+    image: ${JAVA_IMAGE}
+    expose:
+      - ${BACKEND_AUTHENTICATION_SERVICE_PORT_INT}
+    entrypoint: ${ENTRYPOINT}
     env_file: ./.env
     depends_on:
       - "postgres-procom-erp-authentication-service"
@@ -142,15 +142,15 @@ services:
   springboot-procom-erp-directory-service:
     container_name: ${BACKEND_DIRECTORY_SERVICE_HOSTNAME}
     hostname: ${BACKEND_DIRECTORY_SERVICE_HOSTNAME}
-    build:
-      context: ${BACKEND_DIRECTORY_SERVICE_PATH}
-      dockerfile: ./Dockerfile
-    ports:
-      - "${BACKEND_DIRECTORY_SERVICE_PORT_EXT}:${BACKEND_DIRECTORY_SERVICE_PORT_INT}"
+    image: ${JAVA_IMAGE}
+    expose:
+      - ${BACKEND_DIRECTORY_SERVICE_PORT_INT}
+    entrypoint: ${ENTRYPOINT}
     env_file: ./.env
     depends_on:
       - "postgres-procom-erp-directory-service"
       - "springboot-procom-erp-message-broker-service"
+      - "springboot-procom-erp-authentication-service"
     networks:
       vnet-procom-erp:
         ipv4_address: ${BACKEND_DIRECTORY_SERVICE_IP_INT}
