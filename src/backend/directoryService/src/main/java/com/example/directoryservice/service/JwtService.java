@@ -1,21 +1,22 @@
-package com.example.authenticationservice.service;
+package com.example.directoryservice.service;
 
-import com.example.authenticationservice.model.Employee;
-import com.example.authenticationservice.model.Role;
-import com.example.authenticationservice.repository.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
-import org.springframework.security.oauth2.jwt.*;
+import org.springframework.security.oauth2.jwt.JwsHeader;
+import org.springframework.security.oauth2.jwt.JwtClaimsSet;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
 @Service
 @DependsOn("securityConfig")
@@ -35,7 +36,6 @@ public class JwtService {
     private String jwtClaimRoles;
 
     private final JwtEncoder jwtEncoder;
-    private final EmployeeRepository employeeRepository;
 
     //private final Logger logger = LoggerFactory.getLogger(JwtService.class);
 
@@ -59,24 +59,12 @@ public class JwtService {
     }
 
     private List<String> getRolesByAuthSubject(String authSubject)
-            throws InsufficientAuthenticationException, AccessDeniedException {
+            throws AccessDeniedException {
 
         // if service try to connect to another one
         if (Objects.equals(authSubject, sharedKey))
             return Collections.singletonList(serviceRole);
+        throw new AccessDeniedException("");
 
-        // check if employee exists
-        Employee employee = employeeRepository.findById(authSubject)
-                .orElseThrow(() -> new InsufficientAuthenticationException(""));
-        // get role names
-        List<String> roles =  employee.getRoles().stream()
-                .filter(role -> role.getCounter() > 0)
-                .map(Role::getName)
-                .toList();
-        //logger.info("Roles in Repository : " + roles);
-        if (roles.isEmpty()) {
-            throw new AccessDeniedException("");
-        }
-        return roles;
     }
 }

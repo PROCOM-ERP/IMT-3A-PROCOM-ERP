@@ -4,10 +4,12 @@ import com.example.authenticationservice.dto.EmployeeResponseAQMPDto;
 import com.example.authenticationservice.dto.RoleResponseAQMPDto;
 import com.example.authenticationservice.service.EmployeeService;
 import com.example.authenticationservice.service.RoleService;
+import com.rabbitmq.client.Channel;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.amqp.core.Message;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -15,6 +17,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 @Component
@@ -53,22 +57,29 @@ public class RabbitMQReceiver {
     }
 
     @RabbitListener(queues = "roles-init-queue")
-    public void receiveRolesInitMessage(String getAllRolesPath) {
+    public void receiveRolesInitMessage(Message message, Channel channel) throws IOException {
+        String getAllRolesPath = new String(message.getBody());
         logger.info("Message received on startup of a service to init its roles: " + getAllRolesPath);
         // build request
         String url = customHttpRequestBuilder.buildUrl(getAllRolesPath);
         HttpEntity<String> entity = customHttpRequestBuilder.buildHttpEntity();
         // send request
-        ResponseEntity<List<RoleResponseAQMPDto>> response = restTemplate.exchange(url, HttpMethod.GET,
-                entity,
-                new ParameterizedTypeReference<>() {}); // response with custom type
+        ResponseEntity<List<RoleResponseAQMPDto>> response = null;
+        try {
+            response = restTemplate.exchange(url, HttpMethod.GET,
+                    entity,
+                    new ParameterizedTypeReference<>() {}); // response with custom type
+        } catch (Exception ignored) {
+        }
+
         // update local roles
-        if (response.getStatusCode().is2xxSuccessful() && response.hasBody() && response.getBody() != null) {
+        if (response != null && response.getStatusCode().is2xxSuccessful() && response.hasBody() && response.getBody() != null) {
             roleService.saveAllExternalRoles(response.getBody());
             logger.info("Roles successfully initialised");
         } else {
             logger.error("Roles initialisation failed");
         }
+        channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
     }
 
     @RabbitListener(queues = "roles-new-queue")

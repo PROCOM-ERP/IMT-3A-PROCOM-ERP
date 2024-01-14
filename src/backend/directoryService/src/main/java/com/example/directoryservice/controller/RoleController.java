@@ -11,6 +11,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -24,6 +26,7 @@ import java.util.List;
 public class RoleController {
 
     private final RoleService roleService;
+    private final Logger logger = LoggerFactory.getLogger(RoleController.class);
 
     @PostMapping
     @Operation(operationId = "createRole", tags = {"roles"},
@@ -79,6 +82,7 @@ public class RoleController {
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
     public ResponseEntity<List<RoleResponseDto>> getAllRoles() {
+        logger.info("Endpoint called correctly.");
         return ResponseEntity.ok(roleService.getAllRoles());
     }
 

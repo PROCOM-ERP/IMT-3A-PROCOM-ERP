@@ -40,7 +40,7 @@ public class AuthController {
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
     public ResponseEntity<String> generateJwtToken(Authentication authentication) {
-        return ResponseEntity.ok(jwtService.generateJwtToken(authentication));
+        return ResponseEntity.ok(jwtService.generateJwtToken(authentication.getName()));
     }
 
 }

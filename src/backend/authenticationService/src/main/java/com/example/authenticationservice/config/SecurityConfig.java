@@ -2,19 +2,21 @@ package com.example.authenticationservice.config;
 
 import com.example.authenticationservice.model.Endpoint;
 import com.example.authenticationservice.repository.EmployeeRepository;
+import com.example.authenticationservice.repository.RoleRepository;
 import com.example.authenticationservice.service.CustomUserDetailsService;
 import com.example.authenticationservice.service.EndpointService;
-import com.example.authenticationservice.service.RoleService;
+import com.example.authenticationservice.service.PermissionService;
 import com.example.authenticationservice.utils.CustomJwtAuthenticationConverter;
-import com.example.authenticationservice.utils.SharedKeyAuthenticationFilter;
-import com.nimbusds.jose.jwk.source.ImmutableSecret;
+
 import java.time.Duration;
 import java.util.List;
-import javax.crypto.spec.SecretKeySpec;
+
+import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -29,25 +31,35 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.*;
-import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.savedrequest.NullRequestCache;
+import org.springframework.stereotype.Component;
+
+import javax.crypto.spec.SecretKeySpec;
 
 @Configuration
+@Component("securityConfig")
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-  @Value("${security.services.sharedkey}") private String sharedKey;
+  @Value("${security.service.sharedKey}")
+  private String sharedKey;
 
-  @Value("${security.jwt.secretkey}") private String jwtKey;
+  @Value("${security.service.role}")
+  private String serviceRole;
 
-  @Value("${security.jwt.claim.roles}") private String jwtClaimRoles;
+  @Value("${security.jwt.claim.roles}")
+  private String jwtClaimRoles;
 
+  @Value("${security.jwt.secretkey}")
+  private String jwtKey;
+
+  private final PermissionService permissionService;
+  private final RoleRepository roleRepository;
+  private final EmployeeRepository employeeRepository;
   private final CustomUserDetailsService customUserDetailsService;
   private final EndpointService endpointService;
-  private final RoleService roleService;
-  private final EmployeeRepository employeeRepository;
 
   // private final Logger logger =
   // LoggerFactory.getLogger(SecurityConfig.class);
@@ -107,18 +119,29 @@ public class SecurityConfig {
             .oauth2ResourceServer(
                     (oauth2)
                             -> oauth2.jwt(jwtConfigurer
-                            -> jwtConfigurer.jwtAuthenticationConverter(
-                            new CustomJwtAuthenticationConverter(
-                                    jwtClaimRoles, roleService, employeeRepository))))
+                            -> jwtConfigurer.jwtAuthenticationConverter(new CustomJwtAuthenticationConverter(
+                              sharedKey, serviceRole, jwtClaimRoles,
+                              permissionService, roleRepository, employeeRepository))))
             // finalize the build
-            .addFilterBefore(new SharedKeyAuthenticationFilter(sharedKey, endpointService),
-                    BearerTokenAuthenticationFilter.class)
             .build();
   }
 
   @Bean
   GrantedAuthorityDefaults grantedAuthorityDefaults() {
     return new GrantedAuthorityDefaults(""); // Remove the ROLE_ prefix
+  }
+
+  @Bean
+  public JwtEncoder jwtEncoder() {
+    return new NimbusJwtEncoder(new ImmutableSecret<>(this.jwtKey.getBytes()));
+  }
+
+  @Bean
+  public JwtDecoder jwtDecoder() {
+    SecretKeySpec secretKey = new SecretKeySpec(this.jwtKey.getBytes(), 0, this.jwtKey.getBytes().length,"HS256");
+    NimbusJwtDecoder jwtDecoder = NimbusJwtDecoder.withSecretKey(secretKey).macAlgorithm(MacAlgorithm.HS256).build();
+    jwtDecoder.setJwtValidator(new JwtTimestampValidator(Duration.ZERO)); // no clock skew
+    return jwtDecoder;
   }
 
   @Bean
@@ -137,20 +160,4 @@ public class SecurityConfig {
     return new BCryptPasswordEncoder();
   }
 
-  @Bean
-  public JwtEncoder jwtEncoder() {
-    return new NimbusJwtEncoder(new ImmutableSecret<>(this.jwtKey.getBytes()));
-  }
-
-  @Bean
-  public JwtDecoder jwtDecoder() {
-    SecretKeySpec secretKey = new SecretKeySpec(
-            this.jwtKey.getBytes(), 0, this.jwtKey.getBytes().length, "RSA");
-    NimbusJwtDecoder jwtDecoder = NimbusJwtDecoder.withSecretKey(secretKey)
-            .macAlgorithm(MacAlgorithm.HS256)
-            .build();
-    jwtDecoder.setJwtValidator(
-            new JwtTimestampValidator(Duration.ZERO)); // no clock skew
-    return jwtDecoder;
-  }
 }

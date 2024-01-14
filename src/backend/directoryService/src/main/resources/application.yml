@@ -38,10 +38,13 @@ springdoc:
     operations-sorter: method
 
 security:
-  services:
-    sharedkey: ${SECURITY_SERVICES_SHARED_KEY}
+  service:
+    sharedKey: ${SECURITY_SERVICES_SHARED_KEY}
+    role: microservices
   jwt:
     secretkey: ${SECURITY_JWT_SECRET_KEY}
     claim:
       roles: ${SECURITY_JWT_CLAIMS_KEY_ROLES}
+    duration:
+      minutes: 1
 # logging.level.com.example.directoryservice: INFO
