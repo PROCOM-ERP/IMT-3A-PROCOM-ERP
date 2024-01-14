@@ -23,9 +23,9 @@ CREATE TABLE employees
     CONSTRAINT pk_employees PRIMARY KEY (id),
 
     CONSTRAINT check_employees_id
-        CHECK (employees.id ~* '[A-Z][0-9]{5}'),
-    CONSTRAINT check_employees_email
-        CHECK (employees.email ~* '^[a-zA-Z0-9](?:[a-zA-Z0-9-._-]{0,62}[a-zA-Z0-9])?@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z]{2,})+$')
+        CHECK (employees.id ~* '[A-Z][0-9]{5}')--,
+    --CONSTRAINT check_employees_email
+        --CHECK (employees.email ~* '^[a-zA-Z0-9](?:[a-zA-Z0-9-._-]{0,62}[a-zA-Z0-9])?@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z]{2,})+$')
 
 );
 
