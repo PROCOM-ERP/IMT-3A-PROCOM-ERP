@@ -14,32 +14,33 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class RabbitMQSender implements CommandLineRunner {
 
-    private final RabbitTemplate rabbitTemplate;
-    private final DirectExchange directExchange;
-    private final CustomHttpRequestBuilder customHttpRequestBuilder;
-    private final Logger logger = LoggerFactory.getLogger(RabbitMQSender.class);
+  private final RabbitTemplate rabbitTemplate;
+  private final DirectExchange directExchange;
+  private final CustomHttpRequestBuilder customHttpRequestBuilder;
+  private final Logger logger = LoggerFactory.getLogger(RabbitMQSender.class);
 
-    @Override
-    public void run(String... args) {
-        logger.info("Sending message to auth service about roles...");
-        String resource = Path.ROLES;
-        String path = customHttpRequestBuilder.buildPath(Path.V1, resource);
-        rabbitTemplate.convertAndSend(directExchange.getType(), "roles.init", path);
-        logger.info("Message sent");
-    }
+  @Override
+  public void run(String... args) {
+    logger.info("Sending message to auth service about roles...");
+    String resource = Path.ROLES;
+    String path = customHttpRequestBuilder.buildPath(Path.V1, resource);
+    rabbitTemplate.convertAndSend(directExchange.getName(), "roles.init", path);
+    logger.info("Message sent");
+  }
 
-    public void sendRoleEnableModifyMessage(String role) {
-        logger.info("Sending message to auth service to set a role activation status...");
-        String resource = String.format("%s/%s", Path.ROLES, role);
-        String path = customHttpRequestBuilder.buildPath(Path.V1, resource);
-        rabbitTemplate.convertAndSend(directExchange.getName(), "role.enable.modify", path);
-        logger.info("Message sent");
-    }
+  public void sendRoleEnableModifyMessage(String role) {
+    logger.info(
+        "Sending message to auth service to set a role activation status...");
+    String resource = String.format("%s/%s", Path.ROLES, role);
+    String path = customHttpRequestBuilder.buildPath(Path.V1, resource);
+    rabbitTemplate.convertAndSend(directExchange.getName(),
+                                  "role.enable.modify", path);
+    logger.info("Message sent");
+  }
 
-    public void sendRolesNewMessage(String role) {
-        logger.info("Sending message to auth service about a new role created...");
-        rabbitTemplate.convertAndSend(directExchange.getName(), "roles.new", role);
-        logger.info("Message sent");
-    }
-
+  public void sendRolesNewMessage(String role) {
+    logger.info("Sending message to auth service about a new role created...");
+    rabbitTemplate.convertAndSend(directExchange.getName(), "roles.new", role);
+    logger.info("Message sent");
+  }
 }

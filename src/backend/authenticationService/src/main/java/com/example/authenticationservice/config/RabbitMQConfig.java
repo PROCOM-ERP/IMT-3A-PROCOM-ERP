@@ -1,17 +1,17 @@
 package com.example.authenticationservice.config;
 
 import org.springframework.amqp.core.*;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
+// import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RabbitMQConfig {
 
-  @Bean
-  public RabbitTemplate rabbitTemplate() {
-    return new RabbitTemplate();
-  }
+  // @Bean
+  // public RabbitTemplate rabbitTemplate() {
+  // return new RabbitTemplate();
+  // }
 
   @Bean
   public Queue helloQueue() {
@@ -19,7 +19,7 @@ public class RabbitMQConfig {
   }
 
   @Bean
-  public Exchange helloExchange() {
+  public DirectExchange helloExchange() {
     return new DirectExchange("hello-exchange");
   }
 
