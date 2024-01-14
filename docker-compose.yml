@@ -90,9 +90,10 @@ services:
       vnet-procom-erp:
         ipv4_address: ${BACKEND_MESSAGE_BROKER_SERVICE_IP_INT}
     volumes:
-      - ${BACKEND_MESSAGE_BROKER_SERVICE_PATH}/config:${RABBIT_MQ_CONFIG}
-      - ${SYSTEM_PATH}:/etc/rabbitmq/certs
-      - ${BACKEND_MESSAGE_BROKER_SERVICE_PATH}:/etc/rabbitmq/certs
+      - ${BACKEND_MESSAGE_BROKER_SERVICE_PATH}/config/rabbitmq.conf:/${RABBIT_MQ_CONFIG}
+      - ${SYSTEM_PATH}:/etc/rabbitmq/CA
+      - ${BACKEND_MESSAGE_BROKER_SERVICE_PATH}/message-broker-service-certificate.pem:/etc/rabbitmq/certs/message-broker-service-certificate.pem
+      - ${BACKEND_MESSAGE_BROKER_SERVICE_PATH}/message-broker-service-key.pem:/etc/rabbitmq/certs/message-broker-service-key.pem
 
   # +---------------------------------------------------------------------------+
 
@@ -111,7 +112,7 @@ services:
     volumes:
       - ${BACKEND_GATEWAY_SERVICE_PATH}/target:/app
       - ${BACKEND_GATEWAY_SERVICE_PATH}/gateway-service-keystore.p12:/certs/gateway-service-keystore.p12
-      - ${SYSTEM_PATH}../security:/certs/all
+      - ${SYSTEM_PATH}/../security:/certs/all
       - ${SYSTEM_PATH}:/config
 
   # +---------------------------------------------------------------------------+

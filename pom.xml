@@ -23,6 +23,7 @@
         <spring-boot.version>3.1.5</spring-boot.version>
         <lombok.version>1.18.30</lombok.version>
         <spring-cloud.version>2022.0.4</spring-cloud.version>
+        <aqmp.version>2.7.0</aqmp.version>
         <springdoc-openapi.version>2.2.0</springdoc-openapi.version>
         <apache-http.version>5.2</apache-http.version>
 
@@ -90,7 +91,7 @@
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-amqp</artifactId>
-                <version>2.7.0</version>
+                <version>${aqmp.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.projectlombok</groupId>
