@@ -6,8 +6,8 @@
   },
   "servers": [
     {
-      "url": "https://localhost:8042",
-      "description": "Generated server url"
+      "url": "https://localhost:8041",
+      "description": "Gateway access URL"
     }
   ],
   "tags": [
