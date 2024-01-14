@@ -1,6 +1,13 @@
 #!/bin/bash
+# Script Name: clean_security.sh
+# Description: Opposite of "security_setup.sh"
+# Author: maestro-bene (GitHub)
+# Date Created: 2024-01-15
+# Last Modified: 2024-01-15
+# Version: 1.0
+# Usage: Enter the number of services, then each of their names.
+# Notes: Another scripts "security_setup.sh" works with this one to undo the changes made by this script.
 
-# Parse command-line options
 include_ca=false
 while [[ $# -gt 0 ]]; do
     case "$1" in

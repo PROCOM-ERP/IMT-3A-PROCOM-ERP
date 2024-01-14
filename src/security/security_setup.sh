@@ -1,4 +1,12 @@
 #!/bin/bash
+# Script Name: security_setup.sh
+# Description: Generate CA and services security essentials, and moves them to the correct spot.
+# Author: maestro-bene (GitHub)
+# Date Created: 2024-01-15
+# Last Modified: 2024-01-15
+# Version: 1.0
+# Usage: Enter the number of services, then each of their names.
+# Notes: Another scripts "clean_security.sh" works with this one to undo the changes made by this script.
 
 # Check if OpenSSL is installed
 if ! command -v openssl &> /dev/null; then
