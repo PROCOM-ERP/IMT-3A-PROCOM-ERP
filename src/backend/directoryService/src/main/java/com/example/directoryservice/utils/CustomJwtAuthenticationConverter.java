@@ -3,11 +3,7 @@ package com.example.directoryservice.utils;
 import com.example.directoryservice.repository.EmployeeRepository;
 import com.example.directoryservice.repository.RoleRepository;
 import com.example.directoryservice.service.PermissionService;
-import com.example.directoryservice.service.RoleService;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
@@ -21,11 +17,16 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.Objects;
-@AllArgsConstructor
+
+@Component
+@RequiredArgsConstructor
 public class CustomJwtAuthenticationConverter implements Converter<Jwt, AbstractAuthenticationToken> {
 
+    @Value("${security.service.sharedKey}")
     private String sharedKey;
+    @Value("${security.service.role}")
     private String serviceRole;
+    @Value("${security.jwt.claim.roles}")
     private String jwtClaimRoles;
 
     private final PermissionService permissionService;
