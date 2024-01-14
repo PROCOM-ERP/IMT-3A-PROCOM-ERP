@@ -94,14 +94,14 @@ for ((i=0; i<num_services; i++)); do
 done
 
 # Step 6: Convert CA certificate to .pem
-openssl x509 -inform der -in "${ca_crt}" -out procom-erp-ca.pem
+# openssl x509 -inform der -in "${ca_crt}" -out procom-erp-ca.pem
 
 # Move the CA's keys and certificates to the CA directory
 ca_dir="./CA"
 mkdir -p "${ca_dir}"
 mv procom-erp-truststore.jks "../system/"
-cp procom-erp-ca.pem "../system/procom-erp-ca.pem"
-mv "${ca_key}" "${ca_crt}" procom-erp-ca.pem "${ca_dir}/"
+cp "${ca_crt}" "../system/procom-erp-ca.pem"
+mv "${ca_key}" "${ca_crt}" "${ca_dir}/"
 
 echo "CA's keys and certificates moved to ${ca_dir}"
 
