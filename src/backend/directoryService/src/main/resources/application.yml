@@ -9,6 +9,9 @@ server:
     trust-store-password: ${SECURITY_TRUST_STORE_PASSWORD}
 
 spring:
+  main:
+    log-startup-info: off
+    banner-mode: off
   profiles:
     active: dev
   datasource:
@@ -47,4 +50,3 @@ security:
       roles: ${SECURITY_JWT_CLAIMS_KEY_ROLES}
     duration:
       minutes: 1
-# logging.level.com.example.directoryservice: INFO
