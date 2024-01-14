@@ -95,7 +95,7 @@ public class RabbitMQConfig {
                                       Exchange employeeInfoExchange) {
     return BindingBuilder.bind(employeeEmailQueue)
         .to(employeeInfoExchange)
-        .with("employees.email.*")
+        .with("employee.email.*")
         .noargs();
   }
 }

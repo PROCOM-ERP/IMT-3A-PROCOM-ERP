@@ -81,7 +81,7 @@ public class RabbitMQReceiver {
 
     @RabbitListener(queues = "employee-email-queue")
     public void receiveEmployeeEmailMessage(String getEmployeeByIdPath) {
-        System.out.println("Received message of an update in employee information : " + getEmployeeByIdPath);
+        logger.info("Message received to update an employee email: " + getEmployeeByIdPath);
         // build request
         String url = customHttpRequestBuilder.buildUrl(getEmployeeByIdPath);
         HttpEntity<String> entity = customHttpRequestBuilder.buildHttpEntity();
@@ -91,8 +91,11 @@ public class RabbitMQReceiver {
                 new ParameterizedTypeReference<>() {}); // response with custom type
         // update local roles
         if (response.getStatusCode().is2xxSuccessful() && response.hasBody() && response.getBody() != null) {
+            logger.info("Employee email successfully updated");
             EmployeeResponseAQMPDto employee = response.getBody();
             employeeService.updateEmployeeEmail(employee.getId(), employee.getEmail());
+        } else {
+            logger.error("Employee email update failed");
         }
     }
 }
