@@ -12,7 +12,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.example</groupId>
     <artifactId>parent</artifactId>
-    <version>0.0.1-SNAPSHOT</version> <!-- link to the version in BACKLOG.md -->
+    <version>0.1.0</version> <!-- link to the version in BACKLOG.md -->
     <packaging>pom</packaging>
 
     <properties>
