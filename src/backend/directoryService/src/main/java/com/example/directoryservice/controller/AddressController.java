@@ -30,7 +30,8 @@ public class AddressController {
     @Operation(operationId = "createAddress", tags = {"addresses"},
             summary = "Create a new address", description =
             "Create a new address by providing location information (see body type).<br>" +
-            "Information about it are available in URI given in the response header location.")
+            "Information about it are available in URI given in the response header location.<br>" +
+                    "Only available for admins.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description =
                     "Address created correctly",
@@ -68,7 +69,7 @@ public class AddressController {
             @ApiResponse(responseCode = "200", description =
                     "Addresses information retrieved correctly",
                     content = {@Content(mediaType = "application/json",
-                            schema = @Schema(type = "array", implementation = EmployeeResponseDto.class))} ),
+                            schema = @Schema(type = "array", implementation = AddressResponseDto.class))} ),
             @ApiResponse(responseCode = "401", description =
                     "Roles in Jwt token are insufficient to authorize the access to this URL",
                     content = {@Content(mediaType = "application/json")} ),
@@ -105,15 +106,14 @@ public class AddressController {
 
     @DeleteMapping(Path.ADDRESS_ID)
     @Operation(operationId = "deleteAddress", tags = {"addresses"},
-            summary = "Delete one address", description =
+            summary = "Delete an address", description =
             "Delete one address, by providing its id.",
             parameters = {@Parameter(name = "idAddress", description =
                     "The address id as an integer")})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description =
                     "Address deleted correctly",
-                    content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = AddressResponseDto.class))} ),
+                    content = {@Content(mediaType = "application/json")} ),
             @ApiResponse(responseCode = "401", description =
                     "Roles in Jwt token are insufficient to authorize the access to this URL",
                     content = {@Content(mediaType = "application/json")} ),
