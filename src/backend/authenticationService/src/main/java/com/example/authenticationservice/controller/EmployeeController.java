@@ -223,7 +223,7 @@ public class EmployeeController {
     }
 
     @PatchMapping(Path.EMPLOYEE_ID_ENABLE)
-    @Operation(operationId = "updateEmployeeEmail", tags = {"employees"},
+    @Operation(operationId = "updateEmployeeEnable", tags = {"employees"},
             summary = "Enable or disable an employee", description =
             "Enable or disable an employee, by providing a new enable value (true or false).<br>" +
             "Only available for admins.",

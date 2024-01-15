@@ -10,14 +10,23 @@ import org.springframework.context.annotation.Profile;
 @SpringBootApplication
 @Profile("dev")
 @OpenAPIDefinition(
-    info = @Info(title = "DirectoryService", version = "0.0.1-SNAPSHOT",
-                 description = ""),
-    tags =
-    { @Tag(name = "hello")
-      , @Tag(name = "roles"), @Tag(name = "permissions") })
+        info = @Info(
+                title = "DirectoryService",
+                version = "0.1.0",
+                description =
+                        "Service to register employees contact information as a directory."),
+        tags = {
+                @Tag(name = "hello"),
+                @Tag(name = "addresses"),
+                @Tag(name = "organisations"),
+                @Tag(name = "services"),
+                @Tag(name = "employees"),
+                @Tag(name = "roles"),
+                @Tag(name = "permissions")
+        })
 public class DirectoryServiceApplication {
 
-  public static void main(String[] args) {
-    SpringApplication.run(DirectoryServiceApplication.class, args);
-  }
+    public static void main(String[] args) {
+        SpringApplication.run(DirectoryServiceApplication.class, args);
+    }
 }
