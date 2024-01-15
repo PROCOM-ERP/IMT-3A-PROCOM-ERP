@@ -60,7 +60,6 @@ public class EmployeeController {
                 .toUri();
         // send the response with 201 Http status
         return ResponseEntity.created(location).build();
-
     }
 
     @GetMapping
