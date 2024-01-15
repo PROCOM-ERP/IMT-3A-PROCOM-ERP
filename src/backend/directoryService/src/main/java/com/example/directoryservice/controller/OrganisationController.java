@@ -82,8 +82,8 @@ public class OrganisationController {
 
     @GetMapping(Path.ORGANISATION_ID_OR_NAME)
     @Operation(operationId = "getOrganisation", tags = {"organisations"},
-            summary = "Retrieve one organisations information", description =
-            "Retrieve one organisations information, by providing its id or name.",
+            summary = "Retrieve one organisation information", description =
+            "Retrieve one organisation information, by providing its id or name.",
             parameters = {@Parameter(name = "idOrName", description =
                     "The organisation id as an integer in a string or its name")})
     @ApiResponses(value = {
