@@ -5,29 +5,10 @@ import org.springframework.amqp.core.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
-import org.springframework.stereotype.Component;
 
 @Configuration
 @DependsOn({"securityConfig", "restConfig"})
 public class RabbitMQConfig {
-
-  @Bean
-  public Queue helloQueue() {
-    return new Queue("hello-queue");
-  }
-
-  @Bean
-  public DirectExchange helloExchange() {
-    return new DirectExchange("hello-exchange");
-  }
-
-  @Bean
-  public Binding helloBinding(Queue helloQueue, Exchange helloExchange) {
-    return BindingBuilder.bind(helloQueue)
-        .to(helloExchange)
-        .with("hello-key")
-        .noargs();
-  }
 
   @Bean
   public Queue roleEnableModifyQueue() {
