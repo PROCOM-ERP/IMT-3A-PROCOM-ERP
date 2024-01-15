@@ -4,80 +4,176 @@ version: "3.8"
 # | Services section                                                            |
 # +-----------------------------------------------------------------------------+
 services:
-
   # +---------------------------------------------------------------------------+
   # | Database containers section (mask: 10.200.1.64/26)                        |
   # +---------------------------------------------------------------------------+
-  postgres_procom_erp_: # TODO
-    container_name: postgres_procom_erp_ # TODO
-    hostname: postgres_procom_erp_ # TODO
+  postgres-procom-erp-authentication-service:
+    container_name: ${DB_AUTHENTICATION_SERVICE_HOSTNAME}
+    hostname: ${DB_AUTHENTICATION_SERVICE_HOSTNAME}
     image: postgres:13
     environment:
-      POSTGRES_USER: pguser     # TODO
-      POSTGRES_PASSWORD: pgpwd  # TODO
-      POSTGRES_DB: db_name      # TODO
+      POSTGRES_USER: ${DB_AUTHENTICATION_SERVICE_USER}
+      POSTGRES_PASSWORD: ${DB_AUTHENTICATION_SERVICE_PASSWORD}
+      POSTGRES_DB: ${DB_AUTHENTICATION_SERVICE_DB}
+    expose:
+      - "${DB_AUTHENTICATION_SERVICE_PORT_INT}"
     ports:
-      - "5432:5432"             # TODO
+      - "${DB_AUTHENTICATION_SERVICE_PORT_EXT}:${DB_AUTHENTICATION_SERVICE_PORT_INT}"
     networks:
-      vnet_procom_erp:
-        ipv4_address: 10.200.1.65 # TODO
+      vnet-procom-erp:
+        ipv4_address: ${DB_AUTHENTICATION_SERVICE_IP_INT}
     volumes:
-      - postgres-procom-erp-id-data:/var/lib/postgresql/data
-      # - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - db-procom-erp-authentication-service-data:/var/lib/postgresql/data
+      - ${DB_AUTHENTICATION_SERVICE_PATH}/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ${DB_AUTHENTICATION_SERVICE_PATH}/postgresql.conf:/etc/postgresql/postgresql.conf
+    command: -c 'config_file=/etc/postgresql/postgresql.conf'
 
+  # +-----------------------------------------------------------------------------+
+
+  postgres-procom-erp-directory-service:
+    container_name: ${DB_DIRECTORY_SERVICE_HOSTNAME}
+    hostname: ${DB_DIRECTORY_SERVICE_HOSTNAME}
+    image: postgres:13
+    environment:
+      POSTGRES_USER: ${DB_DIRECTORY_SERVICE_USER}
+      POSTGRES_PASSWORD: ${DB_DIRECTORY_SERVICE_PASSWORD}
+      POSTGRES_DB: ${DB_DIRECTORY_SERVICE_DB}
+    expose:
+      - "${DB_DIRECTORY_SERVICE_PORT_INT}"
+    ports:
+      - "${DB_DIRECTORY_SERVICE_PORT_EXT}:${DB_DIRECTORY_SERVICE_PORT_INT}"
+    networks:
+      vnet-procom-erp:
+        ipv4_address: ${DB_DIRECTORY_SERVICE_IP_INT}
+    volumes:
+      - db-procom-erp-directory-service-data:/var/lib/postgresql/data
+      - ${DB_DIRECTORY_SERVICE_PATH}/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ${DB_DIRECTORY_SERVICE_PATH}/postgresql.conf:/etc/postgresql/postgresql.conf
+    command: -c 'config_file=/etc/postgresql/postgresql.conf'
+
+  # +-----------------------------------------------------------------------------+
+
+  #  postgres-procom-erp-local-test-service:
+  #    container_name: ${DB_LOCAL_TEST_SERVICE_HOSTNAME}
+  #    hostname: ${DB_LOCAL_TEST_SERVICE_HOSTNAME}
+  #    image: postgres:13
+  #    environment:
+  #      POSTGRES_USER: ${DB_LOCAL_TEST_SERVICE_USER}
+  #      POSTGRES_PASSWORD: ${DB_LOCAL_TEST_SERVICE_PASSWORD}
+  #      POSTGRES_DB: ${DB_LOCAL_TEST_SERVICE_DB}
+  #    expose:
+  #      - "${DB_LOCAL_TEST_SERVICE_PORT_INT}"
+  #    ports:
+  #      - "${DB_LOCAL_TEST_SERVICE_PORT_EXT}:${DB_LOCAL_TEST_SERVICE_PORT_INT}"
+  #    networks:
+  #      vnet-procom-erp:
+  #        ipv4_address: ${DB_LOCAL_TEST_SERVICE_IP_INT}
+  #    volumes:
+  #      - db-procom-erp-local-test-service-data:/var/lib/postgresql/data
+  #      - ${DB_LOCAL_TEST_SERVICE_PATH}/init.sql:/docker-entrypoint-initdb.d/init.sql
+  #      - ${DB_LOCAL_TEST_SERVICE_PATH}/postgresql.conf:/etc/postgresql/postgresql.conf
+  #    command: -c 'config_file=/etc/postgresql/postgresql.conf'
 
   # +---------------------------------------------------------------------------+
   # | Backend containers section (mask: 10.200.1.128/26)                        |
   # +---------------------------------------------------------------------------+
-  springboot_procom_erp_: # TODO
-    container_name: springboot_procom_erp_ # TODO
-    hostname: springboot_procom_erp_ # TODO
-    build:
-      context: ./backend  # TODO
-      dockerfile: ./Dockerfile # TODO
-    ports:
-      - "8000:8000"   # TODO
-    environment:
-      DATABASE_URL: postgres://pguser:pgpwd@db/db_name # TODO
-    depends_on:
-      - "postgres_procom_erp_"  # TODO
-    networks:
-      vnet_procom_erp:
-        ipv4_address: 10.200.1.129 # TODO
-    volumes:
-      - ./target:/app # TODO
 
+  springboot-procom-erp-message-broker-service:
+    container_name: ${BACKEND_MESSAGE_BROKER_SERVICE_HOSTNAME}
+    hostname: ${BACKEND_MESSAGE_BROKER_SERVICE_HOSTNAME}
+    image: "rabbitmq:3-management"
+    ports:
+      - "${BACKEND_MESSAGE_BROKER_SERVICE_PORT_EXT}:${BACKEND_MESSAGE_BROKER_SERVICE_PORT_INT}"
+      - "${BACKEND_MESSAGE_BROKER_SERVICE_ADMIN_PORT_EXT}:${BACKEND_MESSAGE_BROKER_SERVICE_ADMIN_PORT_INT}"
+    env_file: ./.env
+    networks:
+      vnet-procom-erp:
+        ipv4_address: ${BACKEND_MESSAGE_BROKER_SERVICE_IP_INT}
+    volumes:
+      - ${BACKEND_MESSAGE_BROKER_SERVICE_PATH}/config/rabbitmq.conf:/${RABBIT_MQ_CONFIG}
+      - ${SYSTEM_PATH}:/etc/rabbitmq/CA
+      - ${BACKEND_MESSAGE_BROKER_SERVICE_PATH}/message-broker-service-certificate.pem:/etc/rabbitmq/certs/message-broker-service-certificate.pem
+      - ${BACKEND_MESSAGE_BROKER_SERVICE_PATH}/message-broker-service-key.pem:/etc/rabbitmq/certs/message-broker-service-key.pem
+
+  # +---------------------------------------------------------------------------+
+
+  springboot-procom-erp-gateway-service:
+    container_name: ${BACKEND_GATEWAY_SERVICE_HOSTNAME}
+    hostname: ${BACKEND_GATEWAY_SERVICE_HOSTNAME}
+    image: ${JAVA_IMAGE}
+    expose:
+      - ${BACKEND_GATEWAY_SERVICE_PORT_INT}
+    entrypoint: ${ENTRYPOINT}
+    ports:
+      - "${BACKEND_GATEWAY_SERVICE_PORT_EXT}:${BACKEND_GATEWAY_SERVICE_PORT_INT}"
+    env_file: ./.env
+    networks:
+      vnet-procom-erp:
+        ipv4_address: ${BACKEND_GATEWAY_SERVICE_IP_INT}
+    volumes:
+      - ${BACKEND_GATEWAY_SERVICE_PATH}/target:/app
+      - ${BACKEND_GATEWAY_SERVICE_PATH}/gateway-service-keystore.p12:/certs/gateway-service-keystore.p12
+      - ${SYSTEM_PATH}/../security:/certs/all
+      - ${SYSTEM_PATH}:/config
+
+  # +---------------------------------------------------------------------------+
+
+  springboot-procom-erp-authentication-service:
+    container_name: ${BACKEND_AUTHENTICATION_SERVICE_HOSTNAME}
+    hostname: ${BACKEND_AUTHENTICATION_SERVICE_HOSTNAME}
+    image: ${JAVA_IMAGE}
+    expose:
+      - ${BACKEND_AUTHENTICATION_SERVICE_PORT_INT}
+    entrypoint: ${ENTRYPOINT}
+    env_file: ./.env
+    depends_on:
+      - "postgres-procom-erp-authentication-service"
+      - "springboot-procom-erp-message-broker-service"
+    networks:
+      vnet-procom-erp:
+        ipv4_address: ${BACKEND_AUTHENTICATION_SERVICE_IP_INT}
+    volumes:
+      - ${BACKEND_AUTHENTICATION_SERVICE_PATH}/target:/app
+      - ${BACKEND_AUTHENTICATION_SERVICE_PATH}/authentication-service-keystore.p12:/certs/authentication-service-keystore.p12
+      - ${SYSTEM_PATH}:/config
+
+  # +---------------------------------------------------------------------------+
+
+  springboot-procom-erp-directory-service:
+    container_name: ${BACKEND_DIRECTORY_SERVICE_HOSTNAME}
+    hostname: ${BACKEND_DIRECTORY_SERVICE_HOSTNAME}
+    image: ${JAVA_IMAGE}
+    expose:
+      - ${BACKEND_DIRECTORY_SERVICE_PORT_INT}
+    entrypoint: ${ENTRYPOINT}
+    env_file: ./.env
+    depends_on:
+      - "postgres-procom-erp-directory-service"
+      - "springboot-procom-erp-message-broker-service"
+      - "springboot-procom-erp-authentication-service"
+    networks:
+      vnet-procom-erp:
+        ipv4_address: ${BACKEND_DIRECTORY_SERVICE_IP_INT}
+    volumes:
+      - ${BACKEND_DIRECTORY_SERVICE_PATH}/target:/app
+      - ${BACKEND_DIRECTORY_SERVICE_PATH}/directory-service-keystore.p12:/certs/directory-service-keystore.p12
+      - ${SYSTEM_PATH}:/config
 
   # +---------------------------------------------------------------------------+
   # | Frontend containers section (mask: 10.200.1.192/26)                       |
   # +---------------------------------------------------------------------------+
-  react_procom_erp_:
-    container_name: react_procom_erp_ # TODO
-    hostname: react_procom_erp_ # TODO
-    build:
-      context: ./frontend  # TODO
-      dockerfile: ./Dockerfile  # TODO
-    ports:
-      - "80:80"  # TODO
-    depends_on:
-      - "springboot_procom_erp_"
-    networks:
-      vnet_procom_erp:
-        ipv4_address: 10.200.1.193 # TODO
-    volumes:
-      - ./src/frontend:/app # TODO
-
 
 # +-----------------------------------------------------------------------------+
 # | Networks section                                                            |
 # +-----------------------------------------------------------------------------+
 networks:
-  vnet_procom_erp:
+  vnet-procom-erp:
     driver: bridge
     ipam:
       config:
-        - subnet: 10.200.1.0/24
+        - subnet: ${NETWORK_PROCOM_ERP}
 
 volumes:
-  postgres-procom-erp-id-data:  # TODO
- 
+  db-procom-erp-authentication-service-data:
+  db-procom-erp-directory-service-data:
+  #db-procom-erp-local-test-service-data:
