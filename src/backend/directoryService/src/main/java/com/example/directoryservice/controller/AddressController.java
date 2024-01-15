@@ -2,7 +2,6 @@ package com.example.directoryservice.controller;
 
 import com.example.directoryservice.dto.AddressRequestDto;
 import com.example.directoryservice.dto.AddressResponseDto;
-import com.example.directoryservice.dto.EmployeeResponseDto;
 import com.example.directoryservice.model.Path;
 import com.example.directoryservice.service.AddressService;
 import io.swagger.v3.oas.annotations.Operation;

@@ -1,7 +1,5 @@
 package com.example.directoryservice.controller;
 
-import com.example.directoryservice.dto.AddressResponseDto;
-import com.example.directoryservice.dto.EmployeeResponseDto;
 import com.example.directoryservice.dto.OrganisationRequestDto;
 import com.example.directoryservice.dto.OrganisationResponseDto;
 import com.example.directoryservice.model.Path;
