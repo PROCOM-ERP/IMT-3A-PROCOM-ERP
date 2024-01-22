@@ -141,6 +141,7 @@
     <!-- Each Spring Boot project in src/backend/ as services -->
     <modules>
         <module>src/backend/authService</module>
+        <module>src/backend/inventoryService</module>
     </modules>
 
 </project>
