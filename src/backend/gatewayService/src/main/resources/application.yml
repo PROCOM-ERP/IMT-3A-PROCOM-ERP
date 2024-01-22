@@ -1,0 +1,45 @@
+spring:
+  main:
+    log-startup-info: off
+    banner-mode: off
+  application:
+    name: ${BACKEND_GATEWAY_SERVICE_HOSTNAME}
+  cloud:
+    gateway:
+      httpclient:
+        ssl:
+          enabled: true
+          useInsecureTrustManager: true
+      routes:
+        - id: authentication-service
+          uri: https://${BACKEND_AUTHENTICATION_SERVICE_IP_INT}:${BACKEND_AUTHENTICATION_SERVICE_PORT_INT}
+          predicates:
+            - Path=/api/auth/**
+          filters:
+            - RewritePath=/api/auth/(?<segment>.*), /api/$\{segment}
+        - id: directory-service
+          uri: https://${BACKEND_DIRECTORY_SERVICE_IP_INT}:${BACKEND_DIRECTORY_SERVICE_PORT_INT}
+          predicates:
+            - Path=/api/dir/**
+          filters:
+            - RewritePath=/api/dir/(?<segment>.*), /api/$\{segment}
+  security:
+    require-ssl: true
+
+server:
+  port: ${BACKEND_GATEWAY_SERVICE_PORT_EXT}
+  ssl:
+    key-store: ${BACKEND_GATEWAY_SERVICE_HTTPS_KEY_STORE}
+    key-store-password: ${BACKEND_GATEWAY_SERVICE_HTTPS_KEY_STORE_PASSWORD}
+    keyStoreType: PKCS12
+    keyAlias: ${BACKEND_GATEWAY_SERVICE_HTTPS_KEY_STORE_ALIAS}
+    trust-store: ${SECURITY_TRUST_STORE_PATH}
+    trust-store-password: ${SECURITY_TRUST_STORE_PASSWORD}
+# eureka:
+#   instance:
+#     prefer-ip-address: true
+#   client:
+#     fetch-registry: true
+#     register-with-eureka: true
+#     service-url:
+#       defaultZone: http://${BACKEND_DISCOVERY_SERVICE_HOSTNAME}:${BACKEND_DISCOVERY_SERVICE_PORT_INT}/eureka

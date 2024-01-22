@@ -1,13 +1,27 @@
 # IMT-3A-PROCOM-ERP
 
 ## Description
-TODO
+IMT-3A-PROCOM-ERP is a project to develop a modular Enterprise Resource Planning system.
+The solution enables a ready-to-use product to be produced quickly,
+for new small businesses of all types (shops, restaurants, etc).
+Depending on their needs, companies can have a package with only the necessary functionalities,
+while being able to add or remove functionality later almost instantaneously.
+
+For the moment, the modules on offer are:
+- Directory
+- Authentication service
+
+Other services, such as an order and inventory service, are in the pipeline.
+
+***NB***: This project is part of the ProCom teaching unit in the 3rd year of the engineering course at IMT Atlantique.
+It is not really intended to be marketed,
+but rather to demonstrate the feasibility of such a system with a Proof Of Concept.
 
 ## Metadata
 - **Timestamp**: 2023-11-02
 - **Last update**: 2023-11-11
 - **Status**: In development
-- **Current Version**: 0.0.1-SNAPSHOT
+- **Current Version**: 0.1.0
 - **Supported Platforms**: Windows (Linux and macOS untested)
 - **Development Environment**:
   - [Intellij IDEA 2023.1](https://www.jetbrains.com/idea/)
@@ -47,7 +61,6 @@ IMT-3A-PROCOM-ERP/                     this repository
 │   │   └── react-project/             subproject with frontend code
 │   ├── backend/                       code for microservices
 │   │   ├── service-1/                 one service
-│   │   │   ├── Dockerfile             Docker container for the service
 │   │   │   ├── pom.xml                Maven child configuration file for the service
 │   │   │   ├── src/                   backend source code
 │   │   │   └── ...
@@ -55,7 +68,6 @@ IMT-3A-PROCOM-ERP/                     this repository
 │   │       └── ...
 │   └── databases/                     databases scripts and configurations
 │       ├── db-1/                      one database
-│       │   ├── Dockerfile             Docker container for the database if required
 │       │   ├── reset.sql              script to reset all tables in a relationnal database
 │       │   └── init.sql               script to create tables in a relationnal database
 │       └── db-n/                      another database
@@ -92,9 +104,14 @@ NA
 Many thanks to the different contributors for their contribution to the project.
 Find their names and missions in [Contributors](#contributors) section.
 
+Thanks also to external resources for their open-source samples / documentation:
+- [Baeldung](https://www.baeldung.com): Java Spring Boot tutorials and code samples
+- [Vertabelo](https://vertabelo.com): Data modeling
+- [vishnubob](https://github.com/vishnubob/wait-for-it): wait-for-it.sh script
+
 ## Contributors
-- BOPS: *Role* TODO
-- maestro-bene: *Role* TODO
-- Antoine: *Role* TODO
-- ArthurMaquinImt: *Role* TODO
-- yunea: *Role* TODO
+- BOPS: *Scrum Master*, *Backend Engineer & Developer*, *Head of Security*, *System Support*
+- maestro-bene: *Backend Engineer & Developer*, *System Administrator*, *Security Support*
+- Antoine: *Product Owner*, *Frontend & UI/UX Support*
+- ArthurMaquinImt: *Backend Engineer & Developer*
+- yunea: *Frontend & UI/UX Developer*
