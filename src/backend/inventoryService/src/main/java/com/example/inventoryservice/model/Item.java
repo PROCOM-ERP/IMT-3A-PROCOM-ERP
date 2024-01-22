@@ -34,7 +34,7 @@ public class Item {
 
     @Size(max = 255)
     @Column(name = "status")
-    private Boolean status;
+    private String status;
 
     @NotNull
     @Column(name = "arrival_date", nullable = false)
