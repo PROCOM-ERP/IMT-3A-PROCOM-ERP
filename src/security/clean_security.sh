@@ -22,38 +22,58 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-# Prompt for the number of services
-read -p "Enter the number of services: " num_services
 
-# Initialize arrays for services and hostnames
-services=()
+backend_services=()
+backend_service_directories=($(find ../backend/ -maxdepth 1 -type d -name '*Service'))
+frontend_services=()
+frontend_service_directories=($(find ../frontend/ -maxdepth 1 -type d -name '*Service'))
 
-for ((i=1; i<=num_services; i++)); do
-    read -p "Enter the name for Service ${i}: " service_name
-
-    services+=("${service_name}")
+# Extract service names and count them
+for dir in "${backend_service_directories[@]}"; do
+    service_name=$(basename "$dir" | sed 's/Service$//')
+    backend_services+=("$service_name")
 done
 
+for dir in "${frontend_service_directories[@]}"; do
+    service_name=$(basename "$dir" | sed 's/Service$//')
+    frontend_services+=("$service_name")
+done
+
+# Calculate the total number of services
+num_backend_services=${#backend_services[@]}
+num_frontend_services=${#frontend_services[@]}
+num_services=$((num_backend_services + num_frontend_services))
+# echo ${num_services}
 
 # Get the current date and time
-current_datetime=$(date +"%Y-%m-%d-%H-%M")
+current_datetime=$(date +"%Y-%m-%d-%H-%M-%S")
 
 # Create the archive directory
 archive_dir="./archive/${current_datetime}"
 mkdir -p "${archive_dir}"
 
+# Initialize arrays for services and hostnames
+services=()
+
 # Move only the specific files created by the script to the archive directory
 for ((i=0; i<num_services; i++)); do
-    service="${services[i]}"
+    if [ $i -lt $num_backend_services ]; then
+        service="${backend_services[i]}"
+        service_type="backend"
+    else
+        index=$((i - num_backend_services))
+        service="${frontend_services[index]}"
+        service_type="frontend"
+    fi
 
-    echo ${service}
+    # echo ${service}
     # Move the .p12 file to the archive directory
-    mv "../backend/${service}Service/${service}-service-keystore.p12" "${archive_dir}/"
+    mv "../${service_type}/${service}Service/${service}-service-keystore.p12" "${archive_dir}/"
     
     # If the service is 'message-broker', move the PEM files as well
     if [ "${service}" = "message-broker" ]; then
-        mv "../backend/${service}Service/${service}-service-key.pem" "${archive_dir}/"
-        mv "../backend/${service}Service/${service}-service-certificate.pem" "${archive_dir}/"
+        mv "../${service_type}/${service}Service/${service}-service-key.pem" "${archive_dir}/"
+        mv "../${service_type}/${service}Service/${service}-service-certificate.pem" "${archive_dir}/"
     fi
     
     # Move the entire service directory to the archive directory
@@ -74,8 +94,10 @@ for dir in ./*; do
     fi
 done
 
-mv "../system/procom-erp-truststore.jks" "${archive_dir}"
-rm "../system/procom-erp-ca.pem"
+if [[ "${include_ca}" == "true" ]]; then
+    mv "../system/procom-erp-truststore.jks" "${archive_dir}"
+    rm "../system/procom-erp-ca.pem"
+fi
     
 # Notify the user
 echo "Specific files created by the script moved to ${archive_dir}"
