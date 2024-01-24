@@ -163,6 +163,27 @@ services:
   # | Frontend containers section (mask: 10.200.1.192/26)                       |
   # +---------------------------------------------------------------------------+
 
+  react-procom-erp-webapp-service:
+    container_name: ${FRONTEND_WEBAPP_SERVICE_HOSTNAME}
+    hostname: ${FRONTEND_WEBAPP_SERVICE_HOSTNAME}
+    image: ${FRONT_IMAGE}
+    working_dir: /app
+    command: npm start
+    expose:
+      - ${FRONTEND_WEBAPP_SERVICE_PORT_INT}:${FRONTEND_WEBAPP_SERVICE_PORT_EXT}
+    env_file: ./.env
+    depends_on:
+      - "springboot-procom-erp-gateway-service"
+      - "springboot-procom-erp-message-broker-service"
+      - "springboot-procom-erp-authentication-service"
+    networks:
+      vnet-procom-erp:
+        ipv4_address: ${FRONTEND_WEBAPP_SERVICE_IP_INT}
+    volumes:
+      - ${FRONTEND_WEBAPP_SERVICE_PATH}:/app
+      - ${FRONTEND_WEBAPP_SERVICE_PATH}/webapp-service-keystore.p12:/certs/webapp-service-keystore.p12
+      - ${SYSTEM_PATH}:/config
+
 # +-----------------------------------------------------------------------------+
 # | Networks section                                                            |
 # +-----------------------------------------------------------------------------+
