@@ -6,7 +6,7 @@ function Navbar() {
   return (
     <>
     <nav className='navigation'>
-        <a href="/home" className="brand-name">
+        <a href="/" className="brand-name">
             ERP FIP
         </a>
         <div className="navigation-menu">
