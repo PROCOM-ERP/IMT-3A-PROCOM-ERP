@@ -51,8 +51,8 @@ expect "Enter Import Password:"
 send "procom-erp-${service}-service-secure-keystore\r"
 expect eof
 EOF
-        mv "${service}-service-key.pem" "${service_dir}/"
-        mv "${service}-service-certificate.pem" "${service_dir}/"
+        mv "${service}-service-key.pem" "${service_dir}"
+        mv "${service}-service-certificate.pem" "${service_dir}"
     fi
 
     mv "${service_name}-service.key" "${service_name}-service.csr" "${service_name}-service.crt" "./${service}/"
