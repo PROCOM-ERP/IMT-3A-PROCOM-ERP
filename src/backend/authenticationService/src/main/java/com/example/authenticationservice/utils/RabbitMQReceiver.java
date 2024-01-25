@@ -27,11 +27,6 @@ public class RabbitMQReceiver {
     private final CustomHttpRequestBuilder customHttpRequestBuilder;
     private final Logger logger = LoggerFactory.getLogger(RabbitMQReceiver.class);
 
-    @RabbitListener(queues = "hello-queue")
-    public void receiveMessage(String message) {
-        System.out.println("Received message: " + message);
-    }
-
     @RabbitListener(queues = "role-enable-modify-queue")
     public void receiveRoleEnableModifyMessage(String getRoleByNamePath) {
         logger.info("Message received to set a role activation status: " + getRoleByNamePath);
