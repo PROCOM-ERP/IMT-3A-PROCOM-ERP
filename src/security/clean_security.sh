@@ -76,6 +76,11 @@ for ((i=0; i<num_services; i++)); do
         mv "../${service_type}/${service}Service/${service}-service-certificate.pem" "${archive_dir}/"
     fi
     
+    # If the service is 'webapp', move the PEM files as well
+    if [ "${service}" = "webapp" ]; then
+        mv "../${service_type}/${service}Service/${service}-service.crt" "${archive_dir}/"
+        mv "../${service_type}/${service}Service/${service}-service.key" "${archive_dir}/"
+    fi
     # Move the entire service directory to the archive directory
     mv "./${service}" "${archive_dir}/"
 done

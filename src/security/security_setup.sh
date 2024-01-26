@@ -55,6 +55,10 @@ EOF
         mv "${service}-service-certificate.pem" "${service_dir}"
     fi
 
+    if [ "${service}" = "webapp" ]; then
+        cp "${service_name}-service.key" "${service_name}-service.crt" "${service_dir}/"
+    fi
+
     mv "${service_name}-service.key" "${service_name}-service.csr" "${service_name}-service.crt" "./${service}/"
     mv "${service_name}-service-keystore.p12" "${service_dir}/"
     echo "Certificates for ${service_name} moved to ./${service} and the keystore to ${service_dir}"
