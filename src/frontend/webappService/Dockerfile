@@ -59,3 +59,4 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
 
 # Run the application.
 ENTRYPOINT serve -s -l ${FRONTEND_WEBAPP_SERVICE_PORT_INT}
+

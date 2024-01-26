@@ -172,21 +172,18 @@ services:
       args:
         FRONT_IMAGE: ${FRONT_IMAGE}
         FRONT_BUILD_IMAGE: ${FRONT_BUILD_IMAGE}
-        FRONTEND_WEBAPP_SERVICE_PORT_INT: ${FRONTEND_WEBAPP_SERVICE_PORT_INT}
     expose:
       - ${FRONTEND_WEBAPP_SERVICE_PORT_EXT}
+    environment:
+      FRONTEND_WEBAPP_SERVICE_PORT_INT: ${FRONTEND_WEBAPP_SERVICE_PORT_INT}
     ports:
       - ${FRONTEND_WEBAPP_SERVICE_PORT_INT}:${FRONTEND_WEBAPP_SERVICE_PORT_EXT}
-    env_file: ./.env
     depends_on:
       - "springboot-procom-erp-gateway-service"
-      - "springboot-procom-erp-message-broker-service"
       - "springboot-procom-erp-authentication-service"
     networks:
       vnet-procom-erp:
         ipv4_address: ${FRONTEND_WEBAPP_SERVICE_IP_INT}
-    volumes:
-      - ${SYSTEM_PATH}:/config
 
 # +-----------------------------------------------------------------------------+
 # | Networks section                                                            |
