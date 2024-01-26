@@ -166,10 +166,16 @@ services:
   react-procom-erp-webapp-service:
     container_name: ${FRONTEND_WEBAPP_SERVICE_HOSTNAME}
     hostname: ${FRONTEND_WEBAPP_SERVICE_HOSTNAME}
-    image: ${FRONT_IMAGE}
-    working_dir: /app
-    command: npm start
+    build:
+      context: ${FRONTEND_WEBAPP_SERVICE_PATH}
+      dockerfile: Dockerfile
+      args:
+        FRONT_IMAGE: ${FRONT_IMAGE}
+        FRONT_BUILD_IMAGE: ${FRONT_BUILD_IMAGE}
+        FRONTEND_WEBAPP_SERVICE_PORT_INT: ${FRONTEND_WEBAPP_SERVICE_PORT_INT}
     expose:
+      - ${FRONTEND_WEBAPP_SERVICE_PORT_EXT}
+    ports:
       - ${FRONTEND_WEBAPP_SERVICE_PORT_INT}:${FRONTEND_WEBAPP_SERVICE_PORT_EXT}
     env_file: ./.env
     depends_on:
@@ -180,8 +186,6 @@ services:
       vnet-procom-erp:
         ipv4_address: ${FRONTEND_WEBAPP_SERVICE_IP_INT}
     volumes:
-      - ${FRONTEND_WEBAPP_SERVICE_PATH}:/app
-      - ${FRONTEND_WEBAPP_SERVICE_PATH}/webapp-service-keystore.p12:/certs/webapp-service-keystore.p12
       - ${SYSTEM_PATH}:/config
 
 # +-----------------------------------------------------------------------------+
