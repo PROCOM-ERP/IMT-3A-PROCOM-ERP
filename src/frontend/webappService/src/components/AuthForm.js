@@ -68,9 +68,11 @@ function Form() {
         event.preventDefault();
 
         // Find user login info
+        // TODO : demander à Thibaut get user en fonction du username (est-ce que le username existe ou que l'email?)
         const userData = database.find((user) => user.username === values.username);
 
         // Compare user info
+        // TODO : demander à Thibaut comparaison password pour valider la connexion (API)
         if (userData) {
             if (userData.password !== values.password) {
                 // Invalid password
