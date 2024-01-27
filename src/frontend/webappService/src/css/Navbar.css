@@ -1,4 +1,21 @@
-@import url('https://fonts.googleapis.com/css2?family=Dosis:wght@300;400;500&family=Roboto+Mono:wght@300;400;500;600&family=Teko:wght@300;400;500;600&display=swap');
+/* import used fonts */
+@import url('https://fonts.googleapis.com/css2?family=Dosis:wght@300;400;500;600&family=Roboto+Condensed:wght@300;400;500;600;700&family=Teko:wght@300;400;500;600&display=swap');
+
+/* Navbar variables */
+:root{
+    /* NAVBAR */
+    --nav-bg: #0D3E87;
+    /* LOGO */
+    --logo-font: Teko;
+    --logo-weight: 600;
+    --logo-size: 2rem;
+    --logo-color: #E9B74E;
+    /* TEXT */
+    --text-font: Roboto Condensed;
+    --text-weight: 600;
+    --text-size: 1.2rem;
+    --text-color: #E9B74E;
+}
 
 .navigation{
     height: 60px;
@@ -7,17 +24,15 @@
     align-items: center;
     position: relative;
     padding: 0.5rem 0rem;
-    background-color: #fff;
-    color: black;
-    box-shadow: 0 2px 2px 2px rgba(9, 9, 9, 0.23);
+    background-color: var(--nav-bg);
 }
 
 .brand-name {
-    font-family: Teko;
-    font-weight: 600;
+    font-family: var(--logo-font);
+    font-weight: var(--logo-weight);
+    font-size: var(--logo-size);
+    color: var(--logo-color);
     text-decoration: none;
-    color: black;
-    font-size: 2rem;
     margin-left: 1rem;
 }
 
@@ -31,13 +46,18 @@
 }
 
 .navigation-menu li {
-    /* removes default disc bullet for li tags and applies margin to left & right side */
+    /* removes default disc bullet for li tags */ 
     list-style-type: none;
+    /* applies margin to left & right side */
     margin: 0 1rem;
 }
 
 .navigation-menu li a {
-    /*  increases the surface area of the anchor tag to span more than just the anchor text*/
+    font-family: var(--text-font);
+    font-weight: var(--text-weight);
+    font-size: var(--text-size);
+    color: var(--text-color);
+    /* increases the surface area of the anchor tag to span more than just the anchor text */
     text-decoration: none;
     display: block;
     width: 100%;
