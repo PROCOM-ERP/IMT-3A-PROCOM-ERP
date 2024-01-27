@@ -4,7 +4,7 @@ import AuthHelloWorld from '../components/AuthHelloWorld.js';
 
 function Authentification() {
   return (
-    <div>
+    <div className='authentification'>
       <h1>Login</h1>
       <AuthForm/>
     </div>

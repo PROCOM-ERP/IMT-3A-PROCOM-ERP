@@ -1,3 +1,5 @@
+import "../css/App.css";
+import "../css/AuthForm.css";
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
