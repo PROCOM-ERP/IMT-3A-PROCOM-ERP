@@ -1,5 +1,6 @@
 import React from 'react';
 import Navbar from '../components/Navbar';
+import "../css/App.css";
 
 function Home() {
   return (

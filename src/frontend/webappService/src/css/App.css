@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Dosis:wght@300;400;500&family=Roboto+Mono:wght@300;400;500;600&family=Teko:wght@300;400;500;600&display=swap');
+
 .App {
   text-align: center;
 }
@@ -27,6 +29,12 @@
 .App-link {
   color: #61dafb;
 }
+
+h1{
+  font-family: 'Teko', sans-serif;
+  font-weight: 500;
+}
+
 
 @keyframes App-logo-spin {
   from {

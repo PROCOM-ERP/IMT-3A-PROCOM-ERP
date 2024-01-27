@@ -1,19 +1,23 @@
+@import url('https://fonts.googleapis.com/css2?family=Dosis:wght@300;400;500&family=Roboto+Mono:wght@300;400;500;600&family=Teko:wght@300;400;500;600&display=swap');
+
 .navigation{
     height: 60px;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  position: relative;
-  padding: 0.5rem 0rem;
-  background-color: #fff;
-  color: black;
-  box-shadow: 0 2px 2px 2px rgba(9, 9, 9, 0.23);
+    width: 100%;
+    display: flex;
+    align-items: center;
+    position: relative;
+    padding: 0.5rem 0rem;
+    background-color: #fff;
+    color: black;
+    box-shadow: 0 2px 2px 2px rgba(9, 9, 9, 0.23);
 }
 
 .brand-name {
+    font-family: Teko;
+    font-weight: 600;
     text-decoration: none;
     color: black;
-    font-size: 1.3rem;
+    font-size: 2rem;
     margin-left: 1rem;
 }
 
