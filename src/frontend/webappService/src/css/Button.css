@@ -1,0 +1,23 @@
+/* import all fonts */
+@import url('https://fonts.googleapis.com/css2?family=Dosis:wght@300;400;500;600&family=Roboto+Condensed:wght@300;400;500;600;700&family=Teko:wght@300;400;500;600&display=swap');
+
+button{
+    font-family: Roboto Condensed;
+    font-size: medium;
+    font-weight: 400;
+    background-color: #E9B74E;
+    color: #0D3E87;
+    border-radius: 10px;
+    border: 2px solid #E9B74E;
+    margin: 0.5rem;
+    padding-top: 0.2rem;
+    padding-bottom: 0.2rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+}
+
+button:hover {
+    background-color: #0D3E87;
+    color: #E9B74E;
+    border: 2px solid #0D3E87;
+  }

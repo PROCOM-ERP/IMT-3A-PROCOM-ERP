@@ -2,5 +2,26 @@
 @import url('https://fonts.googleapis.com/css2?family=Dosis:wght@300;400;500;600&family=Roboto+Condensed:wght@300;400;500;600;700&family=Teko:wght@300;400;500;600&display=swap');
 
 form{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin: auto;
+    padding: 10px;
+    width: auto;
     background-color: blue;
+}
+
+form label{
+    font-family: Dosis;
+    padding: 1rem;
+    margin: 1rem;
+}
+
+form input{
+    border-radius: 5px;
+    border-color: white;
+    border: 2px solid white;
 }

@@ -2,6 +2,7 @@ import "../css/App.css";
 import "../css/AuthForm.css";
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import Button from "./Button";
 
 function Form() {
     // React State
@@ -93,14 +94,15 @@ function Form() {
             <form>
                 <div className='usernameInput'>
                 <label>
-                    Nom d'utilisateur :
-                    <input 
+                    Username :
+                    
+                </label>
+                <input className=""
                         type="text"
                         name="username"
                         onChange={handleValueChange("username")}
                         value={values.username}
                     />
-                </label>
                 {renderErrorMessage("usernameError")}
                 </div>
 
@@ -108,28 +110,27 @@ function Form() {
                 
                 <div className='passwordInput'>
                 <label>
-                    Mot de passe :
-                    <input 
+                    Password :
+                    
+                    
+
+                </label>
+                <input 
                         type={values.showPassword ? "text" : "password"}
                         name="password"
                         onChange={handleValueChange("password")}
                         value={values.password}
                     />
-                    <button 
-                        onClick={handleClickShowPassword}
-                        onMouseDown={handleMouseDownPassword} 
-                    >
-                        {values.showPassword ? "O" : "X" } 
-                    </button>
-                </label>
+                <Button onClick={handleClickShowPassword} onMouseDown={handleMouseDownPassword} >   
+                    {values.showPassword ? "O" : "X" } 
+                </Button>
                 {renderErrorMessage("passwordError")}
                 </div>
 
-                <br/>
-
-                <button type="reset" value="Reset" onClick={handleReset} > Reset </button>
-                <button type="submit" value="Submit" onClick={handleSubmit} > Submit </button>
+                <Button type="submit" value="Submit" onClick={handleSubmit}>Submit</Button>
+                <Button type="reset" value="Reset" onClick={handleReset}>Reset</Button>
             </form> 
+            
         </>
     )
 }
