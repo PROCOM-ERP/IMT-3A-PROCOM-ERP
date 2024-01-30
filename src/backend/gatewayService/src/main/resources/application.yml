@@ -23,6 +23,23 @@ spring:
             - Path=/api/dir/**
           filters:
             - RewritePath=/api/dir/(?<segment>.*), /api/$\{segment}
+      # Global CORS configuration for all routes
+      globalcors:
+        cors-configurations:
+          "[/**]":
+            allowed-origins:
+              - https://localhost:${FRONTEND_WEBAPP_SERVICE_PORT_INT}
+            allowed-methods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+            allowed-headers:
+              - Authorization
+              - Content-Type
+              - Accept
+            allow-credentials: true
+
   security:
     require-ssl: true
 
