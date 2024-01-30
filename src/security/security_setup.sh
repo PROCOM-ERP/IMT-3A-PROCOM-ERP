@@ -57,6 +57,7 @@ EOF
 
     if [ "${service}" = "webapp" ]; then
         cp "${service_name}-service.key" "${service_name}-service.crt" "${service_dir}/"
+        openssl x509 -in "${ca_crt}" -out "${service_dir}/procom-erp-ca.pem" -outform PEM
     fi
 
     mv "${service_name}-service.key" "${service_name}-service.csr" "${service_name}-service.crt" "./${service}/"
@@ -73,6 +74,7 @@ if [ ! -f "./CA/procom-erp-ca.crt" ] || [ ! -f "./CA/procom-erp-ca.key" ]; then
 
     # Create and Self-Sign the Root Certificate
     openssl req -new -x509 -days 3650 -key procom-erp-ca.key -out procom-erp-ca.crt -subj "/C=FR/ST=France/L=Paris/O=Procom-ERP/OU=IT/CN=Procom-ERP"
+openssl x509 -in "${ca_crt}" -out "../system/procom-erp-ca.pem" -outform PEM
     
     # Create a trust store for the services to trust
     keytool -importcert -noprompt -alias ca_cert -file procom-erp-ca.crt -keystore procom-erp-truststore.jks --store-pass "super-secure-password-for-trust-store" >/dev/null 2>&1
@@ -122,14 +124,11 @@ for ((i=0; i<num_services; i++)); do
     echo "Certificates generated for ${service} (${service_type})"
 done
 
-# Step 6: Convert CA certificate to .pem
-# openssl x509 -inform der -in "${ca_crt}" -out procom-erp-ca.pem
-
 # Move the CA's keys and certificates to the CA directory
 ca_dir="./CA"
 mkdir -p "${ca_dir}"
 mv procom-erp-truststore.jks "../system/"
-cp "${ca_crt}" "../system/procom-erp-ca.pem"
+openssl x509 -in "${ca_crt}" -out "../system/procom-erp-ca.pem" -outform PEM
 mv "${ca_key}" "${ca_crt}" "${ca_dir}/"
 
 echo "CA's keys and certificates moved to ${ca_dir}"
