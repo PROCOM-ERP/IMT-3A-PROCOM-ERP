@@ -25,6 +25,7 @@ COPY --chown=erp:erp ./src ./src
 COPY --chown=erp:erp ./public ./public
 COPY --chown=erp:erp ./webapp-service.crt ./certs/webapp-service.crt
 COPY --chown=erp:erp ./webapp-service.key ./certs/webapp-service.key
+COPY --chown=erp:erp ./procom-erp-ca.pem ./certs/procom-erp-ca.pem
 
 # Build the application.
 RUN npm run build
@@ -54,9 +55,10 @@ COPY --from=builder /opt/erp/frontend/build /app
 COPY --from=builder /opt/erp/frontend/package*.json /app
 COPY --from=builder /opt/erp/frontend/certs/webapp-service.crt /certs/webapp-service.crt
 COPY --from=builder /opt/erp/frontend/certs/webapp-service.key /certs/webapp-service.key
+COPY --from=builder /opt/erp/frontend/certs/procom-erp-ca.pem /app/certs/procom-erp-ca.pem
 
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD curl -f http://localhost:${FRONTEND_WEBAPP_SERVICE_PORT_INT}/ || exit 1
 
 # Run the application.
-ENTRYPOINT serve -s -l ${FRONTEND_WEBAPP_SERVICE_PORT_INT} --ssl-cert /certs/webapp-service.crt --ssl-key /certs/webapp-service.key
+ENTRYPOINT serve -s /app -l ${FRONTEND_WEBAPP_SERVICE_PORT_INT} --ssl-cert /certs/webapp-service.crt --ssl-key /certs/webapp-service.key
