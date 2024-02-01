@@ -1,12 +1,12 @@
 #!/bin/bash
-# Script Name: security_setup.sh
+# Script Name: security_auto_setup.sh
 # Description: Generate CA and services security essentials, and moves them to the correct spot.
 # Author: maestro-bene (GitHub)
 # Date Created: 2024-01-15
 # Last Modified: 2024-01-15
 # Version: 1.0
-# Usage: Enter the number of services, then each of their names.
-# Notes: Another scripts "clean_security.sh" works with this one to undo the changes made by this script.
+# Usage: Just run the script, it will analyze the directories.
+# Notes: Another scripts "clean_security.sh" works with this one to undo the changes made by this script, by giving the names.
 
 # Check if OpenSSL is installed
 if ! command -v openssl &> /dev/null; then
@@ -17,6 +17,7 @@ fi
 # Function to generate certificates for a service
 generate_certificate() {
     local service_name="$1"
+    local service_type="$2"
 
     # Step 1: Generate Certificates for the Service
     openssl genrsa -out "${service_name}-service.key" 4096
@@ -35,7 +36,7 @@ expect eof
 EOF
     
     # Move the generated files to the service directory
-    service_dir="../backend/${service_name}Service"
+    service_dir="../${service_type}/${service_name}Service"
     mkdir -p "${service_dir}"
     mkdir -p "./${service}"
     
@@ -50,8 +51,13 @@ expect "Enter Import Password:"
 send "procom-erp-${service}-service-secure-keystore\r"
 expect eof
 EOF
-        mv "${service}-service-key.pem" "${service_dir}/"
-        mv "${service}-service-certificate.pem" "${service_dir}/"
+        mv "${service}-service-key.pem" "${service_dir}"
+        mv "${service}-service-certificate.pem" "${service_dir}"
+    fi
+
+    if [ "${service}" = "webapp" ]; then
+        cp "${service_name}-service.key" "${service_name}-service.crt" "${service_dir}/"
+        openssl x509 -in "${ca_crt}" -out "${service_dir}/procom-erp-ca.pem" -outform PEM
     fi
 
     mv "${service_name}-service.key" "${service_name}-service.csr" "${service_name}-service.crt" "./${service}/"
@@ -68,6 +74,7 @@ if [ ! -f "./CA/procom-erp-ca.crt" ] || [ ! -f "./CA/procom-erp-ca.key" ]; then
 
     # Create and Self-Sign the Root Certificate
     openssl req -new -x509 -days 3650 -key procom-erp-ca.key -out procom-erp-ca.crt -subj "/C=FR/ST=France/L=Paris/O=Procom-ERP/OU=IT/CN=Procom-ERP"
+openssl x509 -in "${ca_crt}" -out "../system/procom-erp-ca.pem" -outform PEM
     
     # Create a trust store for the services to trust
     keytool -importcert -noprompt -alias ca_cert -file procom-erp-ca.crt -keystore procom-erp-truststore.jks --store-pass "super-secure-password-for-trust-store" >/dev/null 2>&1
@@ -77,38 +84,51 @@ else
     ca_key="./CA/procom-erp-ca.key"
 fi
 
-# Prompt for the number of services
-read -p "Enter the number of services: " num_services
-
 # Initialize arrays for services and hostnames
-services=()
+backend_services=()
+backend_service_directories=($(find ../backend/ -maxdepth 1 -type d -name '*Service'))
+frontend_services=()
+frontend_service_directories=($(find ../frontend/ -maxdepth 1 -type d -name '*Service'))
 
-# Read service names and hostnames from user input
-for ((i=1; i<=num_services; i++)); do
-    read -p "Enter the name for Service ${i}: " service_name
-
-    services+=("${service_name}")
+# Extract service names and count them
+for dir in "${backend_service_directories[@]}"; do
+    service_name=$(basename "$dir" | sed 's/Service$//')
+    backend_services+=("$service_name")
 done
+
+for dir in "${frontend_service_directories[@]}"; do
+    service_name=$(basename "$dir" | sed 's/Service$//')
+    frontend_services+=("$service_name")
+done
+
+# Calculate the total number of services
+num_backend_services=${#backend_services[@]}
+num_frontend_services=${#frontend_services[@]}
+num_services=$((num_backend_services + num_frontend_services))
 
 # Generate certificates for each service
 for ((i=0; i<num_services; i++)); do
-    service="${services[i]}"
+    if [ $i -lt $num_backend_services ]; then
+        service="${backend_services[i]}"
+        service_type="backend"
+    else
+        index=$((i - num_backend_services))
+        service="${frontend_services[index]}"
+        service_type="frontend"
+    fi
     
-    echo "Generating certificates for ${service}"
+    echo "Generating certificates for ${service} (${service_type})"
     
-    generate_certificate "${service}"
+    generate_certificate "${service}" "${service_type}"
     
-    echo "Certificates generated for ${service}"
+    echo "Certificates generated for ${service} (${service_type})"
 done
-
-# Step 6: Convert CA certificate to .pem
-# openssl x509 -inform der -in "${ca_crt}" -out procom-erp-ca.pem
 
 # Move the CA's keys and certificates to the CA directory
 ca_dir="./CA"
 mkdir -p "${ca_dir}"
 mv procom-erp-truststore.jks "../system/"
-cp "${ca_crt}" "../system/procom-erp-ca.pem"
+openssl x509 -in "${ca_crt}" -out "../system/procom-erp-ca.pem" -outform PEM
 mv "${ca_key}" "${ca_crt}" "${ca_dir}/"
 
 echo "CA's keys and certificates moved to ${ca_dir}"
