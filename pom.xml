@@ -167,6 +167,7 @@
         <module>src/backend/authenticationService</module>
         <module>src/backend/gatewayService</module>
         <module>src/backend/directoryService</module>
+        <module>src/backend/inventoryService</module>
     </modules>
 
 </project>
