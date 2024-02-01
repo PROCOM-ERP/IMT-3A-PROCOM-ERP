@@ -13,41 +13,47 @@
 -- Creation of 'inventories'
 CREATE TABLE addresses (
     id_address SERIAL PRIMARY KEY,
-    title VARCHAR(128),
+    title VARCHAR(128) NOT NULL,
     description TEXT
 );
 
 CREATE TABLE products (
-    id_product SERIAL PRIMARY KEY,
-    title VARCHAR(128),
+    id_product SERIAL PRIMARY KEY ,
+    title VARCHAR(128) NOT NULL,
     description TEXT
 );
 
 CREATE TABLE categories (
     id_category SERIAL PRIMARY KEY,
-    title VARCHAR(128),
+    title VARCHAR(128) NOT NULL,
     description TEXT
 );
 
 CREATE TABLE product_meta (
-    id_address SERIAL PRIMARY KEY,
-    title VARCHAR(128),
+    id_product_meta SERIAL PRIMARY KEY,
+    key VARCHAR(255) NOT NULL,
+    type VARCHAR(16) NOT NULL,
+    value TEXT NOT NULL,
     description TEXT
 );
 
 CREATE TABLE items (
+    id_item SERIAL PRIMARY KEY,
+    quantity INT NOT NULL
 );
 
 CREATE TABLE transactions (
+    quantity INT NOT NULL,
+    timestamp DATE NOT NULL,
+    employee CHAR(6) NOT NULL,
+
+    CONSTRAINT employee_constraint CHECK (employee ~* '[A-Z][0-9]{5}')--,
 );
-
-
 
 CREATE TABLE category_product (
-);
-
-CREATE TABLE product_meta_product (
-);
-
-CREATE TABLE addresses (
+    id_category INT,
+    id_product INT,
+    PRIMARY KEY (id_category, id_product),
+    FOREIGN KEY (id_category) REFERENCES categories(id),
+    FOREIGN KEY (id_product) REFERENCES products(id)
 );
