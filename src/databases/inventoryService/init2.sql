@@ -15,6 +15,7 @@ CREATE TABLE addresses (
     id_address SERIAL PRIMARY KEY,
     title VARCHAR(128) NOT NULL,
     description TEXT
+    FOREIGN KEY (item_id) REFERENCES items(id)
 );
 
 CREATE TABLE products (
@@ -34,18 +35,26 @@ CREATE TABLE product_meta (
     key VARCHAR(255) NOT NULL,
     type VARCHAR(16) NOT NULL,
     value TEXT NOT NULL,
-    description TEXT
+    description TEXT,
+    id_product INT NOT NULL,
+    FOREIGN KEY (id_product) REFERENCES products(id)
 );
 
 CREATE TABLE items (
     id_item SERIAL PRIMARY KEY,
-    quantity INT NOT NULL
+    quantity INT NOT NULL,
+    id_address INT NOT NULL,
+    id_product INT NOT NULL,
+    FOREIGN KEY (id_product) REFERENCES products(id),
+    FOREIGN KEY (id_address) REFERENCES addresses(id)
 );
 
 CREATE TABLE transactions (
     quantity INT NOT NULL,
     timestamp DATE NOT NULL,
     employee CHAR(6) NOT NULL,
+    id_item INT NOT NULL,
+    FOREIGN KEY (id_item) REFERENCES items(id),
 
     CONSTRAINT employee_constraint CHECK (employee ~* '[A-Z][0-9]{5}')--,
 );
