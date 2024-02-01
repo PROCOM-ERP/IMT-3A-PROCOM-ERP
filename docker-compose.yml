@@ -160,6 +160,28 @@ services:
       - ${SYSTEM_PATH}:/config
 
   # +---------------------------------------------------------------------------+
+
+  springboot-procom-erp-inventory-service:
+    container_name: ${BACKEND_INVENTORY_SERVICE_HOSTNAME}
+    hostname: ${BACKEND_INVENTORY_SERVICE_HOSTNAME}
+    image: ${JAVA_IMAGE}
+    expose:
+      - ${BACKEND_INVENTORY_SERVICE_PORT_INT}
+    entrypoint: ${ENTRYPOINT}
+    env_file: ./.env
+    depends_on:
+      - "postgres-procom-erp-inventory-service"
+      - "springboot-procom-erp-message-broker-service"
+      - "springboot-procom-erp-authentication-service"
+    networks:
+      vnet-procom-erp:
+        ipv4_address: ${BACKEND_INVENTORY_SERVICE_IP_INT}
+    volumes:
+      - ${BACKEND_INVENTORY_SERVICE_PATH}/target:/app
+      - ${BACKEND_INVENTORY_SERVICE_PATH}/inventory-service-keystore.p12:/certs/inventory-service-keystore.p12
+      - ${SYSTEM_PATH}:/config
+
+  # +---------------------------------------------------------------------------+
   # | Frontend containers section (mask: 10.200.1.192/26)                       |
   # +---------------------------------------------------------------------------+
 
