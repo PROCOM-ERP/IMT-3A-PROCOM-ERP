@@ -4,8 +4,8 @@
 # Author: maestro-bene (GitHub)
 # Date Created: 2024-01-15
 # Last Modified: 2024-01-15
-# Version: 1.0
-# Usage: Just run the script, it will analyze the directories.
+# Version: 1.1
+# Usage: Just run the script within the src/security directory, it will analyze the frontend and backend directories.
 # Notes: Another scripts "clean_security.sh" works with this one to undo the changes made by this script, by giving the names.
 
 # Check if OpenSSL is installed
