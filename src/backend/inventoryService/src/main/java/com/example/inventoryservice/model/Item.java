@@ -22,6 +22,6 @@ public class Item {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "id_address", nullable = false)
-    private com.example.directoryservice.model.Address idAddress;
+    private Address idAddress;
 
 }

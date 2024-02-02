@@ -6,6 +6,9 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Getter
 @Setter
 @Entity
@@ -24,4 +27,7 @@ public class Product {
     @Column(name = "description", length = Integer.MAX_VALUE)
     private String description;
 
+    @NotNull
+    @ManyToMany(mappedBy = "products")
+    private Set<Category> categories = new HashSet<>();
 }
