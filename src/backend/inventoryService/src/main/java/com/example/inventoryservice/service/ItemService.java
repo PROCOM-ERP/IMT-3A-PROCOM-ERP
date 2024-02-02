@@ -21,12 +21,13 @@ public class ItemService {
                 .map(this::itemToDto);
     }
 
+    /*
     public List<ItemDto> getItemByGroupId(int groupId) {
         List<Item> itemList = itemRepository.findAllByInventoryId(groupId);
             return itemList.stream()
                     .map(this::itemToDto)
                     .collect(Collectors.toList());
-    }
+    }*/
 
     private ItemDto itemToDto(Item item) {
         return ItemDto.builder()
@@ -34,9 +35,8 @@ public class ItemService {
                 .name(item.getName())
                 .alias(item.getAlias())
                 .status(item.getStatus())
-                .description(item.getDescription())
-                .attributeNames(item.getAttributeNames())
-                .items(item.getItems())
+                .arrivalDate(item.getArrivalDate().toString())
+                .removalDate(item.getRemovalDate().toString())
                 .build();
     }
 }
