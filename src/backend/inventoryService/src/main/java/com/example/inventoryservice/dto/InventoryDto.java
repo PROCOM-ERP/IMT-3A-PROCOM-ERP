@@ -1,9 +1,5 @@
 package com.example.inventoryservice.dto;
 
-import com.example.inventoryservice.model.Attribute;
-import com.example.inventoryservice.model.AttributeName;
-import com.example.inventoryservice.model.Inventory;
-import com.example.inventoryservice.model.Item;
 import lombok.*;
 
 import java.util.List;
