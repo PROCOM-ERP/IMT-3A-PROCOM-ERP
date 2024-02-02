@@ -16,9 +16,9 @@ spring:
     active: dev
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://${DB_INVENTORY_SERVICE_HOSTNAME}:${DB_INVENTORY_SERVICE_PORT_INT}/${DB_INVENTORY_SERVICE_DB}
-    username: ${DB_INVENTORY_SERVICE_USER}
-    password: ${DB_INVENTORY_SERVICE_PASSWORD}
+    url: jdbc:postgresql://${DB_LOCAL_TEST_SERVICE_HOSTNAME}:${DB_LOCAL_TEST_SERVICE_PORT_INT}/${DB_LOCAL_TEST_SERVICE_DB}
+    username: ${DB_LOCAL_TEST_SERVICE_USER}
+    password: ${DB_LOCAL_TEST_SERVICE_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: update

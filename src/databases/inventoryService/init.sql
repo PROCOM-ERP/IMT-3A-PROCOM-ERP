@@ -15,7 +15,6 @@ CREATE TABLE addresses (
     id_address SERIAL PRIMARY KEY,
     title VARCHAR(128) NOT NULL,
     description TEXT
-    FOREIGN KEY (item_id) REFERENCES items(id)
 );
 
 CREATE TABLE products (
@@ -37,7 +36,7 @@ CREATE TABLE product_meta (
     value TEXT NOT NULL,
     description TEXT,
     id_product INT NOT NULL,
-    FOREIGN KEY (id_product) REFERENCES products(id)
+    FOREIGN KEY (id_product) REFERENCES products(id_product)
 );
 
 CREATE TABLE items (
@@ -45,16 +44,17 @@ CREATE TABLE items (
     quantity INT NOT NULL,
     id_address INT NOT NULL,
     id_product INT NOT NULL,
-    FOREIGN KEY (id_product) REFERENCES products(id),
-    FOREIGN KEY (id_address) REFERENCES addresses(id)
+    FOREIGN KEY (id_product) REFERENCES products(id_product),
+    FOREIGN KEY (id_address) REFERENCES addresses(id_address)
 );
 
 CREATE TABLE transactions (
+    id_transaction SERIAL PRIMARY KEY,
     quantity INT NOT NULL,
     timestamp TIMESTAMP NOT NULL DEFAULT current_timestamp,
     employee CHAR(6) NOT NULL,
     id_item INT NOT NULL,
-    FOREIGN KEY (id_item) REFERENCES items(id),
+    FOREIGN KEY (id_item) REFERENCES items(id_item),
 
     CONSTRAINT employee_constraint CHECK (employee ~* '[A-Z][0-9]{5}')--,
 );
@@ -63,6 +63,6 @@ CREATE TABLE category_product (
     id_category INT,
     id_product INT,
     PRIMARY KEY (id_category, id_product),
-    FOREIGN KEY (id_category) REFERENCES categories(id),
-    FOREIGN KEY (id_product) REFERENCES products(id)
+    FOREIGN KEY (id_category) REFERENCES categories(id_category),
+    FOREIGN KEY (id_product) REFERENCES products(id_product)
 );
