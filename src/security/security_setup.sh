@@ -14,6 +14,19 @@ if ! command -v openssl &> /dev/null; then
     exit 1
 fi
 
+# Define the expected last three directory entries
+expected_last_entries="src/security"
+
+# Get the last three entries of the current working directory path
+current_directory="$(pwd)"
+last_three_entries=$(basename "$current_directory" | tr '/' ' ' | awk '{print $(NF-1), $NF}')
+
+# Check if the last three entries match the expected ones
+if [ "$last_three_entries" != "$expected_last_entries" ]; then
+    echo "Please run this script from the '${expected_last_entries}' directory."
+    exit 1
+fi
+
 # Function to generate certificates for a service
 generate_certificate() {
     local service_name="$1"
