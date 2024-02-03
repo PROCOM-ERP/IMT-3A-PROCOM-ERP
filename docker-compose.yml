@@ -1,5 +1,47 @@
 version: "3.8"
-
+secrets:
+  SECURITY_SERVICES_SHARED_KEY:
+    external: true
+  SECURITY_JWT_SECRET_KEY:
+    external: true
+  SECURITY_JWT_CLAIMS_KEY_ROLES:
+    external: true
+  SECURITY_TRUST_STORE_PASSWORD:
+    external: true
+  SECURITY_TRUST_STORE_ALIAS:
+    external: true
+  DB_LOCAL_TEST_SERVICE_USER:
+    external: true
+  DB_LOCAL_TEST_SERVICE_PASSWORD:
+    external: true
+  DB_AUTHENTICATION_SERVICE_USER:
+    external: true
+  DB_AUTHENTICATION_SERVICE_PASSWORD:
+    external: true
+  DB_DIRECTORY_SERVICE_USER:
+    external: true
+  DB_DIRECTORY_SERVICE_PASSWORD:
+    external: true
+  BACKEND_MESSAGE_BROKER_SERVICE_USERNAME:
+    external: true
+  BACKEND_MESSAGE_BROKER_SERVICE_PASSWORD:
+    external: true
+  BACKEND_AUTHENTICATION_SERVICE_HTTPS_KEY_STORE_ALIAS:
+    external: true
+  BACKEND_AUTHENTICATION_SERVICE_HTTPS_KEY_STORE_PASSWORD:
+    external: true
+  BACKEND_GATEWAY_SERVICE_HTTPS_KEY_STORE_ALIAS:
+    external: true
+  BACKEND_GATEWAY_SERVICE_HTTPS_KEY_STORE_PASSWORD:
+    external: true
+  BACKEND_MESSAGE_BROKER_SERVICE_HTTPS_KEY_STORE_ALIAS:
+    external: true
+  BACKEND_MESSAGE_BROKER_SERVICE_HTTPS_KEY_STORE_PASSWORD:
+    external: true
+  BACKEND_DIRECTORY_SERVICE_HTTPS_KEY_STORE_ALIAS:
+    external: true
+  BACKEND_DIRECTORY_SERVICE_HTTPS_KEY_STORE_PASSWORD:
+    external: true
 # +-----------------------------------------------------------------------------+
 # | Services section                                                            |
 # +-----------------------------------------------------------------------------+
@@ -12,9 +54,12 @@ services:
     hostname: ${DB_AUTHENTICATION_SERVICE_HOSTNAME}
     image: postgres:13
     environment:
-      POSTGRES_USER: ${DB_AUTHENTICATION_SERVICE_USER}
-      POSTGRES_PASSWORD: ${DB_AUTHENTICATION_SERVICE_PASSWORD}
+      POSTGRES_USER: /run/secrets/DB_AUTHENTICATION_SERVICE_USER
+      POSTGRES_PASSWORD: /run/secrets/DB_AUTHENTICATION_SERVICE_PASSWORD
       POSTGRES_DB: ${DB_AUTHENTICATION_SERVICE_DB}
+    secrets:
+      - DB_AUTHENTICATION_SERVICE_USER
+      - DB_AUTHENTICATION_SERVICE_PASSWORD
     expose:
       - "${DB_AUTHENTICATION_SERVICE_PORT_INT}"
     ports:
@@ -35,9 +80,12 @@ services:
     hostname: ${DB_DIRECTORY_SERVICE_HOSTNAME}
     image: postgres:13
     environment:
-      POSTGRES_USER: ${DB_DIRECTORY_SERVICE_USER}
-      POSTGRES_PASSWORD: ${DB_DIRECTORY_SERVICE_PASSWORD}
+      POSTGRES_USER: /run/secrets/DB_DIRECTORY_SERVICE_USER
+      POSTGRES_PASSWORD: /run/secrets/DB_DIRECTORY_SERVICE_PASSWORD
       POSTGRES_DB: ${DB_DIRECTORY_SERVICE_DB}
+    secrets:
+      - DB_DIRECTORY_SERVICE_USER
+      - DB_DIRECTORY_SERVICE_PASSWORD
     expose:
       - "${DB_DIRECTORY_SERVICE_PORT_INT}"
     ports:
@@ -86,6 +134,10 @@ services:
       - "${BACKEND_MESSAGE_BROKER_SERVICE_PORT_EXT}:${BACKEND_MESSAGE_BROKER_SERVICE_PORT_INT}"
       - "${BACKEND_MESSAGE_BROKER_SERVICE_ADMIN_PORT_EXT}:${BACKEND_MESSAGE_BROKER_SERVICE_ADMIN_PORT_INT}"
     env_file: ./.env
+    secrets:
+      - BACKEND_MESSAGE_BROKER_SERVICE_USERNAME
+      - BACKEND_MESSAGE_BROKER_SERVICE_PASSWORD
+      - SECURITY_JWT_SECRET_KEY
     networks:
       vnet-procom-erp:
         ipv4_address: ${BACKEND_MESSAGE_BROKER_SERVICE_IP_INT}
@@ -107,6 +159,10 @@ services:
     ports:
       - "${BACKEND_GATEWAY_SERVICE_PORT_EXT}:${BACKEND_GATEWAY_SERVICE_PORT_INT}"
     env_file: ./.env
+    secrets:
+      - BACKEND_GATEWAY_SERVICE_HTTPS_KEY_STORE_ALIAS
+      - BACKEND_GATEWAY_SERVICE_HTTPS_KEY_STORE_PASSWORD
+      - SECURITY_JWT_SECRET_KEY
     networks:
       vnet-procom-erp:
         ipv4_address: ${BACKEND_GATEWAY_SERVICE_IP_INT}
@@ -121,21 +177,36 @@ services:
   springboot-procom-erp-authentication-service:
     container_name: ${BACKEND_AUTHENTICATION_SERVICE_HOSTNAME}
     hostname: ${BACKEND_AUTHENTICATION_SERVICE_HOSTNAME}
+    build:
+      context: ${BACKEND_AUTHENTICATION_SERVICE_PATH}
+      dockerfile: Dockerfile
+      args:
+        JAVA_IMAGE: ${JAVA_IMAGE}
+        BACKEND_AUTHENTICATION_SERVICE_PORT_INT: ${BACKEND_AUTHENTICATION_SERVICE_PORT_INT}
+        ENTRYPOINT: ${ENTRYPOINT}
+        BACKEND_MESSAGE_BROKER_SERVICE_IP_INT: ${BACKEND_MESSAGE_BROKER_SERVICE_IP_INT}
+        BACKEND_MESSAGE_BROKER_SERVICE_PORT_INT: ${BACKEND_MESSAGE_BROKER_SERVICE_PORT_INT}
+        SECURITY_TRUST_STORE_PATH: ${SECURITY_TRUST_STORE_PATH}
     image: ${JAVA_IMAGE}
+    entrypoint: ${ENTRYPOINT}
     expose:
       - ${BACKEND_AUTHENTICATION_SERVICE_PORT_INT}
-    entrypoint: ${ENTRYPOINT}
     env_file: ./.env
+    secrets:
+      - DB_AUTHENTICATION_SERVICE_USER
+      - DB_AUTHENTICATION_SERVICE_PASSWORD
+      - BACKEND_MESSAGE_BROKER_SERVICE_USERNAME
+      - BACKEND_MESSAGE_BROKER_SERVICE_PASSWORD
+      - BACKEND_AUTHENTICATION_SERVICE_HTTPS_KEY_STORE_ALIAS
+      - BACKEND_AUTHENTICATION_SERVICE_HTTPS_KEY_STORE_PASSWORD
+      - SECURITY_JWT_SECRET_KEY
+      - SECURITY_TRUST_STORE_PASSWORD
     depends_on:
       - "postgres-procom-erp-authentication-service"
       - "springboot-procom-erp-message-broker-service"
     networks:
       vnet-procom-erp:
         ipv4_address: ${BACKEND_AUTHENTICATION_SERVICE_IP_INT}
-    volumes:
-      - ${BACKEND_AUTHENTICATION_SERVICE_PATH}/target:/app
-      - ${BACKEND_AUTHENTICATION_SERVICE_PATH}/authentication-service-keystore.p12:/certs/authentication-service-keystore.p12
-      - ${SYSTEM_PATH}:/config
 
   # +---------------------------------------------------------------------------+
 
@@ -147,6 +218,14 @@ services:
       - ${BACKEND_DIRECTORY_SERVICE_PORT_INT}
     entrypoint: ${ENTRYPOINT}
     env_file: ./.env
+    secrets:
+      - DB_DIRECTORY_SERVICE_USER
+      - DB_DIRECTORY_SERVICE_PASSWORD
+      - BACKEND_MESSAGE_BROKER_SERVICE_USERNAME
+      - BACKEND_MESSAGE_BROKER_SERVICE_PASSWORD
+      - BACKEND_AUTHENTICATION_SERVICE_HTTPS_KEY_STORE_ALIAS
+      - BACKEND_AUTHENTICATION_SERVICE_HTTPS_KEY_STORE_PASSWORD
+      - SECURITY_JWT_SECRET_KEY
     depends_on:
       - "postgres-procom-erp-directory-service"
       - "springboot-procom-erp-message-broker-service"
@@ -168,7 +247,7 @@ services:
 # +-----------------------------------------------------------------------------+
 networks:
   vnet-procom-erp:
-    driver: bridge
+    driver: overlay
     ipam:
       config:
         - subnet: ${NETWORK_PROCOM_ERP}
