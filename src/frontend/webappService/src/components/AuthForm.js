@@ -99,7 +99,7 @@ function Form() {
                     Username :
                     
                 </label>
-                <input className=""
+                <input
                         type="text"
                         name="username"
                         onChange={handleValueChange("username")}

@@ -1,32 +1,32 @@
 /* import all fonts */
-@import url('https://fonts.googleapis.com/css2?family=Dosis:wght@300;400;500;600&family=Roboto+Condensed:wght@300;400;500;600;700&family=Teko:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;500;600;700&display=swap');
 
 :root{
     /* button background */
-    --button-bg: #E9B74E;
-    --button-bg-hover: #0D3E87;
+    --btn-bg: #E9B74E;
+    --btn-bg-hover: #0D3E87;
     /* button text */
-    --text-family: Roboto Condensed;
-    --text-size: small;
-    --text-weight: 300;
-    --text-color:#0D3E87;
-    --text-color-hover: #E9B74E;
+    --btn-text-family: Roboto Condensed;
+    --btn-text-size: medium;
+    --btn-text-weight: 400;
+    --btn-text-color:#0D3E87;
+    --btn-text-color-hover: #E9B74E;
 }
 
 button{
-    font-family: var(--text-family);
-    font-size: var(--text-size);
-    font-weight: var(--text-weight);
-    background-color: var(--button-bg);
-    color: var(--text-color);
+    font-family: var(--btn-text-family);
+    font-size: var(--btn-text-size);
+    font-weight: var(--btn-text-weight);
+    color: var(--btn-text-color);
+    background-color: var(--btn-bg);
     border-radius: 10px;
-    border: 2px solid var(--button-bg);
+    border: 2px solid var(--btn-bg);
     margin: 0.5rem;
     padding: 0.2rem 0.5rem;
 }
 
 button:hover {
-    background-color: var(--button-bg-hover);
-    color: var(--text-color-hover);
-    border: 2px solid var(--button-bg-hover);
+    background-color: var(--btn-bg-hover);
+    color: var(--btn-text-color-hover);
+    border: 2px solid var(--btn-bg-hover);
   }

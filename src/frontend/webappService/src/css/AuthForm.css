@@ -1,17 +1,17 @@
 /* import all fonts */
-@import url('https://fonts.googleapis.com/css2?family=Dosis:wght@300;400;500;600&family=Roboto+Condensed:wght@300;400;500;600;700&family=Teko:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Dosis:wght@300;400;500;600&family=Roboto+Condensed:wght@300;400;500;600;700&display=swap');
 
 :root{
-    /* container background */
-    --container-bg: #D7EBFC;
+    /* login background */
+    --login-bg: #D7EBFC;
     /* title page */
-    --title-family: Roboto Condensed;
-    --title-size: larger;
-    --title-weight: 700;
+    --login-title-family: Roboto Condensed;
+    --login-title-size: larger;
+    --login-title-weight: 700;
     /* text page */
-    --text-family: Dosis;
-    --text-size: medium;
-    --text-weight: 400;
+    --login-text-family: Dosis;
+    --login-text-size: medium;
+    --login-text-weight: 400;
 }
 
 .authentification-container{
@@ -19,19 +19,19 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    border: 1px solid var(--container-bg);
+    border: 1px solid var(--login-bg);
     border-radius: 5px;
     margin: auto;
     margin-top: 5rem;
     padding: 1rem;
     width: 25rem;
-    background-color: var(--container-bg);
+    background-color: var(--login-bg);
 }
 
 .login-title{
-    font-family: var(--title-family);
-    font-size: var(--title-size);
-    font-weight: var(--title-weight);
+    font-family: var(--login-title-family);
+    font-size: var(--login-title-size);
+    font-weight: var(--login-title-weight);
     padding: 1rem 1rem 0.5rem 1rem;
 }
 
@@ -44,9 +44,9 @@ form{
 }
 
 form label{
-    font-family: Dosis;
-    font-size: medium;
-    font-weight: 400;
+    font-family: var(--login-text-family);
+    font-size: var(--login-text-size);
+    font-weight: var(--login-text-weight);
     padding: 1rem;
     margin: 1rem;
 }
@@ -63,4 +63,16 @@ form input{
     align-items: center;
     margin: 0;
     padding-top: 1rem;
+}
+
+.error{
+    /* display: flex; */
+    /* justify-content: center; */
+    padding-top: 0.6rem;
+    padding-left: 1rem;
+    margin-left: 1rem;
+    font-family: var(--login-text-family);
+    font-size: var(--login-text-size);
+    font-weight: var(--login-text-weight);
+    color: red;
 }
