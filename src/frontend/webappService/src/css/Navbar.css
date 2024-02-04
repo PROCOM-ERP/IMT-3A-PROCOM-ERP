@@ -3,18 +3,19 @@
 
 /* Navbar variables */
 :root{
-    /* NAVBAR */
-    --nav-bg: #0D3E87;
+    /* NAVBAR #0D3E87 #E9B74E */
+    --nav-bg: #D7EBFC;
     /* LOGO */
     --logo-font: Teko;
     --logo-weight: 600;
     --logo-size: 2rem;
-    --logo-color: #E9B74E;
+    --logo-color: #000;
     /* TEXT */
     --text-font: Roboto Condensed;
     --text-weight: 600;
     --text-size: 1.2rem;
-    --text-color: #E9B74E;
+    --text-color: #000;
+    --text-color-hover: #E9B74E;
 }
 
 .navigation{
@@ -63,3 +64,6 @@
     width: 100%;
 }
 
+.navigation-menu li a:hover {
+    color: var(--text-color-hover);
+}

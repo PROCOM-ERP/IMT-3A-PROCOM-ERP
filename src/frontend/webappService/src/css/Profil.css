@@ -1,0 +1,21 @@
+/* import used fonts */
+@import url('https://fonts.googleapis.com/css2?family=Dosis:wght@300;400;500;600&family=Roboto+Condensed:wght@300;400;500;600;700&family=Teko:wght@300;400;500;600&display=swap');
+
+:root{
+    
+}
+
+.profil-container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.title{
+    font-family: var(--title-family);
+    font-size: var(--title-size);
+    font-weight: var(--title-weight);
+    margin: 2rem;
+    padding: 1rem;
+}

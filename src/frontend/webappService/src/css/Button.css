@@ -3,14 +3,14 @@
 
 :root{
     /* button background */
-    --btn-bg: #E9B74E;
-    --btn-bg-hover: #0D3E87;
+    --btn-bg: #F1D394;
+    --btn-bg-hover: #0A316C;
     /* button text */
     --btn-text-family: Roboto Condensed;
-    --btn-text-size: medium;
+    --btn-text-size: 1rem;
     --btn-text-weight: 400;
-    --btn-text-color:#0D3E87;
-    --btn-text-color-hover: #E9B74E;
+    --btn-text-color:#000000;
+    --btn-text-color-hover: #F1D394;
 }
 
 button{

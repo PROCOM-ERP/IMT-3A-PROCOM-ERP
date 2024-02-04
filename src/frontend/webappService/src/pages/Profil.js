@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
+import Button from "../components/Button.js"
+import "../css/App.css";
+import "../css/Profil.css";
 
 function Profil() {
   const [message, setMessage] = useState("");
@@ -38,18 +41,25 @@ function Profil() {
     department: "Software Engineering",
   };
 
+  function handleModif() {
+    console.log("handle modification TODO");
+  }
+
   return (
-    <div>
+    <>
       <Navbar />
-      <h1>Profil</h1>
-      <p>Firstname : {user.firstname}</p>
-      <p>Lastname : {user.lastname}</p>
-      <p>Age : {user.age}</p>
-      <p>Office : {user.office}</p>
-      <p>Department : {user.department}</p>
-      <p>Job : {user.job}</p>
-      <p>API Response: {message}</p>
-    </div>
+      <div className="profil-container">
+        <div className="title">Profil</div>
+        <p>Firstname : {user.firstname}</p>
+        <p>Lastname : {user.lastname}</p>
+        <p>Age : {user.age}</p>
+        <p>Office : {user.office}</p>
+        <p>Department : {user.department}</p>
+        <p>Job : {user.job}</p>
+        <p>API Response: {message}</p>
+        <Button type="button" value="modify" onClick={handleModif}>Modify</Button>
+      </div>
+    </>
   );
 }
 
