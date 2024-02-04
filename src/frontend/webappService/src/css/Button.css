@@ -1,23 +1,32 @@
 /* import all fonts */
 @import url('https://fonts.googleapis.com/css2?family=Dosis:wght@300;400;500;600&family=Roboto+Condensed:wght@300;400;500;600;700&family=Teko:wght@300;400;500;600&display=swap');
 
+:root{
+    /* button background */
+    --button-bg: #E9B74E;
+    --button-bg-hover: #0D3E87;
+    /* button text */
+    --text-family: Roboto Condensed;
+    --text-size: small;
+    --text-weight: 300;
+    --text-color:#0D3E87;
+    --text-color-hover: #E9B74E;
+}
+
 button{
-    font-family: Roboto Condensed;
-    font-size: medium;
-    font-weight: 400;
-    background-color: #E9B74E;
-    color: #0D3E87;
+    font-family: var(--text-family);
+    font-size: var(--text-size);
+    font-weight: var(--text-weight);
+    background-color: var(--button-bg);
+    color: var(--text-color);
     border-radius: 10px;
-    border: 2px solid #E9B74E;
+    border: 2px solid var(--button-bg);
     margin: 0.5rem;
-    padding-top: 0.2rem;
-    padding-bottom: 0.2rem;
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
+    padding: 0.2rem 0.5rem;
 }
 
 button:hover {
-    background-color: #0D3E87;
-    color: #E9B74E;
-    border: 2px solid #0D3E87;
+    background-color: var(--button-bg-hover);
+    color: var(--text-color-hover);
+    border: 2px solid var(--button-bg-hover);
   }

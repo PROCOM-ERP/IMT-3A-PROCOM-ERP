@@ -1,21 +1,52 @@
 /* import all fonts */
 @import url('https://fonts.googleapis.com/css2?family=Dosis:wght@300;400;500;600&family=Roboto+Condensed:wght@300;400;500;600;700&family=Teko:wght@300;400;500;600&display=swap');
 
-form{
+:root{
+    /* container background */
+    --container-bg: #D7EBFC;
+    /* title page */
+    --title-family: Roboto Condensed;
+    --title-size: larger;
+    --title-weight: 700;
+    /* text page */
+    --text-family: Dosis;
+    --text-size: medium;
+    --text-weight: 400;
+}
+
+.authentification-container{
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    border: 1px solid #ccc;
+    border: 1px solid var(--container-bg);
     border-radius: 5px;
     margin: auto;
-    padding: 10px;
+    margin-top: 5rem;
+    padding: 1rem;
+    width: 25rem;
+    background-color: var(--container-bg);
+}
+
+.login-title{
+    font-family: var(--title-family);
+    font-size: var(--title-size);
+    font-weight: var(--title-weight);
+    padding: 1rem 1rem 0.5rem 1rem;
+}
+
+form{
+    display: block;
+    flex-direction: column;
+    margin: 0;
+    padding: 2rem;
     width: auto;
-    background-color: blue;
 }
 
 form label{
     font-family: Dosis;
+    font-size: medium;
+    font-weight: 400;
     padding: 1rem;
     margin: 1rem;
 }
@@ -24,4 +55,12 @@ form input{
     border-radius: 5px;
     border-color: white;
     border: 2px solid white;
+}
+
+.authentification-btn{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    padding-top: 1rem;
 }

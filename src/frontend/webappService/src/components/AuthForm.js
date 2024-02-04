@@ -91,6 +91,8 @@ function Form() {
       
     return (
         <>
+        <div className="authentification-container">
+            <div className="login-title">Login</div>
             <form>
                 <div className='usernameInput'>
                 <label>
@@ -111,9 +113,6 @@ function Form() {
                 <div className='passwordInput'>
                 <label>
                     Password :
-                    
-                    
-
                 </label>
                 <input 
                         type={values.showPassword ? "text" : "password"}
@@ -127,10 +126,13 @@ function Form() {
                 {renderErrorMessage("passwordError")}
                 </div>
 
-                <Button type="submit" value="Submit" onClick={handleSubmit}>Submit</Button>
+                <div className="authentification-btn">
                 <Button type="reset" value="Reset" onClick={handleReset}>Reset</Button>
+                <Button type="submit" value="Submit" onClick={handleSubmit}>Submit</Button>
+                </div>
+
             </form> 
-            
+        </div>
         </>
     )
 }
