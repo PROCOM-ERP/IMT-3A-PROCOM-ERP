@@ -57,7 +57,7 @@ function Form() {
         });
     };
 
-    const handleReset = (event) => {
+    const handleReset = () => {
         setValues({
             ...values,
             "username" : "",
