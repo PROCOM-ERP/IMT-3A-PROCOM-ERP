@@ -33,6 +33,7 @@ public class Inventory {
     @Column(name = "isActive")
     private boolean isActive;
 
+    @Column(name = "isActive")
     @OneToMany(mappedBy = "inventory", cascade = CascadeType.ALL)
     private List<Item> items = new ArrayList<>();
 

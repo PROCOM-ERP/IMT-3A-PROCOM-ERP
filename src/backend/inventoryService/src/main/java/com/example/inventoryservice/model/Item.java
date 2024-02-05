@@ -24,4 +24,7 @@ public class Item {
     @JoinColumn(name = "id_address", nullable = false)
     private Address idAddress;
 
+    @NotNull
+    @ManyToOne
+    private Product product;
 }
