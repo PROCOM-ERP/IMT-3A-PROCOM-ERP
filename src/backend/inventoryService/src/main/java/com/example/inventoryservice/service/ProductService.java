@@ -58,18 +58,4 @@ public class ProductService {
                 .map(ItemService::itemToDto)
                 .toList();
     }
-
-    static ItemDto itemToDto(Item item){
-        return ItemDto.builder()
-                .quantity(item.getQuantity())
-                .transaction(item.).build();
-    }
-
-    static AddressDto addressToDto(Address address){
-
-    }
-
-    static TransactionDto transactionToDto(Transaction transaction){
-
-    }
 }
