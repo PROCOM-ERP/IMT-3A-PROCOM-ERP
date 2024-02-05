@@ -5,8 +5,11 @@ import com.example.authenticationservice.dto.RoleResponseAQMPDto;
 import com.example.authenticationservice.dto.RoleResponseDto;
 import com.example.authenticationservice.model.Employee;
 import com.example.authenticationservice.model.Role;
+import com.example.authenticationservice.model.RoleServiceId;
+import com.example.authenticationservice.model.RoleServices;
 import com.example.authenticationservice.repository.EmployeeRepository;
 import com.example.authenticationservice.repository.RoleRepository;
+import com.example.authenticationservice.repository.RoleServiceRepository;
 import com.example.authenticationservice.utils.RabbitMQSender;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.NonNull;
@@ -20,6 +23,7 @@ import java.util.stream.Collectors;
 public class RoleService {
 
     private final RoleRepository roleRepository;
+    private final RoleServiceRepository roleServiceRepository;
     private final PermissionService permissionService;
     private final EmployeeRepository employeeRepository;
     private final RabbitMQSender rabbitMQSender;
@@ -104,15 +108,25 @@ public class RoleService {
         roleRepository.save(role);
     }
 
-    public void updateRoleEnableCounter(String roleName, Boolean enable) {
+    public void updateRoleServiceEnable(String roleName, String service, Boolean enable) throws NoSuchElementException {
         // check if role exists
         Role role = roleRepository.findById(roleName).orElseThrow();
-        // set counter
-        int deltaCounter = enable ? 1 : -1;
-        role.setCounter(role.getCounter() + deltaCounter);
-        role.setEnable(role.getCounter() > 0);
+
+        // set enable property for matching service
+        RoleServiceId roleServiceId = RoleServiceId.builder().role(roleName).service(service).build();
+        RoleServices roleService = roleServiceRepository.findById(roleServiceId)
+                .map(rs -> {
+                    rs.setEnable(enable);
+                    return rs;
+                })
+                .orElse(RoleServices.builder()
+                        .role(role)
+                        .service(service)
+                        .enable(enable)
+                        .build());
+
         // save
-        roleRepository.save(role);
+        roleServiceRepository.save(roleService);
 
         // send message to other services to update all jwt_min_creation
         employeeRepository.updateAllJwtMinCreation();

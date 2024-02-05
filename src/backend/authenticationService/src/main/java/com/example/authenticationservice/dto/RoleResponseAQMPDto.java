@@ -8,7 +8,7 @@ import java.util.Set;
 public class RoleResponseAQMPDto {
 
     private String name;
+    private String service;
     private Boolean enable;
-    private Set<String> permissions;
 
 }

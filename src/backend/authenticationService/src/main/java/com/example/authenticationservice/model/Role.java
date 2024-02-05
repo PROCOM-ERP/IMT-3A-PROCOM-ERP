@@ -33,10 +33,10 @@ public class Role {
     private Boolean enable = true;
 
     @Builder.Default
-    @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(name = "role_services", joinColumns = @JoinColumn(name = "role"))
-    @Column(name = "service")
-    private Set<String> services = new LinkedHashSet<>();
+    @NotNull
+    @JsonIgnoreProperties("role")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "role")
+    private Set<RoleServices> services = new LinkedHashSet<>();
 
     @Builder.Default
     @JsonIgnoreProperties("roles")

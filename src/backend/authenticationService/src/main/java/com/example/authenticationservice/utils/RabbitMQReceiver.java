@@ -40,7 +40,7 @@ public class RabbitMQReceiver {
         // update local roles
         if (response.getStatusCode().is2xxSuccessful() && response.hasBody() && response.getBody() != null) {
             RoleResponseAQMPDto role = response.getBody();
-            roleService.updateRoleEnableCounter(role.getName(), role.getEnable());
+            roleService.updateRoleServiceEnable(role.getName(), role.getService(), role.getEnable());
             logger.info("Role activation status successfully set");
         } else {
             logger.error("Role activation status set failed");
