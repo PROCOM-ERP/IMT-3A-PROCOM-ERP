@@ -65,8 +65,6 @@ services:
     secrets:
       - DB_AUTHENTICATION_SERVICE_USER
       - DB_AUTHENTICATION_SERVICE_PASSWORD
-    expose:
-      - "${DB_AUTHENTICATION_SERVICE_PORT_INT}"
     ports:
       - "${DB_AUTHENTICATION_SERVICE_PORT_EXT}:${DB_AUTHENTICATION_SERVICE_PORT_INT}"
     networks:
@@ -94,8 +92,6 @@ services:
     secrets:
       - DB_DIRECTORY_SERVICE_USER
       - DB_DIRECTORY_SERVICE_PASSWORD
-    expose:
-      - "${DB_DIRECTORY_SERVICE_PORT_INT}"
     ports:
       - "${DB_DIRECTORY_SERVICE_PORT_EXT}:${DB_DIRECTORY_SERVICE_PORT_INT}"
     networks:
@@ -114,8 +110,6 @@ services:
   #      POSTGRES_USER: ${DB_LOCAL_TEST_SERVICE_USER}
   #      POSTGRES_PASSWORD: ${DB_LOCAL_TEST_SERVICE_PASSWORD}
   #      POSTGRES_DB: ${DB_LOCAL_TEST_SERVICE_DB}
-  #    expose:
-  #      - "${DB_LOCAL_TEST_SERVICE_PORT_INT}"
   #    ports:
   #      - "${DB_LOCAL_TEST_SERVICE_PORT_EXT}:${DB_LOCAL_TEST_SERVICE_PORT_INT}"
   #    networks:
@@ -194,8 +188,6 @@ services:
         BACKEND_MESSAGE_BROKER_SERVICE_PORT_INT: ${BACKEND_MESSAGE_BROKER_SERVICE_PORT_INT}
         SECURITY_TRUST_STORE_PATH: ${SECURITY_TRUST_STORE_PATH}
     image: auth-service
-    expose:
-      - ${BACKEND_AUTHENTICATION_SERVICE_PORT_INT}
     env_file: ./.env
     secrets:
       - DB_AUTHENTICATION_SERVICE_USER
@@ -230,8 +222,6 @@ services:
         BACKEND_MESSAGE_BROKER_SERVICE_PORT_INT: ${BACKEND_MESSAGE_BROKER_SERVICE_PORT_INT}
         SECURITY_TRUST_STORE_PATH: ${SECURITY_TRUST_STORE_PATH}
     image: dir-service
-    expose:
-      - ${BACKEND_DIRECTORY_SERVICE_PORT_INT}
     entrypoint: ${ENTRYPOINT}
     env_file: ./.env
     secrets:
