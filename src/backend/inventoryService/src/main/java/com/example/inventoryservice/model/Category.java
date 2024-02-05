@@ -6,7 +6,9 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -33,5 +35,5 @@ public class Category {
             joinColumns = @JoinColumn(name = "id_category"),
             inverseJoinColumns = @JoinColumn(name = "id_product")
     )
-    private Set<Product> products = new HashSet<>();
+    private List<Product> products = new ArrayList<>();
 }

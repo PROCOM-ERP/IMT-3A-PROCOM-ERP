@@ -1,6 +1,6 @@
 package com.example.inventoryservice.controller;
 
-import com.example.inventoryservice.dto.InventoryDto;
+import com.example.inventoryservice.dto.ItemDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

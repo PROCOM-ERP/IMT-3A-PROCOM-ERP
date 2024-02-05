@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Entity
@@ -24,4 +26,6 @@ public class Address {
     @Column(name = "description", length = Integer.MAX_VALUE)
     private String description;
 
+    @OneToMany
+    private List<Item> items;
 }

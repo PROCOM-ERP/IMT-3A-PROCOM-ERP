@@ -67,4 +67,36 @@ CREATE TABLE category_product (
     FOREIGN KEY (id_product) REFERENCES products(id_product)
 );
 
+INSERT INTO categories (title, description)
+VALUES ('test_category', 'test_description');
 
+
+INSERT INTO products (title, description)
+VALUES ('Nordinateur', 'gaming'),
+       ('Carte graphique', 'très performante'),
+       ('Chips', 'très craquantes');
+
+/*
+INSERT INTO category_product (id_product, id_category)
+VALUES (1, 1),
+       (2, 1);
+
+INSERT INTO items (quantity, id_address, id_product)
+VALUES (10, 1, 1);
+
+INSERT INTO addresses (title, description)
+VALUES ('entrepot de Malta Shopper', 'tkt');
+
+SELECT * FROM addresses;
+
+SELECT * FROM products;
+
+SELECT * FROM categories;
+
+SELECT * FROM items;
+
+SELECT * FROM transactions;
+
+SELECT * FROM category_product;
+
+*/

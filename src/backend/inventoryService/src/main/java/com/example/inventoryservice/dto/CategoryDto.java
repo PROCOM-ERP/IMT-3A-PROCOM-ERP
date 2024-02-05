@@ -7,9 +7,12 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-@Builder
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductListDto {
-    List<ProductDto> productDtoList;
+@Builder
+public class CategoryDto {
+    private String title;
+    private String description;
+    private List<ProductDto> products;
 }
