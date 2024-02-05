@@ -6,6 +6,8 @@ import com.example.inventoryservice.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -13,17 +15,26 @@ import java.util.stream.Collectors;
 public class ProductService {
     private final ProductRepository productRepository;
 
-    public ProductDto getProductById(int id){
-        return productRepository.findById(id)
+
+    public List<ProductDto> getProductById(int id){
+        List<ProductDto> productInList = new ArrayList<>();
+        productInList.add(productRepository.findById(id)
                 .map(ProductService::productToDto)
-                .orElseThrow();
+                .orElseThrow());
+        return productInList;
+    }
+
+    public List<ProductDto> getAllProducts(){
+        return productRepository.findAll()
+                .stream()
+                .map(ProductService::productToDto)
+                .toList();
     }
 
     static ProductDto productToDto(Product product) {
         return ProductDto.builder()
                 .title(product.getTitle())
                 .description(product.getDescription())
-
                 .build();
     }
 }

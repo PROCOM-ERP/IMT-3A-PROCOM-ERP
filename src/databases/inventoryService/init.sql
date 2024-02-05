@@ -66,3 +66,5 @@ CREATE TABLE category_product (
     FOREIGN KEY (id_category) REFERENCES categories(id_category),
     FOREIGN KEY (id_product) REFERENCES products(id_product)
 );
+
+

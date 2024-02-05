@@ -14,8 +14,14 @@ import java.util.List;
 @RequestMapping("/api/v1/inventory/product/")
 public class ProductController {
 
+    private final ProductService productService;
     @GetMapping("/{id}")
     public ResponseEntity<List<ProductDto>> getProductById(@PathVariable int id){
-        return ResponseEntity.ok(ProductService.getProductById());
+        return ResponseEntity.ok(productService.getProductById(id));
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<ProductDto>> getAllProducts(){
+        return ResponseEntity.ok(productService.getAllProducts());
     }
 }
