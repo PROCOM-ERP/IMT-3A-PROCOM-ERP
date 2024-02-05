@@ -161,8 +161,8 @@ public class RoleController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<String> updateRoleEnableCounter(@PathVariable String role,
-                                                          @RequestBody Boolean enable) {
+    public ResponseEntity<String> updateRoleEnable(@PathVariable String role,
+                                                   @RequestBody Boolean enable) {
         roleService.updateRoleServiceEnable(role, enable);
         return ResponseEntity.noContent().build();
     }

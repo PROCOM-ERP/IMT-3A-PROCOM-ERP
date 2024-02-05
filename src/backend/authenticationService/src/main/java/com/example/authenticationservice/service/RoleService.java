@@ -10,10 +10,16 @@ import com.example.authenticationservice.model.RoleServices;
 import com.example.authenticationservice.repository.EmployeeRepository;
 import com.example.authenticationservice.repository.RoleRepository;
 import com.example.authenticationservice.repository.RoleServiceRepository;
+import com.example.authenticationservice.utils.CustomHttpRequestBuilder;
 import com.example.authenticationservice.utils.RabbitMQSender;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -27,6 +33,8 @@ public class RoleService {
     private final PermissionService permissionService;
     private final EmployeeRepository employeeRepository;
     private final RabbitMQSender rabbitMQSender;
+    private final RestTemplate restTemplate;
+    private final CustomHttpRequestBuilder customHttpRequestBuilder;
 
     // private final Logger logger = LoggerFactory.getLogger(RoleService.class);
 
@@ -96,6 +104,24 @@ public class RoleService {
 
     public List<String> getRolesPermissions(@NonNull List<String> roleNames) {
         return roleRepository.findDistinctPermissionsByRoleNames(roleNames);
+    }
+
+    public RoleServices getExternalRole(@NonNull String getRoleByNamePath) {
+        // build request
+        String url = customHttpRequestBuilder.buildUrl(getRoleByNamePath);
+        HttpEntity<String> entity = customHttpRequestBuilder.buildHttpEntity();
+
+        // send request
+        ResponseEntity<RoleServices> response = restTemplate.exchange(url, HttpMethod.GET,
+                entity,
+                new ParameterizedTypeReference<>() {}); // response with custom type
+
+        // check if body is existing and consistent
+        if (! (response.getStatusCode().is2xxSuccessful() && response.hasBody() && response.getBody() != null))
+            throw new NoSuchElementException();
+
+        // return expected external role
+        return response.getBody();
     }
 
     public void updateRolePermissions(String roleName, List<String> permissions)

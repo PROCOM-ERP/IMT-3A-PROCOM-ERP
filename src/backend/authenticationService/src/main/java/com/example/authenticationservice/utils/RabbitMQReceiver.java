@@ -2,6 +2,7 @@ package com.example.authenticationservice.utils;
 
 import com.example.authenticationservice.dto.EmployeeResponseAQMPDto;
 import com.example.authenticationservice.dto.RoleResponseAQMPDto;
+import com.example.authenticationservice.model.RoleServices;
 import com.example.authenticationservice.service.EmployeeService;
 import com.example.authenticationservice.service.RoleService;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Component
 @RequiredArgsConstructor
@@ -30,19 +32,13 @@ public class RabbitMQReceiver {
     @RabbitListener(queues = "role-enable-modify-queue")
     public void receiveRoleEnableModifyMessage(String getRoleByNamePath) {
         logger.info("Message received to set a role activation status: " + getRoleByNamePath);
-        // build request
-        String url = customHttpRequestBuilder.buildUrl(getRoleByNamePath);
-        HttpEntity<String> entity = customHttpRequestBuilder.buildHttpEntity();
-        // send request
-        ResponseEntity<RoleResponseAQMPDto> response = restTemplate.exchange(url, HttpMethod.GET,
-                entity,
-                new ParameterizedTypeReference<>() {}); // response with custom type
-        // update local roles
-        if (response.getStatusCode().is2xxSuccessful() && response.hasBody() && response.getBody() != null) {
-            RoleResponseAQMPDto role = response.getBody();
-            roleService.updateRoleServiceEnable(role.getName(), role.getService(), role.getEnable());
-            logger.info("Role activation status successfully set");
-        } else {
+        try {
+            // try to get external role
+            RoleServices role = roleService.getExternalRole(getRoleByNamePath);
+            // update local roles
+            roleService.saveExternalRole(role);
+            lologger.info("Role activation status successfully set");
+        } catch (NoSuchElementException ignored) {
             logger.error("Role activation status set failed");
         }
     }
@@ -68,10 +64,17 @@ public class RabbitMQReceiver {
     }
 
     @RabbitListener(queues = "roles-new-queue")
-    public void receiveRolesNewMessage(String role) {
-        logger.info("Message received to add another service new role: " + role);
-        roleService.saveExternalRole(role);
-        logger.info("Roles successfully saved");
+    public void receiveRolesNewMessage(String getRoleByNamePath) {
+        logger.info("Message received to add another service new role: " + getRoleByNamePath);
+        try {
+            // try to get external role
+            RoleServices role = roleService.getExternalRole(getRoleByNamePath);
+            // update local roles
+            roleService.saveExternalRole(role);
+            logger.info("Role successfully saved");
+        } catch (NoSuchElementException ignored) {
+            logger.error("Role save failed");
+        }
     }
 
     @RabbitListener(queues = "employee-email-queue")
