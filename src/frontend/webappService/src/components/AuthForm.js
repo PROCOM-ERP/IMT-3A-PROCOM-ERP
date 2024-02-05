@@ -53,12 +53,11 @@ function Form() {
         setErrorMessage({});
     };
 
-    // Encodez les identifiants en Base64
+    // Encode identifiers in Base64
     const base64Credentials = btoa(`${user.username}:${user.password}`);
 
     // Prepare the 'Authorization' header with the value 'Basic' followed by the Base64-encoded string
     const headers = {
-        //'Content-Type': "text/plain",
         'Authorization': `Basic ${base64Credentials}`,
     };
 
@@ -81,8 +80,8 @@ function Form() {
             return res;
         })
         .then(data => {
-            localStorage.setItem("jwt", data); // Token stored in local storage
-            navigate("/home"); // Navogate to home page
+            localStorage.setItem("Token", data); // Token stored in local storage
+            navigate("/home"); // Navigate to home page
         })
         .catch(error => {
             setErrorMessage({ name: "credentialsError", message: errors.credentialsError }); // Set error for user
@@ -107,8 +106,6 @@ function Form() {
                         value={user.username}
                     />
                 </div>
-
-                <br/>
                 
                 <div className='passwordInput'>
                 <label>
