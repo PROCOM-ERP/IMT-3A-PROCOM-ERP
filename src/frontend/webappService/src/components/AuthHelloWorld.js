@@ -6,20 +6,19 @@ function AuthHelloWorld() {
         fetch("https://localhost:8041/api/auth/v1/hello", {
             method: "GET",
         })
-        .then((response) => response.json())
-        .then((data) => {
-            setHello(data[0].joke);
-            console.log(data);
+        .then((response) => {
+          if (!response.ok) throw new Error(response.status);
+          const res = response.text();
+          return res;
         })
+        .then((status) => console.log("[LOG] auth api response: ",status))
         .catch((error) => {
-            setHello(error);
-            console.log(error)});
+            console.error(error);
+        });
         
-    }, [])
+    }, []);
   return (
     <>
-    <h2>Authentification - Hello World</h2>
-    <p>{hello}</p>
     </>
   )
 }

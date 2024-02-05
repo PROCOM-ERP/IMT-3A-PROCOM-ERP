@@ -6,6 +6,7 @@ import AuthHelloWorld from '../components/AuthHelloWorld.js';
 function Authentification() {
   return (
     <>
+    <AuthHelloWorld/>
     <AuthForm/>
     </>
   )

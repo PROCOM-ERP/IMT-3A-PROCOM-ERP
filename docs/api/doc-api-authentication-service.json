@@ -29,7 +29,7 @@
     }
   ],
   "paths": {
-    "/api/v1/roles": {
+    "/api/auth/v1/roles": {
       "get": {
         "tags": [
           "roles"
@@ -113,7 +113,7 @@
         }
       }
     },
-    "/api/v1/employees": {
+    "/api/auth/v1/employees": {
       "get": {
         "tags": [
           "employees"
@@ -197,7 +197,7 @@
         }
       }
     },
-    "/api/v1/auth/jwt": {
+    "/api/auth/v1/auth/jwt": {
       "post": {
         "tags": [
           "auth"
@@ -233,7 +233,7 @@
         }
       }
     },
-    "/api/v1/roles/{role}/permissions": {
+    "/api/auth/v1/roles/{role}/permissions": {
       "patch": {
         "tags": [
           "roles"
@@ -299,7 +299,7 @@
         }
       }
     },
-    "/api/v1/roles/{role}/enable": {
+    "/api/auth/v1/roles/{role}/enable": {
       "patch": {
         "tags": [
           "roles"
@@ -362,7 +362,7 @@
         }
       }
     },
-    "/api/v1/employees/{idEmployee}/roles": {
+    "/api/auth/v1/employees/{idEmployee}/roles": {
       "patch": {
         "tags": [
           "employees"
@@ -428,7 +428,7 @@
         }
       }
     },
-    "/api/v1/employees/{idEmployee}/password": {
+    "/api/auth/v1/employees/{idEmployee}/password": {
       "patch": {
         "tags": [
           "employees"
@@ -497,7 +497,7 @@
         }
       }
     },
-    "/api/v1/employees/{idEmployee}/enable": {
+    "/api/auth/v1/employees/{idEmployee}/enable": {
       "get": {
         "tags": [
           "employees"
@@ -609,7 +609,7 @@
         }
       }
     },
-    "/api/v1/employees/{idEmployee}/email": {
+    "/api/auth/v1/employees/{idEmployee}/email": {
       "patch": {
         "tags": [
           "employees"
@@ -672,7 +672,7 @@
         }
       }
     },
-    "/api/v1/roles/{role}": {
+    "/api/auth/v1/roles/{role}": {
       "get": {
         "tags": [
           "roles"
@@ -723,7 +723,7 @@
         }
       }
     },
-    "/api/v1/permissions": {
+    "/api/auth/v1/permissions": {
       "get": {
         "tags": [
           "permissions"
@@ -757,7 +757,7 @@
         }
       }
     },
-    "/api/v1/hello": {
+    "/api/auth/v1/hello": {
       "get": {
         "tags": [
           "hello"
@@ -781,7 +781,7 @@
         }
       }
     },
-    "/api/v1/employees/{idEmployee}": {
+    "/api/auth/v1/employees/{idEmployee}": {
       "get": {
         "tags": [
           "employees"

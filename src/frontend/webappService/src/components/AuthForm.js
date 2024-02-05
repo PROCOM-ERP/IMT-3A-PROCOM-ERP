@@ -56,8 +56,9 @@ function Form() {
     // Encodez les identifiants en Base64
     const base64Credentials = btoa(`${user.username}:${user.password}`);
 
-    // Préparez l'en-tête 'Authorization' avec la valeur 'Basic' suivie de la chaîne encodée en Base64
+    // Prepare the 'Authorization' header with the value 'Basic' followed by the Base64-encoded string
     const headers = {
+        //'Content-Type': "text/plain",
         'Authorization': `Basic ${base64Credentials}`,
     };
 
@@ -65,25 +66,8 @@ function Form() {
         // Prevent the browser from reloading the page
         event.preventDefault();
 
-        // Find user login info
-        // TODO : demander à Thibaut get user en fonction du username (est-ce que le username existe ou que l'email?)
-        //const userData = database.find((user) => user.username === user.username);
-
-        // Compare user info
-        // TODO : demander à Thibaut comparaison password pour valider la connexion (API)
-        //if (userData) {
-        //    if (userData.password !== user.password) {
-        //        // Invalid password
-        //        setErrorMessage({ name: "passwordError", message: errors.passwordError });
-        //    } else {
-        //        navigate('/home');
-        //    }
-        //} else {
-            // Username not found
-        //    setErrorMessage({ name: "usernameError", message: errors.usernameError });
-
-        // Define the API URL
-        const apiUrl = "https://localhost:8041/api/auth/v1/jwt";
+        // API URL
+        const apiUrl = "https://localhost:8041/api/auth/v1/auth/jwt";
 
         // Make the API request
         fetch(apiUrl, {
@@ -93,14 +77,15 @@ function Form() {
         })
         .then((response) => {
             if (!response.ok) throw new Error(response.status);
-            response.json();
+            const res = response.text();
+            return res;
         })
         .then(data => {
-            console.log(data);
-            // Traitement des données de la réponse ici
+            localStorage.setItem("jwt", data); // Token stored in local storage
+            navigate("/home"); // Navogate to home page
         })
         .catch(error => {
-            setErrorMessage({ name: "credentialsError", message: errors.credentialsError });
+            setErrorMessage({ name: "credentialsError", message: errors.credentialsError }); // Set error for user
             console.error('API request error: ', error);
         });
     }
@@ -121,7 +106,6 @@ function Form() {
                         onChange={handleValueChange("username")}
                         value={user.username}
                     />
-                {renderErrorMessage("usernameError")}
                 </div>
 
                 <br/>
@@ -139,7 +123,7 @@ function Form() {
                 <Button onClick={handleClickShowPassword} onMouseDown={handleMouseDownPassword} >   
                     {user.showPassword ? "O" : "X" } 
                 </Button>
-                {renderErrorMessage("passwordError")}
+                {renderErrorMessage("credentialsError")}
                 </div>
 
                 <div className="authentification-btn">
