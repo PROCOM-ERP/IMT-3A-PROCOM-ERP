@@ -1,11 +1,12 @@
 import React from 'react'
 import Navbar from '../components/Navbar'
+import DirectoryTable from '../components/DirectoryTable'
 
 function Directory() {
   return (
     <>
     <Navbar/>
-    <h1>Directory</h1>
+    <DirectoryTable/>
     </>
   )
 }

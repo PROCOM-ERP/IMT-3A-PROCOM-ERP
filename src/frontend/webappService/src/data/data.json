@@ -1,0 +1,31 @@
+{
+    "users": [
+        {
+            "id": 0,
+            "firstname": "Aïna",
+            "lastname": "Dirou",
+            "age": 22,
+            "job": "Frontend Developper",
+            "office": "Brest",
+            "department": "Software Engineering"
+        },
+        {
+            "id": 1,
+            "firstname": "Chloé",
+            "lastname": "Benoît",
+            "age": 23,
+            "job": "Network engineer",
+            "office": "Brest",
+            "department": "Network Engineering"
+        },
+        {
+            "id": 2,
+            "firstname": "Antoine",
+            "lastname": "Dagorn",
+            "age": 23,
+            "job": "Project manager",
+            "office": "New York",
+            "department": "Network Engineering"
+        }
+    ]
+}
