@@ -35,9 +35,23 @@ CREATE TABLE roles
 (
     name VARCHAR(32) UNIQUE NOT NULL,
     enable BOOLEAN NOT NULL DEFAULT true,
-    counter INTEGER NOT NULL DEFAULT 1,
 
     CONSTRAINT pk_roles PRIMARY KEY (name)
+);
+
+-- +----------------------------------------------------------------------------------------------+
+
+CREATE TABLE role_services
+(
+    role VARCHAR(32) NOT NULL,
+    service VARCHAR(32) NOT NULL,
+    enable BOOLEAN NOT NULL DEFAULT true,
+
+    CONSTRAINT pk_role_services
+        PRIMARY KEY (role, service),
+    CONSTRAINT fk_role_services_table_roles
+        FOREIGN KEY (role) REFERENCES roles(name)
+            ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 -- +----------------------------------------------------------------------------------------------+
@@ -84,6 +98,12 @@ VALUES ('A00001', '$2a$10$MAxOfcOCypgcExmZjSp/Fu1rMBbepSZPGDX9y4u1XLkKipYsrVcnK'
 INSERT INTO roles (name)
 VALUES ('employee'),
        ('admin');
+
+-- +----------------------------------------------------------------------------------------------+
+
+INSERT INTO role_services (role, service)
+VALUES ('employee', 'authentication'),
+       ('admin', 'authentication');
 
 -- +----------------------------------------------------------------------------------------------+
 
