@@ -7,7 +7,9 @@
             "age": 22,
             "job": "Frontend Developper",
             "office": "Brest",
-            "department": "Software Engineering"
+            "department": "Software Engineering",
+            "username": "aina",
+            "password": "aina"
         },
         {
             "id": 1,
@@ -16,7 +18,9 @@
             "age": 23,
             "job": "Network engineer",
             "office": "Brest",
-            "department": "Network Engineering"
+            "department": "Network Engineering",
+            "username": "chloe",
+            "password": "chloe"
         },
         {
             "id": 2,
@@ -25,7 +29,9 @@
             "age": 23,
             "job": "Project manager",
             "office": "New York",
-            "department": "Network Engineering"
+            "department": "Network Engineering",
+            "username": "antoine",
+            "password": "antoine"
         }
     ]
 }

@@ -5,7 +5,6 @@ import "../css/App.css";
 import "../css/Profil.css";
 
 function Profil() {
-  const [message, setMessage] = useState("");
 
   useEffect(() => {
     // Define the API URL
@@ -24,7 +23,7 @@ function Profil() {
       })
       .then((data) => {
         console.log("API Response:", data); // Check the response in the console
-        setMessage(data); // Set the response as the message
+        //setMessage(data); // Set the response as the message
       })
       .catch((error) => {
         console.error("API request error:", error);
@@ -56,7 +55,6 @@ function Profil() {
         <p>Office : {user.office}</p>
         <p>Department : {user.department}</p>
         <p>Job : {user.job}</p>
-        <p>API Response: {message}</p>
         <Button type="button" value="modify" onClick={handleModif}>Modify</Button>
       </div>
     </>

@@ -1,6 +1,6 @@
 import "../css/App.css";
 import "../css/AuthForm.css";
-import React from 'react';
+import React, {useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from "./Button";
 
@@ -8,28 +8,15 @@ function Form() {
     // React State
     const navigate = useNavigate();
     const [errorMessage, setErrorMessage] = React.useState({});
-    const [values, setValues] = React.useState({
+    const [user, setUser] = useState({
         username: "",
         password: "",
         showPassword: false,
     });
 
-    // User login info
-    const database = [
-        {
-          username: "user1",
-          password: "pass1"
-        },
-        {
-          username: "user2",
-          password: "pass2"
-        }
-    ];
-
     // User login error
     const errors = {
-        usernameError: "Invalid username",
-        passwordError: "Invalid password"
+        credentialsError: "Invalid credentials"
     };
 
     // Generate JSX code for error message
@@ -37,12 +24,12 @@ function Form() {
     name === errorMessage.name && (
         <div className="error">{errorMessage.message}</div>
     );
-    
+
     const handleClickShowPassword = (event) => {
         event.preventDefault();
-        setValues({
-            ...values,
-            showPassword: !values.showPassword,
+        setUser({
+            ...user,
+            showPassword: !user.showPassword,
         });
     };
  
@@ -51,19 +38,27 @@ function Form() {
     };
  
     const handleValueChange = (prop) => (event) => {
-        setValues({
-            ...values,
+        setUser({
+            ...user,
             [prop]: event.target.value,
         });
     };
 
     const handleReset = () => {
-        setValues({
-            ...values,
+        setUser({
+            ...user,
             "username" : "",
             "password" : "",
         });
         setErrorMessage({});
+    };
+
+    // Encodez les identifiants en Base64
+    const base64Credentials = btoa(`${user.username}:${user.password}`);
+
+    // Préparez l'en-tête 'Authorization' avec la valeur 'Basic' suivie de la chaîne encodée en Base64
+    const headers = {
+        'Authorization': `Basic ${base64Credentials}`,
     };
 
     function handleSubmit(event) {
@@ -72,23 +67,44 @@ function Form() {
 
         // Find user login info
         // TODO : demander à Thibaut get user en fonction du username (est-ce que le username existe ou que l'email?)
-        const userData = database.find((user) => user.username === values.username);
+        //const userData = database.find((user) => user.username === user.username);
 
         // Compare user info
         // TODO : demander à Thibaut comparaison password pour valider la connexion (API)
-        if (userData) {
-            if (userData.password !== values.password) {
-                // Invalid password
-                setErrorMessage({ name: "passwordError", message: errors.passwordError });
-            } else {
-                navigate('/home');
-            }
-        } else {
+        //if (userData) {
+        //    if (userData.password !== user.password) {
+        //        // Invalid password
+        //        setErrorMessage({ name: "passwordError", message: errors.passwordError });
+        //    } else {
+        //        navigate('/home');
+        //    }
+        //} else {
             // Username not found
-            setErrorMessage({ name: "usernameError", message: errors.usernameError });
-        }
-      }
-      
+        //    setErrorMessage({ name: "usernameError", message: errors.usernameError });
+
+        // Define the API URL
+        const apiUrl = "https://localhost:8041/api/auth/v1/jwt";
+
+        // Make the API request
+        fetch(apiUrl, {
+        method: "POST",
+        credentials: "include",
+        headers: headers,
+        })
+        .then((response) => {
+            if (!response.ok) throw new Error(response.status);
+            response.json();
+        })
+        .then(data => {
+            console.log(data);
+            // Traitement des données de la réponse ici
+        })
+        .catch(error => {
+            setErrorMessage({ name: "credentialsError", message: errors.credentialsError });
+            console.error('API request error: ', error);
+        });
+    }
+         
     return (
         <>
         <div className="authentification-container">
@@ -103,7 +119,7 @@ function Form() {
                         type="text"
                         name="username"
                         onChange={handleValueChange("username")}
-                        value={values.username}
+                        value={user.username}
                     />
                 {renderErrorMessage("usernameError")}
                 </div>
@@ -115,13 +131,13 @@ function Form() {
                     Password :
                 </label>
                 <input 
-                        type={values.showPassword ? "text" : "password"}
+                        type={user.showPassword ? "text" : "password"}
                         name="password"
                         onChange={handleValueChange("password")}
-                        value={values.password}
+                        value={user.password}
                     />
                 <Button onClick={handleClickShowPassword} onMouseDown={handleMouseDownPassword} >   
-                    {values.showPassword ? "O" : "X" } 
+                    {user.showPassword ? "O" : "X" } 
                 </Button>
                 {renderErrorMessage("passwordError")}
                 </div>
