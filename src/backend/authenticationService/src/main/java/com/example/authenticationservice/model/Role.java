@@ -33,9 +33,10 @@ public class Role {
     private Boolean enable = true;
 
     @Builder.Default
-    @NotNull
-    @Column(name = "counter", nullable = false)
-    private Integer counter = 1;
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "role_services", joinColumns = @JoinColumn(name = "role"))
+    @Column(name = "service")
+    private Set<String> services = new LinkedHashSet<>();
 
     @Builder.Default
     @JsonIgnoreProperties("roles")
