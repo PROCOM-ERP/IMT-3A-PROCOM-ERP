@@ -81,6 +81,7 @@ function Form() {
             return res;
         })
         .then(data => {
+            localStorage.setItem("id", user.username);
             localStorage.setItem(tokenName, data); // Token stored in local storage
             console.log("[LOG] JWT retrieved and stored");
             navigate("/home"); // Navigate to home page
