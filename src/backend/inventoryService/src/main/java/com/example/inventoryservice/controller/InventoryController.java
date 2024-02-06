@@ -1,6 +1,6 @@
 package com.example.inventoryservice.controller;
 
-import com.example.inventoryservice.dto.ItemDto;
+import com.example.inventoryservice.dtoProduct.ItemDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -14,13 +14,13 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/inventory")
 public class InventoryController {
-
+/*
     private final InventoryService inventoryService;
     /**
      * Function that return all the items of a specific inventory.
      *
      * @return List of ItemsDto.
-     */
+     *//*
     @GetMapping("/{id}")
     public ResponseEntity<InventoryDto> getInventoryById(@PathVariable int id) {
         return inventoryService.getInventoryById(id)
@@ -61,7 +61,7 @@ public class InventoryController {
     /**
      * Function that return all the users of the selected inventory.
      * @return List of ItemsDto.
-     */
+     *//*
     public ResponseEntity<List<ItemDto>> getAllInventory(int inventoryId){
         return null; // to do
     }
@@ -72,5 +72,5 @@ public class InventoryController {
                 .build(); // to do
     }
 
-
+*/
 }

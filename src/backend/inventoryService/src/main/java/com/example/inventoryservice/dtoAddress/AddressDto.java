@@ -1,6 +1,11 @@
-package com.example.inventoryservice.dto;
+package com.example.inventoryservice.dtoAddress;
+
+import com.example.inventoryservice.dtoProduct.ItemDto;
+
+import java.util.List;
 
 public class AddressDto {
+    private Integer id;
     private String number;
     private String street;
     private String city;
@@ -8,4 +13,5 @@ public class AddressDto {
     private String country; // Comme les kinder.
     private String postal_code;
     private String info;
+    private List<ItemDto> items;
 }

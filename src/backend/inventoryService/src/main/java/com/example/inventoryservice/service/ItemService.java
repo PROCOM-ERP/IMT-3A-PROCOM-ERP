@@ -1,16 +1,10 @@
 package com.example.inventoryservice.service;
 
-import com.example.inventoryservice.dto.ItemDto;
-import com.example.inventoryservice.dto.ProductDto;
-import com.example.inventoryservice.dto.TransactionDto;
+import com.example.inventoryservice.dtoProduct.ItemDto;
 import com.example.inventoryservice.model.Item;
-import com.example.inventoryservice.model.Product;
-import com.example.inventoryservice.model.Transaction;
 import com.example.inventoryservice.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor

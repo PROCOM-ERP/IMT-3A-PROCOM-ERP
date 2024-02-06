@@ -1,6 +1,5 @@
-package com.example.inventoryservice.dto;
+package com.example.inventoryservice.dtoProduct;
 
-import com.example.inventoryservice.model.Transaction;
 import com.example.inventoryservice.model.Address;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,7 +13,8 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class ItemDto {
+    private Integer id;
     private Integer quantity;
-    private List<Transaction> transactions;
-    private Address address;
+    private List<TransactionDto> transactions;
+    private AddressDto address;
 }

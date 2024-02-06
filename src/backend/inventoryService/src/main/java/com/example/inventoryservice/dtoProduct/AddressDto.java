@@ -1,8 +1,7 @@
-package com.example.inventoryservice.dto;
+package com.example.inventoryservice.dtoProduct;
 
-import java.util.List;
-
-public class FullAddressDto {
+public class AddressDto {
+    private Integer id;
     private String number;
     private String street;
     private String city;
@@ -10,6 +9,4 @@ public class FullAddressDto {
     private String country; // Comme les kinder.
     private String postal_code;
     private String info;
-
-    // Add information for reverse searching: From Address to Items, products, category.
 }
