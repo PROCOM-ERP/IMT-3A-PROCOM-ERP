@@ -51,7 +51,7 @@ services:
   # +---------------------------------------------------------------------------+
   postgres-procom-erp-authentication-service:
     hostname: ${DB_AUTHENTICATION_SERVICE_HOSTNAME}
-    image: db-authentication
+    image: ${DB_AUTHENTICATION_SERVICE_HOSTNAME}:${DB_AUTHENTICATION_SERVICE_IMAGE_VERSION}
     build:
       context: ${DB_AUTHENTICATION_SERVICE_PATH}
       dockerfile: Dockerfile
@@ -65,11 +65,12 @@ services:
     secrets:
       - DB_AUTHENTICATION_SERVICE_USER
       - DB_AUTHENTICATION_SERVICE_PASSWORD
+    deploy:
+      replicas: 1
     ports:
       - "${DB_AUTHENTICATION_SERVICE_PORT_EXT}:${DB_AUTHENTICATION_SERVICE_PORT_INT}"
     networks:
-      vnet-procom-erp:
-        ipv4_address: ${DB_AUTHENTICATION_SERVICE_IP_INT}
+      - vnet-procom-erp
     volumes:
       - db-procom-erp-authentication-service-data:/var/lib/postgresql/data
     command: -c 'config_file=/etc/postgresql/postgresql.conf'
@@ -78,7 +79,6 @@ services:
 
   postgres-procom-erp-directory-service:
     hostname: ${DB_DIRECTORY_SERVICE_HOSTNAME}
-    image: db-directory
     build:
       context: ${DB_DIRECTORY_SERVICE_PATH}
       dockerfile: Dockerfile
@@ -89,14 +89,16 @@ services:
       POSTGRES_DB: ${DB_DIRECTORY_SERVICE_DB}
       POSTGRES_PORT: ${DB_DIRECTORY_SERVICE_PORT_INT}
       PGPORT: ${DB_DIRECTORY_SERVICE_PORT_INT}
+    image: ${DB_DIRECTORY_SERVICE_HOSTNAME}:${DB_DIRECTORY_SERVICE_IMAGE_VERSION}
+    deploy:
+      replicas: 1
     secrets:
       - DB_DIRECTORY_SERVICE_USER
       - DB_DIRECTORY_SERVICE_PASSWORD
     ports:
       - "${DB_DIRECTORY_SERVICE_PORT_EXT}:${DB_DIRECTORY_SERVICE_PORT_INT}"
     networks:
-      vnet-procom-erp:
-        ipv4_address: ${DB_DIRECTORY_SERVICE_IP_INT}
+      - vnet-procom-erp
     volumes:
       - db-procom-erp-directory-service-data:/var/lib/postgresql/data
     command: -c 'config_file=/etc/postgresql/postgresql.conf'
@@ -132,7 +134,10 @@ services:
       dockerfile: Dockerfile
       args:
         RABBIT_MQ_IMAGE: ${RABBIT_MQ_IMAGE}
-    image: message-broker-service
+        BACKEND_MESSAGE_BROKER_SERVICE_PORT_INT: ${BACKEND_MESSAGE_BROKER_SERVICE_PORT_INT}
+    image: ${BACKEND_MESSAGE_BROKER_SERVICE_HOSTNAME}:${BACKEND_MESSAGE_BROKER_SERVICE_IMAGE_VERSION}
+    deploy:
+      replicas: 1
     ports:
       - "${BACKEND_MESSAGE_BROKER_SERVICE_PORT_EXT}:${BACKEND_MESSAGE_BROKER_SERVICE_PORT_INT}"
       - "${BACKEND_MESSAGE_BROKER_SERVICE_ADMIN_PORT_EXT}:${BACKEND_MESSAGE_BROKER_SERVICE_ADMIN_PORT_INT}"
@@ -143,8 +148,7 @@ services:
       - SECURITY_JWT_SECRET_KEY
       - SECURITY_TRUST_STORE_PASSWORD
     networks:
-      vnet-procom-erp:
-        ipv4_address: ${BACKEND_MESSAGE_BROKER_SERVICE_IP_INT}
+      - vnet-procom-erp
 
   # +---------------------------------------------------------------------------+
 
@@ -158,7 +162,9 @@ services:
         BACKEND_GATEWAY_SERVICE_PORT_INT: ${BACKEND_GATEWAY_SERVICE_PORT_INT}
         ENTRYPOINT: ${ENTRYPOINT}
         SECURITY_TRUST_STORE_PATH: ${SECURITY_TRUST_STORE_PATH}
-    image: gateway-service
+    image: ${BACKEND_GATEWAY_SERVICE_HOSTNAME}:${BACKEND_GATEWAY_SERVICE_IMAGE_VERSION}
+    deploy:
+      replicas: 1
     ports:
       - "${BACKEND_GATEWAY_SERVICE_PORT_EXT}:${BACKEND_GATEWAY_SERVICE_PORT_INT}"
     env_file: ./.env
@@ -170,8 +176,7 @@ services:
       - SECURITY_SERVICES_SHARED_KEY
       - SECURITY_TRUST_STORE_PASSWORD
     networks:
-      vnet-procom-erp:
-        ipv4_address: ${BACKEND_GATEWAY_SERVICE_IP_INT}
+      - vnet-procom-erp
 
   # +---------------------------------------------------------------------------+
 
@@ -184,10 +189,11 @@ services:
         JAVA_IMAGE: ${JAVA_IMAGE}
         BACKEND_AUTHENTICATION_SERVICE_PORT_INT: ${BACKEND_AUTHENTICATION_SERVICE_PORT_INT}
         ENTRYPOINT: ${ENTRYPOINT}
-        BACKEND_MESSAGE_BROKER_SERVICE_IP_INT: ${BACKEND_MESSAGE_BROKER_SERVICE_IP_INT}
         BACKEND_MESSAGE_BROKER_SERVICE_PORT_INT: ${BACKEND_MESSAGE_BROKER_SERVICE_PORT_INT}
         SECURITY_TRUST_STORE_PATH: ${SECURITY_TRUST_STORE_PATH}
-    image: auth-service
+    image: ${BACKEND_AUTHENTICATION_SERVICE_HOSTNAME}:${BACKEND_AUTHENTICATION_SERVICE_IMAGE_VERSION}
+    deploy:
+      replicas: 1
     env_file: ./.env
     secrets:
       - DB_AUTHENTICATION_SERVICE_USER
@@ -204,8 +210,7 @@ services:
       - "postgres-procom-erp-authentication-service"
       - "springboot-procom-erp-message-broker-service"
     networks:
-      vnet-procom-erp:
-        ipv4_address: ${BACKEND_AUTHENTICATION_SERVICE_IP_INT}
+      - vnet-procom-erp
 
   # +---------------------------------------------------------------------------+
 
@@ -218,10 +223,11 @@ services:
         JAVA_IMAGE: ${JAVA_IMAGE}
         BACKEND_DIRECTORY_SERVICE_PORT_INT: ${BACKEND_DIRECTORY_SERVICE_PORT_INT}
         ENTRYPOINT: ${ENTRYPOINT}
-        BACKEND_MESSAGE_BROKER_SERVICE_IP_INT: ${BACKEND_MESSAGE_BROKER_SERVICE_IP_INT}
         BACKEND_MESSAGE_BROKER_SERVICE_PORT_INT: ${BACKEND_MESSAGE_BROKER_SERVICE_PORT_INT}
         SECURITY_TRUST_STORE_PATH: ${SECURITY_TRUST_STORE_PATH}
-    image: dir-service
+    image: ${BACKEND_DIRECTORY_SERVICE_HOSTNAME}:${BACKEND_DIRECTORY_SERVICE_IMAGE_VERSION}
+    deploy:
+      replicas: 1
     entrypoint: ${ENTRYPOINT}
     env_file: ./.env
     secrets:
@@ -240,8 +246,7 @@ services:
       - "springboot-procom-erp-message-broker-service"
       - "springboot-procom-erp-authentication-service"
     networks:
-      vnet-procom-erp:
-        ipv4_address: ${BACKEND_DIRECTORY_SERVICE_IP_INT}
+      - vnet-procom-erp
 
   # +---------------------------------------------------------------------------+
   # | Frontend containers section (mask: 10.200.1.192/26)                       |
