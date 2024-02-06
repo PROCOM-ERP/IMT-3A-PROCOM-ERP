@@ -2,15 +2,15 @@ package com.example.authenticationservice.model;
 
 public enum Permission {
 
-    CanCreateEmployee,
+    CanCreateLoginProfile,
     CanCreateRole,
-    CanDeactivateEmployee,
+    CanDeactivateLoginProfile,
     CanDeactivateRole,
-    CanModifyEmployeeEmail,
-    CanModifyEmployeePassword,
-    CanModifyEmployeeRoles,
+    CanModifyLoginProfileEmail,
+    CanModifyLoginProfilePassword,
+    CanModifyLoginProfileRoles,
     CanModifyRolePermissions,
-    CanReadEmployee,
+    CanReadLoginProfile,
     CanReadPermission,
     CanReadRole
 

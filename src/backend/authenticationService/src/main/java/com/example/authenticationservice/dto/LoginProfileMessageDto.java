@@ -8,8 +8,8 @@ import java.time.LocalDate;
 public class LoginProfileMessageDto {
 
     private String id;
-    private LocalDate creation;
-    private Boolean enable;
+    private LocalDate createdAt;
+    private Boolean isEnable;
     private String lastName;
     private String firstName;
     private String email;

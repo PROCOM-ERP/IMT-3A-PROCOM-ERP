@@ -20,7 +20,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping(Path.V1_EMPLOYEES)
+@RequestMapping(Path.V1_LOGIN_PROFILES)
 @RequiredArgsConstructor
 public class LoginProfileController {
 
@@ -55,7 +55,7 @@ public class LoginProfileController {
         // generate URI location to inform the client how to get information on the new loginProfile
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
-                .path(Path.EMPLOYEE_ID)
+                .path(Path.LOGIN_PROFILE_ID)
                 .buildAndExpand(idLoginProfile)
                 .toUri();
         // send the response with 201 Http status
@@ -81,7 +81,7 @@ public class LoginProfileController {
         return ResponseEntity.ok(loginProfileService.getAllLoginProfiles());
     }
 
-    @GetMapping(Path.EMPLOYEE_ID)
+    @GetMapping(Path.LOGIN_PROFILE_ID)
     @Operation(operationId = "getLoginProfile", tags = {"loginProfiles"},
             summary = "Retrieve one loginProfile information", description =
             "Retrieve one loginProfile information, by providing its id (username).",
@@ -105,7 +105,7 @@ public class LoginProfileController {
         return ResponseEntity.ok(loginProfileService.getLoginProfile(idLoginProfile));
     }
 
-    @GetMapping(Path.EMPLOYEE_ID_ENABLE)
+    @GetMapping(Path.LOGIN_PROFILE_ID_ENABLE)
     @Operation(operationId = "getLoginProfileEnable", tags = {"loginProfiles"},
             summary = "Retrieve one loginProfile information about activation status", description =
             "Retrieve one loginProfile information about activation status, by providing its id (username).",
@@ -129,7 +129,7 @@ public class LoginProfileController {
         return ResponseEntity.ok(loginProfileService.getLoginProfileEnable(idLoginProfile));
     }
 
-    @PatchMapping(Path.EMPLOYEE_ID_PASSWORD)
+    @PatchMapping(Path.LOGIN_PROFILE_ID_PASSWORD)
     @Operation(operationId = "updateLoginProfilePassword", tags = {"loginProfiles"},
             summary = "Update an loginProfile password", description =
             "Update an loginProfile password. Only available for the loginProfile itself.",
@@ -161,7 +161,7 @@ public class LoginProfileController {
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping(Path.EMPLOYEE_ID_ROLES)
+    @PatchMapping(Path.LOGIN_PROFILE_ID_ROLES)
     @Operation(operationId = "updateLoginProfileRoles", tags = {"loginProfiles"},
             summary = "Update an loginProfile roles", description =
             "Update an loginProfile roles, by providing a list of all the new ones.<br>" +
@@ -192,7 +192,7 @@ public class LoginProfileController {
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping(Path.EMPLOYEE_ID_EMAIL)
+    @PatchMapping(Path.LOGIN_PROFILE_ID_EMAIL)
     @Operation(operationId = "updateLoginProfileEmail", tags = {"loginProfiles"},
             summary = "Update an loginProfile email", description =
             "Update an loginProfile email, by providing the new one.<br>" +
@@ -222,7 +222,7 @@ public class LoginProfileController {
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping(Path.EMPLOYEE_ID_ENABLE)
+    @PatchMapping(Path.LOGIN_PROFILE_ID_ENABLE)
     @Operation(operationId = "updateLoginProfileEnable", tags = {"loginProfiles"},
             summary = "Enable or disable an loginProfile", description =
             "Enable or disable an loginProfile, by providing a new enable value (true or false).<br>" +

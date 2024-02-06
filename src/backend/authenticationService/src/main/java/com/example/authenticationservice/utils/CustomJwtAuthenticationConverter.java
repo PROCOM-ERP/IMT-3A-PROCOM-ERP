@@ -1,6 +1,6 @@
 package com.example.authenticationservice.utils;
 
-import com.example.authenticationservice.repository.EmployeeRepository;
+import com.example.authenticationservice.repository.LoginProfileRepository;
 import com.example.authenticationservice.repository.RoleRepository;
 import com.example.authenticationservice.service.PermissionService;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +31,7 @@ public class CustomJwtAuthenticationConverter implements Converter<Jwt, Abstract
 
     private final PermissionService permissionService;
     private final RoleRepository roleRepository;
-    private final EmployeeRepository employeeRepository;
+    private final LoginProfileRepository employeeRepository;
 
     //private final Logger logger = LoggerFactory.getLogger(CustomJwtAuthenticationConverter.class);
 
@@ -50,8 +50,7 @@ public class CustomJwtAuthenticationConverter implements Converter<Jwt, Abstract
 
     private void checkTokenValidity(Jwt jwt) throws InsufficientAuthenticationException {
         Instant jwtMinCreation = employeeRepository.findById(jwt.getSubject())
-                .orElseThrow(() -> new InsufficientAuthenticationException("")).getJwtMinCreation()
-                .atZone(ZoneId.systemDefault()).toInstant();
+                .orElseThrow(() -> new InsufficientAuthenticationException("")).getJwtGenMinAt();
         if (jwt.getIssuedAt() == null || jwt.getIssuedAt().isBefore(jwtMinCreation))
             throw new InsufficientAuthenticationException("");
     }

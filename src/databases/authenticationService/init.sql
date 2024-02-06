@@ -115,15 +115,15 @@ VALUES ('A00001', 'admin'),
 -- +----------------------------------------------------------------------------------------------+
 
 INSERT INTO role_permissions (role, permission)
-VALUES ('admin', 'CanCreateEmployee'),
-       ('admin', 'CanReadEmployee'),
-       ('admin', 'CanModifyEmployeeRoles'),
-       ('admin', 'CanModifyEmployeeEmail'),
-       ('admin', 'CanDeactivateEmployee'),
+VALUES ('admin', 'CanCreateLoginProfile'),
+       ('admin', 'CanReadLoginProfile'),
+       ('admin', 'CanModifyLoginProfileRoles'),
+       ('admin', 'CanModifyLoginProfileEmail'),
+       ('admin', 'CanDeactivateLoginProfile'),
        ('admin', 'CanCreateRole'),
        ('admin', 'CanReadRole'),
        ('admin', 'CanModifyRolePermissions'),
        ('admin', 'CanDeactivateRole'),
        ('admin', 'CanReadPermission'),
-       ('employee', 'CanReadEmployee'),
-       ('employee', 'CanModifyEmployeePassword');
+       ('employee', 'CanReadLoginProfile'),
+       ('employee', 'CanModifyLoginProfilePassword');

@@ -9,7 +9,7 @@ public class Path {
   public static final String HELLO = "/hello";
   public static final String RABBITHELLO = "/rabbithello";
   public static final String DOCS = "/docs";
-  public static final String EMPLOYEES = "/employees";
+  public static final String LOGIN_PROFILES = "/login-profiles";
   public static final String PASSWORD = "/password";
   public static final String EMAIL = "/email";
   public static final String ENABLE = "/enable";
@@ -17,18 +17,18 @@ public class Path {
   public static final String PERMISSIONS = "/permissions";
   public static final String AUTH = "/auth";
 
-  public static final String V1_EMPLOYEES = API + V1 + EMPLOYEES;
-  public static final String EMPLOYEE_ID = "/{idEmployee}";
-  public static final String EMPLOYEE_ID_ROLES = EMPLOYEE_ID + ROLES;
-  public static final String EMPLOYEE_ID_PASSWORD = EMPLOYEE_ID + PASSWORD;
-  public static final String EMPLOYEE_ID_EMAIL = EMPLOYEE_ID + EMAIL;
-  public static final String EMPLOYEE_ID_ENABLE = EMPLOYEE_ID + ENABLE;
+  public static final String V1_LOGIN_PROFILES = API + V1 + LOGIN_PROFILES;
+  public static final String LOGIN_PROFILE_ID = "/{idLoginProfile}";
+  public static final String LOGIN_PROFILE_ID_ROLES = LOGIN_PROFILE_ID + ROLES;
+  public static final String LOGIN_PROFILE_ID_PASSWORD = LOGIN_PROFILE_ID + PASSWORD;
+  public static final String LOGIN_PROFILE_ID_EMAIL = LOGIN_PROFILE_ID + EMAIL;
+  public static final String LOGIN_PROFILE_ID_ENABLE = LOGIN_PROFILE_ID + ENABLE;
 
-  public static final String V1_EMPLOYEES_ANYONE = V1_EMPLOYEES + ANYONE;
-  public static final String V1_EMPLOYEES_ANYONE_ROLES = V1_EMPLOYEES_ANYONE + ROLES;
-  public static final String V1_EMPLOYEES_ANYONE_PASSWORD = V1_EMPLOYEES_ANYONE + PASSWORD;
-  public static final String V1_EMPLOYEES_ANYONE_EMAIL = V1_EMPLOYEES_ANYONE + EMAIL;
-  public static final String V1_EMPLOYEES_ANYONE_ENABLE = V1_EMPLOYEES_ANYONE + ENABLE;
+  public static final String V1_LOGIN_PROFILES_ANYONE = V1_LOGIN_PROFILES + ANYONE;
+  public static final String V1_LOGIN_PROFILES_ANYONE_ROLES = V1_LOGIN_PROFILES_ANYONE + ROLES;
+  public static final String V1_LOGIN_PROFILES_ANYONE_PASSWORD = V1_LOGIN_PROFILES_ANYONE + PASSWORD;
+  public static final String V1_LOGIN_PROFILES_ANYONE_EMAIL = V1_LOGIN_PROFILES_ANYONE + EMAIL;
+  public static final String V1_LOGIN_PROFILES_ANYONE_ENABLE = V1_LOGIN_PROFILES_ANYONE + ENABLE;
 
   public static final String V1_ROLES = API + V1 + ROLES;
   public static final String ROLE_NAME = "/{role}";

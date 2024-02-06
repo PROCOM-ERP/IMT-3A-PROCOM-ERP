@@ -12,6 +12,6 @@ import lombok.NoArgsConstructor;
 public class LoginProfileIsEnableMessageDto {
 
     private String id;
-    private Boolean enable;
+    private Boolean isEnable;
 
 }
