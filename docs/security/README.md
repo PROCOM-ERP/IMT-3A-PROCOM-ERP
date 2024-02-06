@@ -37,3 +37,9 @@ Il va tout mettre dans un dossier `./security/archives/Y-M-D-h-m`, et si l'optio
 - Ce script sert à nettoyer ou à réinitialiser les configurations établies par `security_setup.sh`.
 - Pour l'utiliser, exécutez : `./clean_security.sh`.
 - Une option `--CA` est disponnible afin d'archiver aussi les clés et le trust store de l'autorité de certification.
+
+### Utilisation de `docker_secrets.sh`
+
+Ce script génère en local les secrets nécessaire au déploiement de l'application.
+Il n'y a pas d'options particulières.
+Pour des raisons évidentes de sécurité, il n'est pas géré dans ce répertoire git.
