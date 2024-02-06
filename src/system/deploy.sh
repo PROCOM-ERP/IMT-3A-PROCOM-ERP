@@ -86,7 +86,7 @@ build_and_push_images() {
         IMAGE_VERSION="${IMAGE_VERSIONS[i]}"
 
         # Build the image if it doesn't exist
-        if ! docker images "$DOCKER_REGISTRY/$SERVICE:$IMAGE_VERSION" | grep "$SERVICE"; then
+        if ! docker images "$DOCKER_REGISTRY:$SERVICE-$IMAGE_VERSION" | grep "$SERVICE"; then
             echo "Building $SERVICE:$IMAGE_VERSION image"
             docker-compose -f $COMPOSE_FILE build "$SERVICE"
         fi
