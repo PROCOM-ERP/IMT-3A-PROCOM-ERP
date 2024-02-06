@@ -5,7 +5,7 @@ import lombok.Getter;
 import java.time.LocalDate;
 
 @Getter
-public class EmployeeResponseAQMPDto {
+public class LoginProfileMessageDto {
 
     private String id;
     private LocalDate creation;

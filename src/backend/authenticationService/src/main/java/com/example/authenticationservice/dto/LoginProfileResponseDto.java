@@ -11,7 +11,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class EmployeeResponseDto {
+public class LoginProfileResponseDto {
 
     private String id;
     private String email;

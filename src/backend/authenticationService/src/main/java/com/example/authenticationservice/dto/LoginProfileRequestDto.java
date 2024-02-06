@@ -5,13 +5,16 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.Set;
+
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class EmployeeResponseAQMPEnableDto {
+public class LoginProfileRequestDto {
 
-    private String id;
-    private Boolean enable;
+    private String password;
+    private String email;
+    private Set<String> roles;
 
 }

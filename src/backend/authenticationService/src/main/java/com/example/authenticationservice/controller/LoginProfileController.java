@@ -1,10 +1,10 @@
 package com.example.authenticationservice.controller;
 
-import com.example.authenticationservice.dto.EmployeeResponseAQMPEnableDto;
-import com.example.authenticationservice.dto.EmployeeRequestDto;
-import com.example.authenticationservice.dto.EmployeeResponseDto;
+import com.example.authenticationservice.dto.LoginProfileIsEnableMessageDto;
+import com.example.authenticationservice.dto.LoginProfileRequestDto;
+import com.example.authenticationservice.dto.LoginProfileResponseDto;
 import com.example.authenticationservice.model.Path;
-import com.example.authenticationservice.service.EmployeeService;
+import com.example.authenticationservice.service.LoginProfileService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -22,18 +22,18 @@ import java.util.List;
 @RestController
 @RequestMapping(Path.V1_EMPLOYEES)
 @RequiredArgsConstructor
-public class EmployeeController {
+public class LoginProfileController {
 
-    private final EmployeeService employeeService;
+    private final LoginProfileService loginProfileService;
 
     @PostMapping
-    @Operation(operationId = "createEmployee", tags = {"employees"},
-            summary = "Create a new employee", description =
-            "Create a new employee by providing roles and plain text password.<br>" +
+    @Operation(operationId = "createLoginProfile", tags = {"loginProfiles"},
+            summary = "Create a new loginProfile", description =
+            "Create a new loginProfile by providing roles and plain text password.<br>" +
             "Information about it are available in URI given in the response header location.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description =
-                    "Employee created correctly",
+                    "LoginProfile created correctly",
                     content = {@Content(mediaType = "application/json") }),
             @ApiResponse(responseCode = "400", description =
                     "The request body is badly structured or formatted",
@@ -49,104 +49,104 @@ public class EmployeeController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<String> createEmployee(@RequestBody EmployeeRequestDto employeeRequestDto) {
-        // try to create a new employee
-        String idEmployee = employeeService.createEmployee(employeeRequestDto);
-        // generate URI location to inform the client how to get information on the new employee
+    public ResponseEntity<String> createLoginProfile(@RequestBody LoginProfileRequestDto loginProfileRequestDto) {
+        // try to create a new loginProfile
+        String idLoginProfile = loginProfileService.createLoginProfile(loginProfileRequestDto);
+        // generate URI location to inform the client how to get information on the new loginProfile
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path(Path.EMPLOYEE_ID)
-                .buildAndExpand(idEmployee)
+                .buildAndExpand(idLoginProfile)
                 .toUri();
         // send the response with 201 Http status
         return ResponseEntity.created(location).build();
     }
 
     @GetMapping
-    @Operation(operationId = "getAllEmployees", tags = {"employees"},
-            summary = "Retrieve all employees information", description =
-            "Retrieve all employees information.")
+    @Operation(operationId = "getAllLoginProfiles", tags = {"loginProfiles"},
+            summary = "Retrieve all loginProfiles information", description =
+            "Retrieve all loginProfiles information.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description =
-                    "Employees information retrieved correctly",
+                    "LoginProfiles information retrieved correctly",
                     content = {@Content(mediaType = "application/json",
-                    schema = @Schema(type = "array", implementation = EmployeeResponseDto.class))} ),
+                    schema = @Schema(type = "array", implementation = LoginProfileResponseDto.class))} ),
             @ApiResponse(responseCode = "401", description =
                     "Roles in Jwt token are insufficient to authorize the access to this URL",
                     content = {@Content(mediaType = "application/json")} ),
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<List<EmployeeResponseDto>> getAllEmployees() {
-        return ResponseEntity.ok(employeeService.getAllEmployees());
+    public ResponseEntity<List<LoginProfileResponseDto>> getAllLoginProfiles() {
+        return ResponseEntity.ok(loginProfileService.getAllLoginProfiles());
     }
 
     @GetMapping(Path.EMPLOYEE_ID)
-    @Operation(operationId = "getEmployee", tags = {"employees"},
-            summary = "Retrieve one employee information", description =
-            "Retrieve one employee information, by providing its id (username).",
-            parameters = {@Parameter(name = "idEmployee", description =
-            "The employee username (6 characters identifier)")})
+    @Operation(operationId = "getLoginProfile", tags = {"loginProfiles"},
+            summary = "Retrieve one loginProfile information", description =
+            "Retrieve one loginProfile information, by providing its id (username).",
+            parameters = {@Parameter(name = "idLoginProfile", description =
+            "The loginProfile username (6 characters identifier)")})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description =
-                    "Employee information retrieved correctly",
+                    "LoginProfile information retrieved correctly",
                     content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = EmployeeResponseDto.class))} ),
+                            schema = @Schema(implementation = LoginProfileResponseDto.class))} ),
             @ApiResponse(responseCode = "401", description =
                     "Roles in Jwt token are insufficient to authorize the access to this URL",
                     content = {@Content(mediaType = "application/json")} ),
             @ApiResponse(responseCode = "404", description =
-                    "Employee not found",
+                    "LoginProfile not found",
                     content = {@Content(mediaType = "application/json")} ),
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<EmployeeResponseDto> getEmployee(@PathVariable String idEmployee) {
-        return ResponseEntity.ok(employeeService.getEmployee(idEmployee));
+    public ResponseEntity<LoginProfileResponseDto> getLoginProfile(@PathVariable String idLoginProfile) {
+        return ResponseEntity.ok(loginProfileService.getLoginProfile(idLoginProfile));
     }
 
     @GetMapping(Path.EMPLOYEE_ID_ENABLE)
-    @Operation(operationId = "getEmployeeEnable", tags = {"employees"},
-            summary = "Retrieve one employee information about activation status", description =
-            "Retrieve one employee information about activation status, by providing its id (username).",
-            parameters = {@Parameter(name = "idEmployee", description =
-                    "The employee username (6 characters identifier)")})
+    @Operation(operationId = "getLoginProfileEnable", tags = {"loginProfiles"},
+            summary = "Retrieve one loginProfile information about activation status", description =
+            "Retrieve one loginProfile information about activation status, by providing its id (username).",
+            parameters = {@Parameter(name = "idLoginProfile", description =
+                    "The loginProfile username (6 characters identifier)")})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description =
-                    "Employee activation status retrieved correctly",
+                    "LoginProfile activation status retrieved correctly",
                     content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = EmployeeResponseAQMPEnableDto.class))} ),
+                            schema = @Schema(implementation = LoginProfileIsEnableMessageDto.class))} ),
             @ApiResponse(responseCode = "401", description =
                     "Roles in Jwt token are insufficient to authorize the access to this URL",
                     content = {@Content(mediaType = "application/json")} ),
             @ApiResponse(responseCode = "404", description =
-                    "Employee not found",
+                    "LoginProfile not found",
                     content = {@Content(mediaType = "application/json")} ),
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<EmployeeResponseAQMPEnableDto> getEmployeeEnable(@PathVariable String idEmployee) {
-        return ResponseEntity.ok(employeeService.getEmployeeEnable(idEmployee));
+    public ResponseEntity<LoginProfileIsEnableMessageDto> getLoginProfileEnable(@PathVariable String idLoginProfile) {
+        return ResponseEntity.ok(loginProfileService.getLoginProfileEnable(idLoginProfile));
     }
 
     @PatchMapping(Path.EMPLOYEE_ID_PASSWORD)
-    @Operation(operationId = "updateEmployeePassword", tags = {"employees"},
-            summary = "Update an employee password", description =
-            "Update an employee password. Only available for the employee itself.",
-            parameters = {@Parameter(name = "idEmployee", description =
-            "The employee username (6 characters identifier)")})
+    @Operation(operationId = "updateLoginProfilePassword", tags = {"loginProfiles"},
+            summary = "Update an loginProfile password", description =
+            "Update an loginProfile password. Only available for the loginProfile itself.",
+            parameters = {@Parameter(name = "idLoginProfile", description =
+            "The loginProfile username (6 characters identifier)")})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description =
-                    "Employee password updated correctly",
+                    "LoginProfile password updated correctly",
                     content = {@Content(mediaType = "application/json")} ),
             @ApiResponse(responseCode = "401", description =
                     "Roles in Jwt token are insufficient to authorize the access to this URL",
                     content = {@Content(mediaType = "application/json")} ),
             @ApiResponse(responseCode = "403", description =
-                    "Authenticated employee cannot update an other employee password",
+                    "Authenticated loginProfile cannot update an other loginProfile password",
                     content = {@Content(mediaType = "application/json")} ),
             @ApiResponse(responseCode = "404", description =
-                    "Employee not found",
+                    "LoginProfile not found",
                     content = {@Content(mediaType = "application/json")} ),
             @ApiResponse(responseCode = "422", description =
                     "Attribute values don't respect integrity constraints.<br>" +
@@ -155,29 +155,29 @@ public class EmployeeController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<String> updateEmployeePassword(@PathVariable String idEmployee,
+    public ResponseEntity<String> updateLoginProfilePassword(@PathVariable String idLoginProfile,
                                                          @RequestBody String password) {
-        employeeService.updateEmployeePassword(idEmployee, password);
+        loginProfileService.updateLoginProfilePassword(idLoginProfile, password);
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping(Path.EMPLOYEE_ID_ROLES)
-    @Operation(operationId = "updateEmployeeRoles", tags = {"employees"},
-            summary = "Update an employee roles", description =
-            "Update an employee roles, by providing a list of all the new ones.<br>" +
+    @Operation(operationId = "updateLoginProfileRoles", tags = {"loginProfiles"},
+            summary = "Update an loginProfile roles", description =
+            "Update an loginProfile roles, by providing a list of all the new ones.<br>" +
             "Previous ones will be deleted.<br>" +
             "Only available for admins.",
-            parameters = {@Parameter(name = "idEmployee", description =
-            "The employee username (6 characters identifier)")})
+            parameters = {@Parameter(name = "idLoginProfile", description =
+            "The loginProfile username (6 characters identifier)")})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description =
-                    "Employee roles updated correctly",
+                    "LoginProfile roles updated correctly",
                     content = {@Content(mediaType = "application/json")} ),
             @ApiResponse(responseCode = "401", description =
                     "Roles in Jwt token are insufficient to authorize the access to this URL",
                     content = {@Content(mediaType = "application/json")} ),
             @ApiResponse(responseCode = "404", description =
-                    "Employee not found",
+                    "LoginProfile not found",
                     content = {@Content(mediaType = "application/json")} ),
             @ApiResponse(responseCode = "422", description =
                     "Attribute values don't respect integrity constraints.<br>" +
@@ -186,28 +186,28 @@ public class EmployeeController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<String> updateEmployeeRoles(@PathVariable String idEmployee,
+    public ResponseEntity<String> updateLoginProfileRoles(@PathVariable String idLoginProfile,
                                                       @RequestBody List<String> roles) {
-        employeeService.updateEmployeeRoles(idEmployee, roles);
+        loginProfileService.updateLoginProfileRoles(idLoginProfile, roles);
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping(Path.EMPLOYEE_ID_EMAIL)
-    @Operation(operationId = "updateEmployeeEmail", tags = {"employees"},
-            summary = "Update an employee email", description =
-            "Update an employee email, by providing the new one.<br>" +
+    @Operation(operationId = "updateLoginProfileEmail", tags = {"loginProfiles"},
+            summary = "Update an loginProfile email", description =
+            "Update an loginProfile email, by providing the new one.<br>" +
             "Only available for admins.",
-            parameters = {@Parameter(name = "idEmployee", description =
-            "The employee username (6 characters identifier)")})
+            parameters = {@Parameter(name = "idLoginProfile", description =
+            "The loginProfile username (6 characters identifier)")})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description =
-                    "Employee email updated correctly",
+                    "LoginProfile email updated correctly",
                     content = {@Content(mediaType = "application/json")} ),
             @ApiResponse(responseCode = "401", description =
                     "Roles in Jwt token are insufficient to authorize the access to this URL",
                     content = {@Content(mediaType = "application/json")} ),
             @ApiResponse(responseCode = "404", description =
-                    "Employee not found",
+                    "LoginProfile not found",
                     content = {@Content(mediaType = "application/json")} ),
             @ApiResponse(responseCode = "422", description =
                     "Attribute values don't respect integrity constraints.<br>" +
@@ -216,28 +216,28 @@ public class EmployeeController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<String> updateEmployeeEmail(@PathVariable String idEmployee,
+    public ResponseEntity<String> updateLoginProfileEmail(@PathVariable String idLoginProfile,
                                                        @RequestBody String email) {
-        employeeService.updateEmployeeEmail(idEmployee, email);
+        loginProfileService.updateLoginProfileEmail(idLoginProfile, email);
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping(Path.EMPLOYEE_ID_ENABLE)
-    @Operation(operationId = "updateEmployeeEnable", tags = {"employees"},
-            summary = "Enable or disable an employee", description =
-            "Enable or disable an employee, by providing a new enable value (true or false).<br>" +
+    @Operation(operationId = "updateLoginProfileEnable", tags = {"loginProfiles"},
+            summary = "Enable or disable an loginProfile", description =
+            "Enable or disable an loginProfile, by providing a new enable value (true or false).<br>" +
             "Only available for admins.",
-            parameters = {@Parameter(name = "idEmployee", description =
-                    "The employee username (6 characters identifier)")})
+            parameters = {@Parameter(name = "idLoginProfile", description =
+                    "The loginProfile username (6 characters identifier)")})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description =
-                    "Employee enable attribute updated correctly",
+                    "LoginProfile enable attribute updated correctly",
                     content = {@Content(mediaType = "application/json")} ),
             @ApiResponse(responseCode = "401", description =
                     "Roles in Jwt token are insufficient to authorize the access to this URL",
                     content = {@Content(mediaType = "application/json")} ),
             @ApiResponse(responseCode = "404", description =
-                    "Employee not found",
+                    "LoginProfile not found",
                     content = {@Content(mediaType = "application/json")} ),
             @ApiResponse(responseCode = "422", description =
                     "Attribute values don't respect integrity constraints.<br>" +
@@ -246,9 +246,9 @@ public class EmployeeController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<String> updateEmployeeEnable(@PathVariable String idEmployee,
+    public ResponseEntity<String> updateLoginProfileEnable(@PathVariable String idLoginProfile,
                                                        @RequestBody Boolean enable) {
-        employeeService.updateEmployeeEnable(idEmployee, enable);
+        loginProfileService.updateLoginProfileEnable(idLoginProfile, enable);
         return ResponseEntity.noContent().build();
     }
 

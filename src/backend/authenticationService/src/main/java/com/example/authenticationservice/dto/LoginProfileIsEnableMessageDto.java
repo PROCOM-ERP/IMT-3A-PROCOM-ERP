@@ -5,16 +5,13 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.Set;
-
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class EmployeeRequestDto {
+public class LoginProfileIsEnableMessageDto {
 
-    private String password;
-    private String email;
-    private Set<String> roles;
+    private String id;
+    private Boolean enable;
 
 }

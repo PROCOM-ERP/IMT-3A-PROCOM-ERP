@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 public interface LoginProfileRepository extends JpaRepository<LoginProfile, String>, JpaSpecificationExecutor<LoginProfile> {
 
     @Query(value = "SELECT nextval('public.login_profiles_id_login_profile_gen_seq')", nativeQuery = true)
-    Integer getNextIdEmployee();
+    Integer getNextIdLoginProfile();
 
     @Transactional
     @Modifying
