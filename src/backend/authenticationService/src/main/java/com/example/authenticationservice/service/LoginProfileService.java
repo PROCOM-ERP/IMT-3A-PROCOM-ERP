@@ -77,7 +77,7 @@ public class LoginProfileService {
         return loginProfileRepository.findById(idLoginProfile)
                 .map(loginProfile -> LoginProfileIsEnableMessageDto.builder()
                         .id(loginProfile.getId())
-                        .enable(loginProfile.getIsEnable())
+                        .isEnable(loginProfile.getIsEnable())
                         .build())
                 .orElseThrow();
     }
