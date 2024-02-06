@@ -10,20 +10,20 @@
 -- | Create table                                                                                 |
 -- +----------------------------------------------------------------------------------------------+
 
-CREATE TABLE employees
+CREATE TABLE login_profiles
 (
     id CHAR(6) UNIQUE NOT NULL,
-    id_employee_gen SERIAL UNIQUE NOT NULL,
+    id_login_profile_gen SERIAL UNIQUE NOT NULL,
     password VARCHAR(128) NOT NULL,
     email VARCHAR(320) UNIQUE,
-    creation TIMESTAMP NOT NULL DEFAULT current_timestamp,
-    enable BOOLEAN NOT NULL DEFAULT true,
-    jwt_min_creation TIMESTAMP NOT NULL DEFAULT current_timestamp,
+    created_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
+    is_enable BOOLEAN NOT NULL DEFAULT true,
+    jwt_gen_min_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
 
-    CONSTRAINT pk_employees PRIMARY KEY (id),
+    CONSTRAINT pk_login_profiles PRIMARY KEY (id),
 
-    CONSTRAINT check_employees_id
-        CHECK (employees.id ~* '[A-Z][0-9]{5}')--,
+    CONSTRAINT check_login_profiles_id
+        CHECK (login_profiles.id ~* '[A-Z][0-9]{5}')--,
     --CONSTRAINT check_employees_email
         --CHECK (employees.email ~* '^[a-zA-Z0-9](?:[a-zA-Z0-9-._-]{0,62}[a-zA-Z0-9])?@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z]{2,})+$')
 
@@ -34,22 +34,22 @@ CREATE TABLE employees
 CREATE TABLE roles
 (
     name VARCHAR(32) UNIQUE NOT NULL,
-    enable BOOLEAN NOT NULL DEFAULT true,
+    is_enable BOOLEAN NOT NULL DEFAULT true,
 
     CONSTRAINT pk_roles PRIMARY KEY (name)
 );
 
 -- +----------------------------------------------------------------------------------------------+
 
-CREATE TABLE role_services
+CREATE TABLE role_activations
 (
     role VARCHAR(32) NOT NULL,
-    service VARCHAR(32) NOT NULL,
-    enable BOOLEAN NOT NULL DEFAULT true,
+    microservice VARCHAR(32) NOT NULL,
+    is_enable BOOLEAN NOT NULL DEFAULT true,
 
-    CONSTRAINT pk_role_services
-        PRIMARY KEY (role, service),
-    CONSTRAINT fk_role_services_table_roles
+    CONSTRAINT pk_role_activations
+        PRIMARY KEY (role, microservice),
+    CONSTRAINT fk_role_activations_table_roles
         FOREIGN KEY (role) REFERENCES roles(name)
             ON UPDATE CASCADE ON DELETE CASCADE
 );
@@ -70,17 +70,17 @@ CREATE TABLE role_permissions
 
 -- +----------------------------------------------------------------------------------------------+
 
-CREATE TABLE join_employees_roles
+CREATE TABLE join_login_profiles_roles
 (
-    employee CHAR(6) NOT NULL,
+    login_profile CHAR(6) NOT NULL,
     role VARCHAR(32) NOT NULL,
 
-    CONSTRAINT pk_join_employees_roles
-        PRIMARY KEY (employee, role),
-    CONSTRAINT fk_join_employees_roles_table_employees
-        FOREIGN KEY (employee) REFERENCES employees(id)
+    CONSTRAINT pk_join_login_profiles_roles
+        PRIMARY KEY (login_profile, role),
+    CONSTRAINT fk_join_login_profiles_roles_table_login_profiles
+        FOREIGN KEY (login_profile) REFERENCES login_profiles(id)
             ON UPDATE CASCADE ON DELETE CASCADE,
-    CONSTRAINT fk_join_employees_roles_table_roles
+    CONSTRAINT fk_join_login_profiles_roles_table_roles
         FOREIGN KEY (role) REFERENCES roles(name)
             ON UPDATE CASCADE ON DELETE CASCADE
 );
@@ -89,7 +89,7 @@ CREATE TABLE join_employees_roles
 -- | Insert into                                                                                  |
 -- +----------------------------------------------------------------------------------------------+
 
-INSERT INTO employees (id, password)
+INSERT INTO login_profiles (id, password)
 VALUES ('A00001', '$2a$10$MAxOfcOCypgcExmZjSp/Fu1rMBbepSZPGDX9y4u1XLkKipYsrVcnK'),
        ('A00002', '$2a$10$MAxOfcOCypgcExmZjSp/Fu1rMBbepSZPGDX9y4u1XLkKipYsrVcnK');
 
@@ -101,13 +101,13 @@ VALUES ('employee'),
 
 -- +----------------------------------------------------------------------------------------------+
 
-INSERT INTO role_services (role, service)
+INSERT INTO role_activations (role, microservice)
 VALUES ('employee', 'authentication'),
        ('admin', 'authentication');
 
 -- +----------------------------------------------------------------------------------------------+
 
-INSERT INTO join_employees_roles (employee, role)
+INSERT INTO join_login_profiles_roles (login_profile, role)
 VALUES ('A00001', 'admin'),
        ('A00001', 'employee'),
        ('A00002', 'employee');

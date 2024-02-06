@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.Hibernate;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -16,8 +17,9 @@ import java.util.Objects;
 @Getter
 @Setter
 @Embeddable
-public class RoleServiceId implements Serializable {
-    private static final long serialVersionUID = -5923163786474763967L;
+public class RoleActivationId implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1977334691863885855L;
     @Size(max = 32)
     @NotNull
     @Column(name = "role", nullable = false, length = 32)
@@ -25,21 +27,21 @@ public class RoleServiceId implements Serializable {
 
     @Size(max = 32)
     @NotNull
-    @Column(name = "service", nullable = false, length = 32)
-    private String service;
+    @Column(name = "microservice", nullable = false, length = 32)
+    private String microservice;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        RoleServiceId entity = (RoleServiceId) o;
+        RoleActivationId entity = (RoleActivationId) o;
         return Objects.equals(this.role, entity.role) &&
-                Objects.equals(this.service, entity.service);
+                Objects.equals(this.microservice, entity.microservice);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(role, service);
+        return Objects.hash(role, microservice);
     }
 
 }

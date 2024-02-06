@@ -1,7 +1,7 @@
 package com.example.authenticationservice.service;
 
-import com.example.authenticationservice.model.Employee;
-import com.example.authenticationservice.repository.EmployeeRepository;
+import com.example.authenticationservice.model.LoginProfile;
+import com.example.authenticationservice.repository.LoginProfileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,11 +16,11 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private final EmployeeRepository employeeRepository;
+    private final LoginProfileRepository loginProfileRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<Employee> employee = employeeRepository.findById(username);
+        Optional<LoginProfile> employee = loginProfileRepository.findById(username);
         return employee.map(
                 e -> new User(username, e.getPassword(), Collections.emptyList()))
                 .orElseGet(() -> new User(username, "", Collections.emptyList()));

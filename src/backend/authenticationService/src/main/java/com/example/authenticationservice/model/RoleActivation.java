@@ -2,6 +2,7 @@ package com.example.authenticationservice.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -12,10 +13,10 @@ import org.hibernate.annotations.OnDeleteAction;
 @Getter
 @Setter
 @Entity
-@Table(name = "role_services", schema = "public")
-public class RoleServices {
+@Table(name = "role_activations", schema = "public")
+public class RoleActivation {
     @EmbeddedId
-    private RoleServiceId id;
+    private RoleActivationId id;
 
     @MapsId("role")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -24,11 +25,13 @@ public class RoleServices {
     private Role role;
 
     @NotNull
-    @Column(name = "service", nullable = false)
-    private String service;
+    @Size(max = 32)
+    @Column(name = "microservice", nullable = false)
+    private String microservice;
 
+    @Builder.Default
     @NotNull
-    @Column(name = "enable", nullable = false)
-    private Boolean enable = true;
+    @Column(name = "is_enable", nullable = false)
+    private Boolean isEnable = true;
 
 }
