@@ -31,15 +31,30 @@ public class ProductService {
                 .toList();
     }
 
-
-
-
     static ProductDto productToDto(Product product) {
         return ProductDto.builder()
                 .id(product.getId())
                 .title(product.getTitle())
                 .description(product.getDescription())
                 .items(itemToDtoList(product.getItems()))
+                .categories(categoryToDtoList(product.getCategories()))
+                .build();
+    }
+
+    static ProductDto productItemToDto(Product product) {
+        return ProductDto.builder()
+                .id(product.getId())
+                .title(product.getTitle())
+                .description(product.getDescription())
+                .items(itemToDtoList(product.getItems()))
+                .build();
+    }
+
+    static ProductDto productCategoryToDto(Product product) {
+        return ProductDto.builder()
+                .id(product.getId())
+                .title(product.getTitle())
+                .description(product.getDescription())
                 .categories(categoryToDtoList(product.getCategories()))
                 .build();
     }

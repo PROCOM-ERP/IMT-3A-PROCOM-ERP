@@ -15,6 +15,6 @@ import java.util.List;
 public class ItemDto {
     private Integer id;
     private Integer quantity;
-    private List<Transaction> transactions;
+    private List<TransactionDto> transactions;
     private AddressDto address;
 }
