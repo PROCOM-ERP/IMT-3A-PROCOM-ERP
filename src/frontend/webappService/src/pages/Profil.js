@@ -6,42 +6,73 @@ import "../css/Profil.css";
 
 function Profil() {
 
+  const [user, setUser] = useState({
+    firstname : "Aina",
+    name: "Dirou",
+    age: 23,
+    office: "Brest",
+    department: "Software",
+    job: "Software Development"
+  });
+  const tokenName = "Token"; // Need to be the same name as in AuthForm.js components
+  const token = localStorage.getItem(tokenName);
+
+  // Prepare the 'Authorization' header with the value 'Bearer' and the token
+  const headers = {
+    'Authorization': `Bearer ${token}`,
+  };
+
+  // Get the user profil information
   useEffect(() => {
-    // Define the API URL
-    const apiUrl = "https://localhost:8041/api/dir/v1/hello";
+    // API URL
+    const apiUrl = "https://localhost:8041/api/dir/v1/employees"; // TODO: to change
 
     // Make the API request
     fetch(apiUrl, {
       method: "GET",
-      credentials: "include",
-    })
+      headers: headers,
+      })
       .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.text(); // Parse the response as text
+          if (!response.ok) throw new Error(response.status);
+          const res = response.json();
+          return res;
       })
-      .then((data) => {
-        console.log("API Response:", data); // Check the response in the console
-        //setMessage(data); // Set the response as the message
+      .then(data => {
+          //setUser(data);
+          console.info("[DATA] " + data);
+          console.log("[LOG] profil info retrieve");
       })
-      .catch((error) => {
-        console.error("API request error:", error);
+      .catch(error => {
+          console.error('API request error: ', error);
       });
-  }, []);
 
-  const user = {
-    id: 1,
-    firstname: "Aina",
-    lastname: "Dirou",
-    age: 23,
-    job: "Frontend Developper",
-    office: "Brest",
-    department: "Software Engineering",
-  };
+  });
 
-  function handleModif() {
-    console.log("handle modification TODO");
+  // Modify the user profil
+  function handleModif(event) {
+      // Prevent the browser from reloading the page
+      event.preventDefault();
+
+      // API URL
+      const apiUrl = "https://localhost:8041/api/dir/v1/employees";
+
+      // Make the API request
+      fetch(apiUrl, {
+      method: "GET",
+      headers: headers,
+      })
+      .then((response) => {
+          if (!response.ok) throw new Error(response.status);
+          const res = response.json();
+          return res;
+      })
+      .then(data => {
+          setUser(data);
+          console.log("[LOG] profil info retrieve");
+      })
+      .catch(error => {
+          console.error('API request error: ', error);
+      });
   }
 
   return (

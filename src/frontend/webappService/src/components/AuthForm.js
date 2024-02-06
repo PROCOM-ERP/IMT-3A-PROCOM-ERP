@@ -7,6 +7,7 @@ import Button from "./Button";
 function Form() {
     // React State
     const navigate = useNavigate();
+    const tokenName = "Token";
     const [errorMessage, setErrorMessage] = useState({});
     const [user, setUser] = useState({
         username: "",
@@ -80,7 +81,7 @@ function Form() {
             return res;
         })
         .then(data => {
-            localStorage.setItem("Token", data); // Token stored in local storage
+            localStorage.setItem(tokenName, data); // Token stored in local storage
             console.log("[LOG] JWT retrieved and stored");
             navigate("/home"); // Navigate to home page
         })
