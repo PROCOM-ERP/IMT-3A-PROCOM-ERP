@@ -13,20 +13,25 @@ import org.hibernate.annotations.OnDeleteAction;
 @Getter
 @Setter
 @Entity
-@Table(name = "role_activations", schema = "public")
+@Table(name = "role_activations", schema = "public", indexes = {
+        @Index(name = "uq_role_activations_role_microservice", columnList = "role, microservice", unique = true)
+})
 public class RoleActivation {
-    @EmbeddedId
-    private RoleActivationId id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "role_activations_id_gen")
+    @SequenceGenerator(name = "role_activations_id_gen", sequenceName = "role_activations_id_seq", allocationSize = 1)
+    @Column(name = "id", nullable = false)
+    private Integer id;
 
-    @MapsId("role")
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "role", nullable = false)
     private Role role;
 
-    @NotNull
     @Size(max = 32)
-    @Column(name = "microservice", nullable = false)
+    @NotNull
+    @Column(name = "microservice", nullable = false, length = 32)
     private String microservice;
 
     @Builder.Default

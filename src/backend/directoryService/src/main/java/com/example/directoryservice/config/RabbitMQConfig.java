@@ -17,25 +17,25 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    public FanoutExchange employeeSecExchange() {
-        return new FanoutExchange("employee-sec-exchange");
+    public FanoutExchange loginProfilesSecExchange() {
+        return new FanoutExchange("login-profiles-sec-exchange");
     }
 
     @Bean
-    public TopicExchange employeeInfoExchange() {
-        return new TopicExchange("employee-info-exchange");
+    public TopicExchange loginProfilesInfoExchange() {
+        return new TopicExchange("login-profiles-info-exchange");
     }
 
     @Bean
-    public Queue employeeSecQueue() {
-        return new Queue("employee-sec-queue");
+    public Queue loginProfileSecQueue() {
+        return new Queue("login-profile-sec-queue");
     }
 
     @Bean
-    public Binding employeeSecBinding(Queue employeeSecQueue,
-                                      Exchange employeeSecExchange) {
-        return BindingBuilder.bind(employeeSecQueue)
-                .to(employeeSecExchange)
+    public Binding loginProfileSecBinding(Queue loginProfileSecQueue,
+                                      Exchange loginProfilesSecExchange) {
+        return BindingBuilder.bind(loginProfileSecQueue)
+                .to(loginProfilesSecExchange)
                 .with("*")
                 .noargs();
     }

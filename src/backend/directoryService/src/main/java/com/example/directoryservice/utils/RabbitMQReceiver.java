@@ -25,21 +25,21 @@ public class RabbitMQReceiver {
 
     private final Logger logger = LoggerFactory.getLogger(RabbitMQReceiver.class);
 
-    @RabbitListener(queues = "employee-sec-queue")
+    @RabbitListener(queues = "login-profile-sec-queue")
     public void receiveEmployeeSecMessage(String message, @Header(AmqpHeaders.RECEIVED_ROUTING_KEY) String routingKey) {
         switch (routingKey) {
-            case "employees.jwt.disable.old":
-                logger.info("Message received to expire all employee Jwt: " + message);
+            case "login-profiles.jwt.disable.old":
+                logger.info("Message received to expire all login-profiles Jwt: " + message);
                 employeeService.updateAllEmployeesJwtMinCreation();
-                logger.info("Jwt min creation successfully updated for all employees");
+                logger.info("Jwt min creation successfully updated for all login-profiles");
                 break;
-            case "employee.jwt.disable.old":
-                logger.info("Message received to expire an employee Jwt: " + message);
+            case "login-profile.jwt.disable.old":
+                logger.info("Message received to expire a login-profile Jwt: " + message);
                 employeeService.updateEmployeeJwtMinCreation(message);
-                logger.info("Jwt min creation successfully updated for the employee");
+                logger.info("Jwt min creation successfully updated for the login-profile");
                 break;
-            case "employee.enable.modify":
-                logger.info("Message received to set an employee activation status: " + message);
+            case "login-profile.enable.modify":
+                logger.info("Message received to set a login-profile activation status: " + message);
                 // build request
                 String url = customHttpRequestBuilder.buildUrl(message); // message contains the path
                 HttpEntity<String> entity = customHttpRequestBuilder.buildHttpEntity();
@@ -51,9 +51,9 @@ public class RabbitMQReceiver {
                 if (response.getStatusCode().is2xxSuccessful() && response.hasBody() && response.getBody() != null) {
                     EmployeeResponseAQMPEnableDto employee = response.getBody();
                     employeeService.updateEmployeeEnable(employee.getId(), employee.getEnable());
-                    logger.info("Employee activation status successfully updated");
+                    logger.info("Login-profile activation status successfully updated");
                 } else {
-                    logger.error("Employee activation status update failed");
+                    logger.error("Login-profile activation status update failed");
                 }
                 break;
             default:

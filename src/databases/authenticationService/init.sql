@@ -43,15 +43,18 @@ CREATE TABLE roles
 
 CREATE TABLE role_activations
 (
+    id SERIAL UNIQUE NOT NULL,
     role VARCHAR(32) NOT NULL,
     microservice VARCHAR(32) NOT NULL,
     is_enable BOOLEAN NOT NULL DEFAULT true,
 
     CONSTRAINT pk_role_activations
-        PRIMARY KEY (role, microservice),
+        PRIMARY KEY (id),
     CONSTRAINT fk_role_activations_table_roles
         FOREIGN KEY (role) REFERENCES roles(name)
-            ON UPDATE CASCADE ON DELETE CASCADE
+            ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT uq_role_activations_role_microservice
+        UNIQUE (role, microservice)
 );
 
 -- +----------------------------------------------------------------------------------------------+

@@ -7,7 +7,6 @@ import com.example.authenticationservice.dto.RoleResponseDto;
 import com.example.authenticationservice.model.LoginProfile;
 import com.example.authenticationservice.model.Role;
 import com.example.authenticationservice.model.RoleActivation;
-import com.example.authenticationservice.model.RoleActivationId;
 import com.example.authenticationservice.repository.LoginProfileRepository;
 import com.example.authenticationservice.repository.RoleActivationRepository;
 import com.example.authenticationservice.repository.RoleRepository;
@@ -187,7 +186,6 @@ public class RoleService {
 
     private RoleActivation dtoToModel(RoleActivationDto ra, Role role) {
         return RoleActivation.builder()
-                .id(RoleActivationId.of(ra.getName(), ra.getMicroservice()))
                 .role(role)
                 .microservice(ra.getMicroservice())
                 .isEnable(ra.getIsEnable())
@@ -196,7 +194,6 @@ public class RoleService {
 
     private RoleActivation requestDtoToModel(RoleActivationRequestDto ra, Role role) {
         return RoleActivation.builder()
-                .id(RoleActivationId.of(role.getName(), ra.getMicroservice()))
                 .role(role)
                 .microservice(ra.getMicroservice())
                 .isEnable(ra.getIsEnable())
