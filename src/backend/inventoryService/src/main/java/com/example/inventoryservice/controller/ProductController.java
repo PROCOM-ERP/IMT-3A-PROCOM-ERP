@@ -1,6 +1,6 @@
 package com.example.inventoryservice.controller;
 
-import com.example.inventoryservice.dtoProduct.ProductDto;
+import com.example.inventoryservice.dto.ProductDto;
 import com.example.inventoryservice.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

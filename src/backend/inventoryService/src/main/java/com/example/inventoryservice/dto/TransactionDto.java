@@ -1,4 +1,4 @@
-package com.example.inventoryservice.dtoProduct;
+package com.example.inventoryservice.dto;
 
 import java.time.Instant;
 

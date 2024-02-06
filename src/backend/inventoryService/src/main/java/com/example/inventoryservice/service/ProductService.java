@@ -1,8 +1,9 @@
 package com.example.inventoryservice.service;
 
+import com.example.inventoryservice.dto.CategoryDto;
 import com.example.inventoryservice.model.*;
-import com.example.inventoryservice.dtoProduct.ItemDto;
-import com.example.inventoryservice.dtoProduct.ProductDto;
+import com.example.inventoryservice.dto.ItemDto;
+import com.example.inventoryservice.dto.ProductDto;
 import com.example.inventoryservice.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -39,12 +40,19 @@ public class ProductService {
                 .title(product.getTitle())
                 .description(product.getDescription())
                 .items(itemToDtoList(product.getItems()))
+                .categories(categoryToDtoList(product.getCategories()))
                 .build();
     }
 
     static List<ItemDto> itemToDtoList(List<Item> items){
         return items.stream()
                 .map(ItemService::itemToDto)
+                .toList();
+    }
+
+    static List<CategoryDto> categoryToDtoList(List<Category> category){
+        return category.stream()
+                .map(CategoryService::categoryOnlyToDto)
                 .toList();
     }
 }

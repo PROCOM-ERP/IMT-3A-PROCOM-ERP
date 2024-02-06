@@ -1,4 +1,4 @@
-package com.example.inventoryservice.dtoProduct;
+package com.example.inventoryservice.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,10 +11,9 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ProductDto {
+public class CategoryDto {
     private Integer id;
     private String title;
     private String description;
-    private List<ItemDto> items;
-    private List<CategoryDto> categories;
+    private List<ProductDto> products;
 }

@@ -1,6 +1,6 @@
 package com.example.inventoryservice.service;
 
-import com.example.inventoryservice.dtoProduct.ItemDto;
+import com.example.inventoryservice.dto.ItemDto;
 import com.example.inventoryservice.model.Item;
 import com.example.inventoryservice.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,4 +16,6 @@ public class ItemService {
                 .transactions(item.getTransactions())
                 .build();
     }
+
+
 }
