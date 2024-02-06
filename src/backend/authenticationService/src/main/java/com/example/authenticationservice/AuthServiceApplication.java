@@ -14,13 +14,13 @@ import org.springframework.context.annotation.Profile;
                 title = "AuthenticationService",
                 version = "0.1.0",
                 description =
-                        "Service to register employees with password and roles.<br>" +
+                        "Service to register login-profiles with password and roles.<br>" +
                         "It allows to get Jwt token for future connections to other services<br>." +
                         "BasicAuth required to get a Jwt token."),
         tags = {
                 @Tag(name = "hello"),
                 @Tag(name = "auth"),
-                @Tag(name = "employees"),
+                @Tag(name = "login-profiles"),
                 @Tag(name = "roles"),
                 @Tag(name = "permissions")
         })

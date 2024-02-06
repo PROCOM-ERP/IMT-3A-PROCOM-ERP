@@ -137,33 +137,4 @@ public class RoleController {
         roleService.updateRolePermissions(role, permissions);
         return ResponseEntity.noContent().build();
     }
-
-    @PatchMapping(Path.ROLE_NAME_ENABLE)
-    @Operation(operationId = "updateRoleEnableCounter", tags = {"roles"},
-            summary = "Enable or disable a role", description =
-            "Enable or disable a role, by providing a new enable value (true or false).<br>" +
-            "Only available for admins.",
-            parameters = {@Parameter(name = "role", description =
-                    "The role name")})
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description =
-                    "Role enable attribute updated correctly",
-                    content = {@Content(mediaType = "application/json")} ),
-            @ApiResponse(responseCode = "400", description =
-                    "The request body is badly structured or formatted",
-                    content = {@Content(mediaType = "application/json") }),
-            @ApiResponse(responseCode = "401", description =
-                    "Roles in Jwt token are insufficient to authorize the access to this URL",
-                    content = {@Content(mediaType = "application/json")} ),
-            @ApiResponse(responseCode = "404", description =
-                    "Role not found",
-                    content = {@Content(mediaType = "application/json")} ),
-            @ApiResponse(responseCode = "500", description =
-                    "Uncontrolled error appeared",
-                    content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<String> updateRoleEnable(@PathVariable String role,
-                                                   @RequestBody Boolean enable) {
-        roleService.updateRoleServiceEnable(role, enable);
-        return ResponseEntity.noContent().build();
-    }
 }

@@ -30,9 +30,7 @@ public class CustomJwtAuthenticationConverter implements Converter<Jwt, Abstract
 
     private final PermissionService permissionService;
     private final RoleRepository roleRepository;
-    private final LoginProfileRepository employeeRepository;
-
-    //private final Logger logger = LoggerFactory.getLogger(CustomJwtAuthenticationConverter.class);
+    private final LoginProfileRepository loginProfileRepository;
 
     @Override
     public AbstractAuthenticationToken convert(Jwt jwt) {
@@ -48,7 +46,7 @@ public class CustomJwtAuthenticationConverter implements Converter<Jwt, Abstract
     }
 
     private void checkTokenValidity(Jwt jwt) throws InsufficientAuthenticationException {
-        Instant jwtMinCreation = employeeRepository.findById(jwt.getSubject())
+        Instant jwtMinCreation = loginProfileRepository.findById(jwt.getSubject())
                 .orElseThrow(() -> new InsufficientAuthenticationException("")).getJwtGenMinAt();
         if (jwt.getIssuedAt() == null || jwt.getIssuedAt().isBefore(jwtMinCreation))
             throw new InsufficientAuthenticationException("");

@@ -3,8 +3,6 @@ package com.example.authenticationservice.utils;
 import java.util.NoSuchElementException;
 
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,10 +15,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RequiredArgsConstructor
 public class ControllerExceptionHandler {
 
-    // private final Logger logger = LoggerFactory.getLogger(ControllerExceptionHandler.class);
-
     @ExceptionHandler(Exception.class) // Http 500
-    public ResponseEntity<String> handleAllExceptions(Exception e) {
+    public ResponseEntity<String> handleAllExceptions() {
         return ResponseEntity.internalServerError().build();
     }
 

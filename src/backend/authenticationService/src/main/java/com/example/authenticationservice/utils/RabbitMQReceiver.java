@@ -1,9 +1,8 @@
 package com.example.authenticationservice.utils;
 
-import com.example.authenticationservice.dto.EmployeeResponseAQMPDto;
-import com.example.authenticationservice.dto.RoleResponseAQMPDto;
-import com.example.authenticationservice.model.RoleServices;
-import com.example.authenticationservice.service.EmployeeService;
+import com.example.authenticationservice.dto.LoginProfileMessageDto;
+import com.example.authenticationservice.dto.RoleActivationDto;
+import com.example.authenticationservice.service.LoginProfileService;
 import com.example.authenticationservice.service.RoleService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -24,7 +23,7 @@ import java.util.NoSuchElementException;
 public class RabbitMQReceiver {
 
     private final RoleService roleService;
-    private final EmployeeService employeeService;
+    private final LoginProfileService loginProfileService;
     private final RestTemplate restTemplate;
     private final CustomHttpRequestBuilder customHttpRequestBuilder;
     private final Logger logger = LoggerFactory.getLogger(RabbitMQReceiver.class);
@@ -34,10 +33,10 @@ public class RabbitMQReceiver {
         logger.info("Message received to set a role activation status: " + getRoleByNamePath);
         try {
             // try to get external role
-            RoleServices role = roleService.getExternalRole(getRoleByNamePath);
+            RoleActivationDto roleActivation = roleService.getExternalRole(getRoleByNamePath);
             // update local roles
-            roleService.saveExternalRole(role);
-            lologger.info("Role activation status successfully set");
+            roleService.saveExternalRole(roleActivation);
+            logger.info("Role activation status successfully set");
         } catch (NoSuchElementException ignored) {
             logger.error("Role activation status set failed");
         }
@@ -46,19 +45,13 @@ public class RabbitMQReceiver {
     @RabbitListener(queues = "roles-init-queue")
     public void receiveRolesInitMessage(String getAllRolesPath) {
         logger.info("Message received on startup of a service to init its roles: " + getAllRolesPath);
-        // build request
-        String url = customHttpRequestBuilder.buildUrl(getAllRolesPath);
-        HttpEntity<String> entity = customHttpRequestBuilder.buildHttpEntity();
-        // send request
-        ResponseEntity<List<RoleResponseAQMPDto>> response = restTemplate.exchange(url, HttpMethod.GET,
-                entity,
-                new ParameterizedTypeReference<>() {}); // response with custom type
-
-        // update local roles
-        if (response.getStatusCode().is2xxSuccessful() && response.hasBody() && response.getBody() != null) {
-            roleService.saveAllExternalRoles(response.getBody());
+        try {
+            // try to get external role
+            List<RoleActivationDto> roleActivations = roleService.getAllExternalRoles(getAllRolesPath);
+            // update local roles
+            roleService.saveAllExternalRoles(roleActivations);
             logger.info("Roles successfully initialised");
-        } else {
+        } catch (NoSuchElementException ignored) {
             logger.error("Roles initialisation failed");
         }
     }
@@ -68,32 +61,32 @@ public class RabbitMQReceiver {
         logger.info("Message received to add another service new role: " + getRoleByNamePath);
         try {
             // try to get external role
-            RoleServices role = roleService.getExternalRole(getRoleByNamePath);
+            RoleActivationDto roleActivation = roleService.getExternalRole(getRoleByNamePath);
             // update local roles
-            roleService.saveExternalRole(role);
+            roleService.saveExternalRole(roleActivation);
             logger.info("Role successfully saved");
         } catch (NoSuchElementException ignored) {
             logger.error("Role save failed");
         }
     }
 
-    @RabbitListener(queues = "employee-email-queue")
-    public void receiveEmployeeEmailMessage(String getEmployeeByIdPath) {
-        logger.info("Message received to update an employee email: " + getEmployeeByIdPath);
+    @RabbitListener(queues = "login-profile-email-queue")
+    public void receiveLoginProfileEmailMessage(String getLoginProfileByIdPath) {
+        logger.info("Message received to update a login-profile email: " + getLoginProfileByIdPath);
         // build request
-        String url = customHttpRequestBuilder.buildUrl(getEmployeeByIdPath);
+        String url = customHttpRequestBuilder.buildUrl(getLoginProfileByIdPath);
         HttpEntity<String> entity = customHttpRequestBuilder.buildHttpEntity();
         // send request
-        ResponseEntity<EmployeeResponseAQMPDto> response = restTemplate.exchange(url, HttpMethod.GET,
+        ResponseEntity<LoginProfileMessageDto> response = restTemplate.exchange(url, HttpMethod.GET,
                 entity,
                 new ParameterizedTypeReference<>() {}); // response with custom type
         // update local roles
         if (response.getStatusCode().is2xxSuccessful() && response.hasBody() && response.getBody() != null) {
-            logger.info("Employee email successfully updated");
-            EmployeeResponseAQMPDto employee = response.getBody();
-            employeeService.updateEmployeeEmail(employee.getId(), employee.getEmail());
+            logger.info("Login-profile email successfully updated");
+            LoginProfileMessageDto loginProfile = response.getBody();
+            loginProfileService.updateLoginProfileEmail(loginProfile.getId(), loginProfile.getEmail());
         } else {
-            logger.error("Employee email update failed");
+            logger.error("Login-profile email update failed");
         }
     }
 }

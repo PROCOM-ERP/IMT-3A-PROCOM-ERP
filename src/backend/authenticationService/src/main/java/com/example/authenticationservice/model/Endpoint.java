@@ -45,7 +45,6 @@ public enum Endpoint {
           Permission.CanReadPermission),
 
   GET_V1_HELLO(HttpMethod.GET, Path.V1_HELLO, null),
-  GET_V1_RABBITHELLO(HttpMethod.GET, Path.V1_RABBITHELLO, null),
 
   GET_V1_DOCS(HttpMethod.GET, Path.V1_DOCS_ANYTHING, null);
 

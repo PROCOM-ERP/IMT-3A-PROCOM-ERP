@@ -7,7 +7,6 @@ public class Path {
   public static final String ANYONE = "/*";
   public static final String ANYTHING = "/**";
   public static final String HELLO = "/hello";
-  public static final String RABBITHELLO = "/rabbithello";
   public static final String DOCS = "/docs";
   public static final String LOGIN_PROFILES = "/login-profiles";
   public static final String PASSWORD = "/password";
@@ -33,7 +32,6 @@ public class Path {
   public static final String V1_ROLES = API + V1 + ROLES;
   public static final String ROLE_NAME = "/{role}";
   public static final String ROLE_NAME_PERMISSIONS = ROLE_NAME + PERMISSIONS;
-  public static final String ROLE_NAME_ENABLE = ROLE_NAME + ENABLE;
 
   public static final String V1_ROLES_ANYONE = V1_ROLES + ANYONE;
   public static final String V1_ROLES_ANYONE_PERMISSIONS =
@@ -46,7 +44,6 @@ public class Path {
   public static final String JWT = "/jwt";
 
   public static final String V1_HELLO = API + V1 + HELLO;
-  public static final String V1_RABBITHELLO = API + V1 + RABBITHELLO;
 
   public static final String V1_DOCS_ANYTHING = API + V1 + DOCS + ANYTHING;
 }

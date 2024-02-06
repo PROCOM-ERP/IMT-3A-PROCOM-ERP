@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.FanoutExchange;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -18,23 +17,23 @@ public class RabbitMQSender {
     private final CustomHttpRequestBuilder customHttpRequestBuilder;
     private final Logger logger = LoggerFactory.getLogger(RabbitMQSender.class);
 
-    public void sendEmployeesJwtDisableOldMessage() {
-        logger.info("Sending message to expire all employee Jwt...");
-        rabbitTemplate.convertAndSend(fanoutExchange.getName(), "employees.jwt.disable.old", "");
+    public void sendLoginProfilesJwtDisableOldMessage() {
+        logger.info("Sending message to expire all login-profile Jwt...");
+        rabbitTemplate.convertAndSend(fanoutExchange.getName(), "login-profiles.jwt.disable.old", "");
         logger.info("Message sent");
     }
 
-    public void sendEmployeeJwtDisableOldMessage(String idEmployee) {
-        logger.info("Sending message to expire an employee Jwt...");
-        rabbitTemplate.convertAndSend(fanoutExchange.getName(), "employee.jwt.disable.old", idEmployee);
+    public void sendLoginProfileJwtDisableOldMessage(String idLoginProfile) {
+        logger.info("Sending message to expire a login-profile Jwt...");
+        rabbitTemplate.convertAndSend(fanoutExchange.getName(), "login-profile.jwt.disable.old", idLoginProfile);
         logger.info("Message sent");
     }
 
-    public void sendEmployeeEnableModify(String idEmployee) {
-        logger.info("Sending message to set an employee activation status...");
-        String resource = String.format("%s/%s%s", Path.EMPLOYEES, idEmployee, Path.ENABLE);
+    public void sendLoginProfileEnableModify(String idLoginProfile) {
+        logger.info("Sending message to set a login-profile activation status...");
+        String resource = String.format("%s/%s%s", Path.LOGIN_PROFILES, idLoginProfile, Path.ENABLE);
         String path = customHttpRequestBuilder.buildPath(Path.V1, resource);
-        rabbitTemplate.convertAndSend(fanoutExchange.getName(), "employee.enable.modify", path);
+        rabbitTemplate.convertAndSend(fanoutExchange.getName(), "login-profile.enable.modify", path);
         logger.info("Message sent");
     }
 

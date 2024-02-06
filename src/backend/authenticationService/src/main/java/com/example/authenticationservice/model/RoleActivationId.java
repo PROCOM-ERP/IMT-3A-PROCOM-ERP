@@ -44,4 +44,11 @@ public class RoleActivationId implements Serializable {
         return Objects.hash(role, microservice);
     }
 
+    public static RoleActivationId of(String role, String microservice) {
+        return RoleActivationId.builder()
+                .role(role)
+                .microservice(microservice)
+                .build();
+    }
+
 }

@@ -5,17 +5,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.Set;
-
-@Getter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class RoleResponseDto {
+@Getter
+public class RoleActivationDto {
 
     private String name;
+    private String microservice;
     private Boolean isEnable;
-    private Set<String> permissions;
-    private Set<String> loginProfiles;
 
 }

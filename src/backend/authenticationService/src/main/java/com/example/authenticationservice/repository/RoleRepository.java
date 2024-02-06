@@ -7,8 +7,11 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Set;
 
 public interface RoleRepository extends JpaRepository<Role, String>, JpaSpecificationExecutor<Role> {
+
+    List<Role> findAllByNameIn(@NonNull Set<String> roleNames);
 
     @Query("SELECT DISTINCT p " +
             "FROM Role r JOIN r.permissions p " +
