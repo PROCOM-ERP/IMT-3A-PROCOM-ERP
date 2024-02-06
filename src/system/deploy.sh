@@ -134,34 +134,6 @@ if ! [ -f docker-compose.yml ]; then
     exit 1
 fi
 
-if [ "$1" == "--hot" ]; then
-    shift  # Remove --hot from the arguments
-    HOT=true
-else
-    HOT=false
-fi
-
-# Check if the stack is running
-while is_stack_running "ERP"; do
-    if [ "$HOT" == "false" ]; then
-        echo "The stack is already running. Use --hot option to force redeployment."
-        exit 1
-    else
-        echo "Hot deployment requested. Stopping the stack..."
-        docker stack rm ERP
-        sleep 1  # Wait for stack to stop
-    fi
-done
-
-copy_system_files
-
-get_image_versions
-
-COMPOSE_FILE=docker-compose.yml
-
-# Define your Docker registry prefix (e.g., username or organization)
-#DOCKER_REGISTRY_PREFIX=gachille/erp
-
 PUSH=false
 PULL=false
 HOT=false
@@ -198,6 +170,27 @@ while [[ $# -gt 0 ]]; do
             ;;
     esac
 done
+
+# Check if the stack is running
+while is_stack_running "ERP"; do
+    if [ "$HOT" == "false" ]; then
+        echo "The stack is already running. Use --hot option to force redeployment."
+        exit 1
+    else
+        echo "Hot deployment requested. Stopping the stack..."
+        docker stack rm ERP
+        sleep 1  # TODO: Redeploy dynamically
+    fi
+done
+
+copy_system_files
+
+get_image_versions
+
+COMPOSE_FILE=docker-compose.yml
+
+# Define your Docker registry prefix (e.g., username or organization)
+#DOCKER_REGISTRY_PREFIX=gachille/erp
 
 
 if [ "$HOT" == "false" ] && is_stack_running "ERP"; then
