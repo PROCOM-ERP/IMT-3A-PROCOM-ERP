@@ -6,6 +6,7 @@ Déstinés aux parties prenantes et membres du projet, non aux utilisateurs fina
 ### Pré-requis
 
 - Assurez-vous que **OpenSSL** est installé sur votre système pour la gestion des certificats SSL.
+- Assurez-vous que **keytool**(outil préinstallé par java, à vérifier sur votre machine en essayant de lancer un `keytool --version`) est installé sur votre système pour la gestion des certificats SSL.
 
 ### Utilisation de `security_setup.sh`
 
@@ -37,6 +38,8 @@ Il va tout mettre dans un dossier `./security/archives/Y-M-D-h-m`, et si l'optio
 - Ce script sert à nettoyer ou à réinitialiser les configurations établies par `security_setup.sh`.
 - Pour l'utiliser, exécutez : `./clean_security.sh`.
 - Une option `--CA` est disponnible afin d'archiver aussi les clés et le trust store de l'autorité de certification.
+
+Pour l'éxecution sur Windows du script powershell `./clean_security.ps1`, l'option à rentrer est -IncludeCA
 
 ### Utilisation de `docker_secrets.sh`
 
