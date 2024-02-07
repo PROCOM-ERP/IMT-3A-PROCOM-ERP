@@ -1,0 +1,70 @@
+package com.example.inventoryservice.controller;
+
+import com.example.inventoryservice.dto.AddressDto;
+import com.example.inventoryservice.service.AddressService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
+
+@RestController
+@CrossOrigin(origins = "http://localhost")
+@RequiredArgsConstructor
+@RequestMapping("/api/v1/inventory/address/")
+public class AddressController {
+    final private AddressService addressService;
+    @GetMapping("{id}")
+    @Operation(operationId = "getRole", tags = {"roles"},
+            summary = "Retrieve one role information", description =
+            "Retrieve one role information, by providing its name.<br>" +
+                    "Only available for admins.",
+            parameters = {@Parameter(name = "role", description =
+                    "The role name")})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description =
+                    "Role information retrieved correctly",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = AddressDto.class))} ),
+            @ApiResponse(responseCode = "401", description =
+                    "Roles in Jwt token are insufficient to authorize the access to this URL",
+                    content = {@Content(mediaType = "application/json")} ),
+            @ApiResponse(responseCode = "404", description =
+                    "Role not found",
+                    content = {@Content(mediaType = "application/json")} ),
+            @ApiResponse(responseCode = "500", description =
+                    "Uncontrolled error appeared",
+                    content = {@Content(mediaType = "application/json")} )})
+    public ResponseEntity<Optional<AddressDto>> getAddressById(@PathVariable int id){
+        return ResponseEntity.ok(addressService.getAddressById(id));
+    }
+
+    @GetMapping("all")
+    public ResponseEntity<List<AddressDto>> getAllAddress(){
+        return ResponseEntity.ok(addressService.getAllAddress());
+    }
+
+    /*
+    @GetMapping("/{id}")
+    public ResponseEntity<InventoryDto> getInventoryById(@PathVariable int id) {
+        return inventoryService.getInventoryById(id)
+                .map(inventoryDto ->
+                        ResponseEntity
+                                .status(HttpStatus.OK)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .body(inventoryDto))
+                .orElseGet(() ->
+                        ResponseEntity
+                                .status(HttpStatus.NOT_FOUND)
+                                .build());
+    }*/
+}

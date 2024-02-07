@@ -15,6 +15,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AddressService {
     final private AddressRepository addressRepository;
+
     public List<AddressDto> getAllAddress(){
         return addressRepository.findAll()
                 .stream()
@@ -22,7 +23,7 @@ public class AddressService {
                 .toList();
     }
 
-    public Optional<AddressDto> getByIdAddress(int id){
+    public Optional<AddressDto> getAddressById(int id){
         Optional<Address> addressOptional = addressRepository.findById(id);
         return addressOptional.map(AddressService::addressToDto);
     }
