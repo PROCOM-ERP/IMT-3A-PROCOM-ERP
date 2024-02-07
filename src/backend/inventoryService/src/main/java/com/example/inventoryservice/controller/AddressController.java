@@ -23,13 +23,14 @@ import java.util.Optional;
 @RequestMapping("/api/v1/inventory/address/")
 public class AddressController {
     final private AddressService addressService;
+
     @GetMapping("{id}")
-    @Operation(operationId = "getRole", tags = {"roles"},
-            summary = "Retrieve one role information", description =
-            "Retrieve one role information, by providing its name.<br>" +
-                    "Only available for admins.",
-            parameters = {@Parameter(name = "role", description =
-                    "The role name")})
+    @Operation(operationId = "getAddressById", tags = {"address", "inventory"},
+            summary = "Returns the address information",
+            description = "Returns the address information with the items at this address",
+            parameters = {@Parameter(
+                    name = "id",
+                    description = "id of the address")})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description =
                     "Role information retrieved correctly",
@@ -49,6 +50,23 @@ public class AddressController {
     }
 
     @GetMapping("all")
+    @Operation(operationId = "getAllAddress", tags = {"address", "inventory"},
+            summary = "Returns all existing addresses.",
+            description = "Returns the addresses information without items.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description =
+                    "Role information retrieved correctly",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = AddressDto.class))} ),
+            @ApiResponse(responseCode = "401", description =
+                    "Roles in Jwt token are insufficient to authorize the access to this URL",
+                    content = {@Content(mediaType = "application/json")} ),
+            @ApiResponse(responseCode = "404", description =
+                    "Role not found",
+                    content = {@Content(mediaType = "application/json")} ),
+            @ApiResponse(responseCode = "500", description =
+                    "Uncontrolled error appeared",
+                    content = {@Content(mediaType = "application/json")} )})
     public ResponseEntity<List<AddressDto>> getAllAddress(){
         return ResponseEntity.ok(addressService.getAllAddress());
     }
