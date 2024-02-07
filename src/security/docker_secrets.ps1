@@ -44,7 +44,9 @@ function Create-DockerSecret {
     }
     else {
         # Create the secret
-        docker secret create $secretName - <<< $secretValue
+        $secretFile = New-TemporaryFile
+        $secretValue | Out-File -FilePath $secretFile
+        docker secret create $secretName $secretFile
         Write-Host "Secret '$secretName' created."
     }
 }

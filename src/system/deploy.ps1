@@ -57,12 +57,12 @@ function Latest-ImageExists {
     param (
         [string]$imageName
     )
-    $latestImage = docker images "$imageName:latest" | Select-String "$imageName"
+    $latestImage = docker images "${imageName}:latest" | Select-String "$imageName"
     return $null -ne $latestImage
 }
 
 function Build-Images {
-    docker-compose -f $global:composeFile build
+    docker-compose -f docker-compose.yml build
 }
 
 function Build-And-PushImages {
@@ -72,7 +72,7 @@ function Build-And-PushImages {
     Get-ImageVersions # Ensure image versions are loaded
     foreach ($imageName in $global:imageNames.Keys) {
         $imageVersion = $global:imageVersions[$imageName]
-        $fullImageName = "$dockerRegistry/$imageName:$imageVersion"
+        $fullImageName = "$dockerRegistry/{$imageName}:$imageVersion"
         
         if (-not (Latest-ImageExists -imageName $imageName)) {
             Write-Host "Latest image for $imageName does not exist. Building..."
@@ -80,7 +80,7 @@ function Build-And-PushImages {
         }
         
         Write-Host "Tagging and pushing $fullImageName"
-        docker tag "$imageName:$imageVersion" $fullImageName
+        docker tag "${imageName}:$imageVersion" $fullImageName
         docker push $fullImageName
     }
 }
@@ -89,7 +89,7 @@ function Pull-Images {
     param (
         [string]$dockerRegistry
     )
-    $services = docker-compose -f $global:composeFile config --services
+    $services = docker-compose -f docker-compose.yml config --services
     foreach ($service in $services) {
         $imageName = "$dockerRegistry/$service-latest"
         Write-Host "Pulling $imageName"
@@ -99,7 +99,7 @@ function Pull-Images {
 
 function Deploy {
     # Example deploy function, replace with actual deployment logic from your script
-    docker stack deploy -c $global:composeFile "ERP"
+    docker stack deploy -c docker-compose.yml "ERP"
 }
 
 if (-not (Test-Path ".\.env")) {
@@ -107,7 +107,7 @@ if (-not (Test-Path ".\.env")) {
     exit
 }
 
-if (-not (Test-Path $composeFile)) {
+if (-not (Test-Path docker-compose.yml)) {
     Write-Host "docker-compose.yml file not found"
     exit
 }
@@ -153,8 +153,6 @@ if (Is-StackRunning -stackName "ERP") {
 
 Copy-SystemFiles
 Get-ImageVersions
-
-$composeFile = "docker-compose.yml"
 
 if ($push) {
     docker login

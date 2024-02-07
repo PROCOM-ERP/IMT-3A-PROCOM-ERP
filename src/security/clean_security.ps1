@@ -10,8 +10,11 @@ param (
 
 # Verify running from the correct directory
 $expectedLastEntries = "src\security"
-$currentPath = (Get-Location).Path
-$lastTwoEntries = $currentPath -split '\\' | Select-Object -Last 2 -join '\'
+$currentPath = Get-Location
+$parentPath = Split-Path -Path $currentPath -Parent
+$parentPathLast = Split-Path -Path $parentPath -Leaf
+$currentPathLast = Split-Path -Path $currentPath -Leaf
+$lastTwoEntries = "$parentPathLast\$currentPathLast"
 
 if ($lastTwoEntries -ne $expectedLastEntries) {
     Write-Host "Please run this script from the '${expectedLastEntries}' directory."
@@ -63,7 +66,7 @@ if ($IncludeCA) {
 }
 
 # Optional cleanup for remaining directories except "archive" and optionally "CA"
-Get-ChildItem -Directory | Where-Object { $_.Name -notmatch "^(archive|CA)$" } | ForEach-Object {
+Get-ChildItem -Directory | Where-Object { $_.Name -notmatch "^(archive)$" } | ForEach-Object {
     if (-not $IncludeCA -and $_.Name -eq "CA") { return }
     Move-Item -Path $_.FullName -Destination $archiveDir
 }

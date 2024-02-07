@@ -12,8 +12,11 @@ if (-not (Get-Command "openssl" -ErrorAction SilentlyContinue)) {
 
 # Verify running from the correct directory
 $expectedLastEntries = "src\security"
-$currentPath = (Get-Location).Path
-$lastTwoEntries = $currentPath -split '\\' | Select-Object -Last 2 -join '\'
+$currentPath = Get-Location
+$parentPath = Split-Path -Path $currentPath -Parent
+$parentPathLast = Split-Path -Path $parentPath -Leaf
+$currentPathLast = Split-Path -Path $currentPath -Leaf
+$lastTwoEntries = "$parentPathLast\$currentPathLast"
 
 if ($lastTwoEntries -ne $expectedLastEntries) {
     Write-Host "Please run this script from the '${expectedLastEntries}' directory."
@@ -42,9 +45,19 @@ function Generate-Certificate {
     # Export to PKCS12 format
     $securePassword = ConvertTo-SecureString -String "procom-erp-$serviceName-service-secure-keystore" -Force -AsPlainText
     openssl pkcs12 -export -in "$certDir\$serviceName-service.crt" -inkey "$certDir\$serviceName-service.key" -out "$certDir\$serviceName-service-keystore.p12" -name "$serviceName" -passout pass:$securePassword
+
+    if ($serviceName -match "message-broker"){
+        openssl pkcs12 -in "$certDir\${serviceName}-service-keystore.p12" -clcerts -nokeys -nodes -out "${serviceName}-service-certificate.pem" -passout pass:$securePassword -passin pass:$securePassword
+
+        openssl pkcs12 -in "$certDir\${serviceName}-service-keystore.p12" -nocerts -nodes -out "${serviceName}-service-key.pem" -passout pass:$securePassword -passin pass:$securePassword
+
+        Move-Item -Force "${serviceName}-service-key.pem" -Destination "$serviceDir"
+        Move-Item -Force "${serviceName}-service-certificate.pem" -Destination "$serviceDir"
+    }
     
     # Move generated files to the service directory
-    Move-Item -Path "$certDir\*" -Destination $serviceDir -Force
+    Move-Item -Force -Path "$certDir\*.p12" -Destination $serviceDir
+    Move-Item -Force -Path "$certDir\*" -Destination $certDir
     Write-Host "Certificates for $serviceName moved to $certDir and the keystore to $serviceDir"
 }
 
@@ -60,12 +73,12 @@ if (-not (Test-Path "$caDir\$caCrt") -or -not (Test-Path "$caDir\$caKey")) {
     openssl req -new -x509 -days 3650 -key "$caDir\$caKey" -out "$caDir\$caCrt" -subj "/C=FR/ST=France/L=Paris/O=Procom-ERP/OU=IT/CN=Procom-ERP"
     
     # Import into trust store (simulated with keytool command in bash)
-    # PowerShell does not have a direct equivalent to `keytool`, consider using Java or adapt this section based on your environment
+    keytool -importcert -noprompt -alias $caCrt -file $caDir\$caCrt -keystore "$caDir\procom-erp-truststore.jks" --store-pass "super-secure-password-for-trust-store"
     Write-Host "New CA files generated."
-} else {
-    $caCrt = "$caDir\$caCrt"
-    $caKey = "$caDir\$caKey"
+    Move-Item -Force -Path "$caDir\procom-erp-truststore.jks" -Destination "..\system"
 }
+$caCrt = "$caDir\$caCrt"
+$caKey = "$caDir\$caKey"
 
 # Discover service directories and generate certificates
 $backendServices = Get-ChildItem -Path "../backend" -Directory | Where-Object { $_.Name -match "Service$" }
@@ -80,6 +93,7 @@ foreach ($service in $backendServices + $frontendServices) {
 }
 
 # Final CA management and truststore setup not directly translatable to PowerShell without external tools like Java's keytool or manual steps.
+Copy-Item -Force -Path $caCrt -Destination "..\system\procom-erp-ca.pem"
 # Adapt this section based on your security requirements.
 
 Write-Host "Certificates generation completed."
