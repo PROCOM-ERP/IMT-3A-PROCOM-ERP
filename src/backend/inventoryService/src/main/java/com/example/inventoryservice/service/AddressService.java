@@ -9,11 +9,23 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class AddressService {
     final private AddressRepository addressRepository;
+    public List<AddressDto> getAllAddress(){
+        return addressRepository.findAll()
+                .stream()
+                .map(AddressService::addressOnlyToDto)
+                .toList();
+    }
+
+    public Optional<AddressDto> getByIdAddress(int id){
+        Optional<Address> addressOptional = addressRepository.findById(id);
+        return addressOptional.map(AddressService::addressToDto);
+    }
 
     static AddressDto addressToDto(Address address){
         return AddressDto.builder()
@@ -26,6 +38,19 @@ public class AddressService {
                 .street(address.getStreet())
                 .postal_code(address.getPostalCode())
                 .items(itemToDtoList(address.getItems()))
+                .build();
+    }
+
+    static AddressDto addressOnlyToDto(Address address){
+        return AddressDto.builder()
+                .id(address.getId())
+                .city(address.getCity())
+                .country(address.getCountry())
+                .state(address.getState())
+                .number(address.getNumber())
+                .info(address.getInfo())
+                .street(address.getStreet())
+                .postal_code(address.getPostalCode())
                 .build();
     }
 

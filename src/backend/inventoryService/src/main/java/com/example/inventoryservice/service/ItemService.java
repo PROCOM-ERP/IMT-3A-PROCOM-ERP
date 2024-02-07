@@ -2,7 +2,6 @@ package com.example.inventoryservice.service;
 
 import com.example.inventoryservice.dto.*;
 import com.example.inventoryservice.dto.TransactionDto;
-import com.example.inventoryservice.model.Category;
 import com.example.inventoryservice.model.Transaction;
 import com.example.inventoryservice.model.Item;
 import com.example.inventoryservice.repository.ItemRepository;

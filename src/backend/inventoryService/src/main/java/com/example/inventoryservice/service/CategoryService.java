@@ -10,18 +10,16 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class CategoryService {
 
     final private CategoryRepository categoryRepository;
-    public List<CategoryDto> getCategoryById(int id){
+    public Optional<CategoryDto> getCategoryById(int id){
         List<CategoryDto> categoryInList = new ArrayList<>();
-        categoryInList.add(categoryRepository.findById(id)
-                .map(CategoryService::categoryToDto)
-                .orElseThrow());
-        return categoryInList;
+        return categoryOptional.map(CategoryService::categoryToDto);
     }
 
     public List<CategoryDto> getAllCategories(){
