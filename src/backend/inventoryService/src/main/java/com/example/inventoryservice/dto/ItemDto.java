@@ -17,4 +17,5 @@ public class ItemDto {
     private Integer quantity;
     private List<TransactionDto> transactions;
     private AddressDto address;
+    private ProductDto product;
 }

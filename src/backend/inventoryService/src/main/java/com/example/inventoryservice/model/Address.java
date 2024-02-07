@@ -18,14 +18,34 @@ public class Address {
     @Column(name = "id_address", nullable = false)
     private Integer id;
 
-    @Size(max = 128)
+    @Size(max = 32)
+    @Column(name = "number", length = 32)
+    private String number;
+
+    @Size(max = 255)
+    @Column(name = "street")
+    private String street;
+
+    @Size(max = 63)
+    @Column(name = "city", length = 63)
+    private String city;
+
+    @Size(max = 63)
+    @Column(name = "state", length = 63)
+    private String state;
+
+    @Size(max = 63)
+    @Column(name = "country", length = 63)
+    private String country;
+
+    @Size(max = 15)
+    @Column(name = "postal_code", length = 15)
+    private String postalCode;
+
+    @Column(name = "info", length = Integer.MAX_VALUE)
+    private String info;
+
     @NotNull
-    @Column(name = "title", nullable = false, length = 128)
-    private String title;
-
-    @Column(name = "description", length = Integer.MAX_VALUE)
-    private String description;
-
     @OneToMany
     private List<Item> items;
 }

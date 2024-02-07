@@ -13,8 +13,13 @@
 -- Creation of 'inventories'
 CREATE TABLE addresses (
     id_address SERIAL PRIMARY KEY,
-    title VARCHAR(128) NOT NULL,
-    description TEXT
+    number VARCHAR(31),
+    street VARCHAR (255),
+    city VARCHAR (63) ,
+    state VARCHAR (63),
+    country VARCHAR (63),
+    postal_code VARCHAR(15),
+    info TEXT
 );
 
 CREATE TABLE products (

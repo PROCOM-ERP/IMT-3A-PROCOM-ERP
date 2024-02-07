@@ -61,7 +61,7 @@ public class ProductService {
 
     static List<ItemDto> itemToDtoList(List<Item> items){
         return items.stream()
-                .map(ItemService::itemToDto)
+                .map(ItemService::itemAddressToDto)
                 .toList();
     }
 
