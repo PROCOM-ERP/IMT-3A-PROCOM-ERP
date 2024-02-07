@@ -1,5 +1,6 @@
 package com.example.inventoryservice.service;
 
+import com.example.inventoryservice.dto.AddressDto;
 import com.example.inventoryservice.dto.CategoryDto;
 import com.example.inventoryservice.model.*;
 import com.example.inventoryservice.dto.ItemDto;
@@ -10,18 +11,16 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class ProductService {
     private final ProductRepository productRepository;
 
-    public List<ProductDto> getProductById(int id){
-        List<ProductDto> productInList = new ArrayList<>();
-        productInList.add(productRepository.findById(id)
-                .map(ProductService::productToDto)
-                .orElseThrow());
-        return productInList;
+    public Optional<ProductDto> getProductById(int id){
+        Optional<Product> productOptional = productRepository.findById(id);
+        return productOptional.map(ProductService::productToDto);
     }
 
     public List<ProductDto> getAllProducts(){

@@ -1,7 +1,9 @@
 package com.example.inventoryservice.service;
 
+import com.example.inventoryservice.dto.AddressDto;
 import com.example.inventoryservice.dto.CategoryDto;
 import com.example.inventoryservice.dto.ProductDto;
+import com.example.inventoryservice.model.Address;
 import com.example.inventoryservice.model.Category;
 import com.example.inventoryservice.model.Product;
 import com.example.inventoryservice.repository.CategoryRepository;
@@ -18,19 +20,20 @@ public class CategoryService {
 
     final private CategoryRepository categoryRepository;
     public Optional<CategoryDto> getCategoryById(int id){
-        List<CategoryDto> categoryInList = new ArrayList<>();
+        Optional<Category> categoryOptional = categoryRepository.findById(id);
         return categoryOptional.map(CategoryService::categoryToDto);
     }
 
     public List<CategoryDto> getAllCategories(){
         return categoryRepository.findAll()
                 .stream()
-                .map(CategoryService::categoryToDto)
+                .map(CategoryService::categoryOnlyToDto)
                 .toList();
     }
 
     static CategoryDto categoryOnlyToDto(Category category){
         return CategoryDto.builder()
+                .id(category.getId())
                 .title(category.getTitle())
                 .description(category.getDescription())
                 .build();
@@ -38,6 +41,7 @@ public class CategoryService {
 
     static CategoryDto categoryToDto(Category category){
         return CategoryDto.builder()
+                .id(category.getId())
                 .title(category.getTitle())
                 .description(category.getDescription())
                 .products(productToDtoList(category.getProducts()))
