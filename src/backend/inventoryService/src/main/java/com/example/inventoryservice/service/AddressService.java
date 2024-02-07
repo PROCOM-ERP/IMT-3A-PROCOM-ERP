@@ -22,14 +22,16 @@ public class AddressService {
                 .country(address.getCountry())
                 .state(address.getState())
                 .number(address.getNumber())
+                .info(address.getInfo())
+                .street(address.getStreet())
+                .postal_code(address.getPostalCode())
                 .items(itemToDtoList(address.getItems()))
-
                 .build();
     }
 
     static List<ItemDto> itemToDtoList(List<Item> item){
         return item.stream()
-                .map(ItemService::ItemToDto)
+                .map(ItemService::itemProductToDto)
                 .toList();
     }
 }

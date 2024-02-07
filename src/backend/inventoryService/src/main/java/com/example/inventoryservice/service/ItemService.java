@@ -19,7 +19,7 @@ public class ItemService {
         return ItemDto.builder()
                 .quantity(item.getQuantity())
                 .transactions(transactionToDtoList(item.getTransactions()))
-                .address(item.getAddress())
+                .address(AddressService.addressToDto(item.getAddress()))
                 .build();
     }
 
@@ -27,7 +27,7 @@ public class ItemService {
         return ItemDto.builder()
                 .quantity(item.getQuantity())
                 .transactions(transactionToDtoList(item.getTransactions()))
-                .product(ProductService.productItemToDto(item.getProduct()))
+                .product(ProductService.productCategoryToDto(item.getProduct()))
                 .build();
     }
 
