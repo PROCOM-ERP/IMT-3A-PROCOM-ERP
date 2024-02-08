@@ -7,6 +7,7 @@ services:
   # +---------------------------------------------------------------------------+
   # | Database containers section (mask: 10.200.1.64/26)                        |
   # +---------------------------------------------------------------------------+
+
   postgres-procom-erp-authentication-service:
     container_name: ${DB_AUTHENTICATION_SERVICE_HOSTNAME}
     hostname: ${DB_AUTHENTICATION_SERVICE_HOSTNAME}
@@ -53,25 +54,25 @@ services:
 
   # +-----------------------------------------------------------------------------+
 
-  postgres-procom-erp-local-test-service:
-    container_name: ${DB_LOCAL_TEST_SERVICE_HOSTNAME}
-    hostname: ${DB_LOCAL_TEST_SERVICE_HOSTNAME}
+  postgres-procom-erp-inventory-service:
+    container_name: ${DB_INVENTORY_SERVICE_HOSTNAME}
+    hostname: ${DB_INVENTORY_SERVICE_HOSTNAME}
     image: postgres:13
     environment:
-      POSTGRES_USER: ${DB_LOCAL_TEST_SERVICE_USER}
-      POSTGRES_PASSWORD: ${DB_LOCAL_TEST_SERVICE_PASSWORD}
-      POSTGRES_DB: ${DB_LOCAL_TEST_SERVICE_DB}
+      POSTGRES_USER: ${DB_INVENTORY_SERVICE_USER}
+      POSTGRES_PASSWORD: ${DB_INVENTORY_SERVICE_PASSWORD}
+      POSTGRES_DB: ${DB_INVENTORY_SERVICE_DB}
     expose:
-      - "${DB_LOCAL_TEST_SERVICE_PORT_INT}"
+      - "${DB_INVENTORY_SERVICE_PORT_INT}"
     ports:
-      - "${DB_LOCAL_TEST_SERVICE_PORT_EXT}:${DB_LOCAL_TEST_SERVICE_PORT_INT}"
+      - "${DB_INVENTORY_SERVICE_PORT_EXT}:${DB_INVENTORY_SERVICE_PORT_INT}"
     networks:
       vnet-procom-erp:
-        ipv4_address: ${DB_LOCAL_TEST_SERVICE_IP_INT}
+        ipv4_address: ${DB_INVENTORY_SERVICE_IP_INT}
     volumes:
-      - db-procom-erp-local-test-service-data:/var/lib/postgresql/data
-      - ${DB_LOCAL_TEST_SERVICE_PATH}/init.sql:/docker-entrypoint-initdb.d/init.sql
-      - ${DB_LOCAL_TEST_SERVICE_PATH}/postgresql.conf:/etc/postgresql/postgresql.conf
+      - db-procom-erp-inventory-service-data:/var/lib/postgresql/data
+      - ${DB_INVENTORY_SERVICE_PATH}/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ${DB_INVENTORY_SERVICE_PATH}/postgresql.conf:/etc/postgresql/postgresql.conf
     command: -c 'config_file=/etc/postgresql/postgresql.conf'
 
   # +---------------------------------------------------------------------------+
@@ -170,7 +171,7 @@ services:
     entrypoint: ${ENTRYPOINT}
     env_file: ./.env
     depends_on:
-      - "postgres-procom-erp-local-test-service"
+      - "postgres-procom-erp-inventory-service"
       - "springboot-procom-erp-message-broker-service"
       - "springboot-procom-erp-authentication-service"
     networks:
@@ -198,4 +199,4 @@ networks:
 volumes:
   db-procom-erp-authentication-service-data:
   db-procom-erp-directory-service-data:
-  db-procom-erp-local-test-service-data:
+  db-procom-erp-inventory-service-data:
