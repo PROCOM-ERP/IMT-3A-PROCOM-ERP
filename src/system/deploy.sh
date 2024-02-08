@@ -134,6 +134,14 @@ if ! [ -f docker-compose.yml ]; then
     exit 1
 fi
 
+if ! docker info 2>/dev/null | grep -q "Swarm: active"; then
+    docker swarm init > /dev/null 2>&1
+    echo "Swarm initialized"
+    ./src/security/docker_secrets.sh > /dev/null 2>&1
+else
+    echo "Swarm detected"
+fi
+
 PUSH=false
 PULL=false
 HOT=false
