@@ -23,6 +23,12 @@ spring:
             - Path=/api/dir/**
           filters:
             - RewritePath=/api/dir/(?<segment>.*), /api/$\{segment}
+        - id: inventory-service
+          uri: https://${BACKEND_INVENTORY_SERVICE_IP_INT}:${BACKEND_INVENTORY_SERVICE_PORT_INT}
+          predicates:
+            - Path=/api/inv/**
+          filters:
+            - RewritePath=/api/inv/(?<segment>.*), /api/$\{segment}
   security:
     require-ssl: true
 
