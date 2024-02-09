@@ -8,6 +8,8 @@ import com.example.inventoryservice.model.Category;
 import com.example.inventoryservice.model.Product;
 import com.example.inventoryservice.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -17,6 +19,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class CategoryService {
+    private final Logger logger = LoggerFactory.getLogger(CategoryService.class);
 
     final private CategoryRepository categoryRepository;
     public Optional<CategoryDto> getCategoryById(int id){
@@ -25,6 +28,7 @@ public class CategoryService {
     }
 
     public List<CategoryDto> getAllCategories(){
+        logger.info("Hello !");
         return categoryRepository.findAll()
                 .stream()
                 .map(CategoryService::categoryOnlyToDto)

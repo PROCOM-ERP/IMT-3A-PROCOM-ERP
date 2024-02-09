@@ -18,7 +18,7 @@ import java.util.Optional;
 @RestController
 @CrossOrigin(origins = "http://localhost")
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/inventory/product/")
+@RequestMapping("/api/v1/product/")
 public class ProductController {
 
     private final ProductService productService;
@@ -48,7 +48,6 @@ public class ProductController {
         return ResponseEntity.ok(productService.getProductById(id));
     }
 
-    @GetMapping("/all")
     @Operation(operationId = "getProductById", tags = {"product", "inventory"},
             summary = "Returns the product information",
             description = "Returns the product with the associated categories and items",

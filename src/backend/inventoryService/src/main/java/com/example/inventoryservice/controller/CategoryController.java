@@ -14,16 +14,15 @@ import java.util.Optional;
 @RestController
 @CrossOrigin(origins = "http://localhost")
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/inventory/category/")
+@RequestMapping("/api/v1/category")
 public class CategoryController {
     private final CategoryService categoryService;
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Optional<CategoryDto>> getCategoryById(@PathVariable int id){
         return ResponseEntity.ok(categoryService.getCategoryById(id));
     }
 
-    @GetMapping("all")
     public ResponseEntity<List<CategoryDto>> getAllCategory(){
         return ResponseEntity.ok(categoryService.getAllCategories());
     }

@@ -18,11 +18,11 @@ import java.util.Optional;
 @RestController
 @CrossOrigin(origins = "http://localhost")
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/inventory/address/")
+@RequestMapping("/api/v1/address")
 public class AddressController {
     final private AddressService addressService;
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     @Operation(operationId = "getAddressById", tags = {"address", "inventory"},
             summary = "Returns the address information",
             description = "Returns the address information with the items at this address",
@@ -47,7 +47,6 @@ public class AddressController {
         return ResponseEntity.ok(addressService.getAddressById(id));
     }
 
-    @GetMapping("all")
     @Operation(operationId = "getAllAddress", tags = {"address", "inventory"},
             summary = "Returns all existing addresses.",
             description = "Returns the addresses information without items.")
@@ -68,19 +67,4 @@ public class AddressController {
     public ResponseEntity<List<AddressDto>> getAllAddress(){
         return ResponseEntity.ok(addressService.getAllAddress());
     }
-
-    /*
-    @GetMapping("/{id}")
-    public ResponseEntity<InventoryDto> getInventoryById(@PathVariable int id) {
-        return inventoryService.getInventoryById(id)
-                .map(inventoryDto ->
-                        ResponseEntity
-                                .status(HttpStatus.OK)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .body(inventoryDto))
-                .orElseGet(() ->
-                        ResponseEntity
-                                .status(HttpStatus.NOT_FOUND)
-                                .build());
-    }*/
 }
