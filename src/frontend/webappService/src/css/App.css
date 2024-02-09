@@ -1,12 +1,32 @@
 /* import all fonts */
 @import url('https://fonts.googleapis.com/css2?family=Dosis:wght@300;400;500;600&family=Roboto+Condensed:wght@300;400;500;600;700&family=Teko:wght@300;400;500;600&display=swap');
 
-:root{
+:root {
+  /* Navbar */
+  --usr-nav-bg: #D7EBFC;
+  --admin-nav-bg: #F1D394;
+  --nav-text-family: Roboto Condensed;
+  --nav-text-size: 1.2rem;
+  --nav-text-weight: 600;
+  --nav-text-color: #000;
+  --usr-nav-text-color-hover: #E9B74E;
+  --admin-nav-text-color-hover: #0A316C;
+  /* Logo */
+  --logo-family: Teko;
+  --logo-size: 2rem;
+  --logo-weight: 600;
+  --logo-color: #000000;
+  /* Title */
   --title-family: Roboto Condensed;
   --title-size: 2.2rem;
-  --title-weight: 700
+  --title-weight: 700;
+  /* Text */
+  --text-family: Roboto Condensed;
+  --text-size: 2.2rem;
+  --text-weight: 700;
 }
-body{
+
+body {
   padding: 0;
   margin: 0;
 }

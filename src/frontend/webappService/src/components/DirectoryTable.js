@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import data from "../data/data.json";
+import { Link } from 'react-router-dom';
 
 function DirectoryTable() {
     //const defaultUsers = data.users;
+    const userId = localStorage.getItem("id");
     const [users, setUsers] = useState([]);
 
     const [searchTerm, setSearchTerm] = useState('');
@@ -54,7 +56,7 @@ function DirectoryTable() {
                 return res;
             })
             .then(data => {
-                setUsers(data);
+                setUsers(data.filter(user => user.id !== userId));
                 console.log("[LOG] Users profil information retrieved");
             })
             .catch(error => {
@@ -85,8 +87,8 @@ function DirectoryTable() {
                 <tbody>
                     {filteredUsers.map((user, index) => {
                         return (
-                            <tr key={index}>
-                                <td> {user.id} </td>
+                            <tr key={index} >
+                                <td> <Link to={`/user/${user.id}`}>{user.id} </Link> </td>
                                 <td> {user.firstName} </td>
                                 <td> {user.lastName} </td>
                                 <td> {user.email} </td>

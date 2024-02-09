@@ -1,18 +1,16 @@
 /* import used fonts */
 @import url('https://fonts.googleapis.com/css2?family=Dosis:wght@300;400;500;600&family=Roboto+Condensed:wght@300;400;500;600;700&family=Teko:wght@300;400;500;600&display=swap');
 
-:root{
-    
-}
+:root {}
 
-.profil-container{
+.user-container {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
 }
 
-.title{
+.title {
     font-family: var(--title-family);
     font-size: var(--title-size);
     font-weight: var(--title-weight);

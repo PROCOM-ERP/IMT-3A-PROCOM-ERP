@@ -7,6 +7,7 @@ import Profil from './pages/Profil.js';
 import Directory from './pages/Directory.js';
 import Inventory from './pages/Inventory.js';
 import OrderManagement from './pages/OrderManagement.js';
+import DirectoryProfil from './pages/DirectoryProfil.js';
 
 function App() {
   return (
@@ -18,7 +19,8 @@ function App() {
           <Route path='/directory' exact Component={Directory} />
           <Route path='/inventory' exact Component={Inventory} />
           <Route path='/orderManagement' exact Component={OrderManagement} />
-          <Route path='/profil' exact Component={Profil} />
+          <Route path='/profil/' exact Component={Profil} />
+          <Route path='/user/:userId' exact Component={DirectoryProfil} />
         </Routes>
       </Router>
     </div>

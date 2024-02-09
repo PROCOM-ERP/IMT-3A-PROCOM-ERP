@@ -8,7 +8,7 @@ function Profil() {
   return (
     <>
       <Navbar />
-      <UserProfil userId={userId} />
+      <UserProfil title="Profil" userId={userId} />
     </>
   );
 }

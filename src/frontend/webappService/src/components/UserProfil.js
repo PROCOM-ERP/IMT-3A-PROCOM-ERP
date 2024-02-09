@@ -3,20 +3,10 @@ import Button from "../components/Button.js"
 import "../css/App.css";
 import "../css/UserProfil.css";
 
-function UserProfil({ userId }) {
+function UserProfil({ title, userId }) {
 
-  const [user, setUser] = useState({
-    id: "A00006",
-    creation: "2024-02-06",
-    enable: true,
-    lastName: "Dirou",
-    firstName: "Aïna",
-    email: "aina.dirou@email.com",
-    phoneNumber: "0656453687",
-    service: 0
-  });
+  const [user, setUser] = useState({});
 
-  //const userId = localStorage.getItem("id");
   const tokenName = "Token"; // Need to be the same name as in AuthForm.js components
   const token = localStorage.getItem(tokenName);
 
@@ -80,15 +70,21 @@ function UserProfil({ userId }) {
       });
   }
 
+  const renderPasswordButton = () => {
+    if (title.toLowerCase() == "profil") {
+      <Button type="button" value="modify" onClick={handleModif}>Modify password</Button>
+    }
+  }
+
   return (
     <>
-      <div className="profil-container">
-        <div className="title">Profil</div>
+      <div className="user-container">
+        <div className="title">{title}</div>
         <p>Firstname : {user.firstName}</p>
         <p>Lastname : {user.lastName}</p>
         <p>Email : {user.email}</p>
         <p>Phone Number : {user.phoneNumber}</p>
-        <Button type="button" value="modify" onClick={handleModif}>Modify password</Button>
+        {renderPasswordButton()}
       </div>
     </>
   );
