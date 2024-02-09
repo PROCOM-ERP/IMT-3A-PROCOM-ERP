@@ -3,7 +3,7 @@ import data from "../data/data.json";
 
 function DirectoryTable() {
     //const defaultUsers = data.users;
-    const [users, setUsers] = useState({});
+    const [users, setUsers] = useState([]);
 
     const tokenName = "Token"; // Need to be the same name as in AuthForm.js components
     const token = localStorage.getItem(tokenName);
@@ -13,19 +13,10 @@ function DirectoryTable() {
         'Authorization': `Bearer ${token}`,
     };
 
-    async function getEmployees() {
-        // Make the API request
-        const res = await fetch(apiUrl, {
-            method: "GET",
-            headers: headers,
-            });
-        const response = res.json();
-        return response; 
-    }
+    const getEmployees = async () => {
 
-    useEffect(() => {
         // Make the API request
-        fetch(apiUrl, {
+        await fetch(apiUrl, {
             method: "GET",
             headers: headers,
             })
@@ -42,12 +33,14 @@ function DirectoryTable() {
             .catch(error => {
                 console.error('API request error: ', error);
             });
+    }
 
-    });
+    useEffect(() => {
+        getEmployees();
+    }, []);
 
     return (
         <>
-        {setUsers(getEmployees())}
         <table>
             <thead>
                 <th>Name</th>
@@ -56,7 +49,7 @@ function DirectoryTable() {
                 <th>Job</th>
             </thead>
             <tbody>
-                {console.log(JSON.stringify(users))}
+                {console.log(users)}
                 {users.map((user, index) => {
                     return(
                         <tr key={index}>
