@@ -1,8 +1,6 @@
 /* import used fonts */
 @import url('https://fonts.googleapis.com/css2?family=Dosis:wght@300;400;500;600&family=Roboto+Condensed:wght@300;400;500;600;700&family=Teko:wght@300;400;500;600&display=swap');
 
-:root {}
-
 .user-container {
     display: flex;
     flex-direction: column;

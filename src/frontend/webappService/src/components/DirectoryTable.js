@@ -56,7 +56,7 @@ function DirectoryTable() {
                 return res;
             })
             .then(data => {
-                setUsers(data.filter(user => user.id !== userId));
+                setUsers(data);
                 console.log("[LOG] Users profil information retrieved");
             })
             .catch(error => {

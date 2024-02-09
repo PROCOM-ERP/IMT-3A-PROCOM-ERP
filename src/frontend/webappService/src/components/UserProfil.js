@@ -71,8 +71,8 @@ function UserProfil({ title, userId }) {
   }
 
   const renderPasswordButton = () => {
-    if (title.toLowerCase() == "profil") {
-      <Button type="button" value="modify" onClick={handleModif}>Modify password</Button>
+    if (title.toLowerCase() === "profil") {
+      return (<Button type="button" value="modify" onClick={handleModif}>Modify password</Button>);
     }
   }
 
