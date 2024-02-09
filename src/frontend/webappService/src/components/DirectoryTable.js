@@ -1,9 +1,37 @@
-import React, { useState ,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import data from "../data/data.json";
 
 function DirectoryTable() {
     //const defaultUsers = data.users;
     const [users, setUsers] = useState([]);
+
+    const [searchTerm, setSearchTerm] = useState('');
+    const [sortBy, setSortBy] = useState(null);
+
+    const handleChange = (e) => {
+        setSearchTerm(e.target.value);
+    };
+
+    const handleSort = (key) => {
+        setSortBy(key);
+    };
+
+    // TODO : tester si la valeur est null -> ne pas appliquer le filtre
+    let filteredUsers = users.filter(user =>
+        user.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.email.toLowerCase().includes(searchTerm.toLowerCase())
+        //user.phoneNumber.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    if (sortBy) {
+        filteredUsers.sort((a, b) => {
+            if (a[sortBy] < b[sortBy]) return -1;
+            if (a[sortBy] > b[sortBy]) return 1;
+            return 0;
+        });
+    }
 
     const tokenName = "Token"; // Need to be the same name as in AuthForm.js components
     const token = localStorage.getItem(tokenName);
@@ -19,7 +47,7 @@ function DirectoryTable() {
         await fetch(apiUrl, {
             method: "GET",
             headers: headers,
-            })
+        })
             .then((response) => {
                 if (!response.ok) throw new Error(response.status);
                 const res = response.json();
@@ -27,8 +55,7 @@ function DirectoryTable() {
             })
             .then(data => {
                 setUsers(data);
-                console.info("[DATA] " + JSON.stringify(data));
-                console.log("[LOG] profil info retrieve");
+                console.log("[LOG] Users profil information retrieved");
             })
             .catch(error => {
                 console.error('API request error: ', error);
@@ -41,28 +68,35 @@ function DirectoryTable() {
 
     return (
         <>
-        <table>
-            <thead>
-                <th>Name</th>
-                <th>Office</th>
-                <th>Department</th>
-                <th>Job</th>
-            </thead>
-            <tbody>
-                {console.log(users)}
-                {users.map((user, index) => {
-                    return(
-                        <tr key={index}>
-                            <td> {user.firstname + ' ' + user.lastname} </td>
-                            <td> {user.office} </td>
-                            <td> {user.department} </td>
-                            <td> {user.job} </td>
-                        </tr>
-                    )
+            <input
+                type="text"
+                placeholder="Search by name or email"
+                value={searchTerm}
+                onChange={handleChange}
+            />
+            <table>
+                <thead>
+                    <th onClick={() => handleSort('id')} >ID</th>
+                    <th onClick={() => handleSort('firstName')} >Firstname</th>
+                    <th onClick={() => handleSort('lastName')} >Lastname</th>
+                    <th onClick={() => handleSort('email')} >Email</th>
+                    <th onClick={() => handleSort('phoneNumber')} >Phone number</th>
+                </thead>
+                <tbody>
+                    {filteredUsers.map((user, index) => {
+                        return (
+                            <tr key={index}>
+                                <td> {user.id} </td>
+                                <td> {user.firstName} </td>
+                                <td> {user.lastName} </td>
+                                <td> {user.email} </td>
+                                <td> {user.phoneNumber} </td>
+                            </tr>
+                        )
                     })}
-                
-            </tbody>
-        </table>
+
+                </tbody>
+            </table>
         </>
     )
 }
