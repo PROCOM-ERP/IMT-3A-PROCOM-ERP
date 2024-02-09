@@ -70,7 +70,7 @@ function DirectoryTable() {
         <>
             <input
                 type="text"
-                placeholder="Search by name or email"
+                placeholder="Search"
                 value={searchTerm}
                 onChange={handleChange}
             />
