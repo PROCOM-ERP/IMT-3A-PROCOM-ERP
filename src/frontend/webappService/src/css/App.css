@@ -22,8 +22,8 @@
   --title-weight: 700;
   /* Text */
   --text-family: Roboto Condensed;
-  --text-size: 2.2rem;
-  --text-weight: 700;
+  --text-size: 1rem;
+  --text-weight: 400;
 }
 
 body {
