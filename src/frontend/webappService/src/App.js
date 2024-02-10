@@ -8,10 +8,13 @@ import Directory from './pages/Directory.js';
 import Inventory from './pages/Inventory.js';
 import OrderManagement from './pages/OrderManagement.js';
 import DirectoryProfil from './pages/DirectoryProfil.js';
+import AdminUsers from './pages/AdminUsers.js';
+import AdminHome from './pages/AdminHome.js';
+import AdminPermissions from './pages/AdminPermissions.js';
 
 function App() {
   return (
-    <div>
+    <>
       <Router>
         <Routes>
           <Route path='/' exact Component={Authentification} />
@@ -21,9 +24,12 @@ function App() {
           <Route path='/orderManagement' exact Component={OrderManagement} />
           <Route path='/profil/' exact Component={Profil} />
           <Route path='/user/:userId' exact Component={DirectoryProfil} />
+          <Route path='/admin' exact Component={AdminHome} />
+          <Route path='/adminPermissions' exact Component={AdminPermissions} />
+          <Route path='/adminDirectory' exact Component={AdminUsers} />
         </Routes>
       </Router>
-    </div>
+    </>
   );
 }
 

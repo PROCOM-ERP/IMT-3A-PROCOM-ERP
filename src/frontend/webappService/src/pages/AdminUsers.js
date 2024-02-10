@@ -2,13 +2,13 @@ import React from 'react'
 import Navbar from '../components/Navbar'
 import DirectoryTable from '../components/DirectoryTable'
 
-function Directory() {
+function AdminUsers() {
   return (
     <>
-      <Navbar />
+      <Navbar navUser='admin' />
       <DirectoryTable />
     </>
   )
 }
 
-export default Directory
+export default AdminUsers

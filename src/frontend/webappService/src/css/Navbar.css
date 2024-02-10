@@ -1,35 +1,24 @@
-/* import used fonts */
-@import url('https://fonts.googleapis.com/css2?family=Dosis:wght@300;400;500;600&family=Roboto+Condensed:wght@300;400;500;600;700&family=Teko:wght@300;400;500;600&display=swap');
+/* root variables are in App.css */
 
-/* Navbar variables */
-:root{
-    /* NAVBAR #0D3E87 #E9B74E */
-    --nav-bg: #D7EBFC;
-    /* LOGO */
-    --logo-font: Teko;
-    --logo-weight: 600;
-    --logo-size: 2rem;
-    --logo-color: #000;
-    /* TEXT */
-    --text-font: Roboto Condensed;
-    --text-weight: 600;
-    --text-size: 1.2rem;
-    --text-color: #000;
-    --text-color-hover: #E9B74E;
-}
-
-.navigation{
+.navigation {
     height: 60px;
     width: 100%;
     display: flex;
     align-items: center;
     position: relative;
     padding: 0.5rem 0rem;
-    background-color: var(--nav-bg);
+}
+
+.user {
+    background-color: var(--usr-nav-bg);
+}
+
+.admin {
+    background-color: var(--admin-nav-bg);
 }
 
 .brand-name {
-    font-family: var(--logo-font);
+    font-family: var(--logo-family);
     font-weight: var(--logo-weight);
     font-size: var(--logo-size);
     color: var(--logo-color);
@@ -47,23 +36,27 @@
 }
 
 .navigation-menu li {
-    /* removes default disc bullet for li tags */ 
+    /* removes default disc bullet for li tags */
     list-style-type: none;
     /* applies margin to left & right side */
     margin: 0 1rem;
 }
 
 .navigation-menu li a {
-    font-family: var(--text-font);
-    font-weight: var(--text-weight);
-    font-size: var(--text-size);
-    color: var(--text-color);
+    font-family: var(--nav-text-family);
+    font-weight: var(--nav-text-weight);
+    font-size: var(--nav-text-size);
+    color: var(--nav-text-color);
     /* increases the surface area of the anchor tag to span more than just the anchor text */
     text-decoration: none;
     display: block;
     width: 100%;
 }
 
-.navigation-menu li a:hover {
-    color: var(--text-color-hover);
+.navigation-menu.user li a:hover {
+    color: var(--usr-nav-text-color-hover);
+}
+
+.navigation-menu.admin li a:hover {
+    color: var(--admin-nav-text-color-hover);
 }
