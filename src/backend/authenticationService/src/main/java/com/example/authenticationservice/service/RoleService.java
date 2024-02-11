@@ -73,6 +73,7 @@ public class RoleService {
         return savedRole.getName();
     }
 
+    /*
     @Transactional
     public void saveAllExternalRoles(List<RoleActivationDto> externalRoleActivations){
 
@@ -80,6 +81,7 @@ public class RoleService {
         loginProfileRepository.updateAllJwtGenMinAt();
         rabbitMQSender.sendLoginProfilesJwtDisableOldMessage();
     }
+     */
 
     public RolesMicroservicesResponseDto getAllRolesAndMicroservices() {
         return RolesMicroservicesResponseDto.builder()
@@ -88,7 +90,7 @@ public class RoleService {
                 .build();
     }
 
-    public RoleResponseDto getRole(String roleName)
+    public RoleResponseDto getRoleByName(String roleName)
             throws NoSuchElementException {
         Role role = roleRepository.findById(roleName).orElseThrow();
         Set<PermissionDto> permissions = permissionService.getAllPermissions().stream()
@@ -101,18 +103,21 @@ public class RoleService {
 
     }
 
-    public RoleEnableResponseDto getRoleEnableByMicroservice(String role, String microservice) {
-        return roleActivationRepository.findByRoleAndMicroservice(role, microservice)
-                .map(ra -> RoleEnableResponseDto.builder()
-                        .name(role)
+    public RoleActivationResponseDto getRoleActivationByRoleAndMicroservice(String roleName, String microservice) {
+        return roleActivationRepository.findByRoleAndMicroservice(roleName, microservice)
+                .map(ra -> RoleActivationResponseDto.builder()
+                        .name(roleName)
+                        .microservice(microservice)
                         .isEnable(ra.getIsEnable())
                         .build())
-                .orElse(RoleEnableResponseDto.builder()
-                        .name(role)
+                .orElse(RoleActivationResponseDto.builder()
+                        .name(roleName)
+                        .microservice(microservice)
                         .isEnable(false)
                         .build());
     }
 
+    /*
     public List<RoleActivationDto> getAllExternalRoles(@NonNull String getAllRolesPath) {
         // build request
         String url = customHttpRequestBuilder.buildUrl(getAllRolesPath);
@@ -130,7 +135,8 @@ public class RoleService {
         // return expected external role
         return response.getBody();
     }
-
+    */
+    /*
     public RoleActivationDto getExternalRole(@NonNull String getRoleByNamePath) {
         // build request
         String url = customHttpRequestBuilder.buildUrl(getRoleByNamePath);
@@ -149,16 +155,49 @@ public class RoleService {
         return response.getBody();
     }
 
-    public void updateRole(String roleName, List<String> permissions)
+    public void updateRoleByName(String roleName, RoleResponseDto roleDto)
             throws NoSuchElementException {
+
         // check if role exists
         Role role = roleRepository.findById(roleName).orElseThrow();
+
         // set permissions
-        role.setPermissions(new LinkedHashSet<>(permissions));
+        role.setPermissions(new LinkedHashSet<>(roleDto.getPermissions()));
         // save modifications
         roleRepository.save(role);
     }
+     */
 
+    @Transactional
+    public void updateRoleByName(String roleName, RoleUpdateRequestDto roleDto)
+        throws NoSuchElementException, DataIntegrityViolationException {
+
+        // update isEnable property if provided or different of null
+        if (roleDto.getIsEnable() != null) {
+            RoleActivation ra = roleActivationRepository.findByRoleAndMicroservice(roleName, currentMicroservice)
+                    .orElse(RoleActivation.builder()
+                            // check if role already exists
+                            .role(roleRepository.findById(roleName).orElseThrow())
+                            .microservice(currentMicroservice)
+                            .build());
+            ra.setIsEnable(roleDto.getIsEnable());
+            roleActivationRepository.saveAndFlush(ra);
+        }
+
+        // check if role already exists and retrieve it
+        Role role = roleRepository.findById(roleName).orElseThrow();
+
+        // check if permissions are valid
+        roleDto.getPermissions().forEach(permissionService::isValidPermission);
+
+        // update permissions and global isEnable property
+        role.setPermissions(new LinkedHashSet<>(roleDto.getPermissions()));
+        if (roleDto.getIsEnable() != null)
+            updateRoleIsEnable(role);
+        roleRepository.save(role);
+    }
+
+    /* Private Methods */
     private void updateRoleIsEnable(Role role) {
         role.setIsEnable(role.getRoleActivations().stream().anyMatch(RoleActivation::getIsEnable));
     }
@@ -174,7 +213,6 @@ public class RoleService {
 
     private RoleResponseDto roleToRoleResponseDto(Role role, Set<PermissionDto> permissions) {
         return RoleResponseDto.builder()
-                .name(role.getName())
                 .isEnable(isEnableInMicroservice(role))
                 .permissions(permissions)
                 .build();

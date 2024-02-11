@@ -1,7 +1,6 @@
 package com.example.authenticationservice.utils;
 
 import com.example.authenticationservice.dto.LoginProfileMessageDto;
-import com.example.authenticationservice.dto.RoleActivationDto;
 import com.example.authenticationservice.service.LoginProfileService;
 import com.example.authenticationservice.service.RoleService;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +31,7 @@ public class RabbitMQReceiver {
     @RabbitListener(queues = "role-enable-modify-queue")
     public void receiveRoleEnableModifyMessage(String getRoleByNamePath) {
         logger.info("Message received to set a role activation status: " + getRoleByNamePath);
+        /*
         try {
             // try to get external role
             RoleActivationDto roleActivation = roleService.getExternalRole(getRoleByNamePath);
@@ -41,11 +41,14 @@ public class RabbitMQReceiver {
         } catch (NoSuchElementException | RestClientException ignored) {
             logger.error("Role activation status set failed");
         }
+
+         */
     }
 
     @RabbitListener(queues = "roles-init-queue")
     public void receiveRolesInitMessage(String getAllRolesPath) {
         logger.info("Message received on startup of a service to init its roles: " + getAllRolesPath);
+        /*
         try {
             // try to get external role
             List<RoleActivationDto> roleActivations = roleService.getAllExternalRoles(getAllRolesPath);
@@ -55,11 +58,14 @@ public class RabbitMQReceiver {
         } catch (NoSuchElementException | RestClientException ignored) {
             logger.error("Roles initialisation failed");
         }
+
+         */
     }
 
     @RabbitListener(queues = "roles-new-queue")
     public void receiveRolesNewMessage(String getRoleByNamePath) {
         logger.info("Message received to add another service new role: " + getRoleByNamePath);
+        /*
         try {
             // try to get external role
             RoleActivationDto roleActivation = roleService.getExternalRole(getRoleByNamePath);
@@ -69,6 +75,8 @@ public class RabbitMQReceiver {
         } catch (NoSuchElementException | RestClientException ignored) {
             logger.error("Role save failed");
         }
+
+         */
     }
 
     @RabbitListener(queues = "login-profile-email-queue")

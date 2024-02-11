@@ -5,13 +5,11 @@ public enum Permission {
     CanCreateLoginProfile,
     CanCreateRole,
     CanDeactivateLoginProfile,
-    CanDeactivateRole,
     CanModifyLoginProfileEmail,
     CanModifyLoginProfilePassword,
     CanModifyLoginProfileRoles,
-    CanModifyRolePermissions,
+    CanModifyRole,
     CanReadLoginProfile,
-    CanReadPermission,
     CanReadRole
 
 }

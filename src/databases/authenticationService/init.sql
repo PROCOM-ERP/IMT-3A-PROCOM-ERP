@@ -99,21 +99,21 @@ VALUES ('A00001', '$2a$10$MAxOfcOCypgcExmZjSp/Fu1rMBbepSZPGDX9y4u1XLkKipYsrVcnK'
 -- +----------------------------------------------------------------------------------------------+
 
 INSERT INTO roles (name)
-VALUES ('employee'),
+VALUES ('user'),
        ('admin');
 
 -- +----------------------------------------------------------------------------------------------+
 
 INSERT INTO role_activations (role, microservice)
-VALUES ('employee', 'authentication'),
+VALUES ('user', 'authentication'),
        ('admin', 'authentication');
 
 -- +----------------------------------------------------------------------------------------------+
 
 INSERT INTO join_login_profiles_roles (login_profile, role)
 VALUES ('A00001', 'admin'),
-       ('A00001', 'employee'),
-       ('A00002', 'employee');
+       ('A00001', 'user'),
+       ('A00002', 'user');
 
 -- +----------------------------------------------------------------------------------------------+
 
@@ -125,8 +125,7 @@ VALUES ('admin', 'CanCreateLoginProfile'),
        ('admin', 'CanDeactivateLoginProfile'),
        ('admin', 'CanCreateRole'),
        ('admin', 'CanReadRole'),
-       ('admin', 'CanModifyRolePermissions'),
-       ('admin', 'CanDeactivateRole'),
+       ('admin', 'CanModifyRole'),
        ('admin', 'CanReadPermission'),
-       ('employee', 'CanReadLoginProfile'),
-       ('employee', 'CanModifyLoginProfilePassword');
+       ('user', 'CanModifyLoginProfileEmail'),
+       ('user', 'CanModifyLoginProfilePassword');

@@ -1,5 +1,6 @@
 package com.example.authenticationservice.service;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import com.example.authenticationservice.model.Permission;
 
@@ -19,7 +20,11 @@ public class PermissionService {
     }
 
     public void isValidPermission(String permission) throws IllegalArgumentException {
-        Permission.valueOf(permission);
+        try {
+            Permission.valueOf(permission);
+        } catch (IllegalArgumentException ignored) {
+            throw new DataIntegrityViolationException("Invalid permissions provided");
+        }
     }
 
 }

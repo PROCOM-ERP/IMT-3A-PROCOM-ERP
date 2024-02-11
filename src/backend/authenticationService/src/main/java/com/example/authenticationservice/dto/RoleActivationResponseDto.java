@@ -9,9 +9,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class RoleEnableResponseDto {
+public class RoleActivationResponseDto {
 
     private String name;
+    private String microservice;
     private Boolean isEnable;
 
 }
