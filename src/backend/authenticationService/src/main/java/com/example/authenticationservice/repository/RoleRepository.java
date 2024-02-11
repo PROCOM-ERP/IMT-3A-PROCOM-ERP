@@ -11,6 +11,11 @@ import java.util.Set;
 
 public interface RoleRepository extends JpaRepository<Role, String>, JpaSpecificationExecutor<Role> {
 
+    @Query(value =
+        "SELECT r.name " +
+        "FROM Role r ")
+    Set<String> findAllRoleNames();
+
     List<Role> findAllByNameIn(@NonNull Set<String> roleNames);
 
     @Query("SELECT DISTINCT p " +
