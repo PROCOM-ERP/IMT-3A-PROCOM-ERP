@@ -18,7 +18,7 @@ public class Path {
     public static final String EMPLOYEES = "/employees";
     public static final String INFO = "/info";
     public static final String ROLES = "/roles";
-    public static final String PERMISSIONS = "/permissions";
+    public static final String ACTIVATION = "/activation";
 
     public static final String V1_ADDRESSES = API + V1 + ADDRESSES;
     public static final String ADDRESS_ID = "/{idAddress}";
@@ -50,13 +50,10 @@ public class Path {
 
     public static final String V1_ROLES = API + V1 + ROLES;
     public static final String ROLE_NAME = "/{role}";
-    public static final String ROLE_NAME_ENABLE = ROLE_NAME + ENABLE;
-    public static final String ROLE_NAME_PERMISSIONS = ROLE_NAME + PERMISSIONS;
-    public static final String V1_ROLES_ANYONE = V1_ROLES + ANYONE;
-    public static final String V1_ROLES_ANYONE_ENABLE = V1_ROLES_ANYONE + ENABLE;
-    public static final String V1_ROLES_ANYONE_PERMISSIONS = V1_ROLES_ANYONE + PERMISSIONS;
+    public static final String ROLE_NAME_ACTIVATION = ROLE_NAME + ACTIVATION;
 
-    public static final String V1_PERMISSIONS = API + V1 + PERMISSIONS;
+    public static final String V1_ROLES_ANYONE = V1_ROLES + ANYONE;
+    public static final String V1_ROLES_ANYTHING = V1_ROLES + ANYTHING;
 
     public static final String V1_HELLO = API + V1 + HELLO;
 

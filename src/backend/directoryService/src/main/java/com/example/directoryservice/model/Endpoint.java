@@ -35,11 +35,9 @@ public enum Endpoint {
 
     GET_V1_ROLES(HttpMethod.GET, Path.V1_ROLES, Permission.CanReadRole),
     GET_V1_ROLES_ID(HttpMethod.GET, Path.V1_ROLES_ANYONE, Permission.CanReadRole),
+    GET_V1_ROLES_ANYTHING(HttpMethod.GET, Path.V1_ROLES_ANYTHING, Permission.CanReadRole),
     POST_V1_ROLES(HttpMethod.POST, Path.V1_ROLES, Permission.CanCreateRole),
-    PATCH_V1_ROLES_ENABLE(HttpMethod.PATCH, Path.V1_ROLES_ANYONE_ENABLE, Permission.CanDeactivateRole),
-    PATCH_V1_ROLES_PERMISSIONS(HttpMethod.PATCH, Path.V1_ROLES_ANYONE_PERMISSIONS, Permission.CanModifyRolePermissions),
-
-    GET_V1_PERMISSIONS(HttpMethod.GET, Path.V1_PERMISSIONS, Permission.CanReadPermission),
+    PUT_V1_ROLES_ID(HttpMethod.PUT, Path.V1_ROLES_ANYONE, Permission.CanModifyRole),
 
     GET_V1_HELLO(HttpMethod.GET, Path.V1_HELLO, null),
 

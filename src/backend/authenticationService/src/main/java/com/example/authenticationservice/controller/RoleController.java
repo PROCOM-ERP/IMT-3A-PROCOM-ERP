@@ -105,7 +105,7 @@ public class RoleController {
         return ResponseEntity.ok(roleService.getRoleByName(role));
     }
 
-    @GetMapping(Path.ROLE_NAME_MICROSERVICES_ALIAS)
+    @GetMapping(Path.ROLE_NAME_ACTIVATION)
     @Operation(operationId = "getRoleActivationByRoleAndMicroservice", tags = {"roles"},
             summary = "Retrieve one role activation status for a microservice", description =
             "Retrieve one role activation status for a microservice, " +
@@ -131,21 +131,21 @@ public class RoleController {
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
     public ResponseEntity<RoleActivationResponseDto> getRoleActivationByRoleAndMicroservice(@PathVariable String role,
-                                                                                            @PathVariable String microservice) {
+                                                                                            @RequestParam("microservice") String microservice) {
         return ResponseEntity.ok(roleService.getRoleActivationByRoleAndMicroservice(role, microservice));
     }
 
     @PutMapping(Path.ROLE_NAME)
     @Operation(operationId = "updateRoleByName", tags = {"roles"},
             summary = "Update a role permissions and / or activation status", description =
-            "Update a role permissions and / or activation status, by providing a list of active ones .<br>" +
+            "Update a role permissions and / or activation status, by providing a list of active ones.<br>" +
             "Previous ones will be deleted.<br>" +
             "Only available for admins.",
             parameters = {@Parameter(name = "role", description =
             "The role name")})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description =
-                    "Role permissions updated correctly",
+                    "Role and / or activation status permissions updated correctly",
                     content = {@Content(mediaType = "application/json")} ),
             @ApiResponse(responseCode = "400", description =
                     "The request body is badly structured or formatted",

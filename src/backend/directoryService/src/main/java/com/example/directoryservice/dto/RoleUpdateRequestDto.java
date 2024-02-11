@@ -11,9 +11,9 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class RoleResponseDto {
+public class RoleUpdateRequestDto {
 
     private Boolean isEnable;
-    private Set<PermissionDto> permissions;
+    private Set<String> permissions;
 
 }

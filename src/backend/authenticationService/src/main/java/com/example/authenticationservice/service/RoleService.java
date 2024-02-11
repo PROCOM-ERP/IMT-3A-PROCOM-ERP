@@ -3,25 +3,16 @@ package com.example.authenticationservice.service;
 import com.example.authenticationservice.dto.*;
 import com.example.authenticationservice.model.Role;
 import com.example.authenticationservice.model.RoleActivation;
-import com.example.authenticationservice.repository.LoginProfileRepository;
 import com.example.authenticationservice.repository.RoleActivationRepository;
 import com.example.authenticationservice.repository.RoleRepository;
-import com.example.authenticationservice.utils.CustomHttpRequestBuilder;
 import com.example.authenticationservice.utils.PerformanceTracker;
-import com.example.authenticationservice.utils.RabbitMQSender;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -36,14 +27,9 @@ public class RoleService {
     private final RoleRepository roleRepository;
     private final RoleActivationRepository roleActivationRepository;
     private final PermissionService permissionService;
-    private final LoginProfileRepository loginProfileRepository;
-    private final RabbitMQSender rabbitMQSender;
-    private final RestTemplate restTemplate;
-    private final CustomHttpRequestBuilder customHttpRequestBuilder;
 
     private final PerformanceTracker performanceTracker;
     private final Logger logger = LoggerFactory.getLogger(RoleService.class);
-
 
     /* Public Methods */
 
@@ -136,6 +122,10 @@ public class RoleService {
     public RoleActivationResponseDto getRoleActivationByRoleAndMicroservice(String roleName, String microservice) {
         logger.info("Start retrieving one role activation...");
         long startTimeNano = performanceTracker.getCurrentTime();
+
+        // check if microservice is not null
+        if (microservice == null)
+            throw new IllegalArgumentException();
 
         // retrieve or create (transient) RoleActivationResponseDto entity
         RoleActivationResponseDto roleDto = roleActivationRepository.findByRoleAndMicroservice(roleName, microservice)
@@ -232,7 +222,6 @@ public class RoleService {
         roleRepository.save(role);
         long elapsedTimeMillis = performanceTracker.getElapsedTimeMillis(startTimeNano);
         logger.info("Elapsed time to update one role : " + elapsedTimeMillis + " ms");
-
     }
 
     /* Private Methods */

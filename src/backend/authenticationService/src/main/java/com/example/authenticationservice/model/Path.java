@@ -13,6 +13,7 @@ public class Path {
     public static final String EMAIL = "/email";
     public static final String ENABLE = "/enable";
     public static final String ROLES = "/roles";
+    public static final String ACTIVATION = "/activation";
     public static final String MICROSERVICES = "/microservices";
     public static final String AUTH = "/auth";
 
@@ -31,7 +32,7 @@ public class Path {
 
     public static final String V1_ROLES = API + V1 + ROLES;
     public static final String ROLE_NAME = "/{role}";
-    public static final String ROLE_NAME_MICROSERVICES_ALIAS = ROLE_NAME + MICROSERVICES + "/{microservice}";
+    public static final String ROLE_NAME_ACTIVATION = ROLE_NAME + ACTIVATION;
 
     public static final String V1_ROLES_ANYONE = V1_ROLES + ANYONE;
     public static final String V1_ROLES_MICROSERVICES = V1_ROLES + MICROSERVICES;

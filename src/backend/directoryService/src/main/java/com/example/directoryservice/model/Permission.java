@@ -9,7 +9,6 @@ public enum Permission {
     CanCreateService,
 
     CanDeactivateEmployee,
-    CanDeactivateRole,
 
     CanDeleteAddress,
     CanDeleteOrganisation,
@@ -18,7 +17,7 @@ public enum Permission {
     CanModifyEmployeeInfo,
     CanModifyEmployeeService,
     CanModifyOrganisationAddress,
-    CanModifyRolePermissions,
+    CanModifyRole,
     CanModifyServiceAddress,
     CanModifyServiceOrganisation,
 

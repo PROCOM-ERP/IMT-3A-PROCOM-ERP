@@ -5,15 +5,13 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.Set;
-
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class RoleResponseDto {
+public class PermissionDto {
 
+    private String name;
     private Boolean isEnable;
-    private Set<PermissionDto> permissions;
 
 }
