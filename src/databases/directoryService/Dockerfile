@@ -1,5 +1,4 @@
 ARG DB_IMAGE
-ARG DB_ENTRYPOINT
 ARG DB_DIRECTORY_SERVICE_PORT_INT
 
 # Use the official PostgreSQL image as the base image

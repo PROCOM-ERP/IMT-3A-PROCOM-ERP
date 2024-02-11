@@ -37,18 +37,6 @@ set_postgres_variable() {
 
 set_postgres_variable USER USER
 set_postgres_variable PASSWORD PASSWORD
-echo $POSTGRES_USER
-echo $POSTGRES_PASSWORD
-
 
 # Start the PostgreSQL service
-exec /usr/local/bin/docker-entrypoint.sh "$@"
-#
-# # Wait for PostgreSQL to become available
-# until pg_isready -h localhost -p $POSTGRES_PORT -U $POSTGRES_USER; do
-#     echo "Waiting for PostgreSQL to become available..."
-#     sleep 1
-# done
-# Run the init.sql script
-echo "Initializing the database..."
-psql -h localhost -p $POSTGRES_PORT -U $POSTGRES_USER -d $POSTGRES_DB -a -f /docker-entrypoint-initdb.d/init.sql
+/usr/local/bin/docker-entrypoint.sh "$@"
