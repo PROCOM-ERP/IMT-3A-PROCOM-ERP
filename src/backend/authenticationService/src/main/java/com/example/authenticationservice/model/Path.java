@@ -35,6 +35,7 @@ public class Path {
   public static final String ROLE_NAME_PERMISSIONS = ROLE_NAME + PERMISSIONS;
 
   public static final String V1_ROLES_ANYONE = V1_ROLES + ANYONE;
+  public static final String V1_ROLES_MICROSERVICES = V1_ROLES + MICROSERVICES;
   public static final String V1_ROLES_ANYONE_PERMISSIONS =
           V1_ROLES_ANYONE + PERMISSIONS;
   public static final String V1_ROLES_ANYONE_ENABLE = V1_ROLES_ANYONE + ENABLE;
