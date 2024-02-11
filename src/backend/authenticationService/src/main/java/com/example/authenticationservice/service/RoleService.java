@@ -1,9 +1,6 @@
 package com.example.authenticationservice.service;
 
-import com.example.authenticationservice.dto.RoleActivationDto;
-import com.example.authenticationservice.dto.RoleActivationRequestDto;
-import com.example.authenticationservice.dto.RoleRequestDto;
-import com.example.authenticationservice.dto.RoleResponseDto;
+import com.example.authenticationservice.dto.*;
 import com.example.authenticationservice.model.LoginProfile;
 import com.example.authenticationservice.model.Role;
 import com.example.authenticationservice.model.RoleActivation;
@@ -115,6 +112,13 @@ public class RoleService {
         return roleRepository.findById(roleName)
                 .map(RoleService::modelToResponseDto)
                 .orElseThrow();
+    }
+
+    public RolesMicroservicesResponseDto getAllRolesAndMicroservices() {
+        return RolesMicroservicesResponseDto.builder()
+                .roles(roleRepository.findAllRoleNames())
+                .microservices(roleActivationRepository.findAllMicroservices())
+                .build();
     }
 
     public List<RoleActivationDto> getAllExternalRoles(@NonNull String getAllRolesPath) {

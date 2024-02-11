@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 
-import java.util.List;
+import java.util.Set;
 
 public interface RoleActivationRepository extends JpaRepository<RoleActivation, Integer>, JpaSpecificationExecutor<RoleActivation> {
 
@@ -13,5 +13,5 @@ public interface RoleActivationRepository extends JpaRepository<RoleActivation, 
         "SELECT DISTINCT ra.microservice " +
         "FROM RoleActivation ra "
     )
-    List<String> findAllMicroservices();
+    Set<String> findAllMicroservices();
 }
