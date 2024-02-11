@@ -63,51 +63,6 @@ public class RoleController {
         return ResponseEntity.created(location).build();
     }
 
-    @GetMapping
-    @Operation(operationId = "getAllRoles", tags = {"roles"},
-            summary = "Retrieve all roles information", description =
-            "Retrieve all roles information.<br>" +
-            "Only available for admins.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description =
-                    "Roles information retrieved correctly",
-                    content = {@Content(mediaType = "application/json",
-                    schema = @Schema(type = "array", implementation = RoleResponseDto.class))} ),
-            @ApiResponse(responseCode = "401", description =
-                    "Roles in Jwt token are insufficient to authorize the access to this URL",
-                    content = {@Content(mediaType = "application/json")} ),
-            @ApiResponse(responseCode = "500", description =
-                    "Uncontrolled error appeared",
-                    content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<List<RoleResponseDto>> getAllRoles() {
-        return ResponseEntity.ok(roleService.getAllRoles());
-    }
-
-    @GetMapping(Path.ROLE_NAME)
-    @Operation(operationId = "getRole", tags = {"roles"},
-            summary = "Retrieve one role information", description =
-            "Retrieve one role information, by providing its name.<br>" +
-            "Only available for admins.",
-            parameters = {@Parameter(name = "role", description =
-            "The role name")})
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description =
-                    "Role information retrieved correctly",
-                    content = {@Content(mediaType = "application/json",
-                    schema = @Schema(implementation = RoleResponseDto.class))} ),
-            @ApiResponse(responseCode = "401", description =
-                    "Roles in Jwt token are insufficient to authorize the access to this URL",
-                    content = {@Content(mediaType = "application/json")} ),
-            @ApiResponse(responseCode = "404", description =
-                    "Role not found",
-                    content = {@Content(mediaType = "application/json")} ),
-            @ApiResponse(responseCode = "500", description =
-                    "Uncontrolled error appeared",
-                    content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<RoleResponseDto> getRole(@PathVariable String role) {
-        return ResponseEntity.ok(roleService.getRole(role));
-    }
-
     @GetMapping(Path.MICROSERVICES)
     @Operation(operationId = "getAllRolesAndMicroservices", tags = {"roles"},
             summary = "Retrieve all role names and microservices alias", description =
@@ -128,6 +83,30 @@ public class RoleController {
         return ResponseEntity.ok(roleService.getAllRolesAndMicroservices());
     }
 
+    @GetMapping(Path.ROLE_NAME)
+    @Operation(operationId = "getRole", tags = {"roles"},
+            summary = "Retrieve one role permissions and activation status", description =
+            "Retrieve one role permissions and activation status, by providing its name.<br>" +
+            "Only available for admins.",
+            parameters = {@Parameter(name = "role", description =
+            "The role name")})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description =
+                    "Role permissions and activation status retrieved correctly",
+                    content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = RoleResponseDto.class))} ),
+            @ApiResponse(responseCode = "401", description =
+                    "Roles in Jwt token are insufficient to authorize the access to this URL",
+                    content = {@Content(mediaType = "application/json")} ),
+            @ApiResponse(responseCode = "404", description =
+                    "Role not found",
+                    content = {@Content(mediaType = "application/json")} ),
+            @ApiResponse(responseCode = "500", description =
+                    "Uncontrolled error appeared",
+                    content = {@Content(mediaType = "application/json")} )})
+    public ResponseEntity<RoleResponseDto> getRole(@PathVariable String role) {
+        return ResponseEntity.ok(roleService.getRole(role));
+    }
 
     @PatchMapping(Path.ROLE_NAME_PERMISSIONS)
     @Operation(operationId = "updateRolePermissions", tags = {"roles"},

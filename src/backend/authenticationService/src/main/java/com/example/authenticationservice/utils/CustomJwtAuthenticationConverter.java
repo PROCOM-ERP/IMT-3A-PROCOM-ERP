@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
@@ -34,7 +35,7 @@ public class CustomJwtAuthenticationConverter implements Converter<Jwt, Abstract
 
     @Override
     public AbstractAuthenticationToken convert(Jwt jwt) {
-        List<String> permissions;
+        Set<String> permissions;
         List<String> roles = jwt.getClaimAsStringList(jwtClaimRoles);
         if (Objects.equals(jwt.getSubject(), sharedKey) && roles.contains(serviceRole)) {
             permissions = permissionService.getAllPermissions();
@@ -52,7 +53,7 @@ public class CustomJwtAuthenticationConverter implements Converter<Jwt, Abstract
             throw new InsufficientAuthenticationException("");
     }
 
-    private List<SimpleGrantedAuthority> permissionsToAuthorities(List<String> permissions) {
+    private List<SimpleGrantedAuthority> permissionsToAuthorities(Set<String> permissions) {
         return permissions.stream().map(SimpleGrantedAuthority::new).toList();
     }
 }

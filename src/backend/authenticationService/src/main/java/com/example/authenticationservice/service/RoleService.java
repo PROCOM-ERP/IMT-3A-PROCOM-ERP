@@ -2,6 +2,7 @@ package com.example.authenticationservice.service;
 
 import com.example.authenticationservice.dto.*;
 import com.example.authenticationservice.model.LoginProfile;
+import com.example.authenticationservice.model.Permission;
 import com.example.authenticationservice.model.Role;
 import com.example.authenticationservice.model.RoleActivation;
 import com.example.authenticationservice.repository.LoginProfileRepository;
@@ -101,24 +102,24 @@ public class RoleService {
         updateRoleActivation(dtoToModel(externalRoleActivation, role), role);
     }
 
-    public List<RoleResponseDto> getAllRoles() {
-        return roleRepository.findAll().stream()
-                .map(RoleService::modelToResponseDto)
-                .toList();
-    }
-
-    public RoleResponseDto getRole(String roleName)
-            throws NoSuchElementException {
-        return roleRepository.findById(roleName)
-                .map(RoleService::modelToResponseDto)
-                .orElseThrow();
-    }
-
     public RolesMicroservicesResponseDto getAllRolesAndMicroservices() {
         return RolesMicroservicesResponseDto.builder()
                 .roles(roleRepository.findAllRoleNames())
                 .microservices(roleActivationRepository.findAllMicroservices())
                 .build();
+    }
+
+    public RoleResponseDto getRole(String roleName)
+            throws NoSuchElementException {
+        Role role = roleRepository.findById(roleName).orElseThrow();
+        Set<PermissionDto> permissions = permissionService.getAllPermissions().stream()
+                .map(p -> PermissionDto.builder()
+                        .name(p)
+                        .isEnable(role.getPermissions().contains(p))
+                        .build())
+                .collect(Collectors.toSet());
+        return modelToResponseDto(role, permissions);
+
     }
 
     public List<RoleActivationDto> getAllExternalRoles(@NonNull String getAllRolesPath) {
@@ -208,14 +209,11 @@ public class RoleService {
         role.setIsEnable(role.getRoleActivations().stream().anyMatch(RoleActivation::getIsEnable));
     }
 
-    static RoleResponseDto modelToResponseDto(Role role) {
+    static RoleResponseDto modelToResponseDto(Role role, Set<PermissionDto> permissions) {
         return RoleResponseDto.builder()
                 .name(role.getName())
                 .isEnable(role.getIsEnable())
-                .permissions(role.getPermissions())
-                .loginProfiles(role.getLoginProfiles().stream()
-                        .map(LoginProfile::getId)
-                        .collect(Collectors.toSet()))
+                .permissions(permissions)
                 .build();
     }
 
