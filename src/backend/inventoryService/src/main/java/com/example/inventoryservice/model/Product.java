@@ -30,9 +30,9 @@ public class Product {
     private String description;
 
     @NotNull
-    @ManyToMany(mappedBy = "products")
+    @ManyToMany(mappedBy = "products", fetch = FetchType.EAGER)
     private List<Category> categories = new ArrayList<>();
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Item> items;
 }

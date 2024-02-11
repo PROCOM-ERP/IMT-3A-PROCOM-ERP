@@ -29,7 +29,7 @@ public class Category {
     @Column(name = "description", length = Integer.MAX_VALUE)
     private String description;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "category_product",
             joinColumns = @JoinColumn(name = "id_category"),

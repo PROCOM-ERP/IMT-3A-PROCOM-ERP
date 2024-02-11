@@ -32,7 +32,7 @@ public class Transaction {
     private String employee;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "id_item", nullable = false)
     private Item idItem;
 

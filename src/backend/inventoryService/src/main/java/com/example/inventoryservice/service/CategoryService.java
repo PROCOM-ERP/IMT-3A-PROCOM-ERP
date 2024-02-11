@@ -48,13 +48,13 @@ public class CategoryService {
                 .id(category.getId())
                 .title(category.getTitle())
                 .description(category.getDescription())
-                .products(productToDtoList(category.getProducts()))
+                .products(productItemToDtoList(category.getProducts()))
                 .build();
     }
 
-    static List<ProductDto> productToDtoList(List<Product> products) {
+    static List<ProductDto> productItemToDtoList(List<Product> products) {
         return products.stream()
-                .map(ProductService::productToDto)
+                .map(ProductService::productItemToDto)
                 .toList();
     }
 }

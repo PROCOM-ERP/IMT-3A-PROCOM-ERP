@@ -16,6 +16,7 @@ public class ItemService {
     private final ItemRepository itemRepository;
     static ItemDto itemAddressToDto(Item item){
         return ItemDto.builder()
+                .id(item.getId())
                 .quantity(item.getQuantity())
                 .transactions(transactionToDtoList(item.getTransactions()))
                 .address(AddressService.addressToDto(item.getAddress()))
@@ -24,6 +25,7 @@ public class ItemService {
 
     static ItemDto itemProductToDto(Item item){
         return ItemDto.builder()
+                .id(item.getId())
                 .quantity(item.getQuantity())
                 .transactions(transactionToDtoList(item.getTransactions()))
                 .product(ProductService.productCategoryToDto(item.getProduct()))

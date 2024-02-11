@@ -22,15 +22,15 @@ public class Item {
     private Integer quantity;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "id_address", nullable = false)
     private Address address;
 
     @NotNull
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private Product product;
 
     @NotNull
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     private List<Transaction> transactions;
 }

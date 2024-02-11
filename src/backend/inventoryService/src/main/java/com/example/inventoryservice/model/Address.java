@@ -46,6 +46,6 @@ public class Address {
     private String info;
 
     @NotNull
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     private List<Item> items;
 }

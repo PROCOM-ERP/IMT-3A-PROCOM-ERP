@@ -47,6 +47,7 @@ public class AddressController {
         return ResponseEntity.ok(addressService.getAddressById(id));
     }
 
+    @GetMapping
     @Operation(operationId = "getAllAddress", tags = {"address", "inventory"},
             summary = "Returns all existing addresses.",
             description = "Returns the addresses information without items.")

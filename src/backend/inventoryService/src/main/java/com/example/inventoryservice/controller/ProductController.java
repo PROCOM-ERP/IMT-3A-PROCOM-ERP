@@ -48,6 +48,7 @@ public class ProductController {
         return ResponseEntity.ok(productService.getProductById(id));
     }
 
+    @GetMapping
     @Operation(operationId = "getProductById", tags = {"product", "inventory"},
             summary = "Returns the product information",
             description = "Returns the product with the associated categories and items",

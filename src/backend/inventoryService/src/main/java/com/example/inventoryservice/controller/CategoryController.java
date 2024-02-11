@@ -23,6 +23,7 @@ public class CategoryController {
         return ResponseEntity.ok(categoryService.getCategoryById(id));
     }
 
+    @GetMapping
     public ResponseEntity<List<CategoryDto>> getAllCategory(){
         return ResponseEntity.ok(categoryService.getAllCategories());
     }
