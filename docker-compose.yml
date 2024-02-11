@@ -7,7 +7,6 @@ services:
       dockerfile: Dockerfile
       args:
         DB_IMAGE: ${DB_IMAGE}
-        ENTRYPOINT: ${DB_ENTRYPOINT}
     environment:
       POSTGRES_DB: ${DB_AUTHENTICATION_SERVICE_DB}
       POSTGRES_PORT: ${DB_AUTHENTICATION_SERVICE_PORT_INT}
@@ -19,6 +18,9 @@ services:
       - "${DB_AUTHENTICATION_SERVICE_PORT_EXT}:${DB_AUTHENTICATION_SERVICE_PORT_INT}"
     networks:
       - vnet-procom-erp
+    volumes:
+      - db-procom-erp-authentication-service-data:/var/lib/postgresql/data
+    command: -c 'config_file=/etc/postgresql/postgresql.conf'
 
   postgres-procom-erp-directory-service:
     hostname: ${DB_DIRECTORY_SERVICE_HOSTNAME}
@@ -27,7 +29,6 @@ services:
       dockerfile: Dockerfile
       args:
         DB_IMAGE: ${DB_IMAGE}
-        ENTRYPOINT: ${DB_ENTRYPOINT}
     environment:
       POSTGRES_DB: ${DB_DIRECTORY_SERVICE_DB}
       POSTGRES_PORT: ${DB_DIRECTORY_SERVICE_PORT_INT}
@@ -39,6 +40,9 @@ services:
       - "${DB_DIRECTORY_SERVICE_PORT_EXT}:${DB_DIRECTORY_SERVICE_PORT_INT}"
     networks:
       - vnet-procom-erp
+    volumes:
+      - db-procom-erp-directory-service-data:/var/lib/postgresql/data
+    command: -c 'config_file=/etc/postgresql/postgresql.conf'
 
   springboot-procom-erp-message-broker-service:
     hostname: ${BACKEND_MESSAGE_BROKER_SERVICE_HOSTNAME}
@@ -59,6 +63,8 @@ services:
     env_file: ./.env
     networks:
       - vnet-procom-erp
+    volumes:
+      - procom-erp-message-broker-service-data:/var/lib/rabbitmq
 
   springboot-procom-erp-gateway-service:
     hostname: ${BACKEND_GATEWAY_SERVICE_HOSTNAME}
@@ -148,6 +154,11 @@ networks:
     ipam:
       config:
         - subnet: ${NETWORK_PROCOM_ERP}
+
+volumes:
+  db-procom-erp-authentication-service-data:
+  db-procom-erp-directory-service-data:
+  procom-erp-message-broker-service-data:
 
 secrets:
   DB_AUTHENTICATION_SERVICE_USER:

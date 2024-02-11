@@ -16,12 +16,11 @@ copy_system_files() {
     # Define paths to backend and frontend directories
     declare -a paths=("src/backend/*" "src/frontend/*")
     
+    echo "Copying system files to services"
     for path in "${paths[@]}"; do
         # Find and iterate over directories in backend and frontend
         for SERVICE_PATH in $path; do
             if [ -d "$SERVICE_PATH" ]; then
-                echo "Copying system files to $SERVICE_PATH"
-                # Copy all files from system except deploy.sh to the service's directory
                 cp ./src/system/entrypoint.sh "${SERVICE_PATH}"
                 cp ./src/system/procom-erp-truststore.jks "${SERVICE_PATH}"
                 cp ./src/system/procom-erp-ca.pem "${SERVICE_PATH}"
@@ -34,8 +33,6 @@ copy_system_files() {
         # Find and iterate over directories in databases
         for SERVICE_PATH in $db_path; do
             if [ -d "$SERVICE_PATH" ]; then
-                echo "Copying system files to $SERVICE_PATH"
-                # Copy all files from system except deploy.sh to the service's directory
                 cp ./src/system/db_entrypoint.sh "${SERVICE_PATH}"
             fi
         done
