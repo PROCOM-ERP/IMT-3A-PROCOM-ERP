@@ -6,7 +6,6 @@ import com.example.authenticationservice.dto.LoginProfileResponseDto;
 import com.example.authenticationservice.model.LoginProfile;
 import com.example.authenticationservice.model.Role;
 import com.example.authenticationservice.repository.LoginProfileRepository;
-import com.example.authenticationservice.utils.RabbitMQSender;
 import lombok.RequiredArgsConstructor;
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
@@ -29,7 +28,6 @@ public class LoginProfileService {
             "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!.*])(?=\\S+$).{12,}$";
 
     private final LoginProfileRepository loginProfileRepository;
-    private final RabbitMQSender rabbitMQSender;
     private final PasswordEncoder passwordEncoder;
 
     // private final Logger logger = LoggerFactory.getLogger(LoginProfileService.class);
@@ -103,7 +101,6 @@ public class LoginProfileService {
         }
 
         // send message to other services to update jwt_min_creation for current loginProfile
-        rabbitMQSender.sendLoginProfileJwtDisableOldMessage(idLoginProfile);
 
     }
 
@@ -122,7 +119,6 @@ public class LoginProfileService {
         loginProfileRepository.save(loginProfile);
 
         // send message to other services to update jwt_min_creation for current loginProfile
-        rabbitMQSender.sendLoginProfileJwtDisableOldMessage(idLoginProfile);
     }
 
     public void updateLoginProfileEmail(String idLoginProfile, String email)
@@ -148,7 +144,6 @@ public class LoginProfileService {
         }
 
         // send message to other services to update jwt_min_creation for current loginProfile
-        rabbitMQSender.sendLoginProfileEnableModify(idLoginProfile);
     }
 
     private String generateIdLoginProfileFromNextId(Integer nextIdLoginProfile) {
