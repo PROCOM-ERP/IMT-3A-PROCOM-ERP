@@ -87,23 +87,37 @@ public class RoleService {
         logger.info("Start external roles saving operation...");
         long startTimeNano = performanceTracker.getCurrentTime();
 
-        // retrieve microservice roles
+        // retrieve microservice RoleActivation entities
         Set<RoleActivationResponseDto> roleDtos = getAllMicroserviceRoles(getAllRolesPath);
 
-        // retrieve all existing roles
+        // retrieve all existing Role and RoleActivation entities
         List<Role> existingRoles = roleRepository.findAll();
+        Map<String, RoleActivation> existingRoleActivations = roleActivationRepository.findAll().stream()
+                .collect(Collectors.toMap(
+                    ra -> ra.getRole().getName() + "_" + ra.getMicroservice(),
+                    ra -> ra));
 
         // cast RoleActivationDto entities to RoleActivation entities before database insertion
-        Set<RoleActivation> roleActivations = roleDtos.stream()
-                .map(ra -> RoleActivation.builder()
-                        .role(existingRoles.stream()
-                                .filter(r -> ra.getName().equals(r.getName()))
-                                .findFirst()
-                                .orElseThrow())
-                        .microservice(ra.getMicroservice())
-                        .isEnable(ra.getIsEnable())
-                        .build())
-                .collect(Collectors.toSet());
+        Set<RoleActivation> roleActivations = new HashSet<>();
+        roleDtos.forEach(raDto -> {
+            String key = raDto.getName() + "_" + raDto.getMicroservice();
+            Role role = existingRoles.stream()
+                    .filter(r -> raDto.getName().equals(r.getName()))
+                    .findFirst()
+                    .orElseThrow();
+            RoleActivation ra;
+            if (existingRoleActivations.containsKey(key)) {
+                ra = existingRoleActivations.get(key);
+                ra.setIsEnable(raDto.getIsEnable());
+            } else {
+                ra = RoleActivation.builder()
+                        .role(role)
+                        .microservice(raDto.getMicroservice())
+                        .isEnable(raDto.getIsEnable())
+                        .build();
+            }
+            roleActivations.add(ra);
+        });
 
         // insert RoleActivation entities
         roleActivationRepository.saveAllAndFlush(roleActivations);
@@ -130,11 +144,13 @@ public class RoleService {
         Role role = roleRepository.findById(roleDto.getName()).orElseThrow();
 
         // update RoleActivation entity
-        RoleActivation roleActivation = RoleActivation.builder()
-                .role(role)
-                .microservice(roleDto.getMicroservice())
-                .isEnable(roleDto.getIsEnable())
-                .build();
+        RoleActivation roleActivation = roleActivationRepository
+                .findByRoleAndMicroservice(roleDto.getName(), roleDto.getMicroservice())
+                .orElse(RoleActivation.builder()
+                        .role(role)
+                        .microservice(roleDto.getMicroservice())
+                        .build());
+        roleActivation.setIsEnable(roleDto.getIsEnable());
 
         // insert RoleActivation entity
         roleActivationRepository.save(roleActivation);
