@@ -2,6 +2,7 @@ package com.example.authenticationservice.controller;
 
 import com.example.authenticationservice.dto.RoleRequestDto;
 import com.example.authenticationservice.dto.RoleResponseDto;
+import com.example.authenticationservice.dto.RolesMicroservicesResponseDto;
 import com.example.authenticationservice.model.Path;
 import com.example.authenticationservice.service.RoleService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -106,6 +107,27 @@ public class RoleController {
     public ResponseEntity<RoleResponseDto> getRole(@PathVariable String role) {
         return ResponseEntity.ok(roleService.getRole(role));
     }
+
+    @GetMapping(Path.MICROSERVICES)
+    @Operation(operationId = "getAllRolesAndMicroservices", tags = {"roles"},
+            summary = "Retrieve all role names and microservices alias", description =
+            "Retrieve all roles names and microservices alias.<br>" +
+                    "Only available for admins.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description =
+                    "Role names and microservices alias retrieved correctly",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = RolesMicroservicesResponseDto.class))} ),
+            @ApiResponse(responseCode = "401", description =
+                    "Roles in Jwt token are insufficient to authorize the access to this URL",
+                    content = {@Content(mediaType = "application/json")} ),
+            @ApiResponse(responseCode = "500", description =
+                    "Uncontrolled error appeared",
+                    content = {@Content(mediaType = "application/json")} )})
+    public ResponseEntity<RolesMicroservicesResponseDto> getAllRolesAndMicroservices() {
+        return ResponseEntity.ok(roleService.getAllRolesAndMicroservices());
+    }
+
 
     @PatchMapping(Path.ROLE_NAME_PERMISSIONS)
     @Operation(operationId = "updateRolePermissions", tags = {"roles"},

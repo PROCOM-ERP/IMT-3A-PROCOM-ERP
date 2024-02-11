@@ -14,6 +14,7 @@ public class Path {
   public static final String ENABLE = "/enable";
   public static final String ROLES = "/roles";
   public static final String PERMISSIONS = "/permissions";
+  public static final String MICROSERVICES = "/microservices";
   public static final String AUTH = "/auth";
 
   public static final String V1_LOGIN_PROFILES = API + V1 + LOGIN_PROFILES;
