@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 
 @Service
 @RequiredArgsConstructor
@@ -19,18 +20,12 @@ public class MessageReceiverService {
     @RabbitListener(queues = "roles-init-queue")
     public void receiveRolesInitMessage(String getAllRolesPath) {
         logger.info("Message received on startup of a service to init its roles: " + getAllRolesPath);
-        /*
         try {
-            // try to get external role
-            List<RoleActivationDto> roleActivations = roleService.getAllExternalRoles(getAllRolesPath);
-            // update local roles
-            roleService.saveAllExternalRoles(roleActivations);
+            roleService.saveAllMicroserviceRoles(getAllRolesPath);
             logger.info("Roles successfully initialised");
-        } catch (NoSuchElementException | RestClientException ignored) {
+        } catch (RestClientException ignored) {
             logger.error("Roles initialisation failed");
         }
-
-         */
     }
 
     @RabbitListener(queues = "role-activation-queue")

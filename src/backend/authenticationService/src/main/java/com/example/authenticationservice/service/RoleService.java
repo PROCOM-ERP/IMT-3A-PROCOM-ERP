@@ -213,26 +213,6 @@ public class RoleService {
         return roleDto;
     }
 
-    /*
-    public RoleActivationDto getExternalRole(@NonNull String getRoleByNamePath) {
-        // build request
-        String url = customHttpRequestBuilder.buildUrl(getRoleByNamePath);
-        HttpEntity<String> entity = customHttpRequestBuilder.buildHttpEntity();
-
-        // send request
-        ResponseEntity<RoleActivationDto> response = restTemplate.exchange(url, HttpMethod.GET,
-                entity,
-                new ParameterizedTypeReference<>() {}); // response with custom type
-
-        // check if body is existing and consistent
-        if (! (response.getStatusCode().is2xxSuccessful() && response.hasBody() && response.getBody() != null))
-            throw new NoSuchElementException();
-
-        // return expected external role
-        return response.getBody();
-    }
-    */
-
     @Transactional
     public void updateRoleByName(String roleName, RoleUpdateRequestDto roleDto)
             throws NoSuchElementException, DataIntegrityViolationException {
