@@ -13,6 +13,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
@@ -37,7 +38,7 @@ public class RabbitMQReceiver {
             // update local roles
             roleService.saveExternalRole(roleActivation);
             logger.info("Role activation status successfully set");
-        } catch (NoSuchElementException ignored) {
+        } catch (NoSuchElementException | RestClientException ignored) {
             logger.error("Role activation status set failed");
         }
     }
@@ -51,7 +52,7 @@ public class RabbitMQReceiver {
             // update local roles
             roleService.saveAllExternalRoles(roleActivations);
             logger.info("Roles successfully initialised");
-        } catch (NoSuchElementException ignored) {
+        } catch (NoSuchElementException | RestClientException ignored) {
             logger.error("Roles initialisation failed");
         }
     }
@@ -65,7 +66,7 @@ public class RabbitMQReceiver {
             // update local roles
             roleService.saveExternalRole(roleActivation);
             logger.info("Role successfully saved");
-        } catch (NoSuchElementException ignored) {
+        } catch (NoSuchElementException | RestClientException ignored) {
             logger.error("Role save failed");
         }
     }
