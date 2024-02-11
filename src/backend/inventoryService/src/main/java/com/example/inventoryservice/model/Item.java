@@ -28,6 +28,7 @@ public class Item {
 
     @NotNull
     @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_product", nullable = false)
     private Product product;
 
     @NotNull
