@@ -1,8 +1,6 @@
 package com.example.authenticationservice.service;
 
 import com.example.authenticationservice.dto.*;
-import com.example.authenticationservice.model.LoginProfile;
-import com.example.authenticationservice.model.Permission;
 import com.example.authenticationservice.model.Role;
 import com.example.authenticationservice.model.RoleActivation;
 import com.example.authenticationservice.repository.LoginProfileRepository;
