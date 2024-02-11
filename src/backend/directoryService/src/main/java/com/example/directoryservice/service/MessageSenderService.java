@@ -21,7 +21,7 @@ public class MessageSenderService implements CommandLineRunner {
     private final Logger logger = LoggerFactory.getLogger(MessageSenderService.class);
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
         logger.info("Sending message about service initialisation to retrieve its roles...");
         String resource = Path.ROLES;
         String path = customHttpRequestBuilder.buildPath(Path.V1, resource);
