@@ -38,28 +38,26 @@ public class RoleService {
     private final RestTemplate restTemplate;
     private final CustomHttpRequestBuilder customHttpRequestBuilder;
 
-    // private final Logger logger = LoggerFactory.getLogger(RoleService.class);
-
     /* Public Methods */
 
     @Transactional
-    public String createRole(RoleCreationRequestDto roleCreationRequestDto)
+    public String createRole(RoleCreationRequestDto roleDto)
             throws IllegalArgumentException, DataIntegrityViolationException {
 
         // check if role doesn't already exist
-        if (roleRepository.existsById(roleCreationRequestDto.getName()))
+        if (roleRepository.existsById(roleDto.getName()))
             throw new DataIntegrityViolationException("Entity already exists");
 
         // create new Role entity before database insertion
         Role role = Role.builder()
-                .name(roleCreationRequestDto.getName())
+                .name(roleDto.getName())
                 .build();
 
         // insert Role entity
         Role savedRole = roleRepository.save(role);
 
         // create RoleActivation entities before database insertion
-        Set<RoleActivation> roleActivations = roleCreationRequestDto.getMicroservices().stream()
+        Set<RoleActivation> roleActivations = roleDto.getMicroservices().stream()
                 .map(m -> RoleActivation.builder()
                         .role(savedRole)
                         .microservice(m)
@@ -99,7 +97,10 @@ public class RoleService {
                         .isEnable(role.getPermissions().contains(p))
                         .build())
                 .collect(Collectors.toSet());
-        return roleToRoleResponseDto(role, permissions);
+        return RoleResponseDto.builder()
+                .isEnable(isEnableInMicroservice(role))
+                .permissions(permissions)
+                .build();
 
     }
 
@@ -192,6 +193,7 @@ public class RoleService {
     }
 
     /* Private Methods */
+
     private void updateRoleIsEnable(Role role) {
         role.setIsEnable(role.getRoleActivations().stream().anyMatch(RoleActivation::getIsEnable));
     }
@@ -203,13 +205,6 @@ public class RoleService {
             }
         }
         return false;
-    }
-
-    private RoleResponseDto roleToRoleResponseDto(Role role, Set<PermissionDto> permissions) {
-        return RoleResponseDto.builder()
-                .isEnable(isEnableInMicroservice(role))
-                .permissions(permissions)
-                .build();
     }
 
 }
