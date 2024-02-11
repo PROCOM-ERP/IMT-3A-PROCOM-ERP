@@ -124,7 +124,7 @@ pull_images() {
 
 deploy(){
     if [ "$SWARM" == "true" ]; then
-        docker stack deploy -c ./docker-compose.yml ERP
+        docker stack deploy -c $COMPOSE_FILE ERP
     else
         docker-compose -f $COMPOSE_FILE up -d --build
     fi
