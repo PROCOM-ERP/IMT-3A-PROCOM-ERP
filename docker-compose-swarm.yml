@@ -67,6 +67,11 @@ services:
       - DB_AUTHENTICATION_SERVICE_PASSWORD
     deploy:
       replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
     ports:
       - "${DB_AUTHENTICATION_SERVICE_PORT_EXT}:${DB_AUTHENTICATION_SERVICE_PORT_INT}"
     networks:
@@ -92,6 +97,11 @@ services:
     image: ${DB_DIRECTORY_SERVICE_HOSTNAME}:${DB_DIRECTORY_SERVICE_IMAGE_VERSION}
     deploy:
       replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
     secrets:
       - DB_DIRECTORY_SERVICE_USER
       - DB_DIRECTORY_SERVICE_PASSWORD
@@ -138,6 +148,11 @@ services:
     image: ${BACKEND_MESSAGE_BROKER_SERVICE_HOSTNAME}:${BACKEND_MESSAGE_BROKER_SERVICE_IMAGE_VERSION}
     deploy:
       replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
     ports:
       - "${BACKEND_MESSAGE_BROKER_SERVICE_PORT_EXT}:${BACKEND_MESSAGE_BROKER_SERVICE_PORT_INT}"
       - "${BACKEND_MESSAGE_BROKER_SERVICE_ADMIN_PORT_EXT}:${BACKEND_MESSAGE_BROKER_SERVICE_ADMIN_PORT_INT}"
@@ -165,6 +180,11 @@ services:
     image: ${BACKEND_GATEWAY_SERVICE_HOSTNAME}:${BACKEND_GATEWAY_SERVICE_IMAGE_VERSION}
     deploy:
       replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
     ports:
       - "${BACKEND_GATEWAY_SERVICE_PORT_EXT}:${BACKEND_GATEWAY_SERVICE_PORT_INT}"
     env_file: ./.env
@@ -194,6 +214,11 @@ services:
     image: ${BACKEND_AUTHENTICATION_SERVICE_HOSTNAME}:${BACKEND_AUTHENTICATION_SERVICE_IMAGE_VERSION}
     deploy:
       replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
     env_file: ./.env
     secrets:
       - DB_AUTHENTICATION_SERVICE_USER
@@ -228,6 +253,11 @@ services:
     image: ${BACKEND_DIRECTORY_SERVICE_HOSTNAME}:${BACKEND_DIRECTORY_SERVICE_IMAGE_VERSION}
     deploy:
       replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
     entrypoint: ${ENTRYPOINT}
     env_file: ./.env
     secrets:
