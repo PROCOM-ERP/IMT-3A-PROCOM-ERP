@@ -7,8 +7,11 @@ import com.example.authenticationservice.repository.LoginProfileRepository;
 import com.example.authenticationservice.repository.RoleActivationRepository;
 import com.example.authenticationservice.repository.RoleRepository;
 import com.example.authenticationservice.utils.CustomHttpRequestBuilder;
+import com.example.authenticationservice.utils.PerformanceTracker;
 import com.example.authenticationservice.utils.RabbitMQSender;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -38,11 +41,17 @@ public class RoleService {
     private final RestTemplate restTemplate;
     private final CustomHttpRequestBuilder customHttpRequestBuilder;
 
+    private final PerformanceTracker performanceTracker;
+    private final Logger logger = LoggerFactory.getLogger(RoleService.class);
+
+
     /* Public Methods */
 
     @Transactional
     public String createRole(RoleCreationRequestDto roleDto)
             throws IllegalArgumentException, DataIntegrityViolationException {
+        logger.info("Start role creation...");
+        long startTimeNano = performanceTracker.getCurrentTime();
 
         // check if role doesn't already exist
         if (roleRepository.existsById(roleDto.getName()))
@@ -68,6 +77,8 @@ public class RoleService {
         roleActivationRepository.saveAll(roleActivations);
 
         // return role name
+        long elapsedTimeMillis = performanceTracker.getElapsedTimeMillis(startTimeNano);
+        logger.info("Elapsed time to create new role : " + elapsedTimeMillis + " ms");
         return savedRole.getName();
     }
 
@@ -82,30 +93,52 @@ public class RoleService {
      */
 
     public RolesMicroservicesResponseDto getAllRolesAndMicroservices() {
-        return RolesMicroservicesResponseDto.builder()
+        logger.info("Start retrieving roles and microservices...");
+        long startTimeNano = performanceTracker.getCurrentTime();
+        RolesMicroservicesResponseDto rolesAndMicroservices = RolesMicroservicesResponseDto.builder()
                 .roles(roleRepository.findAllRoleNames())
                 .microservices(roleActivationRepository.findAllMicroservices())
                 .build();
+        long elapsedTimeMillis = performanceTracker.getElapsedTimeMillis(startTimeNano);
+        logger.info("Elapsed time to retrieve roles and microservices : " + elapsedTimeMillis + " ms");
+        return rolesAndMicroservices;
     }
 
     public RoleResponseDto getRoleByName(String roleName)
             throws NoSuchElementException {
+        logger.info("Start retrieving one role...");
+        long startTimeNano = performanceTracker.getCurrentTime();
+
+        // check if role exists and retrieve it
         Role role = roleRepository.findById(roleName).orElseThrow();
+
+        // set permissions isEnable value
         Set<PermissionDto> permissions = permissionService.getAllPermissions().stream()
                 .map(p -> PermissionDto.builder()
                         .name(p)
                         .isEnable(role.getPermissions().contains(p))
                         .build())
                 .collect(Collectors.toSet());
-        return RoleResponseDto.builder()
+
+        // build RoleResponseDto entity
+        RoleResponseDto roleDto = RoleResponseDto.builder()
                 .isEnable(isEnableInMicroservice(role))
                 .permissions(permissions)
                 .build();
 
+        // return RoleResponseDto entity
+        long elapsedTimeMillis = performanceTracker.getElapsedTimeMillis(startTimeNano);
+        logger.info("Elapsed time to retrieve one role : " + elapsedTimeMillis + " ms");
+        return roleDto;
+
     }
 
     public RoleActivationResponseDto getRoleActivationByRoleAndMicroservice(String roleName, String microservice) {
-        return roleActivationRepository.findByRoleAndMicroservice(roleName, microservice)
+        logger.info("Start retrieving one role activation...");
+        long startTimeNano = performanceTracker.getCurrentTime();
+
+        // retrieve or create (transient) RoleActivationResponseDto entity
+        RoleActivationResponseDto roleDto = roleActivationRepository.findByRoleAndMicroservice(roleName, microservice)
                 .map(ra -> RoleActivationResponseDto.builder()
                         .name(roleName)
                         .microservice(microservice)
@@ -116,6 +149,11 @@ public class RoleService {
                         .microservice(microservice)
                         .isEnable(false)
                         .build());
+
+        // return RoleActivationResponseDto entity
+        long elapsedTimeMillis = performanceTracker.getElapsedTimeMillis(startTimeNano);
+        logger.info("Elapsed time to retrieve one role activation : " + elapsedTimeMillis + " ms");
+        return roleDto;
     }
 
     /*
@@ -159,7 +197,9 @@ public class RoleService {
 
     @Transactional
     public void updateRoleByName(String roleName, RoleUpdateRequestDto roleDto)
-        throws NoSuchElementException, DataIntegrityViolationException {
+            throws NoSuchElementException, DataIntegrityViolationException {
+        logger.info("Start updating one role...");
+        long startTimeNano = performanceTracker.getCurrentTime();
 
         // update isEnable property if provided or different of null
         if (roleDto.getIsEnable() != null) {
@@ -190,6 +230,9 @@ public class RoleService {
 
         // save all changes
         roleRepository.save(role);
+        long elapsedTimeMillis = performanceTracker.getElapsedTimeMillis(startTimeNano);
+        logger.info("Elapsed time to update one role : " + elapsedTimeMillis + " ms");
+
     }
 
     /* Private Methods */

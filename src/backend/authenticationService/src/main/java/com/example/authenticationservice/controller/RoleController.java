@@ -3,7 +3,6 @@ package com.example.authenticationservice.controller;
 import com.example.authenticationservice.dto.*;
 import com.example.authenticationservice.model.Path;
 import com.example.authenticationservice.service.RoleService;
-import com.example.authenticationservice.utils.PerformanceTracker;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -11,8 +10,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -25,9 +22,6 @@ import java.net.URI;
 public class RoleController {
 
     private final RoleService roleService;
-
-    private final PerformanceTracker performanceTracker;
-    private final Logger logger = LoggerFactory.getLogger(RoleController.class);
 
     @PostMapping
     @Operation(operationId = "createRole", tags = {"roles"},
@@ -54,8 +48,6 @@ public class RoleController {
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
     public ResponseEntity<String> createRole(@RequestBody RoleCreationRequestDto roleCreationRequestDto) {
-        logger.info("Start role creation...");
-        long startTimeNano = performanceTracker.getCurrentTime();
         // try to create a new role
         String role = roleService.createRole(roleCreationRequestDto);
         // generate URI location to inform the client how to get information on the new role
@@ -65,8 +57,6 @@ public class RoleController {
                 .buildAndExpand(role)
                 .toUri();
         // send the response with 201 Http status
-        long elapsedTimeMillis = performanceTracker.getElapsedTimeMillis(startTimeNano);
-        logger.info("Elapsed time to create new role : " + elapsedTimeMillis + " ms");
         return ResponseEntity.created(location).build();
     }
 
@@ -87,12 +77,7 @@ public class RoleController {
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
     public ResponseEntity<RolesMicroservicesResponseDto> getAllRolesAndMicroservices() {
-        logger.info("Start retrieving roles and microservices...");
-        long startTimeNano = performanceTracker.getCurrentTime();
-        RolesMicroservicesResponseDto body = roleService.getAllRolesAndMicroservices();
-        long elapsedTimeMillis = performanceTracker.getElapsedTimeMillis(startTimeNano);
-        logger.info("Elapsed time to retrieve roles and microservices : " + elapsedTimeMillis + " ms");
-        return ResponseEntity.ok(body);
+        return ResponseEntity.ok(roleService.getAllRolesAndMicroservices());
     }
 
     @GetMapping(Path.ROLE_NAME)
@@ -117,12 +102,7 @@ public class RoleController {
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
     public ResponseEntity<RoleResponseDto> getRoleByName(@PathVariable String role) {
-        logger.info("Start retrieving one role...");
-        long startTimeNano = performanceTracker.getCurrentTime();
-        RoleResponseDto body = roleService.getRoleByName(role);
-        long elapsedTimeMillis = performanceTracker.getElapsedTimeMillis(startTimeNano);
-        logger.info("Elapsed time to retrieve one role : " + elapsedTimeMillis + " ms");
-        return ResponseEntity.ok(body);
+        return ResponseEntity.ok(roleService.getRoleByName(role));
     }
 
     @GetMapping(Path.ROLE_NAME_MICROSERVICES_ALIAS)
@@ -152,12 +132,7 @@ public class RoleController {
                     content = {@Content(mediaType = "application/json")} )})
     public ResponseEntity<RoleActivationResponseDto> getRoleActivationByRoleAndMicroservice(@PathVariable String role,
                                                                                             @PathVariable String microservice) {
-        logger.info("Start retrieving one role activation...");
-        long startTimeNano = performanceTracker.getCurrentTime();
-        RoleActivationResponseDto body = roleService.getRoleActivationByRoleAndMicroservice(role, microservice);
-        long elapsedTimeMillis = performanceTracker.getElapsedTimeMillis(startTimeNano);
-        logger.info("Elapsed time to retrieve one role activation : " + elapsedTimeMillis + " ms");
-        return ResponseEntity.ok(body);
+        return ResponseEntity.ok(roleService.getRoleActivationByRoleAndMicroservice(role, microservice));
     }
 
     @PutMapping(Path.ROLE_NAME)
@@ -192,11 +167,7 @@ public class RoleController {
                     content = {@Content(mediaType = "application/json")} )})
     public ResponseEntity<String> updateRoleByName(@PathVariable String role,
                                                    @RequestBody RoleUpdateRequestDto roleDto) {
-        logger.info("Start updating one role...");
-        long startTimeNano = performanceTracker.getCurrentTime();
         roleService.updateRoleByName(role, roleDto);
-        long elapsedTimeMillis = performanceTracker.getElapsedTimeMillis(startTimeNano);
-        logger.info("Elapsed time to update one role : " + elapsedTimeMillis + " ms");
         return ResponseEntity.noContent().build();
     }
 }
