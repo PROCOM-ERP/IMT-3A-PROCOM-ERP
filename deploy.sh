@@ -196,7 +196,7 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-if [ "$SWARM" == "true"]; then
+if [ "$SWARM" == "true" ]; then
 
     export $(cat ./.env) > /dev/null 2>&1
 
