@@ -19,7 +19,7 @@ public class MessageReceiverService {
         this.roleService = roleService;
     }
 
-    @RabbitListener(queues = "roles.new")
+    @RabbitListener(queues = "roles-new-queue")
     public void receiveRolesNewMessage(String getRoleByNamePath) {
         logger.info("Message received to create a role: " + getRoleByNamePath);
         try {
