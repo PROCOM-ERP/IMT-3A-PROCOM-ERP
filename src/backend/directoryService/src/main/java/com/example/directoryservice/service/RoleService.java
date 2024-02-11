@@ -17,6 +17,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClientException;
@@ -44,33 +45,25 @@ public class RoleService {
 
     /* Public Methods */
 
-    public void createRole(String getRoleByNamePath)
-            throws NoSuchElementException, RestClientException {
+    public void createRole(String getRoleByNamePath) {
         logger.info("Start role creation...");
         long startTimeNano = performanceTracker.getCurrentTime();
 
-        // build request
-        String url = customHttpRequestBuilder.buildUrl(getRoleByNamePath);
-        HttpEntity<String> entity = customHttpRequestBuilder.buildHttpEntity();
+        try {
+            // retrieve microservice role
+            RoleActivationResponseDto roleDto = getMicroserviceRole(getRoleByNamePath);
+            // create new Role entity before database insertion
+            Role role = Role.builder()
+                    .name(roleDto.getName())
+                    .isEnable(roleDto.getIsEnable())
+                    .build();
 
-        // send request
-        ResponseEntity<RoleActivationResponseDto> response = restTemplate.exchange(url, HttpMethod.GET,
-                entity,
-                new ParameterizedTypeReference<>() {}); // response with custom type
+            // insert Role entity
+            roleRepository.save(role);
+        } catch (Exception e) {
+            logger.error("Something went wrong with role creation : " + e.getCause());
+        }
 
-        // check if body is existing and consistent
-        if (! (response.getStatusCode().is2xxSuccessful() && response.hasBody() && response.getBody() != null))
-            throw new NoSuchElementException();
-
-        // create new Role entity before database insertion
-        RoleActivationResponseDto roleDto =  response.getBody();
-        Role role = Role.builder()
-                .name(roleDto.getName())
-                .isEnable(roleDto.getIsEnable())
-                .build();
-
-        // insert Role entity
-        roleRepository.save(role);
         long elapsedTimeMillis = performanceTracker.getElapsedTimeMillis(startTimeNano);
         logger.info("Elapsed time to create new role : " + elapsedTimeMillis + " ms");
     }
@@ -168,5 +161,26 @@ public class RoleService {
                 .microservice(currentMicroservice)
                 .isEnable(role.getIsEnable())
                 .build();
+    }
+
+    private RoleActivationResponseDto getMicroserviceRole(@NonNull String getRoleByNamePath)
+            throws NoSuchElementException, RestClientException {
+
+        // build request
+        String url = customHttpRequestBuilder.buildUrl(getRoleByNamePath);
+        url = customHttpRequestBuilder.addQueryParamToUrl(url, "microservice", currentMicroservice);
+        HttpEntity<String> entity = customHttpRequestBuilder.buildHttpEntity();
+
+        // send request
+        ResponseEntity<RoleActivationResponseDto> response = restTemplate.exchange(url, HttpMethod.GET,
+                entity,
+                new ParameterizedTypeReference<>() {}); // response with custom type
+
+        // check if body is existing and consistent
+        if (! (response.getStatusCode().is2xxSuccessful() && response.hasBody() && response.getBody() != null))
+            throw new NoSuchElementException();
+
+        // return expected external role
+        return response.getBody();
     }
 }

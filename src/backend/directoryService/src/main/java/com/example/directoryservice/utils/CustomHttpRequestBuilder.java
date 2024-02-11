@@ -8,6 +8,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Component
 @RequiredArgsConstructor
@@ -31,6 +32,10 @@ public class CustomHttpRequestBuilder {
     public String buildUrl(String path) {
         String protocol = isHttpsEnabled() ? "https" : "http";
         return String.format("%s://%s:%s%s", protocol, gatewayHostname, gatewayPort, path);
+    }
+
+    public String addQueryParamToUrl(String url, String param, String value) {
+       return UriComponentsBuilder.fromHttpUrl(url).queryParam(param, value).toUriString();
     }
 
     public HttpEntity<String> buildHttpEntity() {

@@ -306,5 +306,4 @@ public class RoleService {
         // return expected external role
         return response.getBody();
     }
-
 }
