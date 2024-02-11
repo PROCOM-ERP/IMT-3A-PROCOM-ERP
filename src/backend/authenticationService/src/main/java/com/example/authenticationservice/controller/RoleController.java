@@ -1,6 +1,7 @@
 package com.example.authenticationservice.controller;
 
 import com.example.authenticationservice.dto.RoleCreationRequestDto;
+import com.example.authenticationservice.dto.RoleEnableResponseDto;
 import com.example.authenticationservice.dto.RoleResponseDto;
 import com.example.authenticationservice.dto.RolesMicroservicesResponseDto;
 import com.example.authenticationservice.model.Path;
@@ -108,7 +109,37 @@ public class RoleController {
         return ResponseEntity.ok(roleService.getRole(role));
     }
 
-    @PatchMapping(Path.ROLE_NAME_PERMISSIONS)
+    @GetMapping(Path.ROLE_NAME_MICROSERVICES_ALIAS)
+    @Operation(operationId = "getRoleEnableByMicroservice", tags = {"roles"},
+            summary = "Retrieve one role activation status for a microservice", description =
+            "Retrieve one role activation status for a microservice, " +
+                    "by providing its name and the microservice alias.<br>" +
+                    "Only available for admins.",
+            parameters = {
+            @Parameter(name = "role", description =
+                    "The role name"),
+            @Parameter(name = "microservice", description =
+                    "The microservice alias")})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description =
+                    "Role activation status retrieved correctly",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = RoleResponseDto.class))} ),
+            @ApiResponse(responseCode = "401", description =
+                    "Roles in Jwt token are insufficient to authorize the access to this URL",
+                    content = {@Content(mediaType = "application/json")} ),
+            @ApiResponse(responseCode = "404", description =
+                    "Role activation status not found for role and microservice provided",
+                    content = {@Content(mediaType = "application/json")} ),
+            @ApiResponse(responseCode = "500", description =
+                    "Uncontrolled error appeared",
+                    content = {@Content(mediaType = "application/json")} )})
+    public ResponseEntity<RoleEnableResponseDto> getRoleEnableByMicroservice(@PathVariable String role,
+                                                                             @PathVariable String microservice) {
+        return ResponseEntity.ok(roleService.getRoleEnableByMicroservice(role, microservice));
+    }
+
+    @PatchMapping(Path.ROLE_NAME_MICROSERVICES_ALIAS)
     @Operation(operationId = "updateRolePermissions", tags = {"roles"},
             summary = "Update a role permissions", description =
             "Update a role permissions, by providing a list of all the new ones.<br>" +

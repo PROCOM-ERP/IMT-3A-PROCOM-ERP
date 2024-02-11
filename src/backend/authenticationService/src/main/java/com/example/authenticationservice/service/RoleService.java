@@ -9,6 +9,7 @@ import com.example.authenticationservice.repository.RoleRepository;
 import com.example.authenticationservice.utils.CustomHttpRequestBuilder;
 import com.example.authenticationservice.utils.RabbitMQSender;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpEntity;
@@ -26,6 +27,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class RoleService {
 
+    @Value("${security.service.alias}")
+    private String currentMicroservice;
+
     private final RoleRepository roleRepository;
     private final RoleActivationRepository roleActivationRepository;
     private final PermissionService permissionService;
@@ -35,6 +39,8 @@ public class RoleService {
     private final CustomHttpRequestBuilder customHttpRequestBuilder;
 
     // private final Logger logger = LoggerFactory.getLogger(RoleService.class);
+
+    /* Public Methods */
 
     @Transactional
     public String createRole(RoleCreationRequestDto roleCreationRequestDto)
@@ -70,55 +76,9 @@ public class RoleService {
     @Transactional
     public void saveAllExternalRoles(List<RoleActivationDto> externalRoleActivations){
 
-        // get all distinct Role entity names from RoleActivation List
-        Set<String> roleNames = externalRoleActivations.stream()
-                .map(RoleActivationDto::getName)
-                .collect(Collectors.toSet());
-
-        // get all existing Role entities and transform the List into a Map
-        List<Role> existingRoles = roleRepository.findAllByNameIn(roleNames);
-        Map<String, Role> existingRolesMap = existingRoles.stream()
-                .collect(Collectors.toMap(Role::getName, r -> r));
-
-        // create new Role entities before database insertion
-        List<Role> newRoles = externalRoleActivations.stream()
-                .filter(r -> !existingRolesMap.containsKey(r.getName()))
-                .map(r -> Role.builder().name(r.getName()).build())
-                .toList();
-
-        // insert new Role entities
-        roleRepository.saveAll(newRoles).forEach(r -> existingRolesMap.put(r.getName(), r));
-
-        // create new RoleActivation entities before database insertion
-        List<RoleActivation> roleActivations = externalRoleActivations.stream()
-                .map(ra -> dtoToModel(ra, existingRolesMap.get(ra.getName())))
-                .toList();
-
-        // insert new RoleActivation entities
-        roleActivationRepository.saveAll(roleActivations);
-
-        // update Role entity isEnable attribute depending on all RoleActivation isEnable values
-        List<Role> roles = roleRepository.findAll().stream()
-                .peek(this::updateRoleIsEnable)
-                .toList();
-        roleRepository.saveAll(roles);
-
         // send message to other services to update all jwt_gen_min_at
         loginProfileRepository.updateAllJwtGenMinAt();
         rabbitMQSender.sendLoginProfilesJwtDisableOldMessage();
-    }
-
-    @Transactional
-    public void saveExternalRole(RoleActivationDto externalRoleActivation) {
-        // check if Role entity exists, and else create it and save it
-        Role role = roleRepository.findById(externalRoleActivation.getName())
-                .orElse(roleRepository.save(Role.builder()
-                        .name(externalRoleActivation.getName())
-                        .isEnable(externalRoleActivation.getIsEnable())
-                        .build()));
-
-        // insert RoleActivation entity and update Role entity isEnable attribute
-        updateRoleActivation(dtoToModel(externalRoleActivation, role), role);
     }
 
     public RolesMicroservicesResponseDto getAllRolesAndMicroservices() {
@@ -137,8 +97,20 @@ public class RoleService {
                         .isEnable(role.getPermissions().contains(p))
                         .build())
                 .collect(Collectors.toSet());
-        return modelToResponseDto(role, permissions);
+        return roleToRoleResponseDto(role, permissions);
 
+    }
+
+    public RoleEnableResponseDto getRoleEnableByMicroservice(String role, String microservice) {
+        return roleActivationRepository.findByRoleAndMicroservice(role, microservice)
+                .map(ra -> RoleEnableResponseDto.builder()
+                        .name(role)
+                        .isEnable(ra.getIsEnable())
+                        .build())
+                .orElse(RoleEnableResponseDto.builder()
+                        .name(role)
+                        .isEnable(false)
+                        .build());
     }
 
     public List<RoleActivationDto> getAllExternalRoles(@NonNull String getAllRolesPath) {
@@ -177,7 +149,7 @@ public class RoleService {
         return response.getBody();
     }
 
-    public void updateRolePermissions(String roleName, List<String> permissions)
+    public void updateRole(String roleName, List<String> permissions)
             throws NoSuchElementException {
         // check if role exists
         Role role = roleRepository.findById(roleName).orElseThrow();
@@ -187,51 +159,23 @@ public class RoleService {
         roleRepository.save(role);
     }
 
-    public void updateRoleActivation(RoleActivationRequestDto roleActivation, String roleName) throws NoSuchElementException {
-        // check if Role entity exists
-        Role role = roleRepository.findById(roleName).orElseThrow();
-
-        // insert RoleActivation entity and update Role entity isEnable attribute
-        updateRoleActivation(requestDtoToModel(roleActivation, role), role);
-    }
-
-    private void updateRoleActivation(RoleActivation roleActivation, Role role) {
-        // insert RoleActivation entity
-        roleActivationRepository.save(roleActivation);
-
-        // update Role entity isEnable attribute depending on all RoleActivation isEnable values
-        updateRoleIsEnable(role);
-        roleRepository.save(role);
-
-        // send message to other services to update all jwt_gen_min_at
-        loginProfileRepository.updateAllJwtGenMinAt();
-        rabbitMQSender.sendLoginProfilesJwtDisableOldMessage();
-    }
-
-    private RoleActivation dtoToModel(RoleActivationDto ra, Role role) {
-        return RoleActivation.builder()
-                .role(role)
-                .microservice(ra.getMicroservice())
-                .isEnable(ra.getIsEnable())
-                .build();
-    }
-
-    private RoleActivation requestDtoToModel(RoleActivationRequestDto ra, Role role) {
-        return RoleActivation.builder()
-                .role(role)
-                .microservice(ra.getMicroservice())
-                .isEnable(ra.getIsEnable())
-                .build();
-    }
-
     private void updateRoleIsEnable(Role role) {
         role.setIsEnable(role.getRoleActivations().stream().anyMatch(RoleActivation::getIsEnable));
     }
 
-    static RoleResponseDto modelToResponseDto(Role role, Set<PermissionDto> permissions) {
+    private Boolean isEnableInMicroservice(Role role) {
+        for (RoleActivation activation : role.getRoleActivations()) {
+            if (activation.getMicroservice().equals(currentMicroservice) && activation.getIsEnable()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private RoleResponseDto roleToRoleResponseDto(Role role, Set<PermissionDto> permissions) {
         return RoleResponseDto.builder()
                 .name(role.getName())
-                .isEnable(role.getIsEnable())
+                .isEnable(isEnableInMicroservice(role))
                 .permissions(permissions)
                 .build();
     }
