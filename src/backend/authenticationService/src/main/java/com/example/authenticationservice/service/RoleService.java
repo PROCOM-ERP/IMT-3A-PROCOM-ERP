@@ -5,14 +5,22 @@ import com.example.authenticationservice.model.Role;
 import com.example.authenticationservice.model.RoleActivation;
 import com.example.authenticationservice.repository.RoleActivationRepository;
 import com.example.authenticationservice.repository.RoleRepository;
+import com.example.authenticationservice.utils.CustomHttpRequestBuilder;
 import com.example.authenticationservice.utils.PerformanceTracker;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -27,6 +35,8 @@ public class RoleService {
     private final RoleRepository roleRepository;
     private final RoleActivationRepository roleActivationRepository;
     private final PermissionService permissionService;
+    private final CustomHttpRequestBuilder customHttpRequestBuilder;
+    private final RestTemplate restTemplate;
 
     private final PerformanceTracker performanceTracker;
     private final Logger logger = LoggerFactory.getLogger(RoleService.class);
@@ -68,15 +78,72 @@ public class RoleService {
         return savedRole.getName();
     }
 
-    /*
     @Transactional
-    public void saveAllExternalRoles(List<RoleActivationDto> externalRoleActivations){
+    public void saveAllMicroserviceRoles(String getAllRolesPath) {
+        logger.info("Start external roles saving operation...");
+        long startTimeNano = performanceTracker.getCurrentTime();
 
-        // send message to other services to update all jwt_gen_min_at
-        loginProfileRepository.updateAllJwtGenMinAt();
-        rabbitMQSender.sendLoginProfilesJwtDisableOldMessage();
+        // retrieve microservice roles
+        Set<RoleActivationResponseDto> roleDtos = getAllMicroserviceRoles(getAllRolesPath);
+
+        // retrieve all existing roles
+        List<Role> existingRoles = roleRepository.findAll();
+
+        // cast RoleActivationDto entities to RoleActivation entities before database insertion
+        Set<RoleActivation> roleActivations = roleDtos.stream()
+                .map(ra -> RoleActivation.builder()
+                        .role(existingRoles.stream()
+                                .filter(r -> ra.getName().equals(r.getName()))
+                                .findFirst()
+                                .orElseThrow())
+                        .microservice(ra.getMicroservice())
+                        .isEnable(ra.getIsEnable())
+                        .build())
+                .collect(Collectors.toSet());
+
+        // insert RoleActivation entities
+        roleActivationRepository.saveAllAndFlush(roleActivations);
+
+        // update and insert Role entities global isEnable property
+        roleRepository.saveAll(roleRepository.findAll().stream()
+                .peek(this::updateRoleIsEnable)
+                .toList());
+        long elapsedTimeMillis = performanceTracker.getElapsedTimeMillis(startTimeNano);
+        logger.info("Elapsed time to save external roles : " + elapsedTimeMillis + " ms");
+
     }
-     */
+
+    @Transactional
+    public void saveMicroserviceRole(String getRoleByNamePath)
+            throws NoSuchElementException, RestClientException {
+        logger.info("Start external role saving operation...");
+        long startTimeNano = performanceTracker.getCurrentTime();
+
+        // retrieve microservice role
+        RoleActivationResponseDto roleDto = getMicroserviceRole(getRoleByNamePath);
+
+        // retrieve Role entity from database
+        Role role = roleRepository.findById(roleDto.getName()).orElseThrow();
+
+        // update RoleActivation entity
+        RoleActivation roleActivation = RoleActivation.builder()
+                .role(role)
+                .microservice(roleDto.getMicroservice())
+                .isEnable(roleDto.getIsEnable())
+                .build();
+
+        // insert RoleActivation entity
+        roleActivationRepository.save(roleActivation);
+
+        // update Role entity global isEnable property
+        role = roleRepository.findById(roleDto.getName()).orElseThrow();
+        updateRoleIsEnable(role);
+
+        // insert Role entity
+        roleRepository.save(role);
+        long elapsedTimeMillis = performanceTracker.getElapsedTimeMillis(startTimeNano);
+        logger.info("Elapsed time to save external role : " + elapsedTimeMillis + " ms");
+    }
 
     public RolesMicroservicesResponseDto getAllRolesAndMicroservices() {
         logger.info("Start retrieving roles and microservices...");
@@ -146,25 +213,6 @@ public class RoleService {
         return roleDto;
     }
 
-    /*
-    public List<RoleActivationDto> getAllExternalRoles(@NonNull String getAllRolesPath) {
-        // build request
-        String url = customHttpRequestBuilder.buildUrl(getAllRolesPath);
-        HttpEntity<String> entity = customHttpRequestBuilder.buildHttpEntity();
-
-        // send request
-        ResponseEntity<List<RoleActivationDto>> response = restTemplate.exchange(url, HttpMethod.GET,
-                entity,
-                new ParameterizedTypeReference<>() {}); // response with custom type
-
-        // check if body is existing and consistent
-        if (! (response.getStatusCode().is2xxSuccessful() && response.hasBody() && response.getBody() != null))
-            throw new NoSuchElementException();
-
-        // return expected external role
-        return response.getBody();
-    }
-    */
     /*
     public RoleActivationDto getExternalRole(@NonNull String getRoleByNamePath) {
         // build request
@@ -237,6 +285,46 @@ public class RoleService {
             }
         }
         return false;
+    }
+
+    private Set<RoleActivationResponseDto> getAllMicroserviceRoles(@NonNull String getAllRolesPath)
+            throws RestClientException {
+
+        // build request
+        String url = customHttpRequestBuilder.buildUrl(getAllRolesPath);
+        HttpEntity<String> entity = customHttpRequestBuilder.buildHttpEntity();
+
+        // send request
+        ResponseEntity<Set<RoleActivationResponseDto>> response = restTemplate.exchange(url, HttpMethod.GET,
+                entity,
+                new ParameterizedTypeReference<>() {}); // response with custom type
+
+        // check if body is existing and consistent
+        if (! (response.getStatusCode().is2xxSuccessful() && response.hasBody() && response.getBody() != null))
+            throw new RestClientException("");
+
+        // return expected external role
+        return response.getBody();
+    }
+
+    private RoleActivationResponseDto getMicroserviceRole(@NonNull String getRoleByNamePath)
+            throws RestClientException {
+
+        // build request
+        String url = customHttpRequestBuilder.buildUrl(getRoleByNamePath);
+        HttpEntity<String> entity = customHttpRequestBuilder.buildHttpEntity();
+
+        // send request
+        ResponseEntity<RoleActivationResponseDto> response = restTemplate.exchange(url, HttpMethod.GET,
+                entity,
+                new ParameterizedTypeReference<>() {}); // response with custom type
+
+        // check if body is existing and consistent
+        if (! (response.getStatusCode().is2xxSuccessful() && response.hasBody() && response.getBody() != null))
+            throw new RestClientException("");
+
+        // return expected external role
+        return response.getBody();
     }
 
 }
