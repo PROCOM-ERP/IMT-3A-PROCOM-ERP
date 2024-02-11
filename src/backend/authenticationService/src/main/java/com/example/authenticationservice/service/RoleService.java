@@ -154,19 +154,7 @@ public class RoleService {
         // return expected external role
         return response.getBody();
     }
-
-    public void updateRoleByName(String roleName, RoleResponseDto roleDto)
-            throws NoSuchElementException {
-
-        // check if role exists
-        Role role = roleRepository.findById(roleName).orElseThrow();
-
-        // set permissions
-        role.setPermissions(new LinkedHashSet<>(roleDto.getPermissions()));
-        // save modifications
-        roleRepository.save(role);
-    }
-     */
+    */
 
     @Transactional
     public void updateRoleByName(String roleName, RoleUpdateRequestDto roleDto)
@@ -187,13 +175,19 @@ public class RoleService {
         // check if role already exists and retrieve it
         Role role = roleRepository.findById(roleName).orElseThrow();
 
-        // check if permissions are valid
-        roleDto.getPermissions().forEach(permissionService::isValidPermission);
+        // update permissions if permissions are provided
+        if (roleDto.getPermissions() != null) {
+            // check if permissions are valid
+            roleDto.getPermissions().forEach(permissionService::isValidPermission);
+            // update permissions and
+            role.setPermissions(new LinkedHashSet<>(roleDto.getPermissions()));
+        }
 
-        // update permissions and global isEnable property
-        role.setPermissions(new LinkedHashSet<>(roleDto.getPermissions()));
+        // update global isEnable property if microservice new isEnable property is provided
         if (roleDto.getIsEnable() != null)
             updateRoleIsEnable(role);
+
+        // save all changes
         roleRepository.save(role);
     }
 
