@@ -114,8 +114,7 @@ CREATE TABLE employees
 
 INSERT INTO roles (name)
 VALUES ('admin'),
-       ('employee'),
-       ('HRManager');
+       ('user');
 
 -- +----------------------------------------------------------------------------------------------+
 
@@ -143,17 +142,11 @@ VALUES ('admin', 'CanCreateRole'),
        ('admin', 'CanModifyServiceOrganisation'),
        ('admin', 'CanDeleteService'),
 
-       ('employee', 'CanReadAddress'),
-       ('employee', 'CanReadEmployee'),
-       ('employee', 'CanModifyEmployeeInfo'),
-       ('employee', 'CanReadOrganisation'),
-       ('employee', 'CanReadService'),
-
-       ('HRManager', 'CanCreateAddress'),
-       ('HRManager', 'CanCreateEmployee'),
-       ('HRManager', 'CanModifyEmployeeService'),
-       ('HRManager', 'CanDeactivateEmployee'),
-       ('HRManager', 'CanModifyServiceAddress');
+       ('user', 'CanReadAddress'),
+       ('user', 'CanReadEmployee'),
+       ('user', 'CanModifyEmployeeInfo'),
+       ('user', 'CanReadOrganisation'),
+       ('user', 'CanReadService');
 
 INSERT INTO addresses (number, street, city, country, postal_code)
 VALUES (1, 'rue de la Paix', 'Paris', 'France', '75000'),
