@@ -30,7 +30,7 @@ public class MessageSenderService implements CommandLineRunner {
     }
 
     public void sendRoleActivationMessage(String roleName) {
-        logger.info("Sending message to set a role activation status...");
+        logger.info("Sending message to inform about a change on role activation status...");
         String resource = String.format("%s/%s%s", Path.ROLES, roleName, Path.ACTIVATION);
         String path = customHttpRequestBuilder.buildPath(Path.V1, resource);
         rabbitTemplate.convertAndSend(rolesDirectExchange.getName(), "role.activation", path);

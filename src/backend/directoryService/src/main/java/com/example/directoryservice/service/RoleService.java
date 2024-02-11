@@ -39,6 +39,7 @@ public class RoleService {
     private final PermissionService permissionService;
     private final RestTemplate restTemplate;
     private final CustomHttpRequestBuilder customHttpRequestBuilder;
+    private final MessageSenderService messageSenderService;
 
     private final PerformanceTracker performanceTracker;
     private final Logger logger = LoggerFactory.getLogger(RoleService.class);
@@ -149,6 +150,10 @@ public class RoleService {
         }
         // save all changes
         roleRepository.save(role);
+
+        // send message to inform about a change on role activation status
+        if (roleDto.getIsEnable() != null)
+            messageSenderService.sendRoleActivationMessage(roleName);
         long elapsedTimeMillis = performanceTracker.getElapsedTimeMillis(startTimeNano);
         logger.info("Elapsed time to update one role : " + elapsedTimeMillis + " ms");
     }

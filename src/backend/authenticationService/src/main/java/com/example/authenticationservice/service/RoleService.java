@@ -35,8 +35,9 @@ public class RoleService {
     private final RoleRepository roleRepository;
     private final RoleActivationRepository roleActivationRepository;
     private final PermissionService permissionService;
-    private final CustomHttpRequestBuilder customHttpRequestBuilder;
     private final RestTemplate restTemplate;
+    private final CustomHttpRequestBuilder customHttpRequestBuilder;
+    private final MessageSenderService messageSenderService;
 
     private final PerformanceTracker performanceTracker;
     private final Logger logger = LoggerFactory.getLogger(RoleService.class);
@@ -71,6 +72,9 @@ public class RoleService {
 
         // insert RoleActivation entities
         roleActivationRepository.saveAll(roleActivations);
+
+        // send message to inform the network about role creation
+        messageSenderService.sendRolesNewMessage(savedRole.getName());
 
         // return role name
         long elapsedTimeMillis = performanceTracker.getElapsedTimeMillis(startTimeNano);
