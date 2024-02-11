@@ -1,6 +1,6 @@
 package com.example.authenticationservice.controller;
 
-import com.example.authenticationservice.dto.RoleRequestDto;
+import com.example.authenticationservice.dto.RoleCreationRequestDto;
 import com.example.authenticationservice.dto.RoleResponseDto;
 import com.example.authenticationservice.dto.RolesMicroservicesResponseDto;
 import com.example.authenticationservice.model.Path;
@@ -50,9 +50,9 @@ public class RoleController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<String> createRole(@RequestBody RoleRequestDto roleRequestDto) {
+    public ResponseEntity<String> createRole(@RequestBody RoleCreationRequestDto roleCreationRequestDto) {
         // try to create a new role
-        String role = roleService.createRole(roleRequestDto);
+        String role = roleService.createRole(roleCreationRequestDto);
         // generate URI location to inform the client how to get information on the new role
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()

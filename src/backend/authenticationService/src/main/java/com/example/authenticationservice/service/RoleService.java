@@ -37,23 +37,23 @@ public class RoleService {
     // private final Logger logger = LoggerFactory.getLogger(RoleService.class);
 
     @Transactional
-    public String createRole(RoleRequestDto roleRequestDto)
+    public String createRole(RoleCreationRequestDto roleCreationRequestDto)
             throws IllegalArgumentException, DataIntegrityViolationException {
 
         // check if role doesn't already exist
-        if (roleRepository.existsById(roleRequestDto.getName()))
+        if (roleRepository.existsById(roleCreationRequestDto.getName()))
             throw new DataIntegrityViolationException("Entity already exists");
 
         // create new Role entity before database insertion
         Role role = Role.builder()
-                .name(roleRequestDto.getName())
+                .name(roleCreationRequestDto.getName())
                 .build();
 
         // insert Role entity
         Role savedRole = roleRepository.save(role);
 
         // create RoleActivation entities before database insertion
-        Set<RoleActivation> roleActivations = roleRequestDto.getMicroservices().stream()
+        Set<RoleActivation> roleActivations = roleCreationRequestDto.getMicroservices().stream()
                 .map(m -> RoleActivation.builder()
                         .role(savedRole)
                         .microservice(m)

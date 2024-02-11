@@ -11,7 +11,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class RoleRequestDto {
+public class RoleCreationRequestDto {
 
     private String name;
     private Set<String> microservices;
