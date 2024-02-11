@@ -28,7 +28,7 @@ public class Role {
 
     @Builder.Default
     @NotNull
-    @Column(name = "isEnable", nullable = false)
+    @Column(name = "is_enable", nullable = false)
     private Boolean isEnable = true;
 
     @Builder.Default

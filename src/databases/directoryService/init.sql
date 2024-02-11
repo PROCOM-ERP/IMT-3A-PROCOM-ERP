@@ -13,7 +13,7 @@
 CREATE TABLE roles
 (
     name VARCHAR(32) UNIQUE NOT NULL,
-    isEnable BOOLEAN NOT NULL DEFAULT true,
+    is_enable BOOLEAN NOT NULL DEFAULT true,
 
     CONSTRAINT pk_roles PRIMARY KEY (name)
 );
@@ -122,7 +122,7 @@ VALUES ('admin'),
 INSERT INTO role_permissions (role, permission)
 VALUES ('admin', 'CanCreateRole'),
        ('admin', 'CanReadRole'),
-       ('admin', 'CanModifyRolePermissions'),
+       ('admin', 'CanModifyRole'),
        ('admin', 'CanDeactivateRole'),
        ('admin', 'CanReadPermission'),
        ('admin', 'CanCreateAddress'),
