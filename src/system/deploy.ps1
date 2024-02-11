@@ -22,12 +22,42 @@ function Copy-SystemFiles {
     }
 }
 
+function Initialize-Swarm {
+    $swarmActive = docker info 2>$null | Select-String "Swarm: active"
+    if (-not $swarmActive) {
+        docker swarm init > $null 2>&1
+        Write-Host "Swarm initialized"
+        .\src\security\docker_secrets.ps1 > $null 2>&1
+    } else {
+        Write-Host "Swarm detected"
+    }
+}
+
 function Is-StackRunning {
     param (
         [string]$stackName
     )
     $stackStatus = docker stack ps --format "{{.Name}}" $stackName 2>$null
     return [string]::IsNullOrWhiteSpace($stackStatus) -eq $false
+}
+
+function Import-DotEnv {
+    $envPath = ".\.env"
+    if (Test-Path $envPath) {
+        Get-Content $envPath | ForEach-Object {
+            if ($_ -match '^\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*=\s*(.*)$') {
+                $name = $matches[1]
+                $value = $matches[2].Trim().Trim('"','''') # Trim spaces, double and single quotes
+                
+                # Set environment variable for the current process
+                [System.Environment]::SetEnvironmentVariable($name, $value, [System.EnvironmentVariableTarget]::Process)
+            }
+        }
+        Write-Host "Environment variables imported from .env file."
+    }
+    else {
+        Write-Host ".env file not found"
+    }
 }
 
 function Get-ImageVersions {
@@ -98,8 +128,11 @@ function Pull-Images {
 }
 
 function Deploy {
-    # Example deploy function, replace with actual deployment logic from your script
-    docker stack deploy -c docker-compose.yml "ERP"
+    if ($swarm) {
+        docker stack deploy -c $composeFile ERP
+    } else {
+        docker-compose -f $composeFile up -d --build
+    }
 }
 
 if (-not (Test-Path ".\.env")) {
@@ -107,19 +140,30 @@ if (-not (Test-Path ".\.env")) {
     exit
 }
 
-if (-not (Test-Path docker-compose.yml)) {
+if (-not (Test-Path ".\docker-compose.yml")) {
     Write-Host "docker-compose.yml file not found"
     exit
 }
 
+if (-not (Test-Path ".\docker-compose-swarm.yml")) {
+    Write-Host "docker-compose-swarm.yml file not found"
+    exit
+}
+
 # Handling command line arguments (equivalent to bash positional parameters)
+$swarm = $false
 $push = $false
 $pull = $false
 $hot = $false
 $dockerRegistry = ""
+$composeFile = "docker-compose.yml"
 
 for ($i = 0; $i -lt $args.Count; $i++) {
     switch ($args[$i]) {
+        "--swarm" {
+            $swarm = $true
+            $composeFile = "docker-compose-swarm.yml"
+        }
         "--push" {
             $push = $true
             $dockerRegistry = $args[++$i]
@@ -138,17 +182,29 @@ for ($i = 0; $i -lt $args.Count; $i++) {
     }
 }
 
+if ($swarm) {
 
-# Main deployment logic based on the provided flags
-if (Is-StackRunning -stackName "ERP") {
-    if (-not $hot) {
-        Write-Host "The stack is already running. Use --hot option to force redeployment."
-        exit 1
+    Import-DotEnv
+
+    $swarmActive = docker info 2>$null | Select-String "Swarm: active"
+    if (-not $swarmActive) {
+        docker swarm init > $null 2>&1
+        Write-Host "Swarm initialized"
     } else {
-        Write-Host "Hot deployment requested. Stopping the stack..."
-        docker stack rm ERP
-        Start-Sleep -Seconds 1 # Assuming a wait is needed before redeployment
+        Write-Host "Swarm detected"
     }
+
+    if (Is-StackRunning -stackName "ERP") {
+        if (-not $hot) {
+            Write-Host "The stack is already running. Use --hot option to force redeployment."
+            exit 1
+        } else {
+            Write-Host "Hot deployment requested. Stopping the stack..."
+            docker stack rm ERP
+            Start-Sleep -Seconds 30 # TODO dynamic redeployment
+        }
+    }
+    Initialize-Swarm
 }
 
 Copy-SystemFiles

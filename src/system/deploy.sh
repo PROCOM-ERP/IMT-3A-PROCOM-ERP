@@ -118,8 +118,11 @@ pull_images() {
 }
 
 deploy(){
-    export $(cat ./.env) > /dev/null 2>&1
-    docker stack deploy -c ./docker-compose.yml ERP
+    if [ "$SWARM" == "true" ]; then
+        docker stack deploy -c ./docker-compose.yml ERP
+    else
+        docker-compose -f $COMPOSE_FILE up -d --build
+    fi
 }
 
 
@@ -134,20 +137,24 @@ if ! [ -f docker-compose.yml ]; then
     exit 1
 fi
 
-if ! docker info 2>/dev/null | grep -q "Swarm: active"; then
-    docker swarm init > /dev/null 2>&1
-    echo "Swarm initialized"
-    ./src/security/docker_secrets.sh > /dev/null 2>&1
-else
-    echo "Swarm detected"
+if ! [ -f docker-compose-swarm.yml ]; then
+    echo "docker-compose-swarm.yml file not found"
+    exit 1
 fi
 
+SWARM=false
 PUSH=false
 PULL=false
 HOT=false
+COMPOSE_FILE=docker-compose.yml
 
 while [[ $# -gt 0 ]]; do
     case $1 in
+        --swarm)
+            SWARM=true
+            COMPOSE_FILE=docker-compose-swarm.yml
+            shift
+            ;;
         --push)
             PUSH=true
             shift
@@ -179,32 +186,45 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-# Check if the stack is running
-while is_stack_running "ERP"; do
-    if [ "$HOT" == "false" ]; then
+if [ "$SWARM" == "true"]; then
+
+    export $(cat ./.env) > /dev/null 2>&1
+
+    if ! docker info 2>/dev/null | grep -q "Swarm: active"; then
+        docker swarm init > /dev/null 2>&1
+        echo "Swarm initialized"
+        ./src/security/docker_secrets.sh > /dev/null 2>&1
+    else
+        echo "Swarm detected"
+    fi
+
+    # Check if the stack is running
+    while is_stack_running "ERP"; do
+        if [ "$HOT" == "false" ]; then
+            echo "The stack is already running. Use --hot option to force redeployment."
+            exit 1
+        else
+            echo "Hot deployment requested. Stopping the stack..."
+            docker stack rm ERP
+            sleep 1  # TODO: Redeploy dynamically
+        fi
+    done
+
+
+    if [ "$HOT" == "false" ] && is_stack_running "ERP"; then
         echo "The stack is already running. Use --hot option to force redeployment."
         exit 1
-    else
-        echo "Hot deployment requested. Stopping the stack..."
-        docker stack rm ERP
-        sleep 1  # TODO: Redeploy dynamically
     fi
-done
+fi
+
 
 copy_system_files
 
 get_image_versions
 
-COMPOSE_FILE=docker-compose.yml
 
 # Define your Docker registry prefix (e.g., username or organization)
 #DOCKER_REGISTRY_PREFIX=gachille/erp
-
-
-if [ "$HOT" == "false" ] && is_stack_running "ERP"; then
-    echo "The stack is already running. Use --hot option to force redeployment."
-    exit 1
-fi
 
 if [ "$PUSH" == "true" ]; then
     docker login
