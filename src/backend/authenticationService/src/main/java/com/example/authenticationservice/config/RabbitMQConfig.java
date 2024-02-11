@@ -9,9 +9,11 @@ import org.springframework.context.annotation.DependsOn;
 @DependsOn({"securityConfig", "restConfig"})
 public class RabbitMQConfig {
 
+    /* Queues */
+
     @Bean
-    public Queue roleEnableModifyQueue() {
-        return new Queue("role-enable-modify-queue");
+    public Queue roleActivationQueue() {
+        return new Queue("role-activation-queue");
     }
 
     @Bean
@@ -20,23 +22,20 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    public Queue rolesNewQueue() {
-        return new Queue("roles-new-queue");
-    }
-
-    @Bean
     public Queue loginProfileEmailQueue() {
         return new Queue("login-profile-email-queue");
     }
 
+    /* Exchanges */
+
     @Bean
-    public DirectExchange rolesExchange() {
-        return new DirectExchange("roles-exchange");
+    public DirectExchange rolesDirectExchange() {
+        return new DirectExchange("roles-direct-exchange");
     }
 
     @Bean
-    public TopicExchange loginProfilesInfoExchange() {
-        return new TopicExchange("login-profiles-info-exchange");
+    public FanoutExchange rolesFanoutExchange() {
+        return new FanoutExchange("roles-fanout-exchange");
     }
 
     @Bean
@@ -45,28 +44,27 @@ public class RabbitMQConfig {
     }
 
     @Bean
+    public TopicExchange loginProfilesInfoExchange() {
+        return new TopicExchange("login-profiles-info-exchange");
+    }
+
+    /* Bindings */
+
+    @Bean
     public Binding rolesInitBinding(Queue rolesInitQueue,
-                                    Exchange rolesExchange) {
+                                    Exchange rolesDirectExchange) {
         return BindingBuilder.bind(rolesInitQueue)
-                .to(rolesExchange)
+                .to(rolesDirectExchange)
                 .with("roles.init")
                 .noargs();
     }
 
     @Bean
-    public Binding roleEnableModifyBinding(Queue roleEnableModifyQueue,
-                                           Exchange rolesExchange) {
-        return BindingBuilder.bind(roleEnableModifyQueue)
-                .to(rolesExchange)
-                .with("role.enable.modify")
-                .noargs();
-    }
-
-    @Bean
-    public Binding rolesNewBinding(Queue rolesNewQueue, Exchange rolesExchange) {
-        return BindingBuilder.bind(rolesNewQueue)
-                .to(rolesExchange)
-                .with("roles.new")
+    public Binding roleActivationBinding(Queue roleActivationQueue,
+                                           Exchange rolesDirectExchange) {
+        return BindingBuilder.bind(roleActivationQueue)
+                .to(rolesDirectExchange)
+                .with("role.activation")
                 .noargs();
     }
 

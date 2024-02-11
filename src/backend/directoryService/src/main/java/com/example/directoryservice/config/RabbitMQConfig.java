@@ -9,9 +9,28 @@ import org.springframework.context.annotation.DependsOn;
 @DependsOn({"securityConfig", "restConfig"})
 public class RabbitMQConfig {
 
+    /* Queues */
+
     @Bean
-    public DirectExchange rolesExchange() {
-        return new DirectExchange("roles-exchange");
+    public Queue rolesNewQueue() {
+        return new Queue("roles-new-queue");
+    }
+
+    @Bean
+    public Queue loginProfileSecQueue() {
+        return new Queue("login-profile-sec-queue");
+    }
+
+    /* Exchanges */
+
+    @Bean
+    public DirectExchange rolesDirectExchange() {
+        return new DirectExchange("roles-direct-exchange");
+    }
+
+    @Bean
+    public FanoutExchange rolesFanoutExchange() {
+        return new FanoutExchange("roles-fanout-exchange");
     }
 
     @Bean
@@ -24,14 +43,20 @@ public class RabbitMQConfig {
         return new TopicExchange("login-profiles-info-exchange");
     }
 
+    /* Bindings */
+
     @Bean
-    public Queue loginProfileSecQueue() {
-        return new Queue("login-profile-sec-queue");
+    public Binding rolesNewBinding(Queue rolesNewQueue,
+                                   Exchange rolesFanoutExchange) {
+        return BindingBuilder.bind(rolesNewQueue)
+                .to(rolesFanoutExchange)
+                .with("*")
+                .noargs();
     }
 
     @Bean
     public Binding loginProfileSecBinding(Queue loginProfileSecQueue,
-                                      Exchange loginProfilesSecExchange) {
+                                          Exchange loginProfilesSecExchange) {
         return BindingBuilder.bind(loginProfileSecQueue)
                 .to(loginProfilesSecExchange)
                 .with("*")
