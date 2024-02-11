@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class LoginProfileIsEnableMessageDto {
+public class LoginProfileActivationResponseDto {
 
     private String id;
     private Boolean isEnable;

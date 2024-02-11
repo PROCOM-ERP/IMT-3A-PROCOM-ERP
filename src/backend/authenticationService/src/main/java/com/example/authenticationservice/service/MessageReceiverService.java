@@ -28,7 +28,7 @@ public class MessageReceiverService {
     }
 
     @RabbitListener(queues = "role-activation-queue")
-    public void receiveRoleEnableModifyMessage(String getRoleByNamePath) {
+    public void receiveRoleActivationMessage(String getRoleByNamePath) {
         logger.info("Message received to set a role activation status: " + getRoleByNamePath);
         try {
             // try to save microservice role

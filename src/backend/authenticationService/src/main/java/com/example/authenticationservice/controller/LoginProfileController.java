@@ -1,7 +1,7 @@
 package com.example.authenticationservice.controller;
 
-import com.example.authenticationservice.dto.LoginProfileIsEnableMessageDto;
-import com.example.authenticationservice.dto.LoginProfileRequestDto;
+import com.example.authenticationservice.dto.LoginProfileActivationResponseDto;
+import com.example.authenticationservice.dto.LoginProfileCreationRequestDto;
 import com.example.authenticationservice.dto.LoginProfileResponseDto;
 import com.example.authenticationservice.model.Path;
 import com.example.authenticationservice.service.LoginProfileService;
@@ -49,9 +49,9 @@ public class LoginProfileController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<String> createLoginProfile(@RequestBody LoginProfileRequestDto loginProfileRequestDto) {
+    public ResponseEntity<String> createLoginProfile(@RequestBody LoginProfileCreationRequestDto loginProfileCreationRequestDto) {
         // try to create a new loginProfile
-        String idLoginProfile = loginProfileService.createLoginProfile(loginProfileRequestDto);
+        String idLoginProfile = loginProfileService.createLoginProfile(loginProfileCreationRequestDto);
         // generate URI location to inform the client how to get information on the new loginProfile
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -105,8 +105,8 @@ public class LoginProfileController {
         return ResponseEntity.ok(loginProfileService.getLoginProfile(idLoginProfile));
     }
 
-    @GetMapping(Path.LOGIN_PROFILE_ID_ENABLE)
-    @Operation(operationId = "getLoginProfileEnable", tags = {"login-profiles"},
+    @GetMapping(Path.LOGIN_PROFILE_ID_ACTIVATION)
+    @Operation(operationId = "getLoginProfileActivation", tags = {"login-profiles"},
             summary = "Retrieve one login-profile information about activation status", description =
             "Retrieve one login-profile information about activation status, by providing its id (username).",
             parameters = {@Parameter(name = "idLoginProfile", description =
@@ -115,7 +115,7 @@ public class LoginProfileController {
             @ApiResponse(responseCode = "200", description =
                     "Login-profile activation status retrieved correctly",
                     content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = LoginProfileIsEnableMessageDto.class))} ),
+                            schema = @Schema(implementation = LoginProfileActivationResponseDto.class))} ),
             @ApiResponse(responseCode = "401", description =
                     "Roles in Jwt token are insufficient to authorize the access to this URL",
                     content = {@Content(mediaType = "application/json")} ),
@@ -125,8 +125,8 @@ public class LoginProfileController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<LoginProfileIsEnableMessageDto> getLoginProfileEnable(@PathVariable String idLoginProfile) {
-        return ResponseEntity.ok(loginProfileService.getLoginProfileEnable(idLoginProfile));
+    public ResponseEntity<LoginProfileActivationResponseDto> getLoginProfileActivation(@PathVariable String idLoginProfile) {
+        return ResponseEntity.ok(loginProfileService.getLoginProfileActivation(idLoginProfile));
     }
 
     @PatchMapping(Path.LOGIN_PROFILE_ID_PASSWORD)
@@ -222,16 +222,16 @@ public class LoginProfileController {
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping(Path.LOGIN_PROFILE_ID_ENABLE)
-    @Operation(operationId = "updateLoginProfileEnable", tags = {"login-profiles"},
+    @PatchMapping(Path.LOGIN_PROFILE_ID_ACTIVATION)
+    @Operation(operationId = "updateLoginProfileActivation", tags = {"login-profiles"},
             summary = "Enable or disable a login-profile", description =
-            "Enable or disable a login-profile, by providing a new enable value (true or false).<br>" +
+            "Enable or disable a login-profile, by providing a new activation value (true or false).<br>" +
             "Only available for admins.",
             parameters = {@Parameter(name = "idLoginProfile", description =
                     "The login-profile username (6 characters identifier)")})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description =
-                    "Login-profile enable attribute updated correctly",
+                    "Login-profile activation status updated correctly",
                     content = {@Content(mediaType = "application/json")} ),
             @ApiResponse(responseCode = "401", description =
                     "Roles in Jwt token are insufficient to authorize the access to this URL",
@@ -241,14 +241,14 @@ public class LoginProfileController {
                     content = {@Content(mediaType = "application/json")} ),
             @ApiResponse(responseCode = "422", description =
                     "Attribute values don't respect integrity constraints.<br>" +
-                    "Enable : boolean value (true or false).",
+                    "isEnable : boolean value (true or false).",
                     content = {@Content(mediaType = "application/json")} ),
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<String> updateLoginProfileEnable(@PathVariable String idLoginProfile,
-                                                       @RequestBody Boolean enable) {
-        loginProfileService.updateLoginProfileEnable(idLoginProfile, enable);
+    public ResponseEntity<String> updateLoginProfileActivation(@PathVariable String idLoginProfile,
+                                                               @RequestBody Boolean isEnable) {
+        loginProfileService.updateLoginProfileActivation(idLoginProfile, isEnable);
         return ResponseEntity.noContent().build();
     }
 

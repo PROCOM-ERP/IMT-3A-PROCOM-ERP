@@ -11,9 +11,8 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class LoginProfileRequestDto {
+public class LoginProfileCreationRequestDto {
 
-    private String password;
     private String email;
     private Set<String> roles;
 

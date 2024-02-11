@@ -40,21 +40,21 @@ public class MessageSenderService {
 
     public void sendLoginProfilesJwtDisableOldMessage() {
         logger.info("Sending message to expire all login profile Jwt...");
-        //rabbitTemplate.convertAndSend(loginProfilesSecExchange.getName(), "login-profiles.jwt.disable.old", "");
+        rabbitTemplate.convertAndSend(loginProfilesSecExchange.getName(), "login-profiles.jwt.disable.old", "");
         logger.info("Message sent");
     }
 
     public void sendLoginProfileJwtDisableOldMessage(String idLoginProfile) {
         logger.info("Sending message to expire a login profile Jwt...");
-        //rabbitTemplate.convertAndSend(loginProfilesSecExchange.getName(), "login-profile.jwt.disable.old", idLoginProfile);
+        rabbitTemplate.convertAndSend(loginProfilesSecExchange.getName(), "login-profile.jwt.disable.old", idLoginProfile);
         logger.info("Message sent");
     }
 
     public void sendLoginProfileEnableModify(String idLoginProfile) {
         logger.info("Sending message to set a login profile activation status...");
-        //String resource = String.format("%s/%s%s", Path.LOGIN_PROFILES, idLoginProfile, Path.ENABLE);
-        //String path = customHttpRequestBuilder.buildPath(Path.V1, resource);
-        //rabbitTemplate.convertAndSend(loginProfilesSecExchange.getName(), "login-profile.enable.modify", path);
+        String resource = String.format("%s/%s%s", Path.LOGIN_PROFILES, idLoginProfile, Path.ACTIVATION);
+        String path = customHttpRequestBuilder.buildPath(Path.V1, resource);
+        rabbitTemplate.convertAndSend(loginProfilesSecExchange.getName(), "login-profile.activation", path);
         logger.info("Message sent");
     }
 }

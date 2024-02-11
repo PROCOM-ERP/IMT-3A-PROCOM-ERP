@@ -38,8 +38,8 @@ public interface LoginProfileRepository extends JpaRepository<LoginProfile, Stri
             "update LoginProfile lp " +
             "set lp.isEnable = :isEnable " +
             "where lp.id = :id")
-    int updateEnableById(@NonNull @Param("id") String id,
-                         @NonNull @Param("isEnable") Boolean isEnable);
+    int updateActivationById(@NonNull @Param("id") String id,
+                             @NonNull @Param("isEnable") Boolean isEnable);
 
     @Transactional
     @Modifying

@@ -1,7 +1,7 @@
 package com.example.authenticationservice.service;
 
-import com.example.authenticationservice.dto.LoginProfileIsEnableMessageDto;
-import com.example.authenticationservice.dto.LoginProfileRequestDto;
+import com.example.authenticationservice.dto.LoginProfileActivationResponseDto;
+import com.example.authenticationservice.dto.LoginProfileCreationRequestDto;
 import com.example.authenticationservice.dto.LoginProfileResponseDto;
 import com.example.authenticationservice.model.LoginProfile;
 import com.example.authenticationservice.model.Role;
@@ -33,10 +33,10 @@ public class LoginProfileService {
     // private final Logger logger = LoggerFactory.getLogger(LoginProfileService.class);
 
     @Transactional
-    public String createLoginProfile(LoginProfileRequestDto loginProfileRequestDto) {
+    public String createLoginProfile(LoginProfileCreationRequestDto loginProfileCreationRequestDto) {
 
         // check password validity
-        String password = loginProfileRequestDto.getPassword();
+        String password = loginProfileCreationRequestDto.getPassword();
         checkPasswordValidity(password);
 
         // create loginProfile
@@ -44,9 +44,9 @@ public class LoginProfileService {
         LoginProfile loginProfile = LoginProfile.builder()
                 .id(generateIdLoginProfileFromNextId(nextIdLoginProfile))
                 .idLoginProfileGen(nextIdLoginProfile)
-                .email(loginProfileRequestDto.getEmail())
+                .email(loginProfileCreationRequestDto.getEmail())
                 .password(passwordEncoder.encode(password))
-                .roles(loginProfileRequestDto.getRoles().stream()
+                .roles(loginProfileCreationRequestDto.getRoles().stream()
                         .map(roleName -> Role.builder()
                                 .name(roleName)
                                 .build())
@@ -70,10 +70,10 @@ public class LoginProfileService {
                 .orElseThrow();
     }
 
-    public LoginProfileIsEnableMessageDto getLoginProfileEnable(String idLoginProfile)
+    public LoginProfileActivationResponseDto getLoginProfileActivation(String idLoginProfile)
             throws NoSuchElementException {
         return loginProfileRepository.findById(idLoginProfile)
-                .map(loginProfile -> LoginProfileIsEnableMessageDto.builder()
+                .map(loginProfile -> LoginProfileActivationResponseDto.builder()
                         .id(loginProfile.getId())
                         .isEnable(loginProfile.getIsEnable())
                         .build())
@@ -133,10 +133,10 @@ public class LoginProfileService {
         }
     }
 
-    public void updateLoginProfileEnable(String idLoginProfile, Boolean enable)
+    public void updateLoginProfileActivation(String idLoginProfile, Boolean isEnable)
             throws NoSuchElementException, DataIntegrityViolationException {
         // try to update enable
-        int row = loginProfileRepository.updateEnableById(idLoginProfile, enable);
+        int row = loginProfileRepository.updateActivationById(idLoginProfile, isEnable);
 
         // check if only 1 row was modified
         if (row != 1) {

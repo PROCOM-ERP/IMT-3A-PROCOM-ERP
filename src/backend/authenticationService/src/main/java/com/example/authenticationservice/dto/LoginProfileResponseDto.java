@@ -14,7 +14,7 @@ import java.util.Set;
 public class LoginProfileResponseDto {
 
     private String id;
-    private String email;
+    private Boolean isEnable;
     private Set<String> roles;
 
 }
