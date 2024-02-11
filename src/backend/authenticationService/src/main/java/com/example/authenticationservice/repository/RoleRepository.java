@@ -16,8 +16,6 @@ public interface RoleRepository extends JpaRepository<Role, String>, JpaSpecific
         "FROM Role r ")
     Set<String> findAllRoleNames();
 
-    List<Role> findAllByNameIn(@NonNull Set<String> roleNames);
-
     @Query("SELECT DISTINCT p " +
             "FROM Role r JOIN r.permissions p " +
             "WHERE r.isEnable = true AND r.name IN :roleNames")

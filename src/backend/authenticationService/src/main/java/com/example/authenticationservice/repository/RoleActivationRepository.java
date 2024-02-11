@@ -1,6 +1,5 @@
 package com.example.authenticationservice.repository;
 
-import com.example.authenticationservice.dto.RoleEnableResponseDto;
 import com.example.authenticationservice.model.RoleActivation;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
