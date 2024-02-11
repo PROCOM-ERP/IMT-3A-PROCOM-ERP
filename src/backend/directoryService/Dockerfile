@@ -31,4 +31,4 @@ RUN chmod +x ./config/entrypoint.sh
 
 USER erp
 
-ENTRYPOINT $(ENTRYPOINT)
+ENTRYPOINT ${ENTRYPOINT}
