@@ -14,6 +14,6 @@ import java.util.Set;
 public class RoleRequestDto {
 
     private String name;
-    private Set<String> permissions;
+    private Set<String> microservices;
 
 }

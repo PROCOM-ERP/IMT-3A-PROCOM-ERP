@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class PermissionDto {
 
-    String name;
-    Boolean isEnable;
+    private String name;
+    private Boolean isEnable;
 
 }

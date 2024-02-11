@@ -10,6 +10,7 @@ import com.example.authenticationservice.utils.CustomHttpRequestBuilder;
 import com.example.authenticationservice.utils.RabbitMQSender;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -35,15 +36,35 @@ public class RoleService {
 
     // private final Logger logger = LoggerFactory.getLogger(RoleService.class);
 
-    public String createRole(RoleRequestDto roleRequestDto) throws IllegalArgumentException {
-        roleRequestDto.getPermissions().forEach(permissionService::isValidPermission);
+    @Transactional
+    public String createRole(RoleRequestDto roleRequestDto)
+            throws IllegalArgumentException, DataIntegrityViolationException {
 
+        // check if role doesn't already exist
+        if (roleRepository.existsById(roleRequestDto.getName()))
+            throw new DataIntegrityViolationException("Entity already exists");
+
+        // create new Role entity before database insertion
         Role role = Role.builder()
                 .name(roleRequestDto.getName())
-                .permissions(new LinkedHashSet<>(roleRequestDto.getPermissions()))
                 .build();
 
-        return roleRepository.save(role).getName();
+        // insert Role entity
+        Role savedRole = roleRepository.save(role);
+
+        // create RoleActivation entities before database insertion
+        Set<RoleActivation> roleActivations = roleRequestDto.getMicroservices().stream()
+                .map(m -> RoleActivation.builder()
+                        .role(savedRole)
+                        .microservice(m)
+                        .build())
+                .collect(Collectors.toSet());
+
+        // insert RoleActivation entities
+        roleActivationRepository.saveAll(roleActivations);
+
+        // return role name
+        return savedRole.getName();
     }
 
     @Transactional

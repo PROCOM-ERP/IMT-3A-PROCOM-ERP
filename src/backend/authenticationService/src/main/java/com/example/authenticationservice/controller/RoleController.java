@@ -29,7 +29,7 @@ public class RoleController {
     @PostMapping
     @Operation(operationId = "createRole", tags = {"roles"},
             summary = "Create a new role", description =
-            "Create a new role by providing its name and permissions.<br>" +
+            "Create a new role by providing its name and microservices where it operates.<br>" +
             "Information about it are available in URI given in the response header location.<br>" +
             "Only available for admins.")
     @ApiResponses(value = {
@@ -45,7 +45,7 @@ public class RoleController {
             @ApiResponse(responseCode = "422", description =
                     "Attribute values don't respect integrity constraints.<br>" +
                     "Name : 32 characters" +
-                    "Permissions : retrieve permissions information (permissions section) to know which one are available",
+                    "Microservices : check alias of available microservices",
                     content = {@Content(mediaType = "application/json")} ),
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",

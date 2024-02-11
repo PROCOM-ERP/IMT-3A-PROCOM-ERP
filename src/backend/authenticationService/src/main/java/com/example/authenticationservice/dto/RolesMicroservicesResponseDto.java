@@ -13,7 +13,7 @@ import java.util.Set;
 @Builder
 public class RolesMicroservicesResponseDto {
 
-    Set<String> roles;
-    Set<String> microservices;
+    private Set<String> roles;
+    private Set<String> microservices;
 
 }
