@@ -7,6 +7,11 @@
 # Version: 1.2
 # Usage: Run the script to create secrets beforehand, and this is to solve the fact that docker stack deploy doesn't support .env placeholding
 
+security() {
+    cd "./src/security"
+    exec ./security_setup.sh
+}
+
 copy_system_files() {
     # Define paths to backend and frontend directories
     declare -a paths=("src/backend/*" "src/frontend/*")
@@ -143,6 +148,7 @@ if ! [ -f docker-compose-swarm.yml ]; then
 fi
 
 SWARM=false
+SEC=false
 PUSH=false
 PULL=false
 HOT=false
@@ -153,6 +159,10 @@ while [[ $# -gt 0 ]]; do
         --swarm)
             SWARM=true
             COMPOSE_FILE=docker-compose-swarm.yml
+            shift
+            ;;
+        --sec)
+            SEC=true
             shift
             ;;
         --push)
@@ -219,6 +229,10 @@ fi
 
 
 copy_system_files
+
+if [ "$SEC" == "true" ]; then
+    security
+fi
 
 get_image_versions
 

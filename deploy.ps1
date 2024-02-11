@@ -1,23 +1,29 @@
 # PowerShell Script: deploy.ps1
 
+function Security {
+    Set-Location -Path ".\src\security"
+    # Execute the security_setup.sh script using bash
+    & .\security_setup.ps1
+}
+
 function Copy-SystemFiles {
-    $paths = @("src/backend/*", "src/frontend/*")
+    $paths = @("src\backend\*", "src\frontend\*")
     foreach ($path in $paths) {
         Get-ChildItem $path -Directory | ForEach-Object {
             $servicePath = $_.FullName
             Write-Host "Copying system files to $servicePath"
-            Copy-Item -Path "./src/system/entrypoint.sh" -Destination $servicePath
-            Copy-Item -Path "./src/system/procom-erp-truststore.jks" -Destination $servicePath
-            Copy-Item -Path "./src/system/procom-erp-ca.pem" -Destination $servicePath
+            Copy-Item -Path ".\src\system\entrypoint.sh" -Destination $servicePath
+            Copy-Item -Path ".\src\system\procom-erp-truststore.jks" -Destination $servicePath
+            Copy-Item -Path ".\src\system\procom-erp-ca.pem" -Destination $servicePath
         }
     }
 
-    $db_paths = @("src/databases/*")
+    $db_paths = @("src\databases\*")
     foreach ($db_path in $db_paths) {
         Get-ChildItem $db_path -Directory | ForEach-Object {
             $servicePath = $_.FullName
             Write-Host "Copying system files to $servicePath"
-            Copy-Item -Path "./src/system/db_entrypoint.sh" -Destination $servicePath
+            Copy-Item -Path ".\src\system\db_entrypoint.sh" -Destination $servicePath
         }
     }
 }
@@ -102,7 +108,7 @@ function Build-And-PushImages {
     Get-ImageVersions # Ensure image versions are loaded
     foreach ($imageName in $global:imageNames.Keys) {
         $imageVersion = $global:imageVersions[$imageName]
-        $fullImageName = "$dockerRegistry/{$imageName}:$imageVersion"
+        $fullImageName = "$dockerRegistry\{$imageName}:$imageVersion"
         
         if (-not (Latest-ImageExists -imageName $imageName)) {
             Write-Host "Latest image for $imageName does not exist. Building..."
@@ -121,7 +127,7 @@ function Pull-Images {
     )
     $services = docker-compose -f docker-compose.yml config --services
     foreach ($service in $services) {
-        $imageName = "$dockerRegistry/$service-latest"
+        $imageName = "$dockerRegistry\$service-latest"
         Write-Host "Pulling $imageName"
         docker pull $imageName
     }
@@ -152,6 +158,7 @@ if (-not (Test-Path ".\docker-compose-swarm.yml")) {
 
 # Handling command line arguments (equivalent to bash positional parameters)
 $swarm = $false
+$sec = $false
 $push = $false
 $pull = $false
 $hot = $false
@@ -163,6 +170,9 @@ for ($i = 0; $i -lt $args.Count; $i++) {
         "--swarm" {
             $swarm = $true
             $composeFile = "docker-compose-swarm.yml"
+        }
+        "--sec" {
+            $sec = $true
         }
         "--push" {
             $push = $true
@@ -208,6 +218,11 @@ if ($swarm) {
 }
 
 Copy-SystemFiles
+
+if ($sec) {
+    Security
+}
+
 Get-ImageVersions
 
 if ($push) {
