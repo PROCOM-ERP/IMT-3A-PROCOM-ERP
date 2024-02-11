@@ -20,7 +20,7 @@ spring:
         - id: directory-service
           uri: https://${BACKEND_DIRECTORY_SERVICE_HOSTNAME}:${BACKEND_DIRECTORY_SERVICE_PORT_INT}
           predicates:
-            - Path=/${BACKEND_AUTHENTICATION_SERVICE_NAME}/dir/**
+            - Path=/api/${BACKEND_AUTHENTICATION_SERVICE_NAME}/**
           filters:
             - RewritePath=/api/${BACKEND_AUTHENTICATION_SERVICE_NAME}/(?<segment>.*), /api/$\{segment}
   security:
