@@ -16,10 +16,11 @@ public interface LoginProfileRepository extends JpaRepository<LoginProfile, Stri
 
     @Transactional
     @Modifying
-    @Query("update LoginProfile lp " +
-            "set lp.password = :password, " +
-            "lp.jwtGenMinAt = current_timestamp " +
-            "where lp.id = :id")
+    @Query(value =
+            "update login_profiles " +
+            "set password = :password, " +
+            "jwt_gen_min_at = current_timestamp " +
+            "where id = :id", nativeQuery = true)
     int updatePasswordById(@Param("id") String id, @NonNull @Param("password") String password);
 
     @Transactional
@@ -42,8 +43,9 @@ public interface LoginProfileRepository extends JpaRepository<LoginProfile, Stri
 
     @Transactional
     @Modifying
-    @Query("update LoginProfile lp " +
-            "set lp.jwtGenMinAt = current_timestamp ")
+    @Query(value =
+            "update login_profiles " +
+            "set jwt_gen_min_at = current_timestamp ", nativeQuery = true)
     void updateAllJwtGenMinAt();
 
 }

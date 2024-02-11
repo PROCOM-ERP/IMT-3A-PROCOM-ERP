@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "AuthenticationService",
-    "description": "Service to register employees with password and roles.<br>It allows to get Jwt token for future connections to other services<br>.BasicAuth required to get a Jwt token.",
+    "description": "Service to register login-profiles with password and roles.<br>It allows to get Jwt token for future connections to other services<br>.BasicAuth required to get a Jwt token.",
     "version": "0.1.0"
   },
   "servers": [
@@ -19,7 +19,7 @@
       "name": "auth"
     },
     {
-      "name": "employees"
+      "name": "login-profiles"
     },
     {
       "name": "roles"
@@ -38,18 +38,6 @@
         "description": "Retrieve all roles information.<br>Only available for admins.",
         "operationId": "getAllRoles",
         "responses": {
-          "500": {
-            "description": "Uncontrolled error appeared",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "401": {
-            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
-            "content": {
-              "application/json": {}
-            }
-          },
           "200": {
             "description": "Roles information retrieved correctly",
             "content": {
@@ -58,6 +46,18 @@
                   "$ref": "#/components/schemas/RoleResponseDto"
                 }
               }
+            }
+          },
+          "401": {
+            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "500": {
+            "description": "Uncontrolled error appeared",
+            "content": {
+              "application/json": {}
             }
           }
         }
@@ -80,20 +80,20 @@
           "required": true
         },
         "responses": {
-          "201": {
-            "description": "Role created correctly",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "400": {
-            "description": "The request body is badly structured or formatted",
-            "content": {
-              "application/json": {}
-            }
-          },
           "422": {
             "description": "Attribute values don't respect integrity constraints.<br>Name : 32 charactersPermissions : retrieve permissions information (permissions section) to know which one are available",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "401": {
+            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "201": {
+            "description": "Role created correctly",
             "content": {
               "application/json": {}
             }
@@ -104,8 +104,8 @@
               "application/json": {}
             }
           },
-          "401": {
-            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
+          "400": {
+            "description": "The request body is badly structured or formatted",
             "content": {
               "application/json": {}
             }
@@ -113,19 +113,23 @@
         }
       }
     },
-    "/api/auth/v1/employees": {
+    "/api/auth/v1/login-profiles": {
       "get": {
         "tags": [
-          "employees"
+          "login-profiles"
         ],
-        "summary": "Retrieve all employees information",
-        "description": "Retrieve all employees information.",
-        "operationId": "getAllEmployees",
+        "summary": "Retrieve all login-profiles information",
+        "description": "Retrieve all login-profiles information.",
+        "operationId": "getAllLoginProfiles",
         "responses": {
-          "500": {
-            "description": "Uncontrolled error appeared",
+          "200": {
+            "description": "Login-profiles information retrieved correctly",
             "content": {
-              "application/json": {}
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginProfileResponseDto"
+                }
+              }
             }
           },
           "401": {
@@ -134,44 +138,46 @@
               "application/json": {}
             }
           },
-          "200": {
-            "description": "Employees information retrieved correctly",
+          "500": {
+            "description": "Uncontrolled error appeared",
             "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/EmployeeResponseDto"
-                }
-              }
+              "application/json": {}
             }
           }
         }
       },
       "post": {
         "tags": [
-          "employees"
+          "login-profiles"
         ],
-        "summary": "Create a new employee",
-        "description": "Create a new employee by providing roles and plain text password.<br>Information about it are available in URI given in the response header location.",
-        "operationId": "createEmployee",
+        "summary": "Create a new login-profile",
+        "description": "Create a new login-profile by providing roles and plain text password.<br>Information about it are available in URI given in the response header location.",
+        "operationId": "createLoginProfile",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/EmployeeRequestDto"
+                "$ref": "#/components/schemas/LoginProfileRequestDto"
               }
             }
           },
           "required": true
         },
         "responses": {
-          "400": {
-            "description": "The request body is badly structured or formatted",
+          "422": {
+            "description": "Attribute values don't respect integrity constraints.<br>Password : 12 characters, 1 uppercase letter, 1 lowercase letter, 1 digit, 1 special character in (@#$%^&+=!.*).<br>Roles : retrieve roles information (roles section) to know which one are available",
             "content": {
               "application/json": {}
             }
           },
-          "422": {
-            "description": "Attribute values don't respect integrity constraints.<br>Password : 12 characters, 1 uppercase letter, 1 lowercase letter, 1 digit, 1 special character in (@#$%^&+=!.*).<br>Roles : retrieve roles information (roles section) to know which one are available",
+          "201": {
+            "description": "Login-profile created correctly",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "401": {
+            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
             "content": {
               "application/json": {}
             }
@@ -182,14 +188,8 @@
               "application/json": {}
             }
           },
-          "201": {
-            "description": "Employee created correctly",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "401": {
-            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
+          "400": {
+            "description": "The request body is badly structured or formatted",
             "content": {
               "application/json": {}
             }
@@ -206,8 +206,8 @@
         "description": "Create Jwt encrypted token, by providing Basic authentication (username, password)",
         "operationId": "generateJwtToken",
         "responses": {
-          "500": {
-            "description": "Uncontrolled error appeared",
+          "200": {
+            "description": "Jwt token acquired correctly",
             "content": {
               "application/json": {}
             }
@@ -219,13 +219,13 @@
             }
           },
           "403": {
-            "description": "Forbidden to get token because of no roles are available for the authenticated employee",
+            "description": "Forbidden to get token because of no roles are available for the authenticated login-profile",
             "content": {
               "application/json": {}
             }
           },
-          "200": {
-            "description": "Jwt token acquired correctly",
+          "500": {
+            "description": "Uncontrolled error appeared",
             "content": {
               "application/json": {}
             }
@@ -266,14 +266,8 @@
           "required": true
         },
         "responses": {
-          "404": {
-            "description": "Role not found",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "500": {
-            "description": "Uncontrolled error appeared",
+          "422": {
+            "description": "Attribute values don't respect integrity constraints.<br>Permissions : retrieve permissions information (permissions section) to know which one are available",
             "content": {
               "application/json": {}
             }
@@ -284,59 +278,14 @@
               "application/json": {}
             }
           },
-          "401": {
-            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "422": {
-            "description": "Attribute values don't respect integrity constraints.<br>Permissions : retrieve permissions information (permissions section) to know which one are available",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      }
-    },
-    "/api/auth/v1/roles/{role}/enable": {
-      "patch": {
-        "tags": [
-          "roles"
-        ],
-        "summary": "Enable or disable a role",
-        "description": "Enable or disable a role, by providing a new enable value (true or false).<br>Only available for admins.",
-        "operationId": "updateRoleEnableCounter",
-        "parameters": [
-          {
-            "name": "role",
-            "in": "path",
-            "description": "The role name",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "boolean"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "400": {
-            "description": "The request body is badly structured or formatted",
-            "content": {
-              "application/json": {}
-            }
-          },
           "404": {
             "description": "Role not found",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "401": {
+            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
             "content": {
               "application/json": {}
             }
@@ -346,35 +295,23 @@
             "content": {
               "application/json": {}
             }
-          },
-          "401": {
-            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "204": {
-            "description": "Role enable attribute updated correctly",
-            "content": {
-              "application/json": {}
-            }
           }
         }
       }
     },
-    "/api/auth/v1/employees/{idEmployee}/roles": {
+    "/api/auth/v1/login-profiles/{idLoginProfile}/roles": {
       "patch": {
         "tags": [
-          "employees"
+          "login-profiles"
         ],
-        "summary": "Update an employee roles",
-        "description": "Update an employee roles, by providing a list of all the new ones.<br>Previous ones will be deleted.<br>Only available for admins.",
-        "operationId": "updateEmployeeRoles",
+        "summary": "Update a login-profile roles",
+        "description": "Update a login-profile roles, by providing a list of all the new ones.<br>Previous ones will be deleted.<br>Only available for admins.",
+        "operationId": "updateLoginProfileRoles",
         "parameters": [
           {
-            "name": "idEmployee",
+            "name": "idLoginProfile",
             "in": "path",
-            "description": "The employee username (6 characters identifier)",
+            "description": "The login-profile username (6 characters identifier)",
             "required": true,
             "schema": {
               "type": "string"
@@ -395,6 +332,24 @@
           "required": true
         },
         "responses": {
+          "404": {
+            "description": "Login-profile not found",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "204": {
+            "description": "Login-profile roles updated correctly",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "401": {
+            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
+            "content": {
+              "application/json": {}
+            }
+          },
           "422": {
             "description": "Attribute values don't respect integrity constraints.<br>Roles : retrieve roles information (roles section) to know which one are available",
             "content": {
@@ -406,41 +361,23 @@
             "content": {
               "application/json": {}
             }
-          },
-          "204": {
-            "description": "Employee roles updated correctly",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "401": {
-            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "404": {
-            "description": "Employee not found",
-            "content": {
-              "application/json": {}
-            }
           }
         }
       }
     },
-    "/api/auth/v1/employees/{idEmployee}/password": {
+    "/api/auth/v1/login-profiles/{idLoginProfile}/password": {
       "patch": {
         "tags": [
-          "employees"
+          "login-profiles"
         ],
-        "summary": "Update an employee password",
-        "description": "Update an employee password. Only available for the employee itself.",
-        "operationId": "updateEmployeePassword",
+        "summary": "Update a login-profile password",
+        "description": "Update a login-profile password. Only available for the login-profile itself.",
+        "operationId": "updateLoginProfilePassword",
         "parameters": [
           {
-            "name": "idEmployee",
+            "name": "idLoginProfile",
             "in": "path",
-            "description": "The employee username (6 characters identifier)",
+            "description": "The login-profile username (6 characters identifier)",
             "required": true,
             "schema": {
               "type": "string"
@@ -458,14 +395,14 @@
           "required": true
         },
         "responses": {
-          "204": {
-            "description": "Employee password updated correctly",
+          "404": {
+            "description": "Login-profile not found",
             "content": {
               "application/json": {}
             }
           },
-          "500": {
-            "description": "Uncontrolled error appeared",
+          "204": {
+            "description": "Login-profile password updated correctly",
             "content": {
               "application/json": {}
             }
@@ -477,7 +414,13 @@
             }
           },
           "403": {
-            "description": "Authenticated employee cannot update an other employee password",
+            "description": "Authenticated login-profile cannot update an other login-profile password",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "500": {
+            "description": "Uncontrolled error appeared",
             "content": {
               "application/json": {}
             }
@@ -487,29 +430,23 @@
             "content": {
               "application/json": {}
             }
-          },
-          "404": {
-            "description": "Employee not found",
-            "content": {
-              "application/json": {}
-            }
           }
         }
       }
     },
-    "/api/auth/v1/employees/{idEmployee}/enable": {
+    "/api/auth/v1/login-profiles/{idLoginProfile}/enable": {
       "get": {
         "tags": [
-          "employees"
+          "login-profiles"
         ],
-        "summary": "Retrieve one employee information about activation status",
-        "description": "Retrieve one employee information about activation status, by providing its id (username).",
-        "operationId": "getEmployeeEnable",
+        "summary": "Retrieve one login-profile information about activation status",
+        "description": "Retrieve one login-profile information about activation status, by providing its id (username).",
+        "operationId": "getLoginProfileEnable",
         "parameters": [
           {
-            "name": "idEmployee",
+            "name": "idLoginProfile",
             "in": "path",
-            "description": "The employee username (6 characters identifier)",
+            "description": "The login-profile username (6 characters identifier)",
             "required": true,
             "schema": {
               "type": "string"
@@ -517,10 +454,20 @@
           }
         ],
         "responses": {
-          "500": {
-            "description": "Uncontrolled error appeared",
+          "404": {
+            "description": "Login-profile not found",
             "content": {
               "application/json": {}
+            }
+          },
+          "200": {
+            "description": "Login-profile activation status retrieved correctly",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginProfileIsEnableMessageDto"
+                }
+              }
             }
           },
           "401": {
@@ -529,36 +476,26 @@
               "application/json": {}
             }
           },
-          "404": {
-            "description": "Employee not found",
+          "500": {
+            "description": "Uncontrolled error appeared",
             "content": {
               "application/json": {}
-            }
-          },
-          "200": {
-            "description": "Employee activation status retrieved correctly",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/EmployeeResponseAQMPEnableDto"
-                }
-              }
             }
           }
         }
       },
       "patch": {
         "tags": [
-          "employees"
+          "login-profiles"
         ],
-        "summary": "Enable or disable an employee",
-        "description": "Enable or disable an employee, by providing a new enable value (true or false).<br>Only available for admins.",
-        "operationId": "updateEmployeeEnable",
+        "summary": "Enable or disable a login-profile",
+        "description": "Enable or disable a login-profile, by providing a new enable value (true or false).<br>Only available for admins.",
+        "operationId": "updateLoginProfileEnable",
         "parameters": [
           {
-            "name": "idEmployee",
+            "name": "idLoginProfile",
             "in": "path",
-            "description": "The employee username (6 characters identifier)",
+            "description": "The login-profile username (6 characters identifier)",
             "required": true,
             "schema": {
               "type": "string"
@@ -576,14 +513,14 @@
           "required": true
         },
         "responses": {
-          "500": {
-            "description": "Uncontrolled error appeared",
+          "204": {
+            "description": "Login-profile enable attribute updated correctly",
             "content": {
               "application/json": {}
             }
           },
-          "422": {
-            "description": "Attribute values don't respect integrity constraints.<br>Enable : boolean value (true or false).",
+          "404": {
+            "description": "Login-profile not found",
             "content": {
               "application/json": {}
             }
@@ -594,14 +531,14 @@
               "application/json": {}
             }
           },
-          "404": {
-            "description": "Employee not found",
+          "422": {
+            "description": "Attribute values don't respect integrity constraints.<br>Enable : boolean value (true or false).",
             "content": {
               "application/json": {}
             }
           },
-          "204": {
-            "description": "Employee enable attribute updated correctly",
+          "500": {
+            "description": "Uncontrolled error appeared",
             "content": {
               "application/json": {}
             }
@@ -609,19 +546,19 @@
         }
       }
     },
-    "/api/auth/v1/employees/{idEmployee}/email": {
+    "/api/auth/v1/login-profiles/{idLoginProfile}/email": {
       "patch": {
         "tags": [
-          "employees"
+          "login-profiles"
         ],
-        "summary": "Update an employee email",
-        "description": "Update an employee email, by providing the new one.<br>Only available for admins.",
-        "operationId": "updateEmployeeEmail",
+        "summary": "Update a login-profile email",
+        "description": "Update a login-profile email, by providing the new one.<br>Only available for admins.",
+        "operationId": "updateLoginProfileEmail",
         "parameters": [
           {
-            "name": "idEmployee",
+            "name": "idLoginProfile",
             "in": "path",
-            "description": "The employee username (6 characters identifier)",
+            "description": "The login-profile username (6 characters identifier)",
             "required": true,
             "schema": {
               "type": "string"
@@ -639,14 +576,20 @@
           "required": true
         },
         "responses": {
-          "204": {
-            "description": "Employee email updated correctly",
+          "422": {
+            "description": "Attribute values don't respect integrity constraints.<br>Email : 63 characters for 'username', @, 63 for subdomain, and the rest for TLD. Maximum 320 characters.",
             "content": {
               "application/json": {}
             }
           },
-          "500": {
-            "description": "Uncontrolled error appeared",
+          "204": {
+            "description": "Login-profile email updated correctly",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "404": {
+            "description": "Login-profile not found",
             "content": {
               "application/json": {}
             }
@@ -657,14 +600,8 @@
               "application/json": {}
             }
           },
-          "404": {
-            "description": "Employee not found",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "422": {
-            "description": "Attribute values don't respect integrity constraints.<br>Email : 63 characters for 'username', @, 63 for subdomain, and the rest for TLD. Maximum 320 characters.",
+          "500": {
+            "description": "Uncontrolled error appeared",
             "content": {
               "application/json": {}
             }
@@ -698,12 +635,6 @@
               "application/json": {}
             }
           },
-          "500": {
-            "description": "Uncontrolled error appeared",
-            "content": {
-              "application/json": {}
-            }
-          },
           "401": {
             "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
             "content": {
@@ -719,6 +650,12 @@
                 }
               }
             }
+          },
+          "500": {
+            "description": "Uncontrolled error appeared",
+            "content": {
+              "application/json": {}
+            }
           }
         }
       }
@@ -732,6 +669,12 @@
         "description": "Retrieve all permission valus.<br>Only available for admins.",
         "operationId": "getAllPermissions",
         "responses": {
+          "401": {
+            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
+            "content": {
+              "application/json": {}
+            }
+          },
           "200": {
             "description": "Permission values retrieved correctly",
             "content": {
@@ -747,9 +690,54 @@
             "content": {
               "application/json": {}
             }
+          }
+        }
+      }
+    },
+    "/api/auth/v1/login-profiles/{idLoginProfile}": {
+      "get": {
+        "tags": [
+          "login-profiles"
+        ],
+        "summary": "Retrieve one login-profile information",
+        "description": "Retrieve one login-profile information, by providing its id (username).",
+        "operationId": "getLoginProfile",
+        "parameters": [
+          {
+            "name": "idLoginProfile",
+            "in": "path",
+            "description": "The login-profile username (6 characters identifier)",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "Login-profile not found",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "200": {
+            "description": "Login-profile information retrieved correctly",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginProfileResponseDto"
+                }
+              }
+            }
           },
           "401": {
             "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "500": {
+            "description": "Uncontrolled error appeared",
             "content": {
               "application/json": {}
             }
@@ -766,65 +754,14 @@
         "description": "GET Hello World ! from AuthService",
         "operationId": "getHello",
         "responses": {
-          "500": {
-            "description": "Uncontrolled error appeared",
-            "content": {
-              "application/json": {}
-            }
-          },
           "200": {
             "description": "Hello message retrieved correctly",
             "content": {
               "application/json": {}
             }
-          }
-        }
-      }
-    },
-    "/api/auth/v1/employees/{idEmployee}": {
-      "get": {
-        "tags": [
-          "employees"
-        ],
-        "summary": "Retrieve one employee information",
-        "description": "Retrieve one employee information, by providing its id (username).",
-        "operationId": "getEmployee",
-        "parameters": [
-          {
-            "name": "idEmployee",
-            "in": "path",
-            "description": "The employee username (6 characters identifier)",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Employee information retrieved correctly",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/EmployeeResponseDto"
-                }
-              }
-            }
           },
           "500": {
             "description": "Uncontrolled error appeared",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "401": {
-            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "404": {
-            "description": "Employee not found",
             "content": {
               "application/json": {}
             }
@@ -850,7 +787,7 @@
           }
         }
       },
-      "EmployeeRequestDto": {
+      "LoginProfileRequestDto": {
         "type": "object",
         "properties": {
           "password": {
@@ -874,7 +811,7 @@
           "name": {
             "type": "string"
           },
-          "enable": {
+          "isEnable": {
             "type": "boolean"
           },
           "permissions": {
@@ -884,7 +821,7 @@
               "type": "string"
             }
           },
-          "employees": {
+          "loginProfiles": {
             "uniqueItems": true,
             "type": "array",
             "items": {
@@ -893,7 +830,7 @@
           }
         }
       },
-      "EmployeeResponseDto": {
+      "LoginProfileResponseDto": {
         "type": "object",
         "properties": {
           "id": {
@@ -911,13 +848,13 @@
           }
         }
       },
-      "EmployeeResponseAQMPEnableDto": {
+      "LoginProfileIsEnableMessageDto": {
         "type": "object",
         "properties": {
           "id": {
             "type": "string"
           },
-          "enable": {
+          "isEnable": {
             "type": "boolean"
           }
         }
