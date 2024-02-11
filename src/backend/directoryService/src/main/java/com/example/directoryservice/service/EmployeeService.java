@@ -7,7 +7,6 @@ import com.example.directoryservice.dto.EmployeeResponseDto;
 import com.example.directoryservice.model.Employee;
 import com.example.directoryservice.repository.EmployeeRepository;
 import com.example.directoryservice.repository.ServiceRepository;
-import com.example.directoryservice.utils.RabbitMQSender;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +23,6 @@ public class EmployeeService {
 
     private final EmployeeRepository employeeRepository;
     private final ServiceRepository serviceRepository;
-    private final RabbitMQSender rabbitMQSender;
 
     //private final Logger logger = LoggerFactory.getLogger(EmployeeService.class);
 
@@ -97,8 +95,8 @@ public class EmployeeService {
             throw new NoSuchElementException();
         }
 
-        if (email != null && ! email.isEmpty())
-            rabbitMQSender.sendEmployeeEmailModify(employee.getId());
+//        if (email != null && ! email.isEmpty())
+//            rabbitMQSender.sendEmployeeEmailModify(employee.getId());
     }
 
     public void updateEmployeeService(String idOrEmail, Integer idService)
