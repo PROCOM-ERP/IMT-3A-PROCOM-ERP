@@ -92,10 +92,10 @@ VALUES ('15', 'entrepot de Malta Shopper', 'Malte', 'Valleta', 'Malte', '66666',
 
 INSERT INTO items (quantity, id_address, id_product)
 VALUES (10, 1, 1),
-       ();
+       (10, 1, 2);
 
 INSERT INTO transactions(quantity, timestamp, employee, id_item)
-VALUES (10, '2024-02-11 09:00:00', 'Arthur', 1),
+VALUES (10, '2024-02-11 09:00:00', 'A00001', 1),
        (2, '2024-02-11 10:00:00', 'A00002', 1);
 
 INSERT INTO product_meta(key, type, value, description, id_product)

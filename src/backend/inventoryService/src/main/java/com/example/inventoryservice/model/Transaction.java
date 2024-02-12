@@ -35,5 +35,4 @@ public class Transaction {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "id_item", nullable = false)
     private Item item;
-
 }

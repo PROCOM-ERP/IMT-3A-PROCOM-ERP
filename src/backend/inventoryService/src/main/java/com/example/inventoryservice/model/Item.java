@@ -32,6 +32,6 @@ public class Item {
     private Product product;
 
     @NotNull
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "item")
     private List<Transaction> transactions;
 }

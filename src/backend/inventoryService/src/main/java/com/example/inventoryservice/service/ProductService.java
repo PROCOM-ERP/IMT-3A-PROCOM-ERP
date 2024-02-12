@@ -9,6 +9,7 @@ import com.example.inventoryservice.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,6 +30,17 @@ public class ProductService {
                 .toList();
     }
 
+    public void createProduct(Product newProduct){
+        Product product = Product.builder()
+                .title(newProduct.getTitle())
+                .description(newProduct.getDescription())
+                .productMeta(newProduct.getProductMeta())
+                .categories(newProduct.getCategories())
+                .items(newProduct.getItems())
+                .build();
+        productRepository.save(product);
+    }
+
     static ProductDto productToDto(Product product) {
         return ProductDto.builder()
                 .id(product.getId())
@@ -36,6 +48,7 @@ public class ProductService {
                 .description(product.getDescription())
                 .items(itemToDtoList(product.getItems()))
                 .categories(categoryToDtoList(product.getCategories()))
+                .productMeta(productMetaToDtoList(product.getProductMeta()))
                 .build();
     }
 
@@ -45,6 +58,7 @@ public class ProductService {
                 .title(product.getTitle())
                 .description(product.getDescription())
                 .items(itemToDtoList(product.getItems()))
+                .productMeta(productMetaToDtoList(product.getProductMeta()))
                 .build();
     }
 
@@ -54,6 +68,15 @@ public class ProductService {
                 .title(product.getTitle())
                 .description(product.getDescription())
                 .categories(categoryToDtoList(product.getCategories()))
+                .productMeta(productMetaToDtoList(product.getProductMeta()))
+                .build();
+    }
+
+    static ProductDto productNoCategoryToDto(Product product) {
+        return ProductDto.builder()
+                .id(product.getId())
+                .title(product.getTitle())
+                .description(product.getDescription())
                 .productMeta(productMetaToDtoList(product.getProductMeta()))
                 .build();
     }

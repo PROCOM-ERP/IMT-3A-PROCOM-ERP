@@ -28,7 +28,7 @@ public class ItemService {
                 .id(item.getId())
                 .quantity(item.getQuantity())
                 .transactions(transactionToDtoList(item.getTransactions()))
-                .product(ProductService.productCategoryToDto(item.getProduct()))
+                .product(ProductService.productNoCategoryToDto(item.getProduct()))
                 .build();
     }
 
