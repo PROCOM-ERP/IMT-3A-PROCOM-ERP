@@ -49,4 +49,4 @@ security:
     claim:
       roles: ${SECURITY_JWT_CLAIMS_KEY_ROLES}
     duration:
-      minutes: 1
+      minutes: 60
