@@ -13,7 +13,6 @@ import java.util.Set;
 @Builder
 public class LoginProfileResponseDto {
 
-    private String id;
     private Boolean isEnable;
     private Set<String> roles;
 

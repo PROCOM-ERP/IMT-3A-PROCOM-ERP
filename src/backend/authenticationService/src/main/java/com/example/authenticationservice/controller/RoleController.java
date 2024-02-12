@@ -145,7 +145,7 @@ public class RoleController {
             "The role name")})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description =
-                    "Role and / or activation status permissions updated correctly",
+                    "Role activation status and / or permissions updated correctly",
                     content = {@Content(mediaType = "application/json")} ),
             @ApiResponse(responseCode = "400", description =
                     "The request body is badly structured or formatted",

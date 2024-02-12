@@ -3,6 +3,7 @@ package com.example.authenticationservice.controller;
 import com.example.authenticationservice.dto.LoginProfileActivationResponseDto;
 import com.example.authenticationservice.dto.LoginProfileCreationRequestDto;
 import com.example.authenticationservice.dto.LoginProfileResponseDto;
+import com.example.authenticationservice.dto.LoginProfileUpdateRequestDto;
 import com.example.authenticationservice.model.Path;
 import com.example.authenticationservice.service.LoginProfileService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,12 +29,12 @@ public class LoginProfileController {
 
     @PostMapping
     @Operation(operationId = "createLoginProfile", tags = {"login-profiles"},
-            summary = "Create a new login-profile", description =
-            "Create a new login-profile by providing roles and plain text password.<br>" +
+            summary = "Create a new login profile", description =
+            "Create a new login profile by providing roles and email address.<br>" +
             "Information about it are available in URI given in the response header location.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description =
-                    "Login-profile created correctly",
+                    "Login profile created correctly",
                     content = {@Content(mediaType = "application/json") }),
             @ApiResponse(responseCode = "400", description =
                     "The request body is badly structured or formatted",
@@ -43,7 +44,7 @@ public class LoginProfileController {
                     content = {@Content(mediaType = "application/json") }),
             @ApiResponse(responseCode = "422", description =
                     "Attribute values don't respect integrity constraints.<br>" +
-                    "Password : 12 characters, 1 uppercase letter, 1 lowercase letter, 1 digit, 1 special character in (@#$%^&+=!.*).<br>" +
+                    "Email : email standard format.<br>" +
                     "Roles : retrieve roles information (roles section) to know which one are available",
                     content = {@Content(mediaType = "application/json")} ),
             @ApiResponse(responseCode = "500", description =
@@ -62,41 +63,22 @@ public class LoginProfileController {
         return ResponseEntity.created(location).build();
     }
 
-    @GetMapping
-    @Operation(operationId = "getAllLoginProfiles", tags = {"login-profiles"},
-            summary = "Retrieve all login-profiles information", description =
-            "Retrieve all login-profiles information.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description =
-                    "Login-profiles information retrieved correctly",
-                    content = {@Content(mediaType = "application/json",
-                    schema = @Schema(type = "array", implementation = LoginProfileResponseDto.class))} ),
-            @ApiResponse(responseCode = "401", description =
-                    "Roles in Jwt token are insufficient to authorize the access to this URL",
-                    content = {@Content(mediaType = "application/json")} ),
-            @ApiResponse(responseCode = "500", description =
-                    "Uncontrolled error appeared",
-                    content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<List<LoginProfileResponseDto>> getAllLoginProfiles() {
-        return ResponseEntity.ok(loginProfileService.getAllLoginProfiles());
-    }
-
     @GetMapping(Path.LOGIN_PROFILE_ID)
     @Operation(operationId = "getLoginProfile", tags = {"login-profiles"},
-            summary = "Retrieve one login-profile information", description =
-            "Retrieve one login-profile information, by providing its id (username).",
+            summary = "Retrieve one login profile roles and activations status", description =
+            "Retrieve one login profile roles and activations status, by providing its id (username).",
             parameters = {@Parameter(name = "idLoginProfile", description =
-            "The login-profile username (6 characters identifier)")})
+            "The login profile username (6 characters identifier)")})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description =
-                    "Login-profile information retrieved correctly",
+                    "Login profile roles and activations status retrieved correctly",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = LoginProfileResponseDto.class))} ),
             @ApiResponse(responseCode = "401", description =
                     "Roles in Jwt token are insufficient to authorize the access to this URL",
                     content = {@Content(mediaType = "application/json")} ),
             @ApiResponse(responseCode = "404", description =
-                    "Login-profile not found",
+                    "Login profile not found",
                     content = {@Content(mediaType = "application/json")} ),
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
@@ -107,20 +89,20 @@ public class LoginProfileController {
 
     @GetMapping(Path.LOGIN_PROFILE_ID_ACTIVATION)
     @Operation(operationId = "getLoginProfileActivation", tags = {"login-profiles"},
-            summary = "Retrieve one login-profile information about activation status", description =
-            "Retrieve one login-profile information about activation status, by providing its id (username).",
+            summary = "Retrieve one login profile activation status", description =
+            "Retrieve one login profile activation status, by providing its id (username).",
             parameters = {@Parameter(name = "idLoginProfile", description =
-                    "The login-profile username (6 characters identifier)")})
+                    "The login profile username (6 characters identifier)")})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description =
-                    "Login-profile activation status retrieved correctly",
+                    "Login profile activation status retrieved correctly",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = LoginProfileActivationResponseDto.class))} ),
             @ApiResponse(responseCode = "401", description =
                     "Roles in Jwt token are insufficient to authorize the access to this URL",
                     content = {@Content(mediaType = "application/json")} ),
             @ApiResponse(responseCode = "404", description =
-                    "Login-profile not found",
+                    "Login profile not found",
                     content = {@Content(mediaType = "application/json")} ),
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
@@ -131,10 +113,10 @@ public class LoginProfileController {
 
     @PatchMapping(Path.LOGIN_PROFILE_ID_PASSWORD)
     @Operation(operationId = "updateLoginProfilePassword", tags = {"login-profiles"},
-            summary = "Update a login-profile password", description =
-            "Update a login-profile password. Only available for the login-profile itself.",
+            summary = "Update a login profile password", description =
+            "Update a login profile password. Only available for the login-profile itself.",
             parameters = {@Parameter(name = "idLoginProfile", description =
-            "The login-profile username (6 characters identifier)")})
+            "The login profile username (6 characters identifier)")})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description =
                     "Login-profile password updated correctly",
@@ -161,95 +143,35 @@ public class LoginProfileController {
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping(Path.LOGIN_PROFILE_ID_ROLES)
-    @Operation(operationId = "updateLoginProfileRoles", tags = {"login-profiles"},
-            summary = "Update a login-profile roles", description =
-            "Update a login-profile roles, by providing a list of all the new ones.<br>" +
+    @PatchMapping(Path.LOGIN_PROFILE_ID)
+    @Operation(operationId = "updateLoginProfile", tags = {"login-profiles"},
+            summary = "Update a login profile roles and activation status", description =
+            "Update a login profile roles, by providing a list of all the new ones.<br>" +
             "Previous ones will be deleted.<br>" +
             "Only available for admins.",
             parameters = {@Parameter(name = "idLoginProfile", description =
             "The login-profile username (6 characters identifier)")})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description =
-                    "Login-profile roles updated correctly",
+                    "Login profile activation status and / or roles updated correctly",
                     content = {@Content(mediaType = "application/json")} ),
             @ApiResponse(responseCode = "401", description =
                     "Roles in Jwt token are insufficient to authorize the access to this URL",
                     content = {@Content(mediaType = "application/json")} ),
             @ApiResponse(responseCode = "404", description =
-                    "Login-profile not found",
+                    "Login profile not found",
                     content = {@Content(mediaType = "application/json")} ),
             @ApiResponse(responseCode = "422", description =
                     "Attribute values don't respect integrity constraints.<br>" +
-                    "Roles : retrieve roles information (roles section) to know which one are available",
+                    "Roles : retrieve a login profile information to know which one are available<br>" +
+                    "isEnable : provide a boolean to modify value (can be null to keep current value).",
                     content = {@Content(mediaType = "application/json")} ),
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
     public ResponseEntity<String> updateLoginProfileRoles(@PathVariable String idLoginProfile,
-                                                      @RequestBody List<String> roles) {
-        loginProfileService.updateLoginProfileRoles(idLoginProfile, roles);
+                                                          @RequestBody LoginProfileUpdateRequestDto loginProfileDto) {
+        loginProfileService.updateLoginProfile(idLoginProfile, loginProfileDto);
         return ResponseEntity.noContent().build();
     }
-
-    @PatchMapping(Path.LOGIN_PROFILE_ID_EMAIL)
-    @Operation(operationId = "updateLoginProfileEmail", tags = {"login-profiles"},
-            summary = "Update a login-profile email", description =
-            "Update a login-profile email, by providing the new one.<br>" +
-            "Only available for admins.",
-            parameters = {@Parameter(name = "idLoginProfile", description =
-            "The login-profile username (6 characters identifier)")})
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description =
-                    "Login-profile email updated correctly",
-                    content = {@Content(mediaType = "application/json")} ),
-            @ApiResponse(responseCode = "401", description =
-                    "Roles in Jwt token are insufficient to authorize the access to this URL",
-                    content = {@Content(mediaType = "application/json")} ),
-            @ApiResponse(responseCode = "404", description =
-                    "Login-profile not found",
-                    content = {@Content(mediaType = "application/json")} ),
-            @ApiResponse(responseCode = "422", description =
-                    "Attribute values don't respect integrity constraints.<br>" +
-                    "Email : 63 characters for 'username', @, 63 for subdomain, and the rest for TLD. Maximum 320 characters.",
-                    content = {@Content(mediaType = "application/json")} ),
-            @ApiResponse(responseCode = "500", description =
-                    "Uncontrolled error appeared",
-                    content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<String> updateLoginProfileEmail(@PathVariable String idLoginProfile,
-                                                       @RequestBody String email) {
-        loginProfileService.updateLoginProfileEmail(idLoginProfile, email);
-        return ResponseEntity.noContent().build();
-    }
-
-    @PatchMapping(Path.LOGIN_PROFILE_ID_ACTIVATION)
-    @Operation(operationId = "updateLoginProfileActivation", tags = {"login-profiles"},
-            summary = "Enable or disable a login-profile", description =
-            "Enable or disable a login-profile, by providing a new activation value (true or false).<br>" +
-            "Only available for admins.",
-            parameters = {@Parameter(name = "idLoginProfile", description =
-                    "The login-profile username (6 characters identifier)")})
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description =
-                    "Login-profile activation status updated correctly",
-                    content = {@Content(mediaType = "application/json")} ),
-            @ApiResponse(responseCode = "401", description =
-                    "Roles in Jwt token are insufficient to authorize the access to this URL",
-                    content = {@Content(mediaType = "application/json")} ),
-            @ApiResponse(responseCode = "404", description =
-                    "Login-profile not found",
-                    content = {@Content(mediaType = "application/json")} ),
-            @ApiResponse(responseCode = "422", description =
-                    "Attribute values don't respect integrity constraints.<br>" +
-                    "isEnable : boolean value (true or false).",
-                    content = {@Content(mediaType = "application/json")} ),
-            @ApiResponse(responseCode = "500", description =
-                    "Uncontrolled error appeared",
-                    content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<String> updateLoginProfileActivation(@PathVariable String idLoginProfile,
-                                                               @RequestBody Boolean isEnable) {
-        loginProfileService.updateLoginProfileActivation(idLoginProfile, isEnable);
-        return ResponseEntity.noContent().build();
-    }
-
 }

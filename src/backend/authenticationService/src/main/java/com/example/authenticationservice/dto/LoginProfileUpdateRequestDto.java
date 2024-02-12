@@ -13,7 +13,7 @@ import java.util.Set;
 @Getter
 public class LoginProfileUpdateRequestDto {
 
-    Boolean isEnable;
-    Set<String> roles;
+    private Boolean isEnable;
+    private Set<String> roles;
 
 }

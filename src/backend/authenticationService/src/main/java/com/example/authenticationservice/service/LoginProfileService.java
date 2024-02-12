@@ -68,12 +68,6 @@ public class LoginProfileService {
         return idLoginProfile;
     }
 
-    public List<LoginProfileResponseDto> getAllLoginProfiles() {
-        return loginProfileRepository.findAll().stream()
-                .map(this::modelToResponseDto)
-                .toList();
-    }
-
     public LoginProfileResponseDto getLoginProfile(String idLoginProfile)
             throws NoSuchElementException {
         return loginProfileRepository.findById(idLoginProfile)
@@ -116,8 +110,8 @@ public class LoginProfileService {
     }
 
     @Transactional
-    public void updateLoginProfileRolesAndActivation(String idLoginProfile,
-                                                     LoginProfileUpdateRequestDto loginProfileDto)
+    public void updateLoginProfile(String idLoginProfile,
+                                   LoginProfileUpdateRequestDto loginProfileDto)
             throws NoSuchElementException, DataIntegrityViolationException{
 
         // check if loginProfile exists
@@ -176,7 +170,6 @@ public class LoginProfileService {
 
     private LoginProfileResponseDto modelToResponseDto(LoginProfile loginProfile) {
         return LoginProfileResponseDto.builder()
-                .id(loginProfile.getId())
                 .isEnable(loginProfile.getIsEnable())
                 .roles(loginProfile.getRoles().stream()
                         .map(Role::getName)
