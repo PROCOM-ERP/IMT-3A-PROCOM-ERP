@@ -31,6 +31,17 @@ spring:
     username: ${BACKEND_MESSAGE_BROKER_SERVICE_USERNAME}
     password: ${BACKEND_MESSAGE_BROKER_SERVICE_PASSWORD}
     virtual-host: /
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: procom.erp@gmail.com
+    password: 9J6#CaRNy6qBNRci
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
 springdoc:
   api-docs:
