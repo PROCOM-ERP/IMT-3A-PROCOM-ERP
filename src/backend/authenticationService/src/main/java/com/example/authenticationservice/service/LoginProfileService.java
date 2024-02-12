@@ -1,12 +1,10 @@
 package com.example.authenticationservice.service;
 
-import com.example.authenticationservice.dto.LoginProfileActivationResponseDto;
-import com.example.authenticationservice.dto.LoginProfileCreationRequestDto;
-import com.example.authenticationservice.dto.LoginProfileResponseDto;
-import com.example.authenticationservice.dto.LoginProfileUpdateRequestDto;
+import com.example.authenticationservice.dto.*;
 import com.example.authenticationservice.model.LoginProfile;
 import com.example.authenticationservice.model.Role;
 import com.example.authenticationservice.repository.LoginProfileRepository;
+import com.example.authenticationservice.repository.RoleRepository;
 import com.example.authenticationservice.utils.CustomEmailSender;
 import com.example.authenticationservice.utils.CustomPasswordGenerator;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,6 +28,7 @@ import java.util.stream.Collectors;
 public class LoginProfileService {
 
     private final LoginProfileRepository loginProfileRepository;
+    private final RoleRepository roleRepository;
     private final CustomPasswordGenerator customPasswordGenerator;
     private final PasswordEncoder passwordEncoder;
     private final CustomEmailSender customEmailSender;
@@ -68,14 +68,31 @@ public class LoginProfileService {
         return idLoginProfile;
     }
 
-    public LoginProfileResponseDto getLoginProfile(String idLoginProfile)
+    public LoginProfileResponseDto getLoginProfileById(String idLoginProfile)
             throws NoSuchElementException {
-        return loginProfileRepository.findById(idLoginProfile)
-                .map(this::modelToResponseDto)
-                .orElseThrow();
+
+        // check if LoginProfile entity exists and retrieve it
+        LoginProfile loginProfile = loginProfileRepository.findById(idLoginProfile).orElseThrow();
+
+        // get RoleDto entities from the login profile existing ones
+        Set<RoleDto> roles = roleRepository.findAll().stream()
+                .map(r -> RoleDto.builder()
+                        .name(r.getName())
+                        .isEnable(loginProfile.getRoles().contains(r))
+                        .build())
+                .collect(Collectors.toSet());
+
+        // build LoginProfileDto entity
+        LoginProfileResponseDto loginProfileDto = LoginProfileResponseDto.builder()
+                .isEnable(loginProfile.getIsEnable())
+                .roles(roles)
+                .build();
+
+        // return LoginProfileResponseDto entity
+        return loginProfileDto;
     }
 
-    public LoginProfileActivationResponseDto getLoginProfileActivation(String idLoginProfile)
+    public LoginProfileActivationResponseDto getLoginProfileActivationById(String idLoginProfile)
             throws NoSuchElementException {
         return loginProfileRepository.findById(idLoginProfile)
                 .map(loginProfile -> LoginProfileActivationResponseDto.builder()
@@ -85,7 +102,7 @@ public class LoginProfileService {
                 .orElseThrow();
     }
 
-    public void updateLoginProfilePassword(String idLoginProfile, String password)
+    public void updateLoginProfilePasswordById(String idLoginProfile, String password)
             throws AccessDeniedException, NoSuchElementException {
 
         // check if the loginProfile to be modified is the same as the authenticated one
@@ -110,7 +127,7 @@ public class LoginProfileService {
     }
 
     @Transactional
-    public void updateLoginProfile(String idLoginProfile,
+    public void updateLoginProfileById(String idLoginProfile,
                                    LoginProfileUpdateRequestDto loginProfileDto)
             throws NoSuchElementException, DataIntegrityViolationException{
 
@@ -166,14 +183,5 @@ public class LoginProfileService {
         int numericPart = nextIdLoginProfile % 100000;
 
         return String.format("%c%05d", (char) (letterAsciiIndex), numericPart);
-    }
-
-    private LoginProfileResponseDto modelToResponseDto(LoginProfile loginProfile) {
-        return LoginProfileResponseDto.builder()
-                .isEnable(loginProfile.getIsEnable())
-                .roles(loginProfile.getRoles().stream()
-                        .map(Role::getName)
-                        .collect(Collectors.toSet()))
-                .build();
     }
 }

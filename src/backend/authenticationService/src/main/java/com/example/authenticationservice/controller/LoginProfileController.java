@@ -64,7 +64,7 @@ public class LoginProfileController {
     }
 
     @GetMapping(Path.LOGIN_PROFILE_ID)
-    @Operation(operationId = "getLoginProfile", tags = {"login-profiles"},
+    @Operation(operationId = "getLoginProfileById", tags = {"login-profiles"},
             summary = "Retrieve one login profile roles and activations status", description =
             "Retrieve one login profile roles and activations status, by providing its id (username).",
             parameters = {@Parameter(name = "idLoginProfile", description =
@@ -83,12 +83,12 @@ public class LoginProfileController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<LoginProfileResponseDto> getLoginProfile(@PathVariable String idLoginProfile) {
-        return ResponseEntity.ok(loginProfileService.getLoginProfile(idLoginProfile));
+    public ResponseEntity<LoginProfileResponseDto> getLoginProfileById(@PathVariable String idLoginProfile) {
+        return ResponseEntity.ok(loginProfileService.getLoginProfileById(idLoginProfile));
     }
 
     @GetMapping(Path.LOGIN_PROFILE_ID_ACTIVATION)
-    @Operation(operationId = "getLoginProfileActivation", tags = {"login-profiles"},
+    @Operation(operationId = "getLoginProfileActivationById", tags = {"login-profiles"},
             summary = "Retrieve one login profile activation status", description =
             "Retrieve one login profile activation status, by providing its id (username).",
             parameters = {@Parameter(name = "idLoginProfile", description =
@@ -107,12 +107,12 @@ public class LoginProfileController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<LoginProfileActivationResponseDto> getLoginProfileActivation(@PathVariable String idLoginProfile) {
-        return ResponseEntity.ok(loginProfileService.getLoginProfileActivation(idLoginProfile));
+    public ResponseEntity<LoginProfileActivationResponseDto> getLoginProfileActivationById(@PathVariable String idLoginProfile) {
+        return ResponseEntity.ok(loginProfileService.getLoginProfileActivationById(idLoginProfile));
     }
 
     @PatchMapping(Path.LOGIN_PROFILE_ID_PASSWORD)
-    @Operation(operationId = "updateLoginProfilePassword", tags = {"login-profiles"},
+    @Operation(operationId = "updateLoginProfilePasswordById", tags = {"login-profiles"},
             summary = "Update a login profile password", description =
             "Update a login profile password. Only available for the login-profile itself.",
             parameters = {@Parameter(name = "idLoginProfile", description =
@@ -137,14 +137,14 @@ public class LoginProfileController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<String> updateLoginProfilePassword(@PathVariable String idLoginProfile,
+    public ResponseEntity<String> updateLoginProfilePasswordById(@PathVariable String idLoginProfile,
                                                          @RequestBody String password) {
-        loginProfileService.updateLoginProfilePassword(idLoginProfile, password);
+        loginProfileService.updateLoginProfilePasswordById(idLoginProfile, password);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping(Path.LOGIN_PROFILE_ID)
-    @Operation(operationId = "updateLoginProfile", tags = {"login-profiles"},
+    @Operation(operationId = "updateLoginProfileById", tags = {"login-profiles"},
             summary = "Update a login profile roles and activation status", description =
             "Update a login profile roles, by providing a list of all the new ones.<br>" +
             "Previous ones will be deleted.<br>" +
@@ -169,9 +169,9 @@ public class LoginProfileController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<String> updateLoginProfileRoles(@PathVariable String idLoginProfile,
+    public ResponseEntity<String> updateLoginProfileById(@PathVariable String idLoginProfile,
                                                           @RequestBody LoginProfileUpdateRequestDto loginProfileDto) {
-        loginProfileService.updateLoginProfile(idLoginProfile, loginProfileDto);
+        loginProfileService.updateLoginProfileById(idLoginProfile, loginProfileDto);
         return ResponseEntity.noContent().build();
     }
 }
