@@ -1,5 +1,6 @@
 package com.example.directoryservice.utils;
 
+import com.example.directoryservice.model.Employee;
 import com.example.directoryservice.repository.EmployeeRepository;
 import com.example.directoryservice.repository.RoleRepository;
 import com.example.directoryservice.service.PermissionService;
@@ -48,8 +49,11 @@ public class CustomJwtAuthenticationConverter implements Converter<Jwt, Abstract
     }
 
     private void checkTokenValidity(Jwt jwt) throws InsufficientAuthenticationException {
-        Instant jwtMinCreation = employeeRepository.findById(jwt.getSubject())
-                .orElseThrow(() -> new InsufficientAuthenticationException("")).getJwtMinCreation()
+        Employee employee = employeeRepository.findById(jwt.getSubject())
+                .orElseThrow(() -> new InsufficientAuthenticationException(""));
+        if (! employee.getEnable())
+            throw new InsufficientAuthenticationException("");
+        Instant jwtMinCreation = employee.getJwtMinCreation()
                 .atZone(ZoneId.systemDefault()).toInstant();
         if (jwt.getIssuedAt() == null || jwt.getIssuedAt().isBefore(jwtMinCreation))
             throw new InsufficientAuthenticationException("");

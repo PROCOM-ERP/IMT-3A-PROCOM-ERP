@@ -50,7 +50,7 @@ public class MessageSenderService {
         logger.info("Message sent");
     }
 
-    public void sendLoginProfileEnableModify(String idLoginProfile) {
+    public void sendLoginProfileActivation(String idLoginProfile) {
         logger.info("Sending message to set a login profile activation status...");
         String resource = String.format("%s/%s%s", Path.LOGIN_PROFILES, idLoginProfile, Path.ACTIVATION);
         String path = customHttpRequestBuilder.buildPath(Path.V1, resource);

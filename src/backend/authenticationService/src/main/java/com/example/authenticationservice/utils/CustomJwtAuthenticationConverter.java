@@ -1,5 +1,6 @@
 package com.example.authenticationservice.utils;
 
+import com.example.authenticationservice.model.LoginProfile;
 import com.example.authenticationservice.repository.LoginProfileRepository;
 import com.example.authenticationservice.repository.RoleRepository;
 import com.example.authenticationservice.service.PermissionService;
@@ -47,9 +48,12 @@ public class CustomJwtAuthenticationConverter implements Converter<Jwt, Abstract
     }
 
     private void checkTokenValidity(Jwt jwt) throws InsufficientAuthenticationException {
-        Instant jwtMinCreation = loginProfileRepository.findById(jwt.getSubject())
-                .orElseThrow(() -> new InsufficientAuthenticationException("")).getJwtGenMinAt();
-        if (jwt.getIssuedAt() == null || jwt.getIssuedAt().isBefore(jwtMinCreation))
+        LoginProfile loginProfile = loginProfileRepository.findById(jwt.getSubject())
+                .orElseThrow(() -> new InsufficientAuthenticationException(""));
+        if (! loginProfile.getIsEnable())
+            throw new InsufficientAuthenticationException("");
+        Instant jwtGenMinAt = loginProfile.getJwtGenMinAt();
+        if (jwt.getIssuedAt() == null || jwt.getIssuedAt().isBefore(jwtGenMinAt))
             throw new InsufficientAuthenticationException("");
     }
 
