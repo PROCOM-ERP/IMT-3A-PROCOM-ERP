@@ -10,7 +10,6 @@ public class Path {
     public static final String DOCS = "/docs";
     public static final String LOGIN_PROFILES = "/login-profiles";
     public static final String PASSWORD = "/password";
-    public static final String EMAIL = "/email";
     public static final String ROLES = "/roles";
     public static final String ACTIVATION = "/activation";
     public static final String MICROSERVICES = "/microservices";
@@ -18,15 +17,11 @@ public class Path {
 
     public static final String V1_LOGIN_PROFILES = API + V1 + LOGIN_PROFILES;
     public static final String LOGIN_PROFILE_ID = "/{idLoginProfile}";
-    public static final String LOGIN_PROFILE_ID_ROLES = LOGIN_PROFILE_ID + ROLES;
     public static final String LOGIN_PROFILE_ID_PASSWORD = LOGIN_PROFILE_ID + PASSWORD;
-    public static final String LOGIN_PROFILE_ID_EMAIL = LOGIN_PROFILE_ID + EMAIL;
     public static final String LOGIN_PROFILE_ID_ACTIVATION = LOGIN_PROFILE_ID + ACTIVATION;
 
     public static final String V1_LOGIN_PROFILES_ANYONE = V1_LOGIN_PROFILES + ANYONE;
-    public static final String V1_LOGIN_PROFILES_ANYONE_ROLES = V1_LOGIN_PROFILES_ANYONE + ROLES;
     public static final String V1_LOGIN_PROFILES_ANYONE_PASSWORD = V1_LOGIN_PROFILES_ANYONE + PASSWORD;
-    public static final String V1_LOGIN_PROFILES_ANYONE_EMAIL = V1_LOGIN_PROFILES_ANYONE + EMAIL;
     public static final String V1_LOGIN_PROFILES_ANYONE_ACTIVATION = V1_LOGIN_PROFILES_ANYONE + ACTIVATION;
 
     public static final String V1_ROLES = API + V1 + ROLES;

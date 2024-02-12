@@ -7,7 +7,7 @@ public enum Permission {
     CanDeactivateLoginProfile,
     CanModifyLoginProfileEmail,
     CanModifyLoginProfilePassword,
-    CanModifyLoginProfileRoles,
+    CanModifyLoginProfile,
     CanModifyRole,
     CanReadLoginProfile,
     CanReadRole

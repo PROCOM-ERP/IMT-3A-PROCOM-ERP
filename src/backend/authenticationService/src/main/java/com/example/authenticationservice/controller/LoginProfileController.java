@@ -143,7 +143,7 @@ public class LoginProfileController {
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping(Path.LOGIN_PROFILE_ID)
+    @PutMapping(Path.LOGIN_PROFILE_ID)
     @Operation(operationId = "updateLoginProfile", tags = {"login-profiles"},
             summary = "Update a login profile roles and activation status", description =
             "Update a login profile roles, by providing a list of all the new ones.<br>" +

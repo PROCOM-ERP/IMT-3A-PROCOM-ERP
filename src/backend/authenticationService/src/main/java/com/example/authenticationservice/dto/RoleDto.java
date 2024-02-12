@@ -5,15 +5,13 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.Set;
-
-@Getter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class LoginProfileResponseDto {
+@Getter
+public class RoleDto {
 
+    private String name;
     private Boolean isEnable;
-    private Set<RoleDto> roles;
 
 }
