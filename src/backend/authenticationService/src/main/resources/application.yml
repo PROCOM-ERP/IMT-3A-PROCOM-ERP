@@ -32,8 +32,17 @@ spring:
     password: ${BACKEND_MESSAGE_BROKER_SERVICE_PASSWORD}
     virtual-host: /
   mail:
-    default-sender: procom.erp@gmail.com
+    host: smtp.gmail.com
+    port: 587
+    username: procom.erp@gmail.com
+    password: lmtkdewfhthddpop
     default-receiver: procom.erp@gmail.com
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
 springdoc:
   api-docs:

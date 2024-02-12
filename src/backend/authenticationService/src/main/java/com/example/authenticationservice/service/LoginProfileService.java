@@ -5,7 +5,6 @@ import com.example.authenticationservice.model.LoginProfile;
 import com.example.authenticationservice.model.Role;
 import com.example.authenticationservice.repository.LoginProfileRepository;
 import com.example.authenticationservice.repository.RoleRepository;
-import com.example.authenticationservice.utils.CustomMailBuilder;
 import com.example.authenticationservice.utils.CustomPasswordGenerator;
 import com.example.authenticationservice.utils.PerformanceTracker;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,7 +31,7 @@ public class LoginProfileService {
     private final RoleRepository roleRepository;
     private final CustomPasswordGenerator customPasswordGenerator;
     private final PasswordEncoder passwordEncoder;
-    private final CustomMailBuilder customMailBuilder;
+    private final MailService mailService;
     private final MessageSenderService messageSenderService;
 
     private final PerformanceTracker performanceTracker;
@@ -42,7 +40,7 @@ public class LoginProfileService {
     /* Public Methods */
 
     @Transactional
-    public String createLoginProfile(LoginProfileCreationRequestDto loginProfileCreationRequestDto) {
+    public String createLoginProfile(LoginProfileCreationRequestDto loginProfileCreationRequestDto) throws Exception {
         logger.info("Start login profile creation...");
         long startTimeNano = performanceTracker.getCurrentTime();
 
@@ -68,9 +66,9 @@ public class LoginProfileService {
         loginProfileRepository.save(loginProfile);
 
         // send mail to the new user
-        SimpleMailMessage message = customMailBuilder.buildNewLoginProfileMail(idLoginProfile, password);
+        mailService.sendNewLoginProfileMail(idLoginProfile, password);
 
-
+        // return generated idLoginProfile
         long elapsedTimeMillis = performanceTracker.getElapsedTimeMillis(startTimeNano);
         logger.info("Elapsed time to create new login profile : " + elapsedTimeMillis + " ms");
         return idLoginProfile;

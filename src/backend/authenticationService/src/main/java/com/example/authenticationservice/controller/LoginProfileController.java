@@ -49,7 +49,9 @@ public class LoginProfileController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<String> createLoginProfile(@RequestBody LoginProfileCreationRequestDto loginProfileCreationRequestDto) {
+    public ResponseEntity<String> createLoginProfile(
+            @RequestBody LoginProfileCreationRequestDto loginProfileCreationRequestDto)
+            throws Exception {
         // try to create a new loginProfile
         String idLoginProfile = loginProfileService.createLoginProfile(loginProfileCreationRequestDto);
         // generate URI location to inform the client how to get information on the new loginProfile
