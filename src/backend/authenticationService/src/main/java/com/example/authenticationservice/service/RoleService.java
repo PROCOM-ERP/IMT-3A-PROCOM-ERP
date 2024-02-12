@@ -165,6 +165,10 @@ public class RoleService {
         logger.info("Elapsed time to save external role : " + elapsedTimeMillis + " ms");
     }
 
+    public Set<String> getAllRoleNames() {
+        return roleRepository.findAllRoleNames();
+    }
+
     public RolesMicroservicesResponseDto getAllRolesAndMicroservices() {
         logger.info("Start retrieving roles and microservices...");
         long startTimeNano = performanceTracker.getCurrentTime();

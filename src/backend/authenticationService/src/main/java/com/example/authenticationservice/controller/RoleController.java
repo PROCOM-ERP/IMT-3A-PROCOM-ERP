@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.Set;
 
 @RestController
 @RequestMapping(Path.V1_ROLES)
@@ -58,6 +59,26 @@ public class RoleController {
                 .toUri();
         // send the response with 201 Http status
         return ResponseEntity.created(location).build();
+    }
+
+    @GetMapping
+    @Operation(operationId = "getAllRoleNames", tags = {"roles"},
+            summary = "Retrieve all role names", description =
+            "Retrieve all role names.<br>" +
+            "Only available for admins.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description =
+                    "Role names retrieved correctly",
+                    content = {@Content(mediaType = "application/json",
+                    schema = @Schema(type = "array", implementation = String.class))} ),
+            @ApiResponse(responseCode = "401", description =
+                    "Roles in Jwt token are insufficient to authorize the access to this URL",
+                    content = {@Content(mediaType = "application/json")} ),
+            @ApiResponse(responseCode = "500", description =
+                    "Uncontrolled error appeared",
+                    content = {@Content(mediaType = "application/json")} )})
+    public ResponseEntity<Set<String>> getAllRoleNames() {
+        return ResponseEntity.ok(roleService.getAllRoleNames());
     }
 
     @GetMapping(Path.MICROSERVICES)
