@@ -35,10 +35,11 @@ spring:
     host: smtp.gmail.com
     port: 587
     username: procom.erp.authentication@gmail.com
-    default-receiver: procom.erp@gmail.com
-    password: qq@$38k5k!#n!!EH
+    password: hodsmcxuljotpwwz
     properties:
       mail:
+        transport:
+          protocol: smtp
         smtp:
           auth: true
           starttls:
@@ -63,3 +64,9 @@ security:
       roles: ${SECURITY_JWT_CLAIMS_KEY_ROLES}
     duration:
       minutes: 1
+
+logging:
+  level:
+    org:
+      springframework:
+        mail: DEBUG

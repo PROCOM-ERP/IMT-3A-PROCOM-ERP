@@ -7,9 +7,12 @@ import com.example.authenticationservice.repository.LoginProfileRepository;
 import com.example.authenticationservice.repository.RoleRepository;
 import com.example.authenticationservice.utils.CustomEmailSender;
 import com.example.authenticationservice.utils.CustomPasswordGenerator;
+import com.example.authenticationservice.utils.PerformanceTracker;
 import lombok.RequiredArgsConstructor;
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -32,12 +35,15 @@ public class LoginProfileService {
     private final CustomEmailSender customEmailSender;
     private final MessageSenderService messageSenderService;
 
-    // private final Logger logger = LoggerFactory.getLogger(LoginProfileService.class);
+    private final PerformanceTracker performanceTracker;
+    private final Logger logger = LoggerFactory.getLogger(LoginProfileService.class);
 
     /* Public Methods */
 
     @Transactional
     public String createLoginProfile(LoginProfileCreationRequestDto loginProfileCreationRequestDto) {
+        logger.info("Start login profile creation...");
+        long startTimeNano = performanceTracker.getCurrentTime();
 
         // generate random password
         String password = customPasswordGenerator.generateRandomPassword();
@@ -63,6 +69,8 @@ public class LoginProfileService {
         // send mail to the new user
         customEmailSender.sendNewLoginProfileMail(idLoginProfile, password);
 
+        long elapsedTimeMillis = performanceTracker.getElapsedTimeMillis(startTimeNano);
+        logger.info("Elapsed time to create new login profile : " + elapsedTimeMillis + " ms");
         return idLoginProfile;
     }
 
