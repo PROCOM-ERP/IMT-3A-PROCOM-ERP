@@ -63,7 +63,7 @@ public class LoginProfileService {
                 .build();
 
         // try to save loginProfile with its roles and return its id
-        loginProfileRepository.save(loginProfile);
+        loginProfile = loginProfileRepository.save(loginProfile);
 
         // send mail to the new user
         mailService.sendNewLoginProfileMail(idLoginProfile, password);
@@ -71,7 +71,7 @@ public class LoginProfileService {
         // return generated idLoginProfile
         long elapsedTimeMillis = performanceTracker.getElapsedTimeMillis(startTimeNano);
         logger.info("Elapsed time to create new login profile : " + elapsedTimeMillis + " ms");
-        return idLoginProfile;
+        return loginProfile.getId();
     }
 
     public LoginProfileResponseDto getLoginProfileById(String idLoginProfile)

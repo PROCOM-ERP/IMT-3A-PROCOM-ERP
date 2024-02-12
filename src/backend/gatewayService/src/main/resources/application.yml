@@ -8,7 +8,6 @@ spring:
     gateway:
       httpclient:
         ssl:
-          enabled: true
           useInsecureTrustManager: true
       routes:
         - id: authentication-service
@@ -23,8 +22,6 @@ spring:
             - Path=/api/dir/**
           filters:
             - RewritePath=/api/dir/(?<segment>.*), /api/$\{segment}
-  security:
-    require-ssl: true
 
 server:
   port: ${BACKEND_GATEWAY_SERVICE_PORT_EXT}

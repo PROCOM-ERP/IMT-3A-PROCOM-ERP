@@ -41,6 +41,8 @@ spring:
       mail:
         smtp:
           auth: true
+          ssl:
+            trust: smtp.gmail.com
           starttls:
             enable: true
 
@@ -62,7 +64,7 @@ security:
     claim:
       roles: ${SECURITY_JWT_CLAIMS_KEY_ROLES}
     duration:
-      minutes: 1
+      minutes: 60
 
 logging:
   level:
