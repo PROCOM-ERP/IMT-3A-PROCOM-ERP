@@ -21,5 +21,5 @@ public class ProductRequestDto {
     private List<Integer> categories;   // This contains the id of each category.
     private List<ProductMetaRequestDto> productMeta;
     private Integer numberOfItem;       // Defines the initial quantity of this product.
-    private List<Integer> addresses;    // Should be empty if numberOfItem == 0;
+    private Integer address;    // Should be empty if numberOfItem == 0;
 }
