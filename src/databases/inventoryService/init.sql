@@ -91,8 +91,18 @@ INSERT INTO addresses (number, street, city, state, country, postal_code, info)
 VALUES ('15', 'entrepot de Malta Shopper', 'Malte', 'Valleta', 'Malte', '66666', 'je n''y reviendrai plus jamais !');
 
 INSERT INTO items (quantity, id_address, id_product)
-VALUES (10, 1, 1);
+VALUES (10, 1, 1),
+       ();
 
+INSERT INTO transactions(quantity, timestamp, employee, id_item)
+VALUES (10, '2024-02-11 09:00:00', 'Arthur', 1),
+       (2, '2024-02-11 10:00:00', 'A00002', 1);
+
+INSERT INTO product_meta(key, type, value, description, id_product)
+VALUES
+('Volume', 'float', '1,553', 'Bière', 1),
+('Quantité de gras', 'integer', '10', 'Sauciflard', 1),
+('Poids', 'float', '168,4', 'Trop de BF', 1)
 
 /*
 SELECT * FROM addresses;

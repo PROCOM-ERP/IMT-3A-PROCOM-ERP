@@ -32,8 +32,8 @@ public class Transaction {
     private String employee;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "id_item", nullable = false)
-    private Item idItem;
+    private Item item;
 
 }

@@ -1,7 +1,7 @@
 package com.example.inventoryservice.service;
 
-import com.example.inventoryservice.dto.AddressDto;
 import com.example.inventoryservice.dto.CategoryDto;
+import com.example.inventoryservice.dto.ProductMetaDto;
 import com.example.inventoryservice.model.*;
 import com.example.inventoryservice.dto.ItemDto;
 import com.example.inventoryservice.dto.ProductDto;
@@ -9,7 +9,6 @@ import com.example.inventoryservice.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,7 +25,7 @@ public class ProductService {
     public List<ProductDto> getAllProducts(){
         return productRepository.findAll()
                 .stream()
-                .map(ProductService::productToDto)
+                .map(ProductService::productCategoryToDto)
                 .toList();
     }
 
@@ -55,6 +54,7 @@ public class ProductService {
                 .title(product.getTitle())
                 .description(product.getDescription())
                 .categories(categoryToDtoList(product.getCategories()))
+                .productMeta(productMetaToDtoList(product.getProductMeta()))
                 .build();
     }
 
@@ -67,6 +67,12 @@ public class ProductService {
     static List<CategoryDto> categoryToDtoList(List<Category> category){
         return category.stream()
                 .map(CategoryService::categoryOnlyToDto)
+                .toList();
+    }
+
+    static List<ProductMetaDto> productMetaToDtoList(List<ProductMeta> productMeta){
+        return productMeta.stream()
+                .map(ProductMetaService::productMetaToDto)
                 .toList();
     }
 }

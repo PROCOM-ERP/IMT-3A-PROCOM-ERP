@@ -5,17 +5,15 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ProductDto {
+public class ProductMetaDto {
     private Integer id;
-    private String title;
+    private String key;
+    private String value;
+    private String type;
     private String description;
-    private List<ItemDto> items;
-    private List<CategoryDto> categories;
-    private List<ProductMetaDto> productMeta;
+    private ProductDto product;
 }

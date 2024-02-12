@@ -22,7 +22,7 @@ public class Item {
     private Integer quantity;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_address", nullable = false)
     private Address address;
 
