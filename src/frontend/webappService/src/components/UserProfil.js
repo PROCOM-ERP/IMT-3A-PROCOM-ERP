@@ -97,10 +97,10 @@ function UserProfil({ title, userId }) {
         {Object.entries(user).map(([key, value]) => (
           
           <div className="info-container">
-            <strong>{key}:</strong> 
+            <strong>{key}:</strong>
             <span>{Array.isArray(value) ? value.join(', ') : value}</span>
           </div>
-
+          
         ))}
         {renderPasswordButton()}
       </div>
