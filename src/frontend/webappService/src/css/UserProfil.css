@@ -22,6 +22,9 @@
 }
 
 .info-container {
+    font-family: var(--text-family);
+    font-size: var(--text-size);
+    font-weight: var(--text-weight);
     display: flex;
     justify-content: space-between;
     align-items: center;
