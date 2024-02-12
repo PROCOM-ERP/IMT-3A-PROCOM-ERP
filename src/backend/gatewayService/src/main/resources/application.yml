@@ -26,6 +26,18 @@ spring:
   security:
     require-ssl: true
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: procom.erp@gmail.com
+    password: lmtkdewfhthddpop
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
 server:
   port: ${BACKEND_GATEWAY_SERVICE_PORT_EXT}
   ssl:
@@ -35,6 +47,15 @@ server:
     keyAlias: ${BACKEND_GATEWAY_SERVICE_HTTPS_KEY_STORE_ALIAS}
     trust-store: ${SECURITY_TRUST_STORE_PATH}
     trust-store-password: ${SECURITY_TRUST_STORE_PASSWORD}
+
+security:
+  service:
+    sharedKey: ${SECURITY_SERVICES_SHARED_KEY}
+    role: microservices
+  jwt:
+    secretkey: ${SECURITY_JWT_SECRET_KEY}
+    claim:
+      roles: ${SECURITY_JWT_CLAIMS_KEY_ROLES}
 # eureka:
 #   instance:
 #     prefer-ip-address: true

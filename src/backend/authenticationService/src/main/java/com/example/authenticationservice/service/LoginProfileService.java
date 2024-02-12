@@ -5,7 +5,7 @@ import com.example.authenticationservice.model.LoginProfile;
 import com.example.authenticationservice.model.Role;
 import com.example.authenticationservice.repository.LoginProfileRepository;
 import com.example.authenticationservice.repository.RoleRepository;
-import com.example.authenticationservice.utils.CustomEmailSender;
+import com.example.authenticationservice.utils.CustomMailBuilder;
 import com.example.authenticationservice.utils.CustomPasswordGenerator;
 import com.example.authenticationservice.utils.PerformanceTracker;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -32,7 +33,7 @@ public class LoginProfileService {
     private final RoleRepository roleRepository;
     private final CustomPasswordGenerator customPasswordGenerator;
     private final PasswordEncoder passwordEncoder;
-    private final CustomEmailSender customEmailSender;
+    private final CustomMailBuilder customMailBuilder;
     private final MessageSenderService messageSenderService;
 
     private final PerformanceTracker performanceTracker;
@@ -67,7 +68,8 @@ public class LoginProfileService {
         loginProfileRepository.save(loginProfile);
 
         // send mail to the new user
-        customEmailSender.sendNewLoginProfileMail(idLoginProfile, password);
+        SimpleMailMessage message = customMailBuilder.buildNewLoginProfileMail(idLoginProfile, password);
+
 
         long elapsedTimeMillis = performanceTracker.getElapsedTimeMillis(startTimeNano);
         logger.info("Elapsed time to create new login profile : " + elapsedTimeMillis + " ms");

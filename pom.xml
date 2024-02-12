@@ -26,7 +26,6 @@
         <aqmp.version>2.7.0</aqmp.version>
         <springdoc-openapi.version>2.2.0</springdoc-openapi.version>
         <apache-http.version>5.2</apache-http.version>
-        <sprint-context.version>6.1.3</sprint-context.version>
 
         <postgres.version>42.6.0</postgres.version>
         <junit.version>5.9.3</junit.version>
@@ -98,11 +97,6 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-mail</artifactId>
                 <version>${spring-boot.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-context-support</artifactId>
-                <version>${sprint-context.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.projectlombok</groupId>
