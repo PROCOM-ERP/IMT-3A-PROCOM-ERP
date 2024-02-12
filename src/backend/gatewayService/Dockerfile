@@ -1,7 +1,37 @@
 ARG JAVA_IMAGE
+ARG JAVA_BUILD_IMAGE
 ARG BACKEND_GATEWAY_SERVICE_PORT_INT
 ARG ENTRYPOINT
 ARG SECURITY_TRUST_STORE_PATH
+
+FROM ${JAVA_BUILD_IMAGE} AS builder
+
+ARG POM_JAVA_VERSION
+ARG MAVEN_COMPILER_SOURCE
+ARG MAVEN_COMPILER_TARGET
+ARG SPRING_BOOT_VERSION
+ARG SPRING_CLOUD_VERSION
+
+RUN apt-get update && \
+    apt-get install -y maven
+
+COPY ./src/ ./builder/src
+COPY ./prod-pom.xml ./builder/pom.xml
+
+WORKDIR /builder
+
+ENV POM_JAVA_VERSION=${POM_JAVA_VERSION}
+ENV MAVEN_COMPILER_SOURCE=${MAVEN_COMPILER_SOURCE}
+ENV MAVEN_COMPILER_TARGET=${MAVEN_COMPILER_TARGET}
+ENV SPRING_BOOT_VERSION=${SPRING_BOOT_VERSION}
+ENV SPRING_CLOUD_VERSION=${SPRING_CLOUD_VERSION}
+
+RUN mvn clean install \
+    -Djava.version=$POM_JAVA_VERSION \
+    -Dmaven.compiler.source=$MAVEN_COMPILER_SOURCE \
+    -Dmaven.compiler.target=$MAVEN_COMPILER_TARGET \
+    -Dspring-boot.version=$SPRING_BOOT_VERSION \
+    -Dspring-cloud.version=$SPRING_CLOUD_VERSION
 
 
 FROM ${JAVA_IMAGE}
@@ -18,7 +48,7 @@ RUN useradd -r -u 10001 -g erp erp
 
 WORKDIR /
 
-COPY --chown=erp ./target ./app
+COPY --chown=erp --from=builder ./builder/target ./app
 COPY --chown=erp ./gateway-service-keystore.p12 ./app/certs/gateway-service-keystore.p12
 COPY --chown=erp ./gateway-service-keystore.p12 ./app/certs/gateway-service-keystore.p12
 COPY --chown=erp ./procom-erp-truststore.jks ./config/procom-erp-truststore.jks
