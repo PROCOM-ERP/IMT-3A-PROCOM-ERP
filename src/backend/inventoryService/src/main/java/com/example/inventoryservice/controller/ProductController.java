@@ -72,4 +72,9 @@ public class ProductController {
     public ResponseEntity<List<ProductDto>> getAllProducts(){
         return ResponseEntity.ok(productService.getAllProducts());
     }
+
+
+    public ResponseEntity<String> createProduct(){
+
+    }
 }
