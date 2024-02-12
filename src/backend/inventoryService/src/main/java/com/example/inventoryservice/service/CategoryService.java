@@ -22,7 +22,7 @@ public class CategoryService {
     private final Logger logger = LoggerFactory.getLogger(CategoryService.class);
 
     final private CategoryRepository categoryRepository;
-    public Optional<CategoryDto> getCategoryById(int id){
+    public Optional<CategoryDto> getCategoryById(Integer id){
         Optional<Category> categoryOptional = categoryRepository.findById(id);
         return categoryOptional.map(CategoryService::categoryToDto);
     }
@@ -33,6 +33,11 @@ public class CategoryService {
                 .stream()
                 .map(CategoryService::categoryOnlyToDto)
                 .toList();
+    }
+
+    public List<Category> getCategoriesByIds(List<Integer> ids){
+        List<Category> categoryList = categoryRepository.findByIds(ids);
+        return categoryList;
     }
 
     static CategoryDto categoryOnlyToDto(Category category){

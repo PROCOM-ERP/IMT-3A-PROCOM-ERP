@@ -19,6 +19,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ProductService {
     private final ProductRepository productRepository;
+    private final CategoryService categoryService;
+    private final ProductMetaService productMetaService;
 
     public Optional<ProductDto> getProductById(int id){
         Optional<Product> productOptional = productRepository.findById(id);
@@ -32,17 +34,29 @@ public class ProductService {
                 .toList();
     }
 
-    public void createProduct(ProductRequestDto newProduct){
+    public void createProduct(ProductRequestDto productRequest){
+
+
+        List<Category> categories = categoryService.getCategoriesByIds(productRequest.getCategories());
+
         Product product = Product.builder()
-                .title(newProduct.getTitle())
-                .description(newProduct.getDescription())
-                .categories(newProduct.getCategories().stream()
-                        .map(CategoryService::dtoToCategory)
-                        .collect(Collectors.toList()))
-                .productMeta(newProduct.getProductMeta().stream()
-                        .map(ProductMetaService::dtoToProductMeta)
-                        .collect(Collectors.toList()))
+                .title(productRequest.getTitle())
+                .description(productRequest.getDescription())
+                .categories(categories)
                 .build();
+
+        List<ProductMeta> productMetaList = productRequest.getProductMeta().stream()
+                .map(metaDto -> ProductMeta.builder()
+                        .key(metaDto.getKey())
+                        .value(metaDto.getValue())
+                        .type(metaDto.getType())
+                        .description(metaDto.getDescription())
+                        .product(product)
+                        .build())
+                .collect(Collectors.toList());
+
+        product.setProductMeta(productMetaList);
+
         productRepository.save(product);
     }
 

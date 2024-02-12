@@ -1,5 +1,6 @@
 package com.example.inventoryservice.dtoRequest;
 
+import com.example.inventoryservice.dto.AddressDto;
 import com.example.inventoryservice.dto.CategoryDto;
 import com.example.inventoryservice.dto.ItemDto;
 import com.example.inventoryservice.dto.ProductMetaDto;
@@ -17,7 +18,8 @@ import java.util.List;
 public class ProductRequestDto {
     private String title;
     private String description;
-    private Integer numberOfItem;     // Defines the initial quantity of this product.
-    private List<CategoryRequestDto> categories;
+    private List<Integer> categories;   // This contains the id of each category.
     private List<ProductMetaRequestDto> productMeta;
+    private Integer numberOfItem;       // Defines the initial quantity of this product.
+    private List<Integer> addresses;    // Should be empty if numberOfItem == 0;
 }

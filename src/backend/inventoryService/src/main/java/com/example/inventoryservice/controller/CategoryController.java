@@ -19,7 +19,7 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<CategoryDto>> getCategoryById(@PathVariable int id){
+    public ResponseEntity<Optional<CategoryDto>> getCategoryById(@PathVariable Integer id){
         return ResponseEntity.ok(categoryService.getCategoryById(id));
     }
 
