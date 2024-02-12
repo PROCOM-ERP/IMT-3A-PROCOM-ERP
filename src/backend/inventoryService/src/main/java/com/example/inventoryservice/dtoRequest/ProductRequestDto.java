@@ -17,7 +17,7 @@ import java.util.List;
 public class ProductRequestDto {
     private String title;
     private String description;
-    private Integer itemNumber;     // Defines the initial quantity of this product.
-    private List<CategoryDto> categories;
-    private List<ProductMetaDto> productMeta;
+    private Integer numberOfItem;     // Defines the initial quantity of this product.
+    private List<CategoryRequestDto> categories;
+    private List<ProductMetaRequestDto> productMeta;
 }

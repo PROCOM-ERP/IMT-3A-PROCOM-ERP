@@ -2,6 +2,7 @@ package com.example.inventoryservice.service;
 
 import com.example.inventoryservice.dto.CategoryDto;
 import com.example.inventoryservice.dto.ProductMetaDto;
+import com.example.inventoryservice.dtoRequest.ProductRequestDto;
 import com.example.inventoryservice.model.*;
 import com.example.inventoryservice.dto.ItemDto;
 import com.example.inventoryservice.dto.ProductDto;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -30,13 +32,16 @@ public class ProductService {
                 .toList();
     }
 
-    public void createProduct(Product newProduct){
+    public void createProduct(ProductRequestDto newProduct){
         Product product = Product.builder()
                 .title(newProduct.getTitle())
                 .description(newProduct.getDescription())
-                .productMeta(newProduct.getProductMeta())
-                .categories(newProduct.getCategories())
-                .items(newProduct.getItems())
+                .categories(newProduct.getCategories().stream()
+                        .map(CategoryService::dtoToCategory)
+                        .collect(Collectors.toList()))
+                .productMeta(newProduct.getProductMeta().stream()
+                        .map(ProductMetaService::dtoToProductMeta)
+                        .collect(Collectors.toList()))
                 .build();
         productRepository.save(product);
     }

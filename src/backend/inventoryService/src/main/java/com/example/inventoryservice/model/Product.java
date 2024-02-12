@@ -3,9 +3,7 @@ package com.example.inventoryservice.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -16,6 +14,8 @@ import java.util.Set;
 @Setter
 @Entity
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "products")
 public class Product {
     @Id
@@ -33,7 +33,7 @@ public class Product {
 
     @NotNull
     @ManyToMany(mappedBy = "products", fetch = FetchType.EAGER)
-    private List<Category> categories = new ArrayList<>();
+    private List<Category> categories;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Item> items;
