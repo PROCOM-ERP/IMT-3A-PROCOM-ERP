@@ -6,6 +6,7 @@ import com.example.authenticationservice.dto.LoginProfileResponseDto;
 import com.example.authenticationservice.model.LoginProfile;
 import com.example.authenticationservice.model.Role;
 import com.example.authenticationservice.repository.LoginProfileRepository;
+import com.example.authenticationservice.utils.CustomPasswordGenerator;
 import lombok.RequiredArgsConstructor;
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
@@ -24,25 +25,25 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class LoginProfileService {
 
-    private static final String regexPassword =
-            "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!.*])(?=\\S+$).{12,}$";
-
     private final LoginProfileRepository loginProfileRepository;
+    private final CustomPasswordGenerator customPasswordGenerator;
     private final PasswordEncoder passwordEncoder;
 
     // private final Logger logger = LoggerFactory.getLogger(LoginProfileService.class);
 
+    /* Public Methods */
+
     @Transactional
     public String createLoginProfile(LoginProfileCreationRequestDto loginProfileCreationRequestDto) {
 
-        // check password validity
-        String password = loginProfileCreationRequestDto.getPassword();
-        checkPasswordValidity(password);
+        // generate random password
+        String password = customPasswordGenerator.generateRandomPassword();
 
         // create loginProfile
         Integer nextIdLoginProfile = loginProfileRepository.getNextIdLoginProfile();
+        String idLoginProfile = generateIdLoginProfileFromNextId(nextIdLoginProfile);
         LoginProfile loginProfile = LoginProfile.builder()
-                .id(generateIdLoginProfileFromNextId(nextIdLoginProfile))
+                .id(idLoginProfile)
                 .idLoginProfileGen(nextIdLoginProfile)
                 .email(loginProfileCreationRequestDto.getEmail())
                 .password(passwordEncoder.encode(password))
@@ -54,19 +55,21 @@ public class LoginProfileService {
                 .build();
 
         // try to save loginProfile with its roles and return its id
-        return loginProfileRepository.save(loginProfile).getId();
+        loginProfileRepository.save(loginProfile);
+
+        return idLoginProfile;
     }
 
     public List<LoginProfileResponseDto> getAllLoginProfiles() {
         return loginProfileRepository.findAll().stream()
-                .map(LoginProfileService::modelToResponseDto)
+                .map(this::modelToResponseDto)
                 .toList();
     }
 
     public LoginProfileResponseDto getLoginProfile(String idLoginProfile)
             throws NoSuchElementException {
         return loginProfileRepository.findById(idLoginProfile)
-                .map(LoginProfileService::modelToResponseDto)
+                .map(this::modelToResponseDto)
                 .orElseThrow();
     }
 
@@ -135,7 +138,7 @@ public class LoginProfileService {
 
     public void updateLoginProfileActivation(String idLoginProfile, Boolean isEnable)
             throws NoSuchElementException, DataIntegrityViolationException {
-        // try to update enable
+        // try to update activation status
         int row = loginProfileRepository.updateActivationById(idLoginProfile, isEnable);
 
         // check if only 1 row was modified
@@ -146,6 +149,8 @@ public class LoginProfileService {
         // send message to other services to update jwt_min_creation for current loginProfile
     }
 
+    /* Private Methods */
+
     private String generateIdLoginProfileFromNextId(Integer nextIdLoginProfile) {
         int letterAsciiIndex = 65 + (nextIdLoginProfile / 100000) % 26;
         int numericPart = nextIdLoginProfile % 100000;
@@ -155,14 +160,14 @@ public class LoginProfileService {
 
     private void checkPasswordValidity(String password)
             throws IllegalArgumentException {
-        if (!password.matches(regexPassword))
+        if (!password.matches(customPasswordGenerator.getRegexPassword()))
             throw new IllegalArgumentException();
     }
 
-    static LoginProfileResponseDto modelToResponseDto(LoginProfile loginProfile) {
+    private LoginProfileResponseDto modelToResponseDto(LoginProfile loginProfile) {
         return LoginProfileResponseDto.builder()
                 .id(loginProfile.getId())
-                .email(loginProfile.getEmail())
+                .isEnable(loginProfile.getIsEnable())
                 .roles(loginProfile.getRoles().stream()
                         .map(Role::getName)
                         .collect(Collectors.toSet()))
