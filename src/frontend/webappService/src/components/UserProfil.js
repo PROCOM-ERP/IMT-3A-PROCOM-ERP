@@ -2,9 +2,11 @@ import React, { useState, useEffect } from "react";
 import Button from "../components/Button.js"
 import "../css/App.css";
 import "../css/UserProfil.css";
+import { useNavigate } from 'react-router-dom';
 
 function UserProfil({ title, userId }) {
   const [user, setUser] = useState({});
+  const navigate = useNavigate();
 
   const tokenName = "Token"; // Need to be the same name as in AuthForm.js components
   const token = localStorage.getItem(tokenName);
@@ -82,6 +84,7 @@ function UserProfil({ title, userId }) {
   function handleModif(event) {
     // Prevent the browser from reloading the page
     event.preventDefault();
+    navigate("/modifyProfil"); // Navigate to the page
   }
 
   const renderPasswordButton = () => {
@@ -95,12 +98,10 @@ function UserProfil({ title, userId }) {
       <div className="user-container">
         <div className="title">{title}</div>
         {Object.entries(user).map(([key, value]) => (
-          
           <div className="info-container">
             <strong>{key}:</strong>
             <span>{Array.isArray(value) ? value.join(', ') : value}</span>
           </div>
-          
         ))}
         {renderPasswordButton()}
       </div>
