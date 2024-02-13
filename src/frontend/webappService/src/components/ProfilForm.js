@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Form from "./AuthForm";
 
 
 function ProfilForm({ title, userId }) {
@@ -78,16 +79,26 @@ function ProfilForm({ title, userId }) {
 
   return (
     <>
-      <div className="TEST">
-        <div className="TEST">{title}</div>
-        {Object.entries(user).map(([key, value]) => (
-          <div className="info-container">
-            <strong>{key}:</strong>
-            <span>{Array.isArray(value) ? value.join(', ') : value}</span>
-          </div>
-        ))}
-      </div>
+      <p>Petit texte avant le formulaire</p>
+      <form method="get" action="">
+        <p>
+          <label for="nom">nom</label> : <input type="text" name="nom" id="nom" placeholder="test"/>
+        </p>
+      </form>
+      <p>texte après le formulaire</p>
     </>
+
+
+
+
+    /*<>
+         {Object.entries(user).map(([key, value]) => (
+           <div className="info-container">
+             <form>{key}:</form>
+             <input type="text"></input>
+           </div>
+         ))}
+     </>*/
   )
 }
 
