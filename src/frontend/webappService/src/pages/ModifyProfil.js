@@ -5,10 +5,12 @@ import Navbar from "../components/Navbar";
 
 
 function ModifyProfil() {
+  const userId = localStorage.getItem("id");
+
   return (
     <>
     <Navbar/>
-    <ProfilForm/>
+    <ProfilForm title="Modify Profil" userId={userId}/>
     </>
   )
 }
