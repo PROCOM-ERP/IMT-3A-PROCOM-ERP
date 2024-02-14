@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -55,12 +54,15 @@ public class ProductService {
                         .build())
                 .collect(Collectors.toList());
 
-        Optional<AddressDto> optionalAddressDto = addressService.getAddressById(productRequest.getAddress());
+        Optional<AddressDto> optionalAddressDto = addressService.getOptionalAddressById(productRequest.getAddress());
         Item item = Item.builder()
                 .quantity(productRequest.getNumberOfItem())
-                .address()
-                .transactions()
+                .address(addressService.getAddressById(productRequest.getAddress()))
                 .build();
+
+        Transaction transaction =
+
+        item.setTransactions();
         List<Item> itemList = new ArrayList<>();
         itemList.add(item);
 

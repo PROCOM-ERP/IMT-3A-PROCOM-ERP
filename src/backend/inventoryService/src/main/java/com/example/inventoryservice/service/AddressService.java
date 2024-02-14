@@ -23,12 +23,12 @@ public class AddressService {
                 .toList();
     }
 
-    public Optional<AddressDto> getAddressById(int id){
+    public Optional<AddressDto> getOptionalAddressById(int id){
         Optional<Address> addressOptional = addressRepository.findById(id);
         return addressOptional.map(AddressService::addressToDto);
     }
 
-    public Address getFuckingAddressById(int id){
+    public Address getAddressById(int id){
         Optional<Address> address = addressRepository.findById(id);
 
         return addressRepository.findById(id).get();
