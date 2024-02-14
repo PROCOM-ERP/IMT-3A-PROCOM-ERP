@@ -10,6 +10,7 @@ import com.example.inventoryservice.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
@@ -21,6 +22,7 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final CategoryService categoryService;
     private final ProductMetaService productMetaService;
+    private final AddressService addressService;
 
     public Optional<ProductDto> getProductById(int id){
         Optional<Product> productOptional = productRepository.findById(id);
@@ -36,14 +38,15 @@ public class ProductService {
 
     public void createProduct(ProductRequestDto productRequest){
 
-
-        List<Category> categories = categoryService.getCategoriesByIds(productRequest.getCategories());
-
         Product product = Product.builder()
                 .title(productRequest.getTitle())
                 .description(productRequest.getDescription())
-                .categories(categories)
                 .build();
+
+        List<Category> categories = categoryService.getCategoriesByIds(productRequest.getCategories());
+        for(Category category : categories) {
+            category.getProducts().add(product);
+        }
 
         List<ProductMeta> productMetaList = productRequest.getProductMeta().stream()
                 .map(metaDto -> ProductMeta.builder()
@@ -55,7 +58,17 @@ public class ProductService {
                         .build())
                 .collect(Collectors.toList());
 
+        Item item = Item.builder()
+                .quantity(productRequest.getNumberOfItem())
+                .address(addressService.getAddressById(productRequest.getAddress()))
+                .transactions()
+                .build();
+        List<Item> itemList = new ArrayList<>();
+        itemList.add(item);
+
         product.setProductMeta(productMetaList);
+        product.setCategories(categories);
+        //product.setItems(itemList);
         // Add Item here
         productRepository.save(product);
     }

@@ -37,8 +37,6 @@ public class CategoryService {
 
     public List<Category> getCategoriesByIds(List<Integer> ids){
         List<Category> categoryList = categoryRepository.findByIds(ids);
-        logger.info("hello"+ ids);
-        logger.info("How R U ?" + categoryList.toString());
         return categoryList;
     }
 
