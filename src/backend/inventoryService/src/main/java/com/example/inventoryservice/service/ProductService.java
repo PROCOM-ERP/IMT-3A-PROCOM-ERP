@@ -1,11 +1,8 @@
 package com.example.inventoryservice.service;
 
-import com.example.inventoryservice.dto.CategoryDto;
-import com.example.inventoryservice.dto.ProductMetaDto;
+import com.example.inventoryservice.dto.*;
 import com.example.inventoryservice.dtoRequest.ProductRequestDto;
 import com.example.inventoryservice.model.*;
-import com.example.inventoryservice.dto.ItemDto;
-import com.example.inventoryservice.dto.ProductDto;
 import com.example.inventoryservice.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -58,9 +55,10 @@ public class ProductService {
                         .build())
                 .collect(Collectors.toList());
 
+        Optional<AddressDto> optionalAddressDto = addressService.getAddressById(productRequest.getAddress());
         Item item = Item.builder()
                 .quantity(productRequest.getNumberOfItem())
-                .address(addressService.getAddressById(productRequest.getAddress()))
+                .address()
                 .transactions()
                 .build();
         List<Item> itemList = new ArrayList<>();

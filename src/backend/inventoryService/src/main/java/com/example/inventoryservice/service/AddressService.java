@@ -28,6 +28,12 @@ public class AddressService {
         return addressOptional.map(AddressService::addressToDto);
     }
 
+    public Address getFuckingAddressById(int id){
+        Optional<Address> address = addressRepository.findById(id);
+
+        return addressRepository.findById(id).get();
+    }
+
     static AddressDto addressToDto(Address address){
         return AddressDto.builder()
                 .id(address.getId())
