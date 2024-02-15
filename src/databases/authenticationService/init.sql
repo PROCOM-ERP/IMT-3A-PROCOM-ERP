@@ -10,27 +10,6 @@
 -- | Create table                                                                                 |
 -- +----------------------------------------------------------------------------------------------+
 
-CREATE TABLE login_profiles
-(
-    id CHAR(6) UNIQUE NOT NULL,
-    id_login_profile_gen SERIAL UNIQUE NOT NULL,
-    password VARCHAR(128) NOT NULL,
-    email VARCHAR(320) UNIQUE,
-    created_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
-    is_enable BOOLEAN NOT NULL DEFAULT true,
-    jwt_gen_min_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
-
-    CONSTRAINT pk_login_profiles PRIMARY KEY (id),
-
-    CONSTRAINT check_login_profiles_id
-        CHECK (login_profiles.id ~* '[A-Z][0-9]{5}')--,
-    --CONSTRAINT check_employees_email
-        --CHECK (employees.email ~* '^[a-zA-Z0-9](?:[a-zA-Z0-9-._-]{0,62}[a-zA-Z0-9])?@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z]{2,})+$')
-
-);
-
--- +----------------------------------------------------------------------------------------------+
-
 CREATE TABLE roles
 (
     name VARCHAR(32) UNIQUE NOT NULL,
@@ -69,6 +48,24 @@ CREATE TABLE role_permissions
     CONSTRAINT fk_role_permissions_table_roles
         FOREIGN KEY (role) REFERENCES roles(name)
             ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+-- +----------------------------------------------------------------------------------------------+
+
+
+CREATE TABLE login_profiles
+(
+    id CHAR(6) UNIQUE NOT NULL,
+    id_login_profile_gen SERIAL UNIQUE NOT NULL,
+    password VARCHAR(128) NOT NULL,
+    email VARCHAR(320) UNIQUE,
+    created_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
+    is_enable BOOLEAN NOT NULL DEFAULT true,
+    jwt_gen_min_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
+
+    CONSTRAINT pk_login_profiles PRIMARY KEY (id),
+    CONSTRAINT check_login_profiles_id
+        CHECK (login_profiles.id ~* '[A-Z][0-9]{5}')
 );
 
 -- +----------------------------------------------------------------------------------------------+
