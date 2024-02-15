@@ -1,9 +1,8 @@
 # PowerShell Script: deploy.ps1
 
 function Security {
-    Set-Location -Path ".\src\security"
     # Execute the security_setup.sh script using bash
-    & .\security_setup.ps1
+    & .\src\security\security_setup.ps1
 }
 
 function Copy-SystemFiles {

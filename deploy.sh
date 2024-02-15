@@ -8,8 +8,7 @@
 # Usage: Run the script to create secrets beforehand, and this is to solve the fact that docker stack deploy doesn't support .env placeholding
 
 security() {
-    cd "./src/security"
-    exec ./security_setup.sh
+    ./src/security/security_setup.sh
 }
 
 copy_system_files() {
