@@ -21,16 +21,26 @@
   --title-size: 2.2rem;
   --title-weight: 700;
   /* Text */
-  --text-family: Roboto Condensed;
+  --text-family: Dosis;
   --text-size: 1rem;
   --text-weight: 400;
 }
 
 body {
+  display: block;
+  justify-content: center;
   padding: 0;
   margin: 0;
 }
 
 h1 {
   font-family: var(--title-family);
+}
+
+.title {
+  font-family: var(--title-family);
+  font-size: var(--title-size);
+  font-weight: var(--title-weight);
+  padding: 2rem 0;
+  text-align: center;
 }

@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import "../css/DirectoryTable.css";
 
 function DirectoryTable() {
     //const defaultUsers = data.users;
+    const navigate = useNavigate();
     const userId = localStorage.getItem("id");
     const [users, setUsers] = useState([]);
 
@@ -16,6 +18,11 @@ function DirectoryTable() {
     const handleSort = (key) => {
         setSortBy(key);
     };
+
+    const handleProfil = (id) => {
+        console.log("tr click: ", id);
+        navigate("/user/" + id);
+    }
 
     // TODO : tester si la valeur est null -> ne pas appliquer le filtre
     let filteredUsers = users.filter(user =>
@@ -69,35 +76,42 @@ function DirectoryTable() {
 
     return (
         <>
-            <input
-                type="text"
-                placeholder="Search"
-                value={searchTerm}
-                onChange={handleChange}
-            />
-            <table>
-                <thead>
-                    <th onClick={() => handleSort('id')} >ID</th>
-                    <th onClick={() => handleSort('firstName')} >Firstname</th>
-                    <th onClick={() => handleSort('lastName')} >Lastname</th>
-                    <th onClick={() => handleSort('email')} >Email</th>
-                    <th onClick={() => handleSort('phoneNumber')} >Phone number</th>
-                </thead>
-                <tbody>
-                    {filteredUsers.map((user, index) => {
-                        return (
-                            <tr key={index} >
-                                <td> <Link to={`/user/${user.id}`}>{user.id} </Link> </td>
-                                <td> {user.firstName} </td>
-                                <td> {user.lastName} </td>
-                                <td> {user.email} </td>
-                                <td> {user.phoneNumber} </td>
-                            </tr>
-                        )
-                    })}
+            <div className='directory-container'>
+                <input className='searchBar'
+                    type="text"
+                    placeholder="Search"
+                    value={searchTerm}
+                    onChange={handleChange}
+                />
+                <table className='table-container' >
+                    <thead className='table-head-container'>
+                        <tr>
+                            <th onClick={() => handleSort('id')} >ID</th>
+                            <th onClick={() => handleSort('firstName')} >Firstname</th>
+                            <th onClick={() => handleSort('lastName')} >Lastname</th>
+                            <th onClick={() => handleSort('email')} >Email</th>
+                            <th onClick={() => handleSort('phoneNumber')} >Phone number</th>
+                        </tr>
+                    </thead>
+                    <tbody className='table-body-container'>
+                        {filteredUsers.map((user, index) => {
+                            return (
+                                <tr key={index} onClick={() => handleProfil(user.id)} >
+                                    <td>
+                                        {/* <Link className='table-link' to={`/user/${user.id}`}>{user.id} </Link> */}
+                                        {user.id}
+                                    </td>
+                                    <td> {user.firstName} </td>
+                                    <td> {user.lastName} </td>
+                                    <td> {user.email} </td>
+                                    <td> {user.phoneNumber} </td>
+                                </tr>
+                            )
+                        })}
 
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
         </>
     )
 }

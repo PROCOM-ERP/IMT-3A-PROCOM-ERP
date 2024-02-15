@@ -6,6 +6,7 @@ function Directory() {
   return (
     <>
       <Navbar />
+      <div className='title'>Directory</div>
       <DirectoryTable />
     </>
   )
