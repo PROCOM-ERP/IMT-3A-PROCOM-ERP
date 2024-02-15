@@ -23,17 +23,14 @@ public class Item {
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
 
-    @NotNull
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_address", nullable = false)
     private Address address;
 
-    @NotNull
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_product", nullable = false)
     private Product product;
 
-    @NotNull
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "item")
     private List<Transaction> transactions;
 }

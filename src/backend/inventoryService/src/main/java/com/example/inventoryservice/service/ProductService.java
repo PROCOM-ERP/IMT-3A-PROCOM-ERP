@@ -54,22 +54,36 @@ public class ProductService {
                         .build())
                 .collect(Collectors.toList());
 
-        Optional<AddressDto> optionalAddressDto = addressService.getOptionalAddressById(productRequest.getAddress());
-        Item item = Item.builder()
-                .quantity(productRequest.getNumberOfItem())
-                .address(addressService.getAddressById(productRequest.getAddress()))
-                .build();
 
-        Transaction transaction =
+        if ((productRequest.getNumberOfItem() >= 0) &&
+                addressService.getAddressById(productRequest.getAddress()) != null){
 
-        item.setTransactions();
-        List<Item> itemList = new ArrayList<>();
-        itemList.add(item);
+            Item item = Item.builder()
+                    .quantity(productRequest.getNumberOfItem())
+                    .address(addressService.getAddressById(productRequest.getAddress()))
+                    .build();
 
+            Transaction transaction = Transaction.builder()
+                    .quantity(productRequest.getNumberOfItem())
+                    .item(item)
+                    .build();
+
+            // This contains only one transaction in the list:
+            List<Transaction> transactionList = new ArrayList<>();
+            transactionList.add(transaction);
+
+            item.setTransactions(transactionList);
+
+            List<Item> itemList = new ArrayList<>();
+            // This contains only one item in the list:
+            //List<Item> itemList = new ArrayList<>();
+            itemList.add(item);
+
+            product.setItems(itemList);
+        }
         product.setProductMeta(productMetaList);
         product.setCategories(categories);
-        //product.setItems(itemList);
-        // Add Item here
+
         productRepository.save(product);
     }
 
