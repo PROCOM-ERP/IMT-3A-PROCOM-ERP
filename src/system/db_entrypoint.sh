@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 # Directory containing Docker secrets
 SECRETS_DIR=/run/secrets
@@ -19,5 +20,23 @@ if [ -d "$SECRETS_DIR" ] && [ "$(ls -A $SECRETS_DIR)" ]; then
   done
 fi
 
-JAR_FILE=$(ls /app/*.jar | tail -n 1)
-/config/wait-for-it.sh $BACKEND_MESSAGE_BROKER_SERVICE_HOSTNAME:$BACKEND_MESSAGE_BROKER_SERVICE_PORT_INT -- java -Djavax.net.ssl.trustStore="$SECURITY_TRUST_STORE_PATH" -Djavax.net.ssl.trustStorePassword="$SECURITY_TRUST_STORE_PASSWORD" -jar "$JAR_FILE"
+set_postgres_variable() {
+  local pattern="DB_.*_SERVICE_$1"
+  local variable_name="POSTGRES_$2"
+
+  # Iterate through environment variables
+  for var in $(compgen -e); do
+    # Check if the variable name matches the pattern
+    if [[ $var =~ $pattern ]]; then
+      # Get the value of the matched variable and set POSTGRES_XXX
+      export "$variable_name"="${!var}"
+      break  # Stop after the first match (you can remove this if needed)
+    fi
+  done
+}
+
+set_postgres_variable USER USER
+set_postgres_variable PASSWORD PASSWORD
+
+# Start the PostgreSQL service
+/usr/local/bin/docker-entrypoint.sh "$@"

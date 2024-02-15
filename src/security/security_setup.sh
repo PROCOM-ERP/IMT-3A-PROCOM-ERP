@@ -3,14 +3,32 @@
 # Description: Generate CA and services security essentials, and moves them to the correct spot.
 # Author: maestro-bene (GitHub)
 # Date Created: 2024-01-15
-# Last Modified: 2024-01-15
-# Version: 1.0
-# Usage: Just run the script, it will analyze the directories.
+# Last Modified: 2024-02-05
+# Version: 1.2
+# Usage: Just run the script within the src/security directory, it will analyze the frontend and backend directories.
 # Notes: Another scripts "clean_security.sh" works with this one to undo the changes made by this script, by giving the names.
 
 # Check if OpenSSL is installed
 if ! command -v openssl &> /dev/null; then
     echo "OpenSSL is not installed. Please install OpenSSL and try again."
+    exit 1
+fi
+
+# Save the current directory
+currentDir=$(pwd)
+
+# Change directory to ./src/security
+cd ./src/security || exit
+
+# Define the expected last three directory entries
+expected_last_entries="src/security"
+
+# Get the last two entries of the current working directory path
+last_two_entries=$(pwd | rev | cut -d'/' -f1,2 | rev)
+
+# Check if the last two entries match the expected ones
+if [ "$last_two_entries" != "$expected_last_entries" ]; then
+    echo "Please run this script from the '${expected_last_entries}' directory."
     exit 1
 fi
 
@@ -133,7 +151,7 @@ mv "${ca_key}" "${ca_crt}" "${ca_dir}/"
 
 echo "CA's keys and certificates moved to ${ca_dir}"
 
-# Step 7: Update Your Docker and Application Configuration
-# Update your Docker and application configurations here
+# Change back to the original directory
+cd "$currentDir" || exit
 
 echo "Certificates generation completed."
