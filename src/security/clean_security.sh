@@ -22,6 +22,13 @@ while [[ $# -gt 0 ]]; do
             ;;
     esac
 done
+
+# Save the current directory
+currentDir=$(pwd)
+
+# Change directory to ./src/security
+cd ./src/security || exit
+
 # Define the expected last three directory entries
 expected_last_entries="src/security"
 
@@ -109,7 +116,10 @@ if [[ "${include_ca}" == "true" ]]; then
     mv "../system/procom-erp-truststore.jks" "${archive_dir}"
     rm "../system/procom-erp-ca.pem"
 fi
-    
+
+# Change back to the original directory
+cd "$currentDir" || exit
+
 # Notify the user
 echo "Specific files created by the script moved to ${archive_dir}"
 
