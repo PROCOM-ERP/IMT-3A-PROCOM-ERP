@@ -97,12 +97,14 @@ function UserProfil({ title, userId }) {
     <>
       <div className="user-container">
         <div className="title">{title}</div>
-        {Object.entries(user).map(([key, value]) => (
-          <div className="info-container">
-            <strong>{key}:</strong>
-            <span>{Array.isArray(value) ? value.join(', ') : value}</span>
-          </div>
-        ))}
+        <div className="information-container">
+          {Object.entries(user).map(([key, value]) => (
+            <div className="information">
+              <div className="key-container">{key}</div>
+              <div className="value-container"><span>{Array.isArray(value) ? value.join(', ') : value}</span></div>
+            </div>
+          ))}
+        </div>
         {renderPasswordButton()}
       </div>
     </>
