@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Form from "./AuthForm";
+import Button from "./Button";
 
 
 function ProfilForm({ title, userId }) {
@@ -77,29 +77,42 @@ function ProfilForm({ title, userId }) {
       });
   }
 
+  function handleBack() {
+    alert('test');
+  }
+
+
+  function handleSubmit() {
+    alert('test');
+  }
+
+  const handleChange = (fieldName, value) => {
+    setUser(prevState => ({
+      ...prevState,
+      [fieldName]: value
+    }));
+  };
+
+
   return (
     <>
-      <p>Petit texte avant le formulaire</p>
-      <form method="get" action="">
-        <p>
-          <label for="nom">nom</label> : <input type="text" name="nom" id="nom" placeholder="test"/>
-        </p>
-      </form>
-      <p>texte après le formulaire</p>
+      {Object.entries(user).map(([key, value]) => (
+        <div className="info-container">
+          <label>{key}:</label>
+          <input
+            type="text"
+            value={value}
+            readOnly={key === "Roles" || key === "Id"} // Only set readOnly for 'role' and 'Id'
+            onChange={key !== "Roles" && key !== "Id" ? (e) => handleChange(key, e.target.value) : undefined} // Add a handler for changes on other fields
+          />
+        </div>
+      ))}
+      <div className="authentification-btn">
+        <Button type="back" value="back" onClick={handleBack}>Back</Button>
+        <Button type="submit" value="Submit" onClick={handleSubmit}>Submit</Button>
+      </div>
     </>
-
-
-
-
-    /*<>
-         {Object.entries(user).map(([key, value]) => (
-           <div className="info-container">
-             <form>{key}:</form>
-             <input type="text"></input>
-           </div>
-         ))}
-     </>*/
-  )
+  );
 }
 
-export default ProfilForm
+export default ProfilForm;
