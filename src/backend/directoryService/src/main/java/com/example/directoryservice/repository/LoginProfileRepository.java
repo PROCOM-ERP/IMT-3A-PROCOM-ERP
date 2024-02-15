@@ -1,6 +1,6 @@
-package com.example.authenticationservice.repository;
+package com.example.directoryservice.repository;
 
-import com.example.authenticationservice.model.LoginProfile;
+import com.example.directoryservice.model.LoginProfile;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -10,28 +10,6 @@ import org.springframework.lang.NonNull;
 import org.springframework.transaction.annotation.Transactional;
 
 public interface LoginProfileRepository extends JpaRepository<LoginProfile, String>, JpaSpecificationExecutor<LoginProfile> {
-
-    @Query(value = "SELECT nextval('public.login_profiles_id_login_profile_gen_seq')", nativeQuery = true)
-    Integer getNextIdLoginProfile();
-
-    @Transactional
-    @Modifying
-    @Query(value =
-            "update login_profiles " +
-            "set password = :password, " +
-            "jwt_gen_min_at = current_timestamp " +
-            "where id = :id", nativeQuery = true)
-    int updatePasswordById(@Param("id") String id,
-                           @NonNull @Param("password") String password);
-
-    @Transactional
-    @Modifying
-    @Query(value =
-            "update login_profiles " +
-            "set email = :email " +
-            "where id = :id", nativeQuery = true)
-    int updateEmailById(@NonNull @Param("id") String id,
-                        @Param("email") String email);
 
     @Transactional
     @Modifying
@@ -56,7 +34,6 @@ public interface LoginProfileRepository extends JpaRepository<LoginProfile, Stri
     @Modifying
     @Query(value =
             "update login_profiles " +
-            "set jwt_gen_min_at = current_timestamp ", nativeQuery = true)
+                    "set jwt_gen_min_at = current_timestamp ", nativeQuery = true)
     void updateAllJwtGenMinAt();
-
 }
