@@ -42,6 +42,10 @@ secrets:
     external: true
   BACKEND_DIRECTORY_SERVICE_HTTPS_KEY_STORE_PASSWORD:
     external: true
+  FRONTEND_WEBAPP_SERVICE_HTTPS_KEY_STORE_ALIAS:
+    external: true
+  FRONTEND_WEBAPP_SERVICE_HTTPS_KEY_STORE_PASSWORD:
+    external: true
 # +-----------------------------------------------------------------------------+
 # | Services section                                                            |
 # +-----------------------------------------------------------------------------+
@@ -263,6 +267,28 @@ services:
   # +---------------------------------------------------------------------------+
   # | Frontend containers section                                               |
   # +---------------------------------------------------------------------------+
+
+  react-procom-erp-webapp-service:
+    hostname: ${FRONTEND_WEBAPP_SERVICE_HOSTNAME}
+    build:
+      context: ${FRONTEND_WEBAPP_SERVICE_PATH}
+      dockerfile: Dockerfile
+      args:
+        FRONT_IMAGE: ${FRONT_IMAGE}
+        FRONT_BUILD_IMAGE: ${FRONT_BUILD_IMAGE}
+    image: ${FRONTEND_WEBAPP_SERVICE_HOSTNAME}:${FRONTEND_WEBAPP_SERVICE_IMAGE_VERSION}
+    environment:
+      FRONTEND_WEBAPP_SERVICE_PORT_INT: ${FRONTEND_WEBAPP_SERVICE_PORT_INT}
+    ports:
+      - ${FRONTEND_WEBAPP_SERVICE_PORT_INT}:${FRONTEND_WEBAPP_SERVICE_PORT_EXT}
+    secrets:
+      - FRONTEND_WEBAPP_SERVICE_HTTPS_KEY_STORE_ALIAS
+      - FRONTEND_WEBAPP_SERVICE_HTTPS_KEY_STORE_PASSWORD
+    depends_on:
+      - "springboot-procom-erp-gateway-service"
+      - "springboot-procom-erp-authentication-service"
+    networks:
+      - vnet-procom-erp
 
 # +-----------------------------------------------------------------------------+
 # | Networks section                                                            |

@@ -34,6 +34,7 @@ spring:
               - POST
               - PUT
               - DELETE
+              - PATCH
             allowed-headers:
               - Authorization
               - Content-Type
