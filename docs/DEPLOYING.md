@@ -20,7 +20,7 @@ We mainly use scripts to deploy this application, although we are researching ot
 
   > If you want to renew certificates and already have a deployed instance, or simply already have certificates in your services and want to change them, execute `./src/security/clean_security.sh`
 
-  > If you would prefer to pull images from a docker registry on :whale: [Docker Hub](https://hub.docker.com) instead of building them locally, you can simply add `--pull "registry_or_username/repository"`, such as: `./deploy --pull "gachille/erp"`.
+  > If you would prefer to pull images from a docker registry on :whale: [Docker Hub](https://hub.docker.com) instead of building them locally, you can simply add `--pull "registry_or_username/repository"`, such as: `./deploy.sh --pull "gachille/erp"`.
 
   > If you would like to push you local images to a docker registry on :whale: [Docker Hub](https://hub.docker.com), you can simply add `--push "registry_or_username/repository"`, such as: `./deploy --push "gachille/erp"`. It will automatically tag the images, and push one image with multiple tags, all named after the services, as not to bring chaos to the repository.
 
@@ -33,6 +33,6 @@ This is going to activate :ship: Swarm mode :sailboat: for :whale: Docker, and c
 
 > If you want to renew certificates and already have a deployed instance, or simply already have certificates in your services and want to change them, execute `./src/security/clean_security.sh`
 
-> If you would prefer to pull images from a docker registry on :whale: [Docker Hub](https://hub.docker.com) instead of building them locally, you can simply add `--pull "registry_or_username/repository"`, such as: `./deploy --pull "gachille/erp"`.
+> If you would prefer to pull images from a docker registry on :whale: [Docker Hub](https://hub.docker.com) instead of building them locally, you can simply add `--pull "registry_or_username/repository"`, such as: `./deploy.sh --pull "gachille/erp"`.
 
-> If you would like to push you local images to a docker registry on :whale: [Docker Hub](https://hub.docker.com), you can simply add `--push "registry_or_username/repository"`, such as: `./deploy --push "gachille/erp"`. It will automatically tag the images, and push one image with multiple tags, all named after the services, as not to bring chaos to the repository.
+> If you would like to push you local images to a docker registry on :whale: [Docker Hub](https://hub.docker.com), you can simply add `--push "registry_or_username/repository"`, such as: `./deploy.sh --push "gachille/erp"`. It will automatically tag the images, and push one image with multiple tags, all named after the services, as not to bring chaos to the repository.
