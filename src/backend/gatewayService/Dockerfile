@@ -12,11 +12,13 @@ ARG MAVEN_COMPILER_TARGET
 ARG SPRING_BOOT_VERSION
 ARG SPRING_CLOUD_VERSION
 
-RUN apt-get update && \
-    apt-get install -y maven
 
 COPY ./src/ ./builder/src
+COPY ./.mvn/ ./builder/.mvn
+COPY ./mvnw ./builder/mvnw
 COPY ./prod-pom.xml ./builder/pom.xml
+
+RUN chmod +x ./builder/mvnw
 
 WORKDIR /builder
 
@@ -26,13 +28,13 @@ ENV MAVEN_COMPILER_TARGET=${MAVEN_COMPILER_TARGET}
 ENV SPRING_BOOT_VERSION=${SPRING_BOOT_VERSION}
 ENV SPRING_CLOUD_VERSION=${SPRING_CLOUD_VERSION}
 
-RUN mvn clean install \
+RUN /builder/mvnw clean install \
     -Djava.version=$POM_JAVA_VERSION \
     -Dmaven.compiler.source=$MAVEN_COMPILER_SOURCE \
     -Dmaven.compiler.target=$MAVEN_COMPILER_TARGET \
     -Dspring-boot.version=$SPRING_BOOT_VERSION \
-    -Dspring-cloud.version=$SPRING_CLOUD_VERSION
-
+    -Dspring-cloud.version=$SPRING_CLOUD_VERSION \
+    -Dmaven.repo.local=/builder/.m2/repository
 
 FROM ${JAVA_IMAGE}
 

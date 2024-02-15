@@ -21,11 +21,12 @@ ARG POSTGRES_VERSION
 ARG JUNIT_VERSION
 ARG MOCKITO_VERSION
 
-RUN apt-get update && \
-    apt-get install -y maven
-
 COPY ./src/ ./builder/src
+COPY ./.mvn/ ./builder/.mvn
+COPY ./mvnw ./builder/mvnw
 COPY ./prod-pom.xml ./builder/pom.xml
+
+RUN chmod +x ./builder/mvnw
 
 WORKDIR /builder
 
@@ -42,7 +43,7 @@ ENV POSTGRES_VERSION=${POSTGRES_VERSION}
 ENV JUNIT_VERSION=${JUNIT_VERSION}
 ENV MOCKITO_VERSION=${MOCKITO_VERSION}
 
-RUN mvn clean install \
+RUN /builder/mvnw clean install \
     -Djava.version=$POM_JAVA_VERSION \
     -Dmaven.compiler.source=$MAVEN_COMPILER_SOURCE \
     -Dmaven.compiler.target=$MAVEN_COMPILER_TARGET \
@@ -54,7 +55,8 @@ RUN mvn clean install \
     -Dapache-http.version=$APACHE_HTTP_VERSION \
     -Dpostgres.version=$POSTGRES_VERSION \
     -Djunit.version=$JUNIT_VERSION \
-    -Dmockito.version=$MOCKITO_VERSION
+    -Dmockito.version=$MOCKITO_VERSION \
+    -Dmaven.repo.local=/builder/.m2/repository
 
 
 FROM ${JAVA_IMAGE}
