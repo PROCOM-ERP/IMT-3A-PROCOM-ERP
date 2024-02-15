@@ -35,7 +35,7 @@
     }
   ],
   "paths": {
-    "/api/v1/services": {
+    "/api/dir/v1/services": {
       "get": {
         "tags": [
           "services"
@@ -119,7 +119,7 @@
         }
       }
     },
-    "/api/v1/roles": {
+    "/api/dir/v1/roles": {
       "get": {
         "tags": [
           "roles"
@@ -203,7 +203,7 @@
         }
       }
     },
-    "/api/v1/organisations": {
+    "/api/dir/v1/organisations": {
       "get": {
         "tags": [
           "organisations"
@@ -287,7 +287,7 @@
         }
       }
     },
-    "/api/v1/employees": {
+    "/api/dir/v1/employees": {
       "get": {
         "tags": [
           "employees"
@@ -371,7 +371,7 @@
         }
       }
     },
-    "/api/v1/addresses": {
+    "/api/dir/v1/addresses": {
       "get": {
         "tags": [
           "addresses"
@@ -455,7 +455,7 @@
         }
       }
     },
-    "/api/v1/services/{idService}/organisation": {
+    "/api/dir/v1/services/{idService}/organisation": {
       "patch": {
         "tags": [
           "services"
@@ -524,7 +524,7 @@
         }
       }
     },
-    "/api/v1/services/{idService}/address": {
+    "/api/dir/v1/services/{idService}/address": {
       "patch": {
         "tags": [
           "services"
@@ -593,7 +593,7 @@
         }
       }
     },
-    "/api/v1/roles/{role}/permissions": {
+    "/api/dir/v1/roles/{role}/permissions": {
       "patch": {
         "tags": [
           "roles"
@@ -659,7 +659,7 @@
         }
       }
     },
-    "/api/v1/roles/{role}/enable": {
+    "/api/dir/v1/roles/{role}/enable": {
       "patch": {
         "tags": [
           "roles"
@@ -722,7 +722,7 @@
         }
       }
     },
-    "/api/v1/organisations/{idOrName}/address": {
+    "/api/dir/v1/organisations/{idOrName}/address": {
       "patch": {
         "tags": [
           "organisations"
@@ -786,7 +786,7 @@
         }
       }
     },
-    "/api/v1/employees/{idOrEmail}/service": {
+    "/api/dir/v1/employees/{idOrEmail}/service": {
       "patch": {
         "tags": [
           "employees"
@@ -850,7 +850,7 @@
         }
       }
     },
-    "/api/v1/employees/{idOrEmail}/info": {
+    "/api/dir/v1/employees/{idOrEmail}/info": {
       "patch": {
         "tags": [
           "employees"
@@ -913,7 +913,7 @@
         }
       }
     },
-    "/api/v1/employees/{idOrEmail}/enable": {
+    "/api/dir/v1/employees/{idOrEmail}/enable": {
       "patch": {
         "tags": [
           "employees"
@@ -976,7 +976,7 @@
         }
       }
     },
-    "/api/v1/services/{idService}": {
+    "/api/dir/v1/services/{idService}": {
       "get": {
         "tags": [
           "services"
@@ -1074,7 +1074,7 @@
         }
       }
     },
-    "/api/v1/roles/{role}": {
+    "/api/dir/v1/roles/{role}": {
       "get": {
         "tags": [
           "roles"
@@ -1125,7 +1125,7 @@
         }
       }
     },
-    "/api/v1/permissions": {
+    "/api/dir/v1/permissions": {
       "get": {
         "tags": [
           "permissions"
@@ -1159,7 +1159,7 @@
         }
       }
     },
-    "/api/v1/organisations/{idOrName}": {
+    "/api/dir/v1/organisations/{idOrName}": {
       "get": {
         "tags": [
           "organisations"
@@ -1255,7 +1255,7 @@
         }
       }
     },
-    "/api/v1/hello": {
+    "/api/dir/v1/hello": {
       "get": {
         "tags": [
           "hello"
@@ -1279,7 +1279,7 @@
         }
       }
     },
-    "/api/v1/employees/{idOrEmail}": {
+    "/api/dir/v1/employees/{idOrEmail}": {
       "get": {
         "tags": [
           "employees"
@@ -1330,7 +1330,7 @@
         }
       }
     },
-    "/api/v1/addresses/{idAddress}": {
+    "/api/dir/v1/addresses/{idAddress}": {
       "get": {
         "tags": [
           "addresses"

@@ -1,0 +1,32 @@
+/* import all fonts */
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;500;600;700&display=swap');
+
+:root{
+    /* button background */
+    --btn-bg: #F1D394;
+    --btn-bg-hover: #0A316C;
+    /* button text */
+    --btn-text-family: Roboto Condensed;
+    --btn-text-size: 1rem;
+    --btn-text-weight: 400;
+    --btn-text-color:#000000;
+    --btn-text-color-hover: #F1D394;
+}
+
+button{
+    font-family: var(--btn-text-family);
+    font-size: var(--btn-text-size);
+    font-weight: var(--btn-text-weight);
+    color: var(--btn-text-color);
+    background-color: var(--btn-bg);
+    border-radius: 10px;
+    border: 2px solid var(--btn-bg);
+    margin: 0.5rem;
+    padding: 0.2rem 0.5rem;
+}
+
+button:hover {
+    background-color: var(--btn-bg-hover);
+    color: var(--btn-text-color-hover);
+    border: 2px solid var(--btn-bg-hover);
+  }

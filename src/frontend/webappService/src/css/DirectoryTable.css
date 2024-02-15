@@ -1,0 +1,59 @@
+/* Styles for the search bar */
+.directory-container {
+  /* Text  */
+  font-family: var(--text-family);
+  font-size: var(--text-size);
+  font-weight: var(--text-weight);
+  /* Display page */
+  display: block;
+  width: 80%;
+  margin: auto;
+}
+
+.searchBar {
+  background-color: #D7EBFC;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 5px;
+  margin-bottom: 1rem;
+}
+
+/* Styles for the table */
+.table-container {
+  border: 1px solid #0D3E87;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+/* Styles for the table header */
+.table-head-container {
+  background-color: #0D3E87;
+  color: #D7EBFC;
+}
+
+.table-head-container th:hover {
+  background-color: #F1D394;
+  color: black;
+}
+
+/* Styles for the table body */
+.table-body-container {
+  background-color: #D7EBFC;
+}
+
+/* Styles for table rows on hover */
+.table-body-container tr:hover {
+  background-color: #F1D394;
+}
+
+/* Styles for table cells */
+td {
+  padding: 8px;
+  /* Add borders between cells */
+  border: 1px solid #0D3E87;
+}
+
+.table-link {
+  text-decoration: none;
+  color: black;
+}

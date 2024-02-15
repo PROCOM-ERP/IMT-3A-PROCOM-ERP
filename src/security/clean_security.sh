@@ -85,6 +85,7 @@ for ((i=0; i<num_services; i++)); do
     fi
 
     # echo ${service}
+    # echo ${service_type}
     # Move the .p12 file to the archive directory
     mv "../${service_type}/${service}Service/${service}-service-keystore.p12" "${archive_dir}/"
     
@@ -94,6 +95,14 @@ for ((i=0; i<num_services; i++)); do
         mv "../${service_type}/${service}Service/${service}-service-certificate.pem" "${archive_dir}/"
     fi
     
+    # If the service is 'webapp', move the PEM files as well
+    if [ "${service}" = "webapp" ]; then
+        mv "../${service_type}/${service}Service/${service}-service.crt" "${archive_dir}/"
+        mv "../${service_type}/${service}Service/${service}-service.key" "${archive_dir}/"
+        if [[ "${include_ca}" == "true" ]]; then
+            mv "../${service_type}/${service}Service/procom-erp-ca.pem" "${archive_dir}/"
+        fi
+    fi
     # Move the entire service directory to the archive directory
     mv "./${service}" "${archive_dir}/"
 done
