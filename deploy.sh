@@ -13,18 +13,35 @@ security() {
 }
 
 copy_system_files() {
-    # Define paths to backend and frontend directories
-    declare -a paths=("src/backend/*" "src/frontend/*")
-    
+   # Define paths to backend and frontend directories
+    declare -a backend_paths=("src/backend/*")
+    declare -a frontend_paths=("src/frontend/*")
+
     echo "Copying system files to services"
-    for path in "${paths[@]}"; do
-        # Find and iterate over directories in backend and frontend
-        for SERVICE_PATH in $path; do
+    # Copy system files to backend services
+    for backend_path in "${backend_paths[@]}"; do
+        # Find and iterate over directories in the backend
+        for SERVICE_PATH in $backend_path; do
             if [ -d "$SERVICE_PATH" ]; then
                 cp ./src/system/entrypoint.sh "${SERVICE_PATH}"
+                cp ./src/system/wait-for-it.sh "${SERVICE_PATH}"
                 cp ./src/system/procom-erp-truststore.jks "${SERVICE_PATH}"
                 cp ./src/system/procom-erp-ca.pem "${SERVICE_PATH}"
-           fi
+                # Copy Maven Wrapper (mvnw) to backend services
+                cp ./src/system/mvnw "${SERVICE_PATH}"
+                cp -R ./src/system/.mvn "${SERVICE_PATH}/"
+            fi
+        done
+    done
+
+    # Copy system files to frontend services
+    for frontend_path in "${frontend_paths[@]}"; do
+        # Find and iterate over directories in the frontend
+        for SERVICE_PATH in $frontend_path; do
+            if [ -d "$SERVICE_PATH" ]; then
+                cp ./src/system/procom-erp-truststore.jks "${SERVICE_PATH}"
+                cp ./src/system/procom-erp-ca.pem "${SERVICE_PATH}"
+            fi
         done
     done
 
@@ -34,6 +51,55 @@ copy_system_files() {
         for SERVICE_PATH in $db_path; do
             if [ -d "$SERVICE_PATH" ]; then
                 cp ./src/system/db_entrypoint.sh "${SERVICE_PATH}"
+            fi
+        done
+    done
+} 
+
+# Litteral opposite of copy_system_files function
+clean_system_files() {
+    # Define paths to backend and frontend directories
+    declare -a backend_paths=("src/backend/*")
+    declare -a frontend_paths=("src/frontend/*")
+    declare -a db_paths=("src/databases/*")
+
+    echo "Cleaning up system files from services"
+
+    # Clean up system files from backend services
+    for backend_path in "${backend_paths[@]}"; do
+        # Find and iterate over directories in the backend
+        for SERVICE_PATH in $backend_path; do
+            if [ -d "$SERVICE_PATH" ]; then
+                # Remove system files and Maven Wrapper from backend services
+                rm -f "${SERVICE_PATH}/entrypoint.sh"
+                rm -f "${SERVICE_PATH}/wait-for-it.sh"
+                rm -f "${SERVICE_PATH}/procom-erp-truststore.jks"
+                rm -f "${SERVICE_PATH}/procom-erp-ca.pem"
+                rm -f "${SERVICE_PATH}/mvnw"
+                rm -rf "${SERVICE_PATH}/.mvn"
+            fi
+        done
+    done
+
+    # Clean up system files from frontend services
+    for frontend_path in "${frontend_paths[@]}"; do
+        # Find and iterate over directories in the frontend
+        for SERVICE_PATH in $frontend_path; do
+            if [ -d "$SERVICE_PATH" ]; then
+                # Remove system files from frontend services
+                rm -f "${SERVICE_PATH}/procom-erp-truststore.jks"
+                rm -f "${SERVICE_PATH}/procom-erp-ca.pem"
+            fi
+        done
+    done
+
+    # Clean up system files from database services
+    for db_path in "${db_paths[@]}"; do
+        # Find and iterate over directories in databases
+        for SERVICE_PATH in $db_path; do
+            if [ -d "$SERVICE_PATH" ]; then
+                # Remove system files from database services
+                rm -f "${SERVICE_PATH}/db_entrypoint.sh"
             fi
         done
     done
@@ -241,6 +307,7 @@ if [ "$PUSH" == "true" ]; then
     docker login
     build_and_push_images "$DOCKER_REGISTRY"
     deploy
+    clean_system_files
     exit 0
 fi
 
@@ -249,6 +316,7 @@ if [ "$PULL" == "true" ]; then
     # Pull the images instead of building
     pull_images "$DOCKER_REGISTRY"
     deploy
+    clean_system_files
     exit 0
 fi
 
@@ -256,7 +324,9 @@ fi
 if [ "$PUSH" == "false" ] && [ "$PULL" == "false"  ]; then
     build_images
     deploy
+    clean_system_files
     exit 0
 fi
+
 
 exit 1
