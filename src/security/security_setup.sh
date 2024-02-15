@@ -14,6 +14,12 @@ if ! command -v openssl &> /dev/null; then
     exit 1
 fi
 
+# Save the current directory
+currentDir=$(pwd)
+
+# Change directory to ./src/security
+cd ./src/security || exit
+
 # Define the expected last three directory entries
 expected_last_entries="src/security"
 
@@ -142,7 +148,7 @@ mv "${ca_key}" "${ca_crt}" "${ca_dir}/"
 
 echo "CA's keys and certificates moved to ${ca_dir}"
 
-# Step 7: Update Your Docker and Application Configuration
-# Update your Docker and application configurations here
+# Change back to the original directory
+cd "$currentDir" || exit
 
 echo "Certificates generation completed."

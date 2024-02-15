@@ -7,14 +7,32 @@ function Security {
 }
 
 function Copy-SystemFiles {
-    $paths = @("src\backend\*", "src\frontend\*")
-    foreach ($path in $paths) {
-        Get-ChildItem $path -Directory | ForEach-Object {
-            $servicePath = $_.FullName
-            Write-Host "Copying system files to $servicePath"
-            Copy-Item -Path ".\src\system\entrypoint.sh" -Destination $servicePath
-            Copy-Item -Path ".\src\system\procom-erp-truststore.jks" -Destination $servicePath
-            Copy-Item -Path ".\src\system\procom-erp-ca.pem" -Destination $servicePath
+    # Define paths to backend and frontend directories
+    $backendPaths = Get-ChildItem -Path "src/backend" -Directory
+    $frontendPaths = Get-ChildItem -Path "src/frontend" -Directory
+
+    Write-Output "Copying system files to services"
+
+    # Copy system files to backend services
+    foreach ($backendPath in $backendPaths) {
+        if (Test-Path -Path $backendPath.FullName) {
+            Write-Output "Copying system files to $($backendPath.FullName)"
+            Copy-Item -Path ".\src\system\entrypoint.sh" -Destination $backendPath.FullName -Force
+            Copy-Item -Path ".\src\system\wait-for-it.sh" -Destination $backendPath.FullName -Force
+            Copy-Item -Path ".\src\system\procom-erp-truststore.jks" -Destination $backendPath.FullName -Force
+            Copy-Item -Path ".\src\system\procom-erp-ca.pem" -Destination $backendPath.FullName -Force
+            # Copy Maven Wrapper (mvnw) to backend services
+            Copy-Item -Path ".\src\system\mvnw" -Destination $backendPath.FullName -Force
+            Copy-Item -Path ".\src\system\.mvn" -Destination "$($backendPath.FullName)" -Recurse -Force
+        }
+    }
+
+    # Copy system files to frontend services
+    foreach ($frontendPath in $frontendPaths) {
+        if (Test-Path -Path $frontendPath.FullName) {
+            Write-Output "Copying system files to $($frontendPath.FullName)"
+            Copy-Item -Path ".\src\system\procom-erp-truststore.jks" -Destination $frontendPath.FullName -Force
+            Copy-Item -Path ".\src\system\procom-erp-ca.pem" -Destination $frontendPath.FullName -Force
         }
     }
 
@@ -24,6 +42,42 @@ function Copy-SystemFiles {
             $servicePath = $_.FullName
             Write-Host "Copying system files to $servicePath"
             Copy-Item -Path ".\src\system\db_entrypoint.sh" -Destination $servicePath
+        }
+    }
+}
+
+function Clean-SystemFiles {
+    # Define paths to backend, frontend, and database directories
+    $backendPaths = Get-ChildItem -Path "src/backend" -Directory
+    $frontendPaths = Get-ChildItem -Path "src/frontend" -Directory
+    $dbPaths = Get-ChildItem -Path "src/databases" -Directory
+
+    Write-Output "Cleaning up system files from services"
+
+    # Clean up system files from backend services
+    foreach ($backendPath in $backendPaths) {
+        if (Test-Path -Path $backendPath.FullName) {
+            Remove-Item -Path "$($backendPath.FullName)\entrypoint.sh" -ErrorAction SilentlyContinue
+            Remove-Item -Path "$($backendPath.FullName)\wait-for-it.sh" -ErrorAction SilentlyContinue
+            Remove-Item -Path "$($backendPath.FullName)\procom-erp-truststore.jks" -ErrorAction SilentlyContinue
+            Remove-Item -Path "$($backendPath.FullName)\procom-erp-ca.pem" -ErrorAction SilentlyContinue
+            Remove-Item -Path "$($backendPath.FullName)\mvnw" -ErrorAction SilentlyContinue
+            Remove-Item -Path "$($backendPath.FullName)\.mvn" -Recurse -ErrorAction SilentlyContinue
+        }
+    }
+
+    # Clean up system files from frontend services
+    foreach ($frontendPath in $frontendPaths) {
+        if (Test-Path -Path $frontendPath.FullName) {
+            Remove-Item -Path "$($frontendPath.FullName)\procom-erp-truststore.jks" -ErrorAction SilentlyContinue
+            Remove-Item -Path "$($frontendPath.FullName)\procom-erp-ca.pem" -ErrorAction SilentlyContinue
+        }
+    }
+
+    # Clean up system files from database services
+    foreach ($dbPath in $dbPaths) {
+        if (Test-Path -Path $dbPath.FullName) {
+            Remove-Item -Path "$($dbPath.FullName)\db_entrypoint.sh" -ErrorAction SilentlyContinue
         }
     }
 }
@@ -170,9 +224,9 @@ for ($i = 0; $i -lt $args.Count; $i++) {
         "--swarm" {
             $swarm = $true
             $composeFile = "docker-compose-swarm.yml"
-        }
-        "--sec" {
-            $sec = $true
+            "--sec" {
+                $sec = $true
+            }
         }
         "--push" {
             $push = $true
@@ -241,3 +295,5 @@ if ($push) {
 
 # Deployment is the final step regardless of the path taken above
 Deploy
+
+Clean-SystemFiles
