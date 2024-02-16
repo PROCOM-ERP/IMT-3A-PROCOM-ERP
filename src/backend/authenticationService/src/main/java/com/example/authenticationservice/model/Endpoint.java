@@ -8,9 +8,6 @@ import org.springframework.http.HttpMethod;
 @Getter
 public enum Endpoint {
 
-    GET_V1_LOGIN_PROFILES(HttpMethod.GET,
-            Path.V1_LOGIN_PROFILES,
-            Permission.CanReadLoginProfile),
     GET_V1_LOGIN_PROFILES_ID(HttpMethod.GET,
             Path.V1_LOGIN_PROFILES_ANYONE,
             Permission.CanReadLoginProfile),
