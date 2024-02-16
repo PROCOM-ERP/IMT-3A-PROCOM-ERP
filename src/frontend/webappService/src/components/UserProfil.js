@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import Button from "../components/Button.js"
+import Button from "../components/Button.js";
 import "../css/App.css";
 import "../css/UserProfil.css";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 function UserProfil({ title, userId }) {
   const [user, setUser] = useState({});
@@ -13,7 +13,7 @@ function UserProfil({ title, userId }) {
 
   // Prepare the 'Authorization' header with the value 'Bearer' and the token
   const headers = {
-    'Authorization': `Bearer ${token}`,
+    Authorization: `Bearer ${token}`,
   };
 
   // Get the user profil information
@@ -25,7 +25,8 @@ function UserProfil({ title, userId }) {
   // Get user from API Directory
   const getUserDir = async () => {
     // API URL
-    const apiUrl = "https://localhost:8041/api/dir/v1/employees/" + userId;
+    const apiUrl =
+      "https://localhost:8041/api/directory/v1/employees/" + userId;
 
     await fetch(apiUrl, {
       method: "GET",
@@ -36,27 +37,28 @@ function UserProfil({ title, userId }) {
         const res = response.json();
         return res;
       })
-      .then(data => {
-        setUser(prevUser => ({
+      .then((data) => {
+        setUser((prevUser) => ({
           ...prevUser,
           Id: data.id,
           Lastname: data.lastName,
           Firstname: data.firstName,
           Email: data.email,
-          "Phone Number": data.phoneNumber
+          "Phone Number": data.phoneNumber,
         }));
         console.info("[DATA] " + JSON.stringify(data));
         console.log("[LOG] profil info retrieve");
       })
-      .catch(error => {
-        console.error('API request error: ', error);
+      .catch((error) => {
+        console.error("API request error: ", error);
       });
-  }
+  };
 
   // Get user from API Authentification
   const getUserAuth = async () => {
     // API URL
-    const apiUrl = "https://localhost:8041/api/auth/v1/employees/" + userId;
+    const apiUrl =
+      "https://localhost:8041/api/authentication/v1/employees/" + userId;
 
     await fetch(apiUrl, {
       method: "GET",
@@ -67,18 +69,18 @@ function UserProfil({ title, userId }) {
         const res = response.json();
         return res;
       })
-      .then(data => {
-        setUser(prevUser => ({
+      .then((data) => {
+        setUser((prevUser) => ({
           ...prevUser,
-          Roles: data.roles
+          Roles: data.roles,
         }));
         console.info("[DATA] " + JSON.stringify(data));
         console.log("[LOG] profil info retrieve");
       })
-      .catch(error => {
-        console.error('API request error: ', error);
+      .catch((error) => {
+        console.error("API request error: ", error);
       });
-  }
+  };
 
   // Modify the user profil TODO
   function handleModif(event) {
@@ -89,9 +91,13 @@ function UserProfil({ title, userId }) {
 
   const renderPasswordButton = () => {
     if (title.toLowerCase() === "profil") {
-      return (<Button type="button" value="modify" onClick={handleModif}>Modify</Button>);
+      return (
+        <Button type="button" value="modify" onClick={handleModif}>
+          Modify
+        </Button>
+      );
     }
-  }
+  };
 
   return (
     <>
@@ -101,7 +107,9 @@ function UserProfil({ title, userId }) {
           {Object.entries(user).map(([key, value]) => (
             <div className="information">
               <div className="key-container">{key}</div>
-              <div className="value-container"><span>{Array.isArray(value) ? value.join(', ') : value}</span></div>
+              <div className="value-container">
+                <span>{Array.isArray(value) ? value.join(", ") : value}</span>
+              </div>
             </div>
           ))}
         </div>
