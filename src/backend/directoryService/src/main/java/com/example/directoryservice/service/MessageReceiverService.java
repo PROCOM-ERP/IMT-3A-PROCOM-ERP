@@ -1,23 +1,20 @@
 package com.example.directoryservice.service;
 
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 
 @Service
+@RequiredArgsConstructor
 public class MessageReceiverService {
 
     private final RoleService roleService;
+    private final LoginProfileService loginProfileService;
 
     private final Logger logger = LoggerFactory.getLogger(MessageReceiverService.class);
-
-    @Autowired
-    public MessageReceiverService(RoleService roleService) {
-        this.roleService = roleService;
-    }
 
     @RabbitListener(queues = "roles-new-queue")
     public void receiveRolesNewMessage(String getRoleByNamePath) {

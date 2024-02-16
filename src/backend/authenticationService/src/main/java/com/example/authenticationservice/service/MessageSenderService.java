@@ -34,7 +34,13 @@ public class MessageSenderService {
         logger.info("Sending message to inform the network about role creation...");
         String resource = String.format("%s/%s%s", Path.ROLES, roleName, Path.ACTIVATION);
         String path = customHttpRequestBuilder.buildPath(Path.V1, resource);
-        rabbitTemplate.convertAndSend(rolesFanoutExchange.getName(), "role.activation", path);
+        rabbitTemplate.convertAndSend(rolesFanoutExchange.getName(), "roles.new", path);
+        logger.info("Message sent");
+    }
+
+    public void sendLoginProfilesNewMessage(String idLoginProfile) {
+        logger.info("Sending message to inform the network about login profile creation...");
+        rabbitTemplate.convertAndSend(loginProfilesSecExchange.getName(), "login-profiles.new", idLoginProfile);
         logger.info("Message sent");
     }
 

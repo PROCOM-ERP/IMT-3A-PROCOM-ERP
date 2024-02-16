@@ -134,8 +134,9 @@ public class LoginProfileService {
 
     @Transactional
     public void updateLoginProfileById(String idLoginProfile,
-                                   LoginProfileUpdateRequestDto loginProfileDto)
-            throws NoSuchElementException, DataIntegrityViolationException{
+                                       LoginProfileUpdateRequestDto loginProfileDto)
+    throws NoSuchElementException, DataIntegrityViolationException
+    {
 
         // check if loginProfile exists
         LoginProfile loginProfile = loginProfileRepository.findById(idLoginProfile).orElseThrow();
