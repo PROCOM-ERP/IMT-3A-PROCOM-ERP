@@ -21,12 +21,6 @@ public class Employee {
     @Column(name = "id", nullable = false, length = 6)
     private String id;
 
-    @MapsId
-    @JsonIgnoreProperties(value = {"employee"})
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "id", nullable = false)
-    private LoginProfile loginProfile;
-
     @Size(max = 255)
     @NotNull
     @Column(name = "last_name", nullable = false)

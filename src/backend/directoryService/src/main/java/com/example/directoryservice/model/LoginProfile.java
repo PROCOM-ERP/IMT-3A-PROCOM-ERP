@@ -30,8 +30,4 @@ public class LoginProfile {
     @Column(name = "jwt_gen_min_at", nullable = false)
     private Instant jwtGenMinAt = Instant.now();
 
-    @Builder.Default
-    @OneToOne(mappedBy = "id")
-    private Employee employee = null;
-
 }

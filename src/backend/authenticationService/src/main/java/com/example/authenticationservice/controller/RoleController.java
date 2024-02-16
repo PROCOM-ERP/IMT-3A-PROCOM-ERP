@@ -102,7 +102,7 @@ public class RoleController {
     }
 
     @GetMapping(Path.ROLE_NAME)
-    @Operation(operationId = "getRole", tags = {"roles"},
+    @Operation(operationId = "getRoleByName", tags = {"roles"},
             summary = "Retrieve one role permissions and activation status", description =
             "Retrieve one role permissions and activation status, by providing its name.<br>" +
             "Only available for admins.",

@@ -1,7 +1,6 @@
 package com.example.directoryservice.controller;
 
-import com.example.directoryservice.dto.EmployeeRequestDto;
-import com.example.directoryservice.dto.EmployeeRequestInfoDto;
+import com.example.directoryservice.dto.EmployeeCreationRequestDto;
 import com.example.directoryservice.dto.EmployeeResponseDto;
 import com.example.directoryservice.model.Path;
 import com.example.directoryservice.service.EmployeeService;
@@ -18,6 +17,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping(Path.V1_EMPLOYEES)
@@ -43,14 +43,14 @@ public class EmployeeController {
                     content = {@Content(mediaType = "application/json") }),
             @ApiResponse(responseCode = "422", description =
                     "Attribute values don't respect integrity constraints.<br>" +
-                    "Service : retrieve services information (services section) to know which one are available.",
+                    "OrgUnit : retrieve organisations (organisations section) to know which one are available.",
                     content = {@Content(mediaType = "application/json")} ),
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<String> createEmployee(@RequestBody EmployeeRequestDto employeeRequestDto) {
+    public ResponseEntity<String> createEmployee(@RequestBody EmployeeCreationRequestDto employeeDto) {
         // try to create a new entity
-        String idEmployee = employeeService.createEmployee(employeeRequestDto);
+        String idEmployee = employeeService.createEmployee(employeeDto);
         // generate URI location to inform the client how to get information on the new entity
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -76,12 +76,12 @@ public class EmployeeController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<List<EmployeeResponseDto>> getAllEmployees() {
+    public ResponseEntity<Set<EmployeeResponseDto>> getAllEmployees() {
         return ResponseEntity.ok().body(employeeService.getAllEmployees());
     }
 
     @GetMapping(Path.EMPLOYEE_ID_OR_EMAIL)
-    @Operation(operationId = "getEmployee", tags = {"employees"},
+    @Operation(operationId = "getEmployeeById", tags = {"employees"},
             summary = "Retrieve one employee information", description =
             "Retrieve one employee information, by providing its id or email.",
             parameters = {@Parameter(name = "idOrEmail", description =
@@ -100,37 +100,8 @@ public class EmployeeController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<EmployeeResponseDto> getEmployee(@PathVariable String idOrEmail) {
+    public ResponseEntity<EmployeeResponseDto> getEmployeeById(@PathVariable String idOrEmail) {
         return ResponseEntity.ok().body(employeeService.getEmployee(idOrEmail));
-    }
-
-    @PatchMapping(Path.EMPLOYEE_ID_OR_EMAIL_INFO)
-    @Operation(operationId = "updateEmployeeInfo", tags = {"employees"},
-            summary = "Update an employee information", description =
-            "Update an employee last name, first name, email and / or phone number, by providing the new ones.",
-            parameters = {@Parameter(name = "idOrEmail", description =
-                    "The employee username (6 characters identifier) or email address")})
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description =
-                    "Employee information updated correctly",
-                    content = {@Content(mediaType = "application/json")} ),
-            @ApiResponse(responseCode = "401", description =
-                    "Roles in Jwt token are insufficient to authorize the access to this URL",
-                    content = {@Content(mediaType = "application/json")} ),
-            @ApiResponse(responseCode = "404", description =
-                    "Employee not found",
-                    content = {@Content(mediaType = "application/json")} ),
-            @ApiResponse(responseCode = "422", description =
-                    "Attribute values don't respect integrity constraints.<br>" +
-                    "Email : 63 characters for 'username', @, 63 for subdomain, and the rest for TLD. Maximum 320 characters.",
-                    content = {@Content(mediaType = "application/json")} ),
-            @ApiResponse(responseCode = "500", description =
-                    "Uncontrolled error appeared",
-                    content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<String> updateEmployeeInfo(@PathVariable String idOrEmail,
-                                                     @RequestBody EmployeeRequestInfoDto employeeRequestInfoDto) {
-        employeeService.updateEmployeeInfo(idOrEmail, employeeRequestInfoDto);
-        return ResponseEntity.noContent().build();
     }
 
     @PatchMapping(Path.EMPLOYEE_ID_OR_EMAIL_SERVICE)
@@ -161,35 +132,4 @@ public class EmployeeController {
         employeeService.updateEmployeeService(idOrEmail, idService);
         return ResponseEntity.noContent().build();
     }
-
-    @PatchMapping(Path.EMPLOYEE_ID_OR_EMAIL_ENABLE)
-    @Operation(operationId = "updateEmployeeEnable", tags = {"employees"},
-            summary = "Enable or disable an employee", description =
-            "Enable or disable an employee, by providing a new enable value (true or false).<br>" +
-            "Only available for admins.",
-            parameters = {@Parameter(name = "idOrEmail", description =
-                    "The employee username (6 characters identifier) or email address")})
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description =
-                    "Employee enable attribute updated correctly",
-                    content = {@Content(mediaType = "application/json")} ),
-            @ApiResponse(responseCode = "401", description =
-                    "Roles in Jwt token are insufficient to authorize the access to this URL",
-                    content = {@Content(mediaType = "application/json")} ),
-            @ApiResponse(responseCode = "404", description =
-                    "Employee not found",
-                    content = {@Content(mediaType = "application/json")} ),
-            @ApiResponse(responseCode = "422", description =
-                    "Attribute values don't respect integrity constraints.<br>" +
-                            "Enable : boolean value (true or false).",
-                    content = {@Content(mediaType = "application/json")} ),
-            @ApiResponse(responseCode = "500", description =
-                    "Uncontrolled error appeared",
-                    content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<String> updateEmployeeEnable(@PathVariable String idOrEmail,
-                                                       @RequestBody Boolean enable) {
-        employeeService.updateEmployeeEnable(idOrEmail, enable);
-        return ResponseEntity.noContent().build();
-    }
-
 }

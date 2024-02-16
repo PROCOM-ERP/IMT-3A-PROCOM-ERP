@@ -1,5 +1,6 @@
 package com.example.directoryservice.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -38,12 +39,13 @@ public class OrgUnit {
     private OrgUnit orgUnit = null;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JsonIgnoreProperties(value = {"orgUnits"})
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "organisation", nullable = false)
     private Organisation organisation;
 
     @Builder.Default
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.SET_DEFAULT)
     @JoinColumn(name = "address")
     private Address address = null;

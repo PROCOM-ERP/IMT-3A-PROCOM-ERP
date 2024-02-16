@@ -76,7 +76,7 @@ public class AddressService {
         }
     }
 
-    private AddressResponseDto modelToResponseDto(Address address) {
+    AddressResponseDto modelToResponseDto(Address address) {
         return AddressResponseDto.builder()
                 .id(address.getId())
                 .number(address.getNumber())
