@@ -29,7 +29,7 @@ public class AddressService {
     /* Public Methods */
 
     @Transactional
-    public String createAddress(AddressCreationRequestDto addressDto) throws Exception {
+    public void createAddress(AddressCreationRequestDto addressDto) throws Exception {
         // create new entity
         Address address = Address.builder()
                 .id(generateHashedIdAddressFromFields(addressDto))
@@ -42,8 +42,8 @@ public class AddressService {
                 .info(addressDto.getInfo())
                 .build();
 
-        // try to save entity and return its id
-        return addressRepository.save(address).getId();
+        // try to save entity
+        addressRepository.save(address);
     }
 
     public Set<AddressResponseDto> getAllAddresses() {

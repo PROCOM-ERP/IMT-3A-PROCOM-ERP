@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -28,7 +29,6 @@ public class AddressController {
     @Operation(operationId = "createAddress", tags = {"addresses"},
             summary = "Create a new address", description =
             "Create a new address by providing location information (see body type).<br>" +
-            "Information about it are available in URI given in the response header location.<br>" +
                     "Only available for admins.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description =
@@ -49,15 +49,9 @@ public class AddressController {
     public ResponseEntity<String> createAddress(@RequestBody AddressCreationRequestDto addressDto)
             throws Exception {
         // try to create a new entity
-        String idAddress = addressService.createAddress(addressDto);
-        // generate URI location to inform the client how to get information on the new entity
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .path(Path.ADDRESS_ID)
-                .buildAndExpand(idAddress)
-                .toUri();
+        addressService.createAddress(addressDto);
         // send the response with 201 Http status
-        return ResponseEntity.created(location).build();
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @GetMapping

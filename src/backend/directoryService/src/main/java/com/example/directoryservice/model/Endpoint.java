@@ -9,6 +9,7 @@ import org.springframework.http.HttpMethod;
 public enum Endpoint {
 
     GET_V1_ADDRESSES(HttpMethod.GET, Path.V1_ADDRESSES, Permission.CanReadAddress),
+    POST_V1_ADDRESSES(HttpMethod.POST, Path.V1_ADDRESSES, Permission.CanCreateAddress),
 
     GET_V1_ORGANISATIONS(HttpMethod.GET, Path.V1_ORGANISATIONS, Permission.CanReadOrganisation),
 
