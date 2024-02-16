@@ -1,7 +1,7 @@
 package com.example.directoryservice.utils;
 
-import com.example.directoryservice.model.Employee;
-import com.example.directoryservice.repository.EmployeeRepository;
+import com.example.directoryservice.model.LoginProfile;
+import com.example.directoryservice.repository.LoginProfileRepository;
 import com.example.directoryservice.repository.RoleRepository;
 import com.example.directoryservice.service.PermissionService;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +15,6 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
-import java.time.ZoneId;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -33,7 +32,7 @@ public class CustomJwtAuthenticationConverter implements Converter<Jwt, Abstract
 
     private final PermissionService permissionService;
     private final RoleRepository roleRepository;
-    private final EmployeeRepository employeeRepository;
+    private final LoginProfileRepository loginProfileRepository;
 
     @Override
     public AbstractAuthenticationToken convert(Jwt jwt) {
@@ -49,13 +48,12 @@ public class CustomJwtAuthenticationConverter implements Converter<Jwt, Abstract
     }
 
     private void checkTokenValidity(Jwt jwt) throws InsufficientAuthenticationException {
-        Employee employee = employeeRepository.findById(jwt.getSubject())
+        LoginProfile loginProfile = loginProfileRepository.findById(jwt.getSubject())
                 .orElseThrow(() -> new InsufficientAuthenticationException(""));
-        if (! employee.getEnable())
+        if (! loginProfile.getIsEnable())
             throw new InsufficientAuthenticationException("");
-        Instant jwtMinCreation = employee.getJwtMinCreation()
-                .atZone(ZoneId.systemDefault()).toInstant();
-        if (jwt.getIssuedAt() == null || jwt.getIssuedAt().isBefore(jwtMinCreation))
+        Instant jwtGenMinAt = loginProfile.getJwtGenMinAt();
+        if (jwt.getIssuedAt() == null || jwt.getIssuedAt().isBefore(jwtGenMinAt))
             throw new InsufficientAuthenticationException("");
     }
 
