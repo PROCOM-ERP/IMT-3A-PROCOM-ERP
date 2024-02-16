@@ -17,8 +17,8 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    public Queue loginProfileSecQueue() {
-        return new Queue("login-profile-sec-queue");
+    public Queue loginProfilesSecQueue() {
+        return new Queue("login-profiles-sec-queue");
     }
 
     /* Exchanges */
@@ -55,9 +55,9 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    public Binding loginProfileSecBinding(Queue loginProfileSecQueue,
-                                          Exchange loginProfilesSecExchange) {
-        return BindingBuilder.bind(loginProfileSecQueue)
+    public Binding loginProfilesSecBinding(Queue loginProfilesSecQueue,
+                                           Exchange loginProfilesSecExchange) {
+        return BindingBuilder.bind(loginProfilesSecQueue)
                 .to(loginProfilesSecExchange)
                 .with("*")
                 .noargs();
