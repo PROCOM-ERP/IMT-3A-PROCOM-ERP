@@ -1,12 +1,17 @@
 package com.example.inventoryservice.service;
 
+import com.example.inventoryservice.InventoryServiceApplication;
 import com.example.inventoryservice.dto.*;
 import com.example.inventoryservice.dtoRequest.ProductRequestDto;
 import com.example.inventoryservice.model.*;
 import com.example.inventoryservice.repository.ProductRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -17,8 +22,8 @@ import java.util.stream.Collectors;
 public class ProductService {
     private final ProductRepository productRepository;
     private final CategoryService categoryService;
-    private final ProductMetaService productMetaService;
     private final AddressService addressService;
+    private final Logger logger = LoggerFactory.getLogger(InventoryServiceApplication.class);
 
     public Optional<ProductDto> getProductById(int id){
         Optional<Product> productOptional = productRepository.findById(id);
@@ -32,6 +37,7 @@ public class ProductService {
                 .toList();
     }
 
+    @Transactional
     public void createProduct(ProductRequestDto productRequest){
 
         Product product = Product.builder()
@@ -54,32 +60,33 @@ public class ProductService {
                         .build())
                 .collect(Collectors.toList());
 
-
-        if ((productRequest.getNumberOfItem() >= 0) &&
-                addressService.getAddressById(productRequest.getAddress()) != null){
+        Address address = addressService.getAddressById(productRequest.getAddress());
+        if ((productRequest.getNumberOfItem() >= 0) && address != null){
 
             Item item = Item.builder()
                     .quantity(productRequest.getNumberOfItem())
-                    .address(addressService.getAddressById(productRequest.getAddress()))
+                    .address(address)
+                    .product(product)
                     .build();
 
             Transaction transaction = Transaction.builder()
                     .quantity(productRequest.getNumberOfItem())
+                    .timestamp(Instant.now())
+                    .employee("B11111")
                     .item(item)
                     .build();
 
-            // This contains only one transaction in the list:
             List<Transaction> transactionList = new ArrayList<>();
             transactionList.add(transaction);
 
             item.setTransactions(transactionList);
 
             List<Item> itemList = new ArrayList<>();
-            // This contains only one item in the list:
-            //List<Item> itemList = new ArrayList<>();
             itemList.add(item);
 
             product.setItems(itemList);
+
+
         }
         product.setProductMeta(productMetaList);
         product.setCategories(categories);

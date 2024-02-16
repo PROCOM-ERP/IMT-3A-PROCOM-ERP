@@ -25,7 +25,7 @@ public class Transaction {
     private Integer quantity;
 
     @NotNull
-    @Column(name = "\"timestamp\"", nullable = false)
+    @Column(name = "timestamp", nullable = false)
     private Instant timestamp;
 
     @Size(max = 6)

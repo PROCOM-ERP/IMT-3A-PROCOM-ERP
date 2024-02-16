@@ -19,7 +19,7 @@ public class ItemService {
                 .id(item.getId())
                 .quantity(item.getQuantity())
                 .transactions(transactionToDtoList(item.getTransactions()))
-                .address(AddressService.addressToDto(item.getAddress()))
+                .address(AddressService.addressOnlyToDto(item.getAddress()))
                 .build();
     }
 

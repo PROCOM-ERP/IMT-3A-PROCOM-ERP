@@ -29,9 +29,7 @@ public class AddressService {
     }
 
     public Address getAddressById(int id){
-        Optional<Address> address = addressRepository.findById(id);
-
-        return addressRepository.findById(id).get();
+        return addressRepository.findById(id).orElseThrow();
     }
 
     static AddressDto addressToDto(Address address){

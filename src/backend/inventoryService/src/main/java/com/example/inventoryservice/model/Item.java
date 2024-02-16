@@ -15,7 +15,8 @@ import java.util.List;
 @Table(name = "items")
 public class Item {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "items_id_item")
+    @SequenceGenerator(name = "items_id_item", sequenceName = "items_id_item_seq", allocationSize = 1)
     @Column(name = "id_item", nullable = false)
     private Integer id;
 
@@ -23,14 +24,16 @@ public class Item {
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_address", nullable = false)
     private Address address;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_product", nullable = false)
     private Product product;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "item")
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "item")
     private List<Transaction> transactions;
 }

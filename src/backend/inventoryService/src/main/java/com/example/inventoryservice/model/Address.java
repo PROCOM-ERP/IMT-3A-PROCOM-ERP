@@ -47,7 +47,6 @@ public class Address {
     @Column(name = "info", length = Integer.MAX_VALUE)
     private String info;
 
-    @NotNull
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "address")
     private List<Item> items;
 }
