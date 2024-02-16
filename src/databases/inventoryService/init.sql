@@ -12,64 +12,82 @@
 
 -- Creation of 'inventories'
 CREATE TABLE addresses (
-    id_address SERIAL PRIMARY KEY,
+    id_address SERIAL NOT NULL,
     number VARCHAR(31),
     street VARCHAR (255),
     city VARCHAR (63) ,
     state VARCHAR (63),
     country VARCHAR (63),
     postal_code VARCHAR(15),
-    info TEXT
+    info TEXT,
+
+    CONSTRAINT pk_addresses PRIMARY KEY (id_address)
 );
 
 CREATE TABLE products (
-    id_product SERIAL PRIMARY KEY ,
+    id_product SERIAL NOT NULL ,
     title VARCHAR(128) NOT NULL,
-    description TEXT
+    description TEXT,
+
+    CONSTRAINT pk_products PRIMARY KEY (id_product)
 );
 
 CREATE TABLE categories (
-    id_category SERIAL PRIMARY KEY,
+    id_category SERIAL NOT NULL,
     title VARCHAR(128) NOT NULL,
-    description TEXT
+    description TEXT,
+
+    CONSTRAINT pk_categories PRIMARY KEY (id_category)
 );
 
 CREATE TABLE product_meta (
-    id_product_meta SERIAL PRIMARY KEY,
+    id_product_meta SERIAL NOT NULL,
     key VARCHAR(255) NOT NULL,
     type VARCHAR(16) NOT NULL,
     value TEXT NOT NULL,
     description TEXT,
     id_product INT NOT NULL,
-    FOREIGN KEY (id_product) REFERENCES products(id_product)
+
+    CONSTRAINT pk_product_meta PRIMARY KEY (id_product_meta),
+    CONSTRAINT fk_product_meta_table_products
+        FOREIGN KEY (id_product) REFERENCES products(id_product)
 );
 
 CREATE TABLE items (
-    id_item SERIAL PRIMARY KEY,
+    id_item SERIAL NOT NULL,
     quantity INT NOT NULL,
     id_address INT NOT NULL,
     id_product INT NOT NULL,
-    FOREIGN KEY (id_product) REFERENCES products(id_product),
-    FOREIGN KEY (id_address) REFERENCES addresses(id_address)
+
+    CONSTRAINT pk_items PRIMARY KEY (id_item),
+    CONSTRAINT fk_items_table_products
+        FOREIGN KEY (id_product) REFERENCES products(id_product),
+    CONSTRAINT fk_items_table_addresses
+        FOREIGN KEY (id_address) REFERENCES addresses(id_address)
 );
 
 CREATE TABLE transactions (
-    id_transaction SERIAL PRIMARY KEY,
+    id_transaction SERIAL NOT NULL,
     quantity INT NOT NULL,
     timestamp TIMESTAMP NOT NULL DEFAULT current_timestamp,
     employee CHAR(6) NOT NULL,
     id_item INT NOT NULL,
-    FOREIGN KEY (id_item) REFERENCES items(id_item),
 
+    CONSTRAINT pk_transactions PRIMARY KEY (id_transaction),
+    CONSTRAINT fk_transactions_table_items
+        FOREIGN KEY (id_item) REFERENCES items(id_item),
     CONSTRAINT employee_constraint CHECK (employee ~* '[A-Z][0-9]{5}')--,
 );
 
-CREATE TABLE category_product (
+CREATE TABLE joint_category_product (
     id_category INT,
     id_product INT,
-    PRIMARY KEY (id_category, id_product),
-    FOREIGN KEY (id_category) REFERENCES categories(id_category),
-    FOREIGN KEY (id_product) REFERENCES products(id_product)
+
+    CONSTRAINT pk_joint_category_product PRIMARY KEY (id_category, id_product),
+    CONSTRAINT fk_joint_category_product_table_categories
+        FOREIGN KEY (id_category) REFERENCES categories(id_category),
+    CONSTRAINT fk_joint_category_product_table_products
+        FOREIGN KEY (id_product) REFERENCES products(id_product)
 );
 
 INSERT INTO categories (title, description)
@@ -82,7 +100,7 @@ VALUES ('Nordinateur', 'gaming'),
        ('Chips', 'très craquantes');
 
 
-INSERT INTO category_product (id_product, id_category)
+INSERT INTO joint_category_product (id_product, id_category)
 VALUES (1, 1),
        (2, 1);
 
