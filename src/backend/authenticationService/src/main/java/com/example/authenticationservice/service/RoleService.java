@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class RoleService {
 
-    @Value("${security.service.alias}")
+    @Value("${security.service.name}")
     private String currentMicroservice;
 
     private final RoleRepository roleRepository;

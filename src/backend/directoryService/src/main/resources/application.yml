@@ -42,7 +42,7 @@ springdoc:
 
 security:
   service:
-    alias: ${BACKEND_DIRECTORY_SERVICE_ALIAS}
+    name: ${BACKEND_DIRECTORY_SERVICE_NAME}
     sharedKey: ${SECURITY_SERVICES_SHARED_KEY}
     role: microservices
   jwt:

@@ -20,7 +20,8 @@ public class CustomHttpRequestBuilder {
     @Value("${BACKEND_GATEWAY_SERVICE_PORT_INT}")
     private String gatewayPort;
     private final Environment env;
-    private final String thisServiceGatewayPath = "/auth";
+    @Value("${security.service.name}")
+    private String thisServiceGatewayPath;
 
     private final JwtService jwtService;
 

@@ -13,15 +13,15 @@ spring:
         - id: authentication-service
           uri: https://${BACKEND_AUTHENTICATION_SERVICE_IP_INT}:${BACKEND_AUTHENTICATION_SERVICE_PORT_INT}
           predicates:
-            - Path=/api/auth/**
+            - Path=/api/${BACKEND_AUTHENTICATION_SERVICE_NAME}/**
           filters:
-            - RewritePath=/api/auth/(?<segment>.*), /api/$\{segment}
+            - RewritePath=/api/${BACKEND_AUTHENTICATION_SERVICE_NAME}/(?<segment>.*), /api/$\{segment}
         - id: directory-service
           uri: https://${BACKEND_DIRECTORY_SERVICE_IP_INT}:${BACKEND_DIRECTORY_SERVICE_PORT_INT}
           predicates:
-            - Path=/api/dir/**
+            - Path=/api/${BACKEND_DIRECTORY_SERVICE_NAME}/**
           filters:
-            - RewritePath=/api/dir/(?<segment>.*), /api/$\{segment}
+            - RewritePath=/api/${BACKEND_DIRECTORY_SERVICE_NAME}/(?<segment>.*), /api/$\{segment}
 
 server:
   port: ${BACKEND_GATEWAY_SERVICE_PORT_EXT}
