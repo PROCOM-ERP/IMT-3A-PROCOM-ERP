@@ -14,8 +14,9 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HexFormat;
-import java.util.List;
+import java.util.Set;
 import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -45,10 +46,10 @@ public class AddressService {
         return addressRepository.save(address).getId();
     }
 
-    public List<AddressResponseDto> getAllAddresses() {
+    public Set<AddressResponseDto> getAllAddresses() {
         return addressRepository.findAll().stream()
                 .map(this::modelToResponseDto)
-                .toList();
+                .collect(Collectors.toSet());
     }
 
     /* Private Methods */

@@ -40,7 +40,7 @@ public class Organisation {
 
     @Builder.Default
     @JsonIgnoreProperties(value = {"organisation"})
-    @OneToMany(mappedBy = "organisation")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "organisation")
     private Set<OrgUnit> orgUnits = new LinkedHashSet<>();
 
 }

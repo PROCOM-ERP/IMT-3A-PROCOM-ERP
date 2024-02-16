@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping(Path.V1_ADDRESSES)
@@ -75,7 +75,7 @@ public class AddressController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<List<AddressResponseDto>> getAllAddresses() {
+    public ResponseEntity<Set<AddressResponseDto>> getAllAddresses() {
         return ResponseEntity.ok().body(addressService.getAllAddresses());
     }
 }
