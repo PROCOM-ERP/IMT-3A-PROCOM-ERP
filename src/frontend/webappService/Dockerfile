@@ -11,14 +11,12 @@ RUN addgroup -S -g 10001 erp && adduser -S -G erp -u 10001 erp
 WORKDIR /opt/erp/frontend/
 RUN chown -R erp:erp /opt/erp/frontend
 
-# Set the user.
-USER erp
-
 # Copy package files
-COPY --chown=erp:erp package*.json ./
+COPY --chown=erp:erp ./package*.json ./
 
 # Install dependencies.
-RUN npm install --omit=dev && npm cache clean --force
+RUN npm install --omit=dev
+RUN npm cache clean --force
 
 # Copy the source code.
 COPY --chown=erp:erp ./src ./src
@@ -57,8 +55,8 @@ COPY --from=builder /opt/erp/frontend/certs/webapp-service.crt /certs/webapp-ser
 COPY --from=builder /opt/erp/frontend/certs/webapp-service.key /certs/webapp-service.key
 COPY --from=builder /opt/erp/frontend/certs/procom-erp-ca.pem /app/certs/procom-erp-ca.pem
 
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost:${FRONTEND_WEBAPP_SERVICE_PORT_INT}/ || exit 1
+# HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+#   CMD curl -f https://localhost:${FRONTEND_WEBAPP_SERVICE_PORT_INT}/ || exit 1
 
 # Run the application.
 ENTRYPOINT serve -s /app -l ${FRONTEND_WEBAPP_SERVICE_PORT_INT} --ssl-cert /certs/webapp-service.crt --ssl-key /certs/webapp-service.key
