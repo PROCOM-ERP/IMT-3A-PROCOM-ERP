@@ -3,6 +3,7 @@ package com.example.authenticationservice.service;
 import com.example.authenticationservice.dto.*;
 import com.example.authenticationservice.model.Role;
 import com.example.authenticationservice.model.RoleActivation;
+import com.example.authenticationservice.repository.LoginProfileRepository;
 import com.example.authenticationservice.repository.RoleActivationRepository;
 import com.example.authenticationservice.repository.RoleRepository;
 import com.example.authenticationservice.utils.CustomHttpRequestBuilder;
@@ -34,6 +35,7 @@ public class RoleService {
 
     private final RoleRepository roleRepository;
     private final RoleActivationRepository roleActivationRepository;
+    private final LoginProfileRepository loginProfileRepository;
     private final PermissionService permissionService;
     private final RestTemplate restTemplate;
     private final CustomHttpRequestBuilder customHttpRequestBuilder;
@@ -126,6 +128,13 @@ public class RoleService {
         roleRepository.saveAll(roleRepository.findAll().stream()
                 .peek(this::updateRoleIsEnable)
                 .toList());
+
+        // expire all Login Profile entities jwt
+        loginProfileRepository.updateAllJwtGenMinAt();
+
+        // send message to inform the network about all login profiles jwt expiration
+        messageSenderService.sendLoginProfilesJwtDisableOldMessage();
+
         long elapsedTimeMillis = performanceTracker.getElapsedTimeMillis(startTimeNano);
         logger.info("Elapsed time to save external roles : " + elapsedTimeMillis + " ms");
 
@@ -161,6 +170,13 @@ public class RoleService {
 
         // insert Role entity
         roleRepository.save(role);
+
+        // expire all Login Profile entities jwt
+        loginProfileRepository.updateAllJwtGenMinAt();
+
+        // send message to inform the network about all login profiles jwt expiration
+        messageSenderService.sendLoginProfilesJwtDisableOldMessage();
+
         long elapsedTimeMillis = performanceTracker.getElapsedTimeMillis(startTimeNano);
         logger.info("Elapsed time to save external role : " + elapsedTimeMillis + " ms");
     }
@@ -272,6 +288,13 @@ public class RoleService {
 
         // save all changes
         roleRepository.save(role);
+
+        // expire all Login Profile entities jwt
+        loginProfileRepository.updateAllJwtGenMinAt();
+
+        // send message to inform the network about all login profiles jwt expiration
+        messageSenderService.sendLoginProfilesJwtDisableOldMessage();
+
         long elapsedTimeMillis = performanceTracker.getElapsedTimeMillis(startTimeNano);
         logger.info("Elapsed time to update one role : " + elapsedTimeMillis + " ms");
     }

@@ -82,6 +82,5 @@ public class MessageReceiverService {
         logger.info("Message received to update a login profile jwt min generation instant: " + idLoginProfile);
         loginProfileService.updateLoginProfileJwtGenMinAtById(idLoginProfile);
         logger.info("Login profile jwt min generation instant successfully updated");
-
     }
 }

@@ -63,15 +63,18 @@ public class LoginProfileService {
                 .build();
 
         // try to save loginProfile with its roles and return its id
-        loginProfile = loginProfileRepository.save(loginProfile);
+        loginProfileRepository.save(loginProfile);
 
         // send mail to the new user
         mailService.sendNewLoginProfileMail(idLoginProfile, password);
 
+        // send message to inform the network about login profile creation
+        messageSenderService.sendLoginProfilesNewMessage(idLoginProfile);
+
         // return generated idLoginProfile
         long elapsedTimeMillis = performanceTracker.getElapsedTimeMillis(startTimeNano);
         logger.info("Elapsed time to create new login profile : " + elapsedTimeMillis + " ms");
-        return loginProfile.getId();
+        return idLoginProfile;
     }
 
     public LoginProfileResponseDto getLoginProfileById(String idLoginProfile)
@@ -128,7 +131,8 @@ public class LoginProfileService {
             throw new NoSuchElementException();
         }
 
-        // send message to other services to update jwt_min_creation for current loginProfile
+        // send message to inform the network about a login profile jwt expiration
+        messageSenderService.sendLoginProfileJwtDisableOldMessage(idLoginProfile);
 
     }
 
