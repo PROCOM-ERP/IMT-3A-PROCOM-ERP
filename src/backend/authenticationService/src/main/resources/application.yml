@@ -40,17 +40,17 @@ spring:
       trust-store-password: ${SECURITY_TRUST_STORE_PASSWORD}
       trust-store-type: JKS
   mail:
-    host: smtp.gmail.com
-    port: 587
-    username: procom.erp@gmail.com
-    password: lmtkdewfhthddpop
-    default-receiver: procom.erp@gmail.com
+    host: ${BACKEND_MAIL_HOST}
+    port: ${BACKEND_MAIL_PORT}
+    username: ${BACKEND_MAIL_USERNAME}
+    password: ${BACKEND_MAIL_PASSWORD}
+    default-receiver: ${BACKEND_MAIL_USERNAME}
     properties:
       mail:
         smtp:
           auth: true
           ssl:
-            trust: smtp.gmail.com
+            trust: ${BACKEND_MAIL_HOST}
           starttls:
             enable: true
 
