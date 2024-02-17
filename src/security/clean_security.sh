@@ -3,10 +3,11 @@
 # Description: Opposite of "security_setup.sh"
 # Author: maestro-bene (GitHub)
 # Date Created: 2024-01-15
-# Last Modified: 2024-01-15
-# Version: 1.0
-# Usage: Enter the number of services, then each of their names.
+# Last Modified: 2024-02-05
+# Version: 1.2
+# Usage: Just run the script, it will analyze the backend and frontend directory and remove every keys, certs, csr, etc.
 # Notes: Another scripts "security_setup.sh" works with this one to undo the changes made by this script.
+# Option: --CA includes all CA keys, certs, and trust stores as well, to fully clean your environment
 
 include_ca=false
 while [[ $# -gt 0 ]]; do
@@ -22,6 +23,23 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
+# Save the current directory
+currentDir=$(pwd)
+
+# Change directory to ./src/security
+cd ./src/security || exit
+
+# Define the expected last three directory entries
+expected_last_entries="src/security"
+
+# Get the last two entries of the current working directory path
+last_two_entries=$(pwd | rev | cut -d'/' -f1,2 | rev)
+
+# Check if the last two entries match the expected ones
+if [ "$last_two_entries" != "$expected_last_entries" ]; then
+    echo "Please run this script from the '${expected_last_entries}' directory."
+    exit 1
+fi
 
 backend_services=()
 backend_service_directories=($(find ../backend/ -maxdepth 1 -type d -name '*Service'))
@@ -67,6 +85,7 @@ for ((i=0; i<num_services; i++)); do
     fi
 
     # echo ${service}
+    # echo ${service_type}
     # Move the .p12 file to the archive directory
     mv "../${service_type}/${service}Service/${service}-service-keystore.p12" "${archive_dir}/"
     
@@ -76,6 +95,14 @@ for ((i=0; i<num_services; i++)); do
         mv "../${service_type}/${service}Service/${service}-service-certificate.pem" "${archive_dir}/"
     fi
     
+    # If the service is 'webapp', move the PEM files as well
+    if [ "${service}" = "webapp" ]; then
+        mv "../${service_type}/${service}Service/${service}-service.crt" "${archive_dir}/"
+        mv "../${service_type}/${service}Service/${service}-service.key" "${archive_dir}/"
+        if [[ "${include_ca}" == "true" ]]; then
+            mv "../${service_type}/${service}Service/procom-erp-ca.pem" "${archive_dir}/"
+        fi
+    fi
     # Move the entire service directory to the archive directory
     mv "./${service}" "${archive_dir}/"
 done
@@ -98,7 +125,10 @@ if [[ "${include_ca}" == "true" ]]; then
     mv "../system/procom-erp-truststore.jks" "${archive_dir}"
     rm "../system/procom-erp-ca.pem"
 fi
-    
+
+# Change back to the original directory
+cd "$currentDir" || exit
+
 # Notify the user
 echo "Specific files created by the script moved to ${archive_dir}"
 

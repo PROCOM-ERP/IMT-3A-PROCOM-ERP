@@ -11,17 +11,37 @@ spring:
           useInsecureTrustManager: true
       routes:
         - id: authentication-service
-          uri: https://${BACKEND_AUTHENTICATION_SERVICE_IP_INT}:${BACKEND_AUTHENTICATION_SERVICE_PORT_INT}
+          uri: https://${BACKEND_AUTHENTICATION_SERVICE_HOSTNAME}:${BACKEND_AUTHENTICATION_SERVICE_PORT_INT}
           predicates:
             - Path=/api/${BACKEND_AUTHENTICATION_SERVICE_NAME}/**
           filters:
             - RewritePath=/api/${BACKEND_AUTHENTICATION_SERVICE_NAME}/(?<segment>.*), /api/$\{segment}
         - id: directory-service
-          uri: https://${BACKEND_DIRECTORY_SERVICE_IP_INT}:${BACKEND_DIRECTORY_SERVICE_PORT_INT}
+          uri: https://${BACKEND_DIRECTORY_SERVICE_HOSTNAME}:${BACKEND_DIRECTORY_SERVICE_PORT_INT}
           predicates:
             - Path=/api/${BACKEND_DIRECTORY_SERVICE_NAME}/**
           filters:
             - RewritePath=/api/${BACKEND_DIRECTORY_SERVICE_NAME}/(?<segment>.*), /api/$\{segment}
+      # Global CORS configuration for all routes
+      globalcors:
+        cors-configurations:
+          "[/**]":
+            allowed-origins:
+              - https://localhost:${FRONTEND_WEBAPP_SERVICE_PORT_INT}
+            allowed-methods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - PATCH
+            allowed-headers:
+              - Authorization
+              - Content-Type
+              - Accept
+            allow-credentials: true
+
+  security:
+    require-ssl: true
 
 server:
   port: ${BACKEND_GATEWAY_SERVICE_PORT_EXT}

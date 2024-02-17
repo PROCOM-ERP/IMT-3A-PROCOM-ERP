@@ -3,14 +3,32 @@
 # Description: Generate CA and services security essentials, and moves them to the correct spot.
 # Author: maestro-bene (GitHub)
 # Date Created: 2024-01-15
-# Last Modified: 2024-01-15
-# Version: 1.0
-# Usage: Just run the script, it will analyze the directories.
+# Last Modified: 2024-02-05
+# Version: 1.2
+# Usage: Just run the script within the src/security directory, it will analyze the frontend and backend directories.
 # Notes: Another scripts "clean_security.sh" works with this one to undo the changes made by this script, by giving the names.
 
 # Check if OpenSSL is installed
 if ! command -v openssl &> /dev/null; then
     echo "OpenSSL is not installed. Please install OpenSSL and try again."
+    exit 1
+fi
+
+# Save the current directory
+currentDir=$(pwd)
+
+# Change directory to ./src/security
+cd ./src/security || exit
+
+# Define the expected last three directory entries
+expected_last_entries="src/security"
+
+# Get the last two entries of the current working directory path
+last_two_entries=$(pwd | rev | cut -d'/' -f1,2 | rev)
+
+# Check if the last two entries match the expected ones
+if [ "$last_two_entries" != "$expected_last_entries" ]; then
+    echo "Please run this script from the '${expected_last_entries}' directory."
     exit 1
 fi
 
@@ -51,8 +69,13 @@ expect "Enter Import Password:"
 send "procom-erp-${service}-service-secure-keystore\r"
 expect eof
 EOF
-        mv "${service}-service-key.pem" "${service_dir}/"
-        mv "${service}-service-certificate.pem" "${service_dir}/"
+        mv "${service}-service-key.pem" "${service_dir}"
+        mv "${service}-service-certificate.pem" "${service_dir}"
+    fi
+
+    if [ "${service}" = "webapp" ]; then
+        cp "${service_name}-service.key" "${service_name}-service.crt" "${service_dir}/"
+        openssl x509 -in "${ca_crt}" -out "${service_dir}/procom-erp-ca.pem" -outform PEM
     fi
 
     mv "${service_name}-service.key" "${service_name}-service.csr" "${service_name}-service.crt" "./${service}/"
@@ -69,6 +92,7 @@ if [ ! -f "./CA/procom-erp-ca.crt" ] || [ ! -f "./CA/procom-erp-ca.key" ]; then
 
     # Create and Self-Sign the Root Certificate
     openssl req -new -x509 -days 3650 -key procom-erp-ca.key -out procom-erp-ca.crt -subj "/C=FR/ST=France/L=Paris/O=Procom-ERP/OU=IT/CN=Procom-ERP"
+openssl x509 -in "${ca_crt}" -out "../system/procom-erp-ca.pem" -outform PEM
     
     # Create a trust store for the services to trust
     keytool -importcert -noprompt -alias ca_cert -file procom-erp-ca.crt -keystore procom-erp-truststore.jks --store-pass "super-secure-password-for-trust-store" >/dev/null 2>&1
@@ -118,19 +142,16 @@ for ((i=0; i<num_services; i++)); do
     echo "Certificates generated for ${service} (${service_type})"
 done
 
-# Step 6: Convert CA certificate to .pem
-# openssl x509 -inform der -in "${ca_crt}" -out procom-erp-ca.pem
-
 # Move the CA's keys and certificates to the CA directory
 ca_dir="./CA"
 mkdir -p "${ca_dir}"
 mv procom-erp-truststore.jks "../system/"
-cp "${ca_crt}" "../system/procom-erp-ca.pem"
+openssl x509 -in "${ca_crt}" -out "../system/procom-erp-ca.pem" -outform PEM
 mv "${ca_key}" "${ca_crt}" "${ca_dir}/"
 
 echo "CA's keys and certificates moved to ${ca_dir}"
 
-# Step 7: Update Your Docker and Application Configuration
-# Update your Docker and application configurations here
+# Change back to the original directory
+cd "$currentDir" || exit
 
 echo "Certificates generation completed."

@@ -1,0 +1,88 @@
+ARG JAVA_IMAGE
+ARG JAVA_BUILD_IMAGE
+ARG BACKEND_AUTHENTICATION_SERVICE_PORT_INT
+ARG ENTRYPOINT
+ARG BACKEND_MESSAGE_BROKER_SERVICE_PORT_INT
+ARG SECURITY_TRUST_STORE_PATH
+
+
+FROM ${JAVA_BUILD_IMAGE} AS builder
+
+ARG POM_JAVA_VERSION
+ARG MAVEN_COMPILER_SOURCE
+ARG MAVEN_COMPILER_TARGET
+ARG SPRING_BOOT_VERSION
+ARG LOMBOK_VERSION
+ARG SPRING_CLOUD_VERSION
+ARG AQMP_VERSION
+ARG SPRINGDOC_OPENAPI_VERSION
+ARG APACHE_HTTP_VERSION
+ARG POSTGRES_VERSION
+ARG JUNIT_VERSION
+ARG MOCKITO_VERSION
+
+COPY ./src/ ./builder/src
+COPY ./.mvn/ ./builder/.mvn
+COPY ./mvnw ./builder/mvnw
+COPY ./prod-pom.xml ./builder/pom.xml
+
+RUN chmod +x ./builder/mvnw
+
+WORKDIR /builder
+
+ENV POM_JAVA_VERSION=${POM_JAVA_VERSION}
+ENV MAVEN_COMPILER_SOURCE=${MAVEN_COMPILER_SOURCE}
+ENV MAVEN_COMPILER_TARGET=${MAVEN_COMPILER_TARGET}
+ENV SPRING_BOOT_VERSION=${SPRING_BOOT_VERSION}
+ENV LOMBOK_VERSION=${LOMBOK_VERSION}
+ENV SPRING_CLOUD_VERSION=${SPRING_CLOUD_VERSION}
+ENV AQMP_VERSION=${AQMP_VERSION}
+ENV SPRINGDOC_OPENAPI_VERSION=${SPRINGDOC_OPENAPI_VERSION}
+ENV APACHE_HTTP_VERSION=${APACHE_HTTP_VERSION}
+ENV POSTGRES_VERSION=${POSTGRES_VERSION}
+ENV JUNIT_VERSION=${JUNIT_VERSION}
+ENV MOCKITO_VERSION=${MOCKITO_VERSION}
+
+RUN /builder/mvnw clean install \
+    -Djava.version=$POM_JAVA_VERSION \
+    -Dmaven.compiler.source=$MAVEN_COMPILER_SOURCE \
+    -Dmaven.compiler.target=$MAVEN_COMPILER_TARGET \
+    -Dspring-boot.version=$SPRING_BOOT_VERSION \
+    -Dlombok.version=$LOMBOK_VERSION \
+    -Dspring-cloud.version=$SPRING_CLOUD_VERSION \
+    -Daqmp.version=$AQMP_VERSION \
+    -Dspringdoc-openapi.version=$SPRINGDOC_OPENAPI_VERSION \
+    -Dapache-http.version=$APACHE_HTTP_VERSION \
+    -Dpostgres.version=$POSTGRES_VERSION \
+    -Djunit.version=$JUNIT_VERSION \
+    -Dmockito.version=$MOCKITO_VERSION \
+    -Dmaven.repo.local=/builder/.m2/repository
+
+
+FROM ${JAVA_IMAGE}
+
+ENV BACKEND_MESSAGE_BROKER_SERVICE_PORT_INT=$BACKEND_MESSAGE_BROKER_SERVICE_PORT_INT
+ENV SECURITY_TRUST_STORE_PATH=$SECURITY_TRUST_STORE_PATH
+
+# Create a group 'erp' if it doesn't already exist
+RUN groupadd -g 10001 erp
+
+# Create a user 'erp' if it doesn't already exist
+RUN useradd -r -u 10001 -g erp erp
+
+EXPOSE ${BACKEND_AUTHENTICATION_SERVICE_PORT_INT}
+
+WORKDIR /
+
+COPY --chown=erp --from=builder ./builder/target ./app
+COPY --chown=erp ./authentication-service-keystore.p12 ./app/certs/authentication-service-keystore.p12
+COPY --chown=erp ./procom-erp-truststore.jks ./config/procom-erp-truststore.jks
+COPY --chown=erp ./wait-for-it.sh ./config/wait-for-it.sh
+COPY --chown=erp ./entrypoint.sh ./config/entrypoint.sh
+
+RUN chmod +x ./config/wait-for-it.sh
+RUN chmod +x ./config/entrypoint.sh
+
+USER erp
+
+ENTRYPOINT ${ENTRYPOINT}

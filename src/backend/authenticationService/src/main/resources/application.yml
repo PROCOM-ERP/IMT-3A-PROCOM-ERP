@@ -26,11 +26,19 @@ spring:
     servlet:
       load-on-startup: 1
   rabbitmq:
-    host: ${BACKEND_MESSAGE_BROKER_SERVICE_IP_INT}
+    host: ${BACKEND_MESSAGE_BROKER_SERVICE_HOSTNAME}
     port: ${BACKEND_MESSAGE_BROKER_SERVICE_PORT_INT}
     username: ${BACKEND_MESSAGE_BROKER_SERVICE_USERNAME}
     password: ${BACKEND_MESSAGE_BROKER_SERVICE_PASSWORD}
     virtual-host: /
+    ssl:
+      enabled: true
+      key-store: file:${BACKEND_AUTHENTICATION_SERVICE_HTTPS_KEY_STORE}
+      key-store-password: ${BACKEND_AUTHENTICATION_SERVICE_HTTPS_KEY_STORE_PASSWORD}
+      key-store-type: PKCS12
+      trust-store: file:${SECURITY_TRUST_STORE_PATH}
+      trust-store-password: ${SECURITY_TRUST_STORE_PASSWORD}
+      trust-store-type: JKS
   mail:
     host: smtp.gmail.com
     port: 587
@@ -65,9 +73,3 @@ security:
       roles: ${SECURITY_JWT_CLAIMS_KEY_ROLES}
     duration:
       minutes: 60
-
-logging:
-  level:
-    org:
-      springframework:
-        mail: DEBUG
