@@ -48,7 +48,12 @@ public class EmployeeService {
                 .build();
 
         // try to save entity and return its id
-        return employeeRepository.save(employee).getId();
+        String idEmployee = employeeRepository.save(employee).getId();
+
+        // send message to inform the network about employee email update
+        messageSenderService.sendEmployeeEmailUpdateMessage(idEmployee);
+
+        return idEmployee;
     }
 
     public Set<EmployeeResponseDto> getAllEmployees() {
