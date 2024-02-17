@@ -2,12 +2,18 @@ package com.example.directoryservice.service;
 
 import com.example.directoryservice.dto.*;
 import com.example.directoryservice.model.Employee;
+import com.example.directoryservice.model.Permission;
 import com.example.directoryservice.repository.EmployeeRepository;
 import com.example.directoryservice.repository.OrgUnitRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.NoSuchElementException;
@@ -58,6 +64,16 @@ public class EmployeeService {
 
     public void updateEmployeeById(String idEmployee, EmployeeUpdateRequestDto employeeDto)
             throws NoSuchElementException, DataIntegrityViolationException {
+
+        // check if the employee to modify is the same as the authenticated one (or admin)
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentLoginProfileId = authentication.getName();
+        boolean canBypassAccessDeny = authentication.getAuthorities()
+                .contains(new SimpleGrantedAuthority(Permission.CanBypassAccessDeny.name()));
+        if (!currentLoginProfileId.equals(idEmployee) && !canBypassAccessDeny) {
+            throw new AccessDeniedException("");
+        }
+
         // check if employee already exists
         Employee employee = employeeRepository.findById(idEmployee).orElseThrow();
 

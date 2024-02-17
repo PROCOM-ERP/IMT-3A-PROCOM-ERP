@@ -2,9 +2,10 @@ package com.example.directoryservice.model;
 
 public enum Permission {
 
+    CanBypassAccessDeny,
+
     CanCreateAddress,
     CanCreateEmployee,
-    CanCreateRole,
 
     CanModifyEmployee,
     CanModifyRole,
@@ -12,7 +13,6 @@ public enum Permission {
     CanReadAddress,
     CanReadEmployee,
     CanReadOrganisation,
-    CanReadPermission,
     CanReadRole,
 
 }

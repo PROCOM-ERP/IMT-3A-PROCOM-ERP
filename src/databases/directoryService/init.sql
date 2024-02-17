@@ -137,34 +137,20 @@ VALUES ('admin'),
 -- +----------------------------------------------------------------------------------------------+
 
 INSERT INTO role_permissions (role, permission)
-VALUES ('admin', 'CanCreateRole'),
-       ('admin', 'CanReadRole'),
-       ('admin', 'CanModifyRole'),
-       ('admin', 'CanDeactivateRole'),
-       ('admin', 'CanReadPermission'),
+VALUES ('admin', 'CanBypassAccessDeny'),
        ('admin', 'CanCreateAddress'),
-       ('admin', 'CanReadAddress'),
-       ('admin', 'CanDeleteAddress'),
        ('admin', 'CanCreateEmployee'),
+       ('admin', 'CanModifyEmployee'),
+       ('admin', 'CanModifyRole'),
+       ('admin', 'CanReadAddress'),
        ('admin', 'CanReadEmployee'),
-       ('admin', 'CanModifyEmployeeInfo'),
-       ('admin', 'CanModifyEmployeeService'),
-       ('admin', 'CanDeactivateEmployee'),
-       ('admin', 'CanCreateOrganisation'),
        ('admin', 'CanReadOrganisation'),
-       ('admin', 'CanModifyOrganisationAddress'),
-       ('admin', 'CanDeleteOrganisation'),
-       ('admin', 'CanCreateService'),
-       ('admin', 'CanReadService'),
-       ('admin', 'CanModifyServiceAddress'),
-       ('admin', 'CanModifyServiceOrganisation'),
-       ('admin', 'CanDeleteService'),
+       ('admin', 'CanReadRole'),
 
+       ('user', 'CanModifyEmployee'),
        ('user', 'CanReadAddress'),
        ('user', 'CanReadEmployee'),
-       ('user', 'CanModifyEmployeeInfo'),
-       ('user', 'CanReadOrganisation'),
-       ('user', 'CanReadService');
+       ('user', 'CanReadOrganisation');
 
 -- +----------------------------------------------------------------------------------------------+
 
