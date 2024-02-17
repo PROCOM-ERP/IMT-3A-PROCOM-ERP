@@ -39,8 +39,8 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    public TopicExchange loginProfilesInfoExchange() {
-        return new TopicExchange("login-profiles-info-exchange");
+    public TopicExchange employeesExchange() {
+        return new TopicExchange("employees-exchange");
     }
 
     /* Bindings */

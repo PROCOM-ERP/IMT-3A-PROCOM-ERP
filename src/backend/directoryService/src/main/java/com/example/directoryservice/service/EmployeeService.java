@@ -27,6 +27,8 @@ public class EmployeeService {
     private final OrgUnitRepository orgUnitRepository;
     private final AddressService addressService;
 
+    private final MessageSenderService messageSenderService;
+
     //private final Logger logger = LoggerFactory.getLogger(EmployeeService.class);
 
     /* Public Methods */
@@ -61,6 +63,15 @@ public class EmployeeService {
                 .orElseThrow();
     }
 
+    public EmployeeEmailResponseDto getEmployeeEmailById(String idEmployee) {
+        return employeeRepository.findById(idEmployee)
+                .map(e -> EmployeeEmailResponseDto.builder()
+                        .id(e.getId())
+                        .email(e.getEmail())
+                        .build())
+                .orElseThrow();
+    }
+
     public void updateEmployeeById(String idEmployee, EmployeeUpdateRequestDto employeeDto)
             throws NoSuchElementException, DataIntegrityViolationException {
 
@@ -76,6 +87,9 @@ public class EmployeeService {
         // check if employee already exists
         Employee employee = employeeRepository.findById(idEmployee).orElseThrow();
 
+        // check if email will change
+       boolean isEmailUpdated = ! employeeDto.getEmail().equals(employee.getEmail());
+
         // update employee attributes
         employee.setLastName(employeeDto.getLastName());
         employee.setFirstName(employeeDto.getFirstName());
@@ -88,8 +102,9 @@ public class EmployeeService {
         // save modifications
         employeeRepository.save(employee);
 
-        // if (email != null && ! email.isEmpty())
-        //      rabbitMQSender.sendEmployeeEmailModify(employee.getId());
+        // send message to inform the network about employee email update
+        if (isEmailUpdated)
+            messageSenderService.sendEmployeeEmailUpdateMessage(idEmployee);
     }
 
     /* Private Methods */

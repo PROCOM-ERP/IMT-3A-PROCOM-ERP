@@ -7,6 +7,7 @@ public class Path {
     public static final String ANYONE = "/*";
     public static final String ANYTHING = "/**";
     public static final String ACTIVATION = "/activation";
+    public static final String EMAIL = "/email";
 
     public static final String ADDRESSES = "/addresses";
     public static final String V1_ADDRESSES = API + V1 + ADDRESSES;
@@ -16,8 +17,10 @@ public class Path {
 
     public static final String EMPLOYEES = "/employees";
     public static final String EMPLOYEE_ID = "/{idEmployee}";
+    public static final String EMPLOYEE_ID_EMAIL = EMPLOYEE_ID + EMAIL;
     public static final String V1_EMPLOYEES = API + V1 + EMPLOYEES;
     public static final String V1_EMPLOYEES_ANYONE = V1_EMPLOYEES + ANYONE;
+    public static final String V1_EMPLOYEES_ANYTHING = V1_EMPLOYEES + ANYTHING;
 
     public static final String ROLES = "/roles";
     public static final String V1_ROLES = API + V1 + ROLES;

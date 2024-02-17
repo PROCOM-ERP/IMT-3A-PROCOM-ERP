@@ -15,6 +15,7 @@ public enum Endpoint {
 
     GET_V1_EMPLOYEES(HttpMethod.GET, Path.V1_EMPLOYEES, Permission.CanReadEmployee),
     GET_V1_EMPLOYEES_ID(HttpMethod.GET, Path.V1_EMPLOYEES_ANYONE, Permission.CanReadEmployee),
+    GET_V1_EMPLOYEES_ANYTHING(HttpMethod.GET, Path.V1_EMPLOYEES_ANYTHING, Permission.CanReadEmployee),
     POST_V1_EMPLOYEES(HttpMethod.GET, Path.V1_EMPLOYEES, Permission.CanCreateEmployee),
     PUT_V1_EMPLOYEES_ID(HttpMethod.PUT, Path.V1_EMPLOYEES_ANYONE, Permission.CanModifyEmployee),
 

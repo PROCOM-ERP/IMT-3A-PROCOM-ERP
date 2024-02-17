@@ -22,8 +22,8 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    public Queue loginProfileEmailQueue() {
-        return new Queue("login-profile-email-queue");
+    public Queue employeeEmailQueue() {
+        return new Queue("employee-email-queue");
     }
 
     /* Exchanges */
@@ -44,8 +44,8 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    public TopicExchange loginProfilesInfoExchange() {
-        return new TopicExchange("login-profiles-info-exchange");
+    public TopicExchange employeesExchange() {
+        return new TopicExchange("employees-exchange");
     }
 
     /* Bindings */
@@ -69,11 +69,11 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    public Binding loginProfilesEmailBinding(Queue loginProfileEmailQueue,
-                                             Exchange loginProfilesInfoExchange) {
-        return BindingBuilder.bind(loginProfileEmailQueue)
-                .to(loginProfilesInfoExchange)
-                .with("login-profile.email.*")
+    public Binding employeeEmailBinding(Queue employeeEmailQueue,
+                                        Exchange employeesExchange) {
+        return BindingBuilder.bind(employeeEmailQueue)
+                .to(employeesExchange)
+                .with("employee.email.*")
                 .noargs();
     }
 }

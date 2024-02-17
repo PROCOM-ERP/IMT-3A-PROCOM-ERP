@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.DirectExchange;
+import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ public class MessageSenderService implements CommandLineRunner {
     private final CustomHttpRequestBuilder customHttpRequestBuilder;
     private final RabbitTemplate rabbitTemplate;
     private final DirectExchange rolesDirectExchange;
+    private final TopicExchange employeesExchange;
 
     private final Logger logger = LoggerFactory.getLogger(MessageSenderService.class);
 
@@ -34,6 +36,14 @@ public class MessageSenderService implements CommandLineRunner {
         String resource = String.format("%s/%s%s", Path.ROLES, roleName, Path.ACTIVATION);
         String path = customHttpRequestBuilder.buildPath(Path.V1, resource);
         rabbitTemplate.convertAndSend(rolesDirectExchange.getName(), "role.activation", path);
+        logger.info("Message sent");
+    }
+
+    public void sendEmployeeEmailUpdateMessage(String idEmployee) {
+        logger.info("Sending message to inform about a change on employee email...");
+        String resource = String.format("%s/%s%s", Path.EMPLOYEES, idEmployee, Path.EMAIL);
+        String path = customHttpRequestBuilder.buildPath(Path.V1, resource);
+        rabbitTemplate.convertAndSend(employeesExchange.getName(), "employee.email.update", path);
         logger.info("Message sent");
     }
 }

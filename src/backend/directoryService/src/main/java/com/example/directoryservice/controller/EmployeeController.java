@@ -1,6 +1,7 @@
 package com.example.directoryservice.controller;
 
 import com.example.directoryservice.dto.EmployeeCreationRequestDto;
+import com.example.directoryservice.dto.EmployeeEmailResponseDto;
 import com.example.directoryservice.dto.EmployeeResponseDto;
 import com.example.directoryservice.dto.EmployeeUpdateRequestDto;
 import com.example.directoryservice.model.Path;
@@ -83,7 +84,7 @@ public class EmployeeController {
     @GetMapping(Path.EMPLOYEE_ID)
     @Operation(operationId = "getEmployeeById", tags = {"employees"},
             summary = "Retrieve one employee information", description =
-            "Retrieve one employee information, by providing its id or email.",
+            "Retrieve one employee information, by providing its id.",
             parameters = {@Parameter(name = "idEmployee", description =
                     "The employee username (6 characters identifier)")})
     @ApiResponses(value = {
@@ -102,6 +103,30 @@ public class EmployeeController {
                     content = {@Content(mediaType = "application/json")} )})
     public ResponseEntity<EmployeeResponseDto> getEmployeeById(@PathVariable String idEmployee) {
         return ResponseEntity.ok().body(employeeService.getEmployeeById(idEmployee));
+    }
+
+    @GetMapping(Path.EMPLOYEE_ID_EMAIL)
+    @Operation(operationId = "getEmployeeEmailById", tags = {"employees"},
+            summary = "Retrieve one employee email", description =
+            "Retrieve one employee email, by providing its id.",
+            parameters = {@Parameter(name = "idEmployee", description =
+                    "The employee username (6 characters identifier)")})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description =
+                    "Employee email retrieved correctly",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = EmployeeEmailResponseDto.class))} ),
+            @ApiResponse(responseCode = "401", description =
+                    "Roles in Jwt token are insufficient to authorize the access to this URL",
+                    content = {@Content(mediaType = "application/json")} ),
+            @ApiResponse(responseCode = "404", description =
+                    "Employee not found",
+                    content = {@Content(mediaType = "application/json")} ),
+            @ApiResponse(responseCode = "500", description =
+                    "Uncontrolled error appeared",
+                    content = {@Content(mediaType = "application/json")} )})
+    public ResponseEntity<EmployeeEmailResponseDto> getEmployeeEmailById(@PathVariable String idEmployee) {
+        return ResponseEntity.ok().body(employeeService.getEmployeeEmailById(idEmployee));
     }
 
     @PutMapping(Path.EMPLOYEE_ID)

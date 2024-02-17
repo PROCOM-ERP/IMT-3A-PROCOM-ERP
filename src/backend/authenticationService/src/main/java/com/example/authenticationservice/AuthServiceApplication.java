@@ -21,8 +21,7 @@ import org.springframework.context.annotation.Profile;
                 @Tag(name = "hello"),
                 @Tag(name = "auth"),
                 @Tag(name = "login-profiles"),
-                @Tag(name = "roles"),
-                @Tag(name = "permissions")
+                @Tag(name = "roles")
         })
 public class AuthServiceApplication {
 
