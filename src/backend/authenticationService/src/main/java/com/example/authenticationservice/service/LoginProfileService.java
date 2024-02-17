@@ -5,6 +5,7 @@ import com.example.authenticationservice.model.LoginProfile;
 import com.example.authenticationservice.model.Role;
 import com.example.authenticationservice.repository.LoginProfileRepository;
 import com.example.authenticationservice.repository.RoleRepository;
+import com.example.authenticationservice.utils.CustomHttpRequestBuilder;
 import com.example.authenticationservice.utils.CustomPasswordGenerator;
 import com.example.authenticationservice.utils.PerformanceTracker;
 import lombok.RequiredArgsConstructor;
@@ -12,12 +13,18 @@ import lombok.RequiredArgsConstructor;
 //import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -31,6 +38,8 @@ public class LoginProfileService {
     private final RoleRepository roleRepository;
     private final CustomPasswordGenerator customPasswordGenerator;
     private final PasswordEncoder passwordEncoder;
+    private final CustomHttpRequestBuilder customHttpRequestBuilder;
+    private final RestTemplate restTemplate;
     private final MailService mailService;
     private final MessageSenderService messageSenderService;
 
@@ -175,15 +184,18 @@ public class LoginProfileService {
         }
     }
 
-    public void updateLoginProfileEmail(String idLoginProfile, String email)
-            throws NoSuchElementException {
+    public void updateLoginProfileEmail(String getEmployeeEmailById)
+            throws RestClientException {
+
+        // retrieve external EmployeeEmailResponseDto entity
+        EmployeeEmailResponseDto employeeDto = getEmployeeEmailById(getEmployeeEmailById);
 
         // try to update the email
-        int row =  loginProfileRepository.updateEmailById(idLoginProfile, email);
+        int row =  loginProfileRepository.updateEmailById(employeeDto.getId(), employeeDto.getEmail());
 
         // check if only 1 row was modified
         if (row != 1) {
-            throw new NoSuchElementException();
+            throw new RestClientException("");
         }
     }
 
@@ -194,5 +206,25 @@ public class LoginProfileService {
         int numericPart = nextIdLoginProfile % 100000;
 
         return String.format("%c%05d", (char) (letterAsciiIndex), numericPart);
+    }
+
+    private EmployeeEmailResponseDto getEmployeeEmailById(String getEmployeeEmailById)
+        throws RestClientException
+    {
+        // build request
+        String url = customHttpRequestBuilder.buildUrl(getEmployeeEmailById);
+        HttpEntity<String> entity = customHttpRequestBuilder.buildHttpEntity();
+
+        // send request
+        ResponseEntity<EmployeeEmailResponseDto> response = restTemplate.exchange(url, HttpMethod.GET,
+                entity,
+                new ParameterizedTypeReference<>() {}); // response with custom type
+
+        // check if body is existing and consistent
+        if (! (response.getStatusCode().is2xxSuccessful() && response.hasBody() && response.getBody() != null))
+            throw new RestClientException("");
+
+        // return expected Employee email
+        return response.getBody();
     }
 }
