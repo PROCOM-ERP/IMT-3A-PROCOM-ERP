@@ -10,6 +10,10 @@ secrets:
     external: true
   SECURITY_TRUST_STORE_ALIAS:
     external: true
+  BACKEND_MAIL_USERNAME:
+    external: true
+  BACKEND_MAIL_PASSWORD:
+    external: true
   DB_LOCAL_TEST_SERVICE_USER:
     external: true
   DB_LOCAL_TEST_SERVICE_PASSWORD:
@@ -228,6 +232,8 @@ services:
     secrets:
       - DB_AUTHENTICATION_SERVICE_USER
       - DB_AUTHENTICATION_SERVICE_PASSWORD
+      - BACKEND_MAIL_USERNAME
+      - BACKEND_MAIL_PASSWORD
       - BACKEND_MESSAGE_BROKER_SERVICE_USERNAME
       - BACKEND_MESSAGE_BROKER_SERVICE_PASSWORD
       - BACKEND_AUTHENTICATION_SERVICE_HTTPS_KEY_STORE_ALIAS
@@ -236,6 +242,8 @@ services:
       - SECURITY_JWT_CLAIMS_KEY_ROLES
       - SECURITY_SERVICES_SHARED_KEY
       - SECURITY_TRUST_STORE_PASSWORD
+    ports:
+      - "${BACKEND_AUTHENTICATION_SERVICE_PORT_EXT}:${BACKEND_AUTHENTICATION_SERVICE_PORT_INT}"
     depends_on:
       - "postgres-procom-erp-authentication-service"
       - "springboot-procom-erp-message-broker-service"
