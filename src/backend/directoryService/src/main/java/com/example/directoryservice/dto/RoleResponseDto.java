@@ -13,8 +13,7 @@ import java.util.Set;
 @Builder
 public class RoleResponseDto {
 
-    private String name;
-    private Boolean enable;
-    private Set<String> permissions;
+    private Boolean isEnable;
+    private Set<PermissionDto> permissions;
 
 }

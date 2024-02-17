@@ -130,6 +130,8 @@ services:
       - SECURITY_JWT_CLAIMS_KEY_ROLES
       - SECURITY_SERVICES_SHARED_KEY
       - SECURITY_TRUST_STORE_PASSWORD
+    ports:
+      - "${BACKEND_AUTHENTICATION_SERVICE_PORT_EXT}:${BACKEND_AUTHENTICATION_SERVICE_PORT_INT}"
     depends_on:
       - postgres-procom-erp-authentication-service
       - springboot-procom-erp-message-broker-service

@@ -10,34 +10,30 @@
 -- | Create table                                                                                 |
 -- +----------------------------------------------------------------------------------------------+
 
-CREATE TABLE employees
+CREATE TABLE roles
 (
-    id CHAR(6) UNIQUE NOT NULL,
-    id_employee_gen SERIAL UNIQUE NOT NULL,
-    password VARCHAR(128) NOT NULL,
-    email VARCHAR(320) UNIQUE,
-    creation TIMESTAMP NOT NULL DEFAULT current_timestamp,
-    enable BOOLEAN NOT NULL DEFAULT true,
-    jwt_min_creation TIMESTAMP NOT NULL DEFAULT current_timestamp,
+    name VARCHAR(32) UNIQUE NOT NULL,
+    is_enable BOOLEAN NOT NULL DEFAULT true,
 
-    CONSTRAINT pk_employees PRIMARY KEY (id),
-
-    CONSTRAINT check_employees_id
-        CHECK (employees.id ~* '[A-Z][0-9]{5}')--,
-    --CONSTRAINT check_employees_email
-        --CHECK (employees.email ~* '^[a-zA-Z0-9](?:[a-zA-Z0-9-._-]{0,62}[a-zA-Z0-9])?@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z]{2,})+$')
-
+    CONSTRAINT pk_roles PRIMARY KEY (name)
 );
 
 -- +----------------------------------------------------------------------------------------------+
 
-CREATE TABLE roles
+CREATE TABLE role_activations
 (
-    name VARCHAR(32) UNIQUE NOT NULL,
-    enable BOOLEAN NOT NULL DEFAULT true,
-    counter INTEGER NOT NULL DEFAULT 1,
+    id SERIAL UNIQUE NOT NULL,
+    role VARCHAR(32) NOT NULL,
+    microservice VARCHAR(32) NOT NULL,
+    is_enable BOOLEAN NOT NULL DEFAULT true,
 
-    CONSTRAINT pk_roles PRIMARY KEY (name)
+    CONSTRAINT pk_role_activations
+        PRIMARY KEY (id),
+    CONSTRAINT fk_role_activations_table_roles
+        FOREIGN KEY (role) REFERENCES roles(name)
+            ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT uq_role_activations_role_microservice
+        UNIQUE (role, microservice)
 );
 
 -- +----------------------------------------------------------------------------------------------+
@@ -56,17 +52,35 @@ CREATE TABLE role_permissions
 
 -- +----------------------------------------------------------------------------------------------+
 
-CREATE TABLE join_employees_roles
+
+CREATE TABLE login_profiles
 (
-    employee CHAR(6) NOT NULL,
+    id CHAR(6) UNIQUE NOT NULL,
+    id_login_profile_gen SERIAL UNIQUE NOT NULL,
+    password VARCHAR(128) NOT NULL,
+    email VARCHAR(320) UNIQUE,
+    created_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
+    is_enable BOOLEAN NOT NULL DEFAULT true,
+    jwt_gen_min_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
+
+    CONSTRAINT pk_login_profiles PRIMARY KEY (id),
+    CONSTRAINT check_login_profiles_id
+        CHECK (login_profiles.id ~* '[A-Z][0-9]{5}')
+);
+
+-- +----------------------------------------------------------------------------------------------+
+
+CREATE TABLE join_login_profiles_roles
+(
+    login_profile CHAR(6) NOT NULL,
     role VARCHAR(32) NOT NULL,
 
-    CONSTRAINT pk_join_employees_roles
-        PRIMARY KEY (employee, role),
-    CONSTRAINT fk_join_employees_roles_table_employees
-        FOREIGN KEY (employee) REFERENCES employees(id)
+    CONSTRAINT pk_join_login_profiles_roles
+        PRIMARY KEY (login_profile, role),
+    CONSTRAINT fk_join_login_profiles_roles_table_login_profiles
+        FOREIGN KEY (login_profile) REFERENCES login_profiles(id)
             ON UPDATE CASCADE ON DELETE CASCADE,
-    CONSTRAINT fk_join_employees_roles_table_roles
+    CONSTRAINT fk_join_login_profiles_roles_table_roles
         FOREIGN KEY (role) REFERENCES roles(name)
             ON UPDATE CASCADE ON DELETE CASCADE
 );
@@ -75,35 +89,37 @@ CREATE TABLE join_employees_roles
 -- | Insert into                                                                                  |
 -- +----------------------------------------------------------------------------------------------+
 
-INSERT INTO employees (id, password)
+INSERT INTO login_profiles (id, password)
 VALUES ('A00001', '$2a$10$MAxOfcOCypgcExmZjSp/Fu1rMBbepSZPGDX9y4u1XLkKipYsrVcnK'),
        ('A00002', '$2a$10$MAxOfcOCypgcExmZjSp/Fu1rMBbepSZPGDX9y4u1XLkKipYsrVcnK');
 
 -- +----------------------------------------------------------------------------------------------+
 
 INSERT INTO roles (name)
-VALUES ('employee'),
+VALUES ('user'),
        ('admin');
 
 -- +----------------------------------------------------------------------------------------------+
 
-INSERT INTO join_employees_roles (employee, role)
+INSERT INTO role_activations (role, microservice)
+VALUES ('user', 'authentication'),
+       ('admin', 'authentication');
+
+-- +----------------------------------------------------------------------------------------------+
+
+INSERT INTO join_login_profiles_roles (login_profile, role)
 VALUES ('A00001', 'admin'),
-       ('A00001', 'employee'),
-       ('A00002', 'employee');
+       ('A00001', 'user'),
+       ('A00002', 'user');
 
 -- +----------------------------------------------------------------------------------------------+
 
 INSERT INTO role_permissions (role, permission)
-VALUES ('admin', 'CanCreateEmployee'),
-       ('admin', 'CanReadEmployee'),
-       ('admin', 'CanModifyEmployeeRoles'),
-       ('admin', 'CanModifyEmployeeEmail'),
-       ('admin', 'CanDeactivateEmployee'),
+VALUES ('admin', 'CanCreateLoginProfile'),
+       ('admin', 'CanReadLoginProfile'),
+       ('admin', 'CanModifyLoginProfile'),
+       ('admin', 'CanModifyLoginProfilePassword'),
        ('admin', 'CanCreateRole'),
        ('admin', 'CanReadRole'),
-       ('admin', 'CanModifyRolePermissions'),
-       ('admin', 'CanDeactivateRole'),
-       ('admin', 'CanReadPermission'),
-       ('employee', 'CanReadEmployee'),
-       ('employee', 'CanModifyEmployeePassword');
+       ('admin', 'CanModifyRole'),
+       ('user', 'CanModifyLoginProfilePassword');

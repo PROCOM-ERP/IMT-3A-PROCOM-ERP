@@ -1,5 +1,6 @@
 package com.example.authenticationservice.controller;
 
+import com.example.authenticationservice.model.Path;
 import io.swagger.v3.oas.annotations.Operation;
 
 import io.swagger.v3.oas.annotations.media.Content;
@@ -11,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/hello")
+@RequestMapping(Path.V1_HELLO)
 public class HelloController {
 
     @GetMapping(produces = "application/json")

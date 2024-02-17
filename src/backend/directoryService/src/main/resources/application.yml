@@ -50,6 +50,7 @@ springdoc:
 
 security:
   service:
+    name: ${BACKEND_DIRECTORY_SERVICE_NAME}
     sharedKey: ${SECURITY_SERVICES_SHARED_KEY}
     role: microservices
   jwt:

@@ -1,6 +1,7 @@
 package com.example.directoryservice.utils;
 
-import com.example.directoryservice.repository.EmployeeRepository;
+import com.example.directoryservice.model.LoginProfile;
+import com.example.directoryservice.repository.LoginProfileRepository;
 import com.example.directoryservice.repository.RoleRepository;
 import com.example.directoryservice.service.PermissionService;
 import lombok.RequiredArgsConstructor;
@@ -14,9 +15,9 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
-import java.time.ZoneId;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
@@ -31,13 +32,11 @@ public class CustomJwtAuthenticationConverter implements Converter<Jwt, Abstract
 
     private final PermissionService permissionService;
     private final RoleRepository roleRepository;
-    private final EmployeeRepository employeeRepository;
-
-    //private final Logger logger = LoggerFactory.getLogger(CustomJwtAuthenticationConverter.class);
+    private final LoginProfileRepository loginProfileRepository;
 
     @Override
     public AbstractAuthenticationToken convert(Jwt jwt) {
-        List<String> permissions;
+        Set<String> permissions;
         List<String> roles = jwt.getClaimAsStringList(jwtClaimRoles);
         if (Objects.equals(jwt.getSubject(), sharedKey) && roles.contains(serviceRole)) {
             permissions = permissionService.getAllPermissions();
@@ -49,14 +48,16 @@ public class CustomJwtAuthenticationConverter implements Converter<Jwt, Abstract
     }
 
     private void checkTokenValidity(Jwt jwt) throws InsufficientAuthenticationException {
-        Instant jwtMinCreation = employeeRepository.findById(jwt.getSubject())
-                .orElseThrow(() -> new InsufficientAuthenticationException("")).getJwtMinCreation()
-                .atZone(ZoneId.systemDefault()).toInstant();
-        if (jwt.getIssuedAt() == null || jwt.getIssuedAt().isBefore(jwtMinCreation))
+        LoginProfile loginProfile = loginProfileRepository.findById(jwt.getSubject())
+                .orElseThrow(() -> new InsufficientAuthenticationException(""));
+        if (! loginProfile.getIsEnable())
+            throw new InsufficientAuthenticationException("");
+        Instant jwtGenMinAt = loginProfile.getJwtGenMinAt();
+        if (jwt.getIssuedAt() == null || jwt.getIssuedAt().isBefore(jwtGenMinAt))
             throw new InsufficientAuthenticationException("");
     }
 
-    private List<SimpleGrantedAuthority> permissionsToAuthorities(List<String> permissions) {
+    private List<SimpleGrantedAuthority> permissionsToAuthorities(Set<String> permissions) {
         return permissions.stream().map(SimpleGrantedAuthority::new).toList();
     }
 }

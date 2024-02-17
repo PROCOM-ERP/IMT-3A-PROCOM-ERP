@@ -20,11 +20,12 @@ public class ControllerExceptionHandler {
 
     // private final Logger logger = LoggerFactory.getLogger(ControllerExceptionHandler.class);
 
+    /*
     @ExceptionHandler(Exception.class) // Http 500
     public ResponseEntity<String> handleAllExceptions(Exception e) {
         return ResponseEntity.internalServerError().build();
     }
-
+    */
     @ExceptionHandler(IllegalArgumentException.class) // Http 400
     public ResponseEntity<String> handleIllegalArgumentExceptions() {
         return ResponseEntity.badRequest().build();

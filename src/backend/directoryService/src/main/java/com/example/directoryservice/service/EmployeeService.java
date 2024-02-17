@@ -1,158 +1,136 @@
 package com.example.directoryservice.service;
 
-
-import com.example.directoryservice.dto.EmployeeRequestDto;
-import com.example.directoryservice.dto.EmployeeRequestInfoDto;
-import com.example.directoryservice.dto.EmployeeResponseDto;
+import com.example.directoryservice.dto.*;
 import com.example.directoryservice.model.Employee;
+import com.example.directoryservice.model.Permission;
 import com.example.directoryservice.repository.EmployeeRepository;
-import com.example.directoryservice.repository.ServiceRepository;
-import com.example.directoryservice.utils.RabbitMQSender;
+import com.example.directoryservice.repository.OrgUnitRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class EmployeeService {
 
     private final EmployeeRepository employeeRepository;
-    private final ServiceRepository serviceRepository;
-    private final RabbitMQSender rabbitMQSender;
+    private final OrgUnitRepository orgUnitRepository;
+    private final AddressService addressService;
+
+    private final MessageSenderService messageSenderService;
 
     //private final Logger logger = LoggerFactory.getLogger(EmployeeService.class);
 
-    public String createEmployee(EmployeeRequestDto employeeRequestDto) throws DataIntegrityViolationException {
+    /* Public Methods */
+
+    public String createEmployee(EmployeeCreationRequestDto employeeDto)
+            throws DataIntegrityViolationException {
         // create new entity
         Employee employee = Employee.builder()
-                    .id(employeeRequestDto.getId())
-                    .lastName(employeeRequestDto.getLastName())
-                    .firstName(employeeRequestDto.getFirstName())
-                    .email(employeeRequestDto.getEmail())
-                    .service(serviceRepository.findById(employeeRequestDto.getService())
+                .id(employeeDto.getId())
+                .lastName(employeeDto.getLastName())
+                .firstName(employeeDto.getFirstName())
+                .email(employeeDto.getEmail())
+                .phoneNumber(employeeDto.getPhoneNumber())
+                .job(employeeDto.getJob())
+                .orgUnit(orgUnitRepository.findById(employeeDto.getOrgUnit())
                             .orElseThrow(() -> new DataIntegrityViolationException("")))
-                    .build();
+                .build();
 
         // try to save entity and return its id
-        return employeeRepository.save(employee).getId();
+        String idEmployee = employeeRepository.save(employee).getId();
+
+        // send message to inform the network about employee email update
+        messageSenderService.sendEmployeeEmailUpdateMessage(idEmployee);
+
+        return idEmployee;
     }
 
-    public List<EmployeeResponseDto> getAllEmployees() {
+    public Set<EmployeeResponseDto> getAllEmployees() {
         return employeeRepository.findAll().stream()
-                .map(EmployeeService::modelToResponseDto)
-                .toList();
+                .map(this::modelToResponseDto)
+                .collect(Collectors.toSet());
     }
 
-    public EmployeeResponseDto getEmployee(String idOrEmail) throws NoSuchElementException {
-        Optional<Employee> employee = idOrEmail.contains("@") ?
-                getEmployeeByEmail(idOrEmail) :
-                getEmployeeById(idOrEmail);
-        return employee
-                .map(EmployeeService::modelToResponseDto)
+    public EmployeeResponseDto getEmployeeById(String idEmployee) {
+        return employeeRepository.findById(idEmployee)
+                .map(this::modelToResponseDto)
                 .orElseThrow();
     }
-    private Optional<Employee> getEmployeeById(String idEmployee) {
-        return employeeRepository.findById(idEmployee);
 
-    }
-    private Optional<Employee> getEmployeeByEmail(String email) {
-        return employeeRepository.findByEmail(email);
-    }
-
-    public void updateEmployeeInfo(String idOrEmail, EmployeeRequestInfoDto employeeRequestInfoDto)
-            throws NoSuchElementException {
-        // build updated entity
-        Employee employee = (idOrEmail.contains("@") ?
-                getEmployeeByEmail(idOrEmail) :
-                getEmployeeById(idOrEmail))
+    public EmployeeEmailResponseDto getEmployeeEmailById(String idEmployee) {
+        return employeeRepository.findById(idEmployee)
+                .map(e -> EmployeeEmailResponseDto.builder()
+                        .id(e.getId())
+                        .email(e.getEmail())
+                        .build())
                 .orElseThrow();
-        String lastName = employeeRequestInfoDto.getLastName();
-        String firstName = employeeRequestInfoDto.getFirstName();
-        String email = employeeRequestInfoDto.getEmail();
-        String phoneNumber = employeeRequestInfoDto.getPhoneNumber();
-        if (lastName != null && ! lastName.isEmpty())
-            employee.setLastName(lastName);
-        if (firstName != null && ! firstName.isEmpty())
-            employee.setFirstName(firstName);
-        if (email != null && ! email.isEmpty())
-            employee.setEmail(email);
-        if (phoneNumber != null)
-            employee.setPhoneNumber(phoneNumber.isEmpty() ? null : phoneNumber);
-
-        // try to update information
-        int row = idOrEmail.contains("@") ?
-                employeeRepository.updateInfoByEmail(employee.getEmail(),  employee.getLastName(),
-                        employee.getFirstName(), employee.getPhoneNumber()) :
-                employeeRepository.updateInfoById(employee.getId(), employee.getLastName(), employee.getFirstName(),
-                        employee.getEmail(), employee.getPhoneNumber());
-
-        // check if only 1 row was modified
-        if (row != 1) {
-            throw new NoSuchElementException();
-        }
-
-        if (email != null && ! email.isEmpty())
-            rabbitMQSender.sendEmployeeEmailModify(employee.getId());
     }
 
-    public void updateEmployeeService(String idOrEmail, Integer idService)
+    public void updateEmployeeById(String idEmployee, EmployeeUpdateRequestDto employeeDto)
             throws NoSuchElementException, DataIntegrityViolationException {
-        // try to update the address
-        int row = idOrEmail.contains("@") ?
-                employeeRepository.updateServiceByEmail(idOrEmail, idService) :
-                employeeRepository.updateServiceById(idOrEmail, idService);
 
-        // check if only 1 row was modified
-        if (row != 1) {
-            throw new NoSuchElementException();
-        }
-    }
-
-    public void updateAllEmployeesJwtMinCreation() {
-        // try to update jwtMinCreation
-        employeeRepository.updatAllJwtMinCreation();
-    }
-
-    public void updateEmployeeJwtMinCreation(String idEmployee) throws NoSuchElementException {
-        // try to update jwtMinCreation
-        int row = employeeRepository.updateJwtMinCreationById(idEmployee);
-
-        // check if only 1 row was modified
-        if (row != 1) {
-            throw new NoSuchElementException();
+        // check if the employee to modify is the same as the authenticated one (or admin)
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentLoginProfileId = authentication.getName();
+        boolean canBypassAccessDeny = authentication.getAuthorities()
+                .contains(new SimpleGrantedAuthority(Permission.CanBypassAccessDeny.name()));
+        if (!currentLoginProfileId.equals(idEmployee) && !canBypassAccessDeny) {
+            throw new AccessDeniedException("");
         }
 
+        // check if employee already exists
+        Employee employee = employeeRepository.findById(idEmployee).orElseThrow();
+
+        // check if email will change
+       boolean isEmailUpdated = ! employeeDto.getEmail().equals(employee.getEmail());
+
+        // update employee attributes
+        employee.setLastName(employeeDto.getLastName());
+        employee.setFirstName(employeeDto.getFirstName());
+        employee.setEmail(employeeDto.getEmail());
+        employee.setPhoneNumber(employeeDto.getPhoneNumber());
+        employee.setJob(employeeDto.getJob());
+        employee.setOrgUnit(orgUnitRepository.findById(employeeDto.getOrgUnit())
+                .orElseThrow(() -> new DataIntegrityViolationException("")));
+
+        // save modifications
+        employeeRepository.save(employee);
+
+        // send message to inform the network about employee email update
+        if (isEmailUpdated)
+            messageSenderService.sendEmployeeEmailUpdateMessage(idEmployee);
     }
 
-    public void updateEmployeeEnable(String idOrEmail, Boolean enable)
-            throws NoSuchElementException, DataIntegrityViolationException {
-        // try to update enable
-        int row = idOrEmail.contains("@") ?
-                employeeRepository.updateEnableByEmail(idOrEmail, enable) :
-                employeeRepository.updateEnableById(idOrEmail, enable);
+    /* Private Methods */
 
-        // check if only 1 row was modified
-        if (row != 1) {
-            throw new NoSuchElementException();
-        }
-    }
-
-    private static EmployeeResponseDto modelToResponseDto(Employee employee) {
+    private EmployeeResponseDto modelToResponseDto(Employee employee) {
         return EmployeeResponseDto.builder()
                 .id(employee.getId())
-                .creation(employee.getCreation())
-                .enable(employee.getEnable())
                 .lastName(employee.getLastName())
                 .firstName(employee.getFirstName())
                 .email(employee.getEmail())
                 .phoneNumber(employee.getPhoneNumber())
-                .service(employee.getService().getId())
+                .job(employee.getJob())
+                .orgUnit(OrgUnitEmployeeResponseDto.builder()
+                        .id(employee.getOrgUnit().getId())
+                        .name(employee.getOrgUnit().getName())
+                        .address(addressService.modelToResponseDto(employee.getOrgUnit().getAddress()))
+                        .build())
+                .organisation(OrganisationEmployeeResponseDto.builder()
+                        .id(employee.getOrgUnit().getOrganisation().getId())
+                        .name(employee.getOrgUnit().getOrganisation().getName())
+                        .build())
                 .build();
     }
 

@@ -22,126 +22,41 @@
       "name": "organisations"
     },
     {
-      "name": "services"
-    },
-    {
       "name": "employees"
     },
     {
       "name": "roles"
-    },
-    {
-      "name": "permissions"
     }
   ],
   "paths": {
-    "/api/dir/v1/services": {
-      "get": {
-        "tags": [
-          "services"
-        ],
-        "summary": "Retrieve all services information",
-        "description": "Retrieve all services information.",
-        "operationId": "getAllServices",
-        "responses": {
-          "200": {
-            "description": "Services information retrieved correctly",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ServiceResponseDto"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "500": {
-            "description": "Uncontrolled error appeared",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "services"
-        ],
-        "summary": "Create a new service",
-        "description": "Create a new service by providing a name, an address and an organisation(see body type).<br>Information about it are available in URI given in the response header location.<br>Only available for admins.",
-        "operationId": "createService",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ServiceRequestDto"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "401": {
-            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "201": {
-            "description": "Service created correctly",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "400": {
-            "description": "The request body is badly structured or formatted",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "500": {
-            "description": "Uncontrolled error appeared",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "422": {
-            "description": "Attribute values don't respect integrity constraints.Address : retrieve addresses information (addresses section) to know which one are available.<br>Organisation : retrieve organisations information (organisations section) to know which one are available.",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      }
-    },
-    "/api/dir/v1/roles": {
+    "/api/directory/v1/roles/{role}": {
       "get": {
         "tags": [
           "roles"
         ],
-        "summary": "Retrieve all roles information",
-        "description": "Retrieve all roles information.<br>Only available for admins.",
-        "operationId": "getAllRoles",
-        "responses": {
-          "401": {
-            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
-            "content": {
-              "application/json": {}
+        "summary": "Retrieve one role permissions and activation status",
+        "description": "Retrieve one role permissions and activation status, by providing its name.<br>Only available for admins.",
+        "operationId": "getRolebyName",
+        "parameters": [
+          {
+            "name": "role",
+            "in": "path",
+            "description": "The role name",
+            "required": true,
+            "schema": {
+              "type": "string"
             }
-          },
-          "500": {
-            "description": "Uncontrolled error appeared",
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "Role not found",
             "content": {
               "application/json": {}
             }
           },
           "200": {
-            "description": "Roles information retrieved correctly",
+            "description": "Role information retrieved correctly",
             "content": {
               "application/json": {
                 "schema": {
@@ -149,27 +64,62 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "500": {
+            "description": "Uncontrolled error appeared",
+            "content": {
+              "application/json": {}
+            }
           }
         }
       },
-      "post": {
+      "put": {
         "tags": [
           "roles"
         ],
-        "summary": "Create a new role",
-        "description": "Create a new role by providing its name and permissions.<br>Information about it are available in URI given in the response header location.<br>Only available for admins.",
-        "operationId": "createRole",
+        "summary": "Update a role permissions and / or activation status",
+        "description": "Update a role permissions and / or activation status, by providing a list of active ones.<br>Previous ones will be deleted.<br>Only available for admins.",
+        "operationId": "updateRoleByName",
+        "parameters": [
+          {
+            "name": "role",
+            "in": "path",
+            "description": "The role name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/RoleRequestDto"
+                "$ref": "#/components/schemas/RoleUpdateRequestDto"
               }
             }
           },
           "required": true
         },
         "responses": {
+          "204": {
+            "description": "Role permissions and / or activation status updated correctly",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "404": {
+            "description": "Role not found",
+            "content": {
+              "application/json": {}
+            }
+          },
           "401": {
             "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
             "content": {
@@ -177,7 +127,13 @@
             }
           },
           "422": {
-            "description": "Attribute values don't respect integrity constraints.<br>Name : 32 charactersPermissions : retrieve permissions information (permissions section) to know which one are available",
+            "description": "Attribute values don't respect integrity constraints.<br>Permissions : retrieve a role information for the microservice, to know which one are available.<br>isEnable : provide a boolean to modify value (can be null to keep current value).",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "500": {
+            "description": "Uncontrolled error appeared",
             "content": {
               "application/json": {}
             }
@@ -187,117 +143,44 @@
             "content": {
               "application/json": {}
             }
-          },
-          "500": {
-            "description": "Uncontrolled error appeared",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "201": {
-            "description": "Role created correctly",
-            "content": {
-              "application/json": {}
-            }
           }
         }
       }
     },
-    "/api/dir/v1/organisations": {
-      "get": {
-        "tags": [
-          "organisations"
-        ],
-        "summary": "Retrieve all organisations information",
-        "description": "Retrieve all organisations information.",
-        "operationId": "getAllOrganisations",
-        "responses": {
-          "200": {
-            "description": "Organisations information retrieved correctly",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/OrganisationResponseDto"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "500": {
-            "description": "Uncontrolled error appeared",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "organisations"
-        ],
-        "summary": "Create a new organisation",
-        "description": "Create a new organisation by providing a name and an address (see body type).<br>Information about it are available in URI given in the response header location.<br>Only available for admins.",
-        "operationId": "createOrganisation",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/OrganisationRequestDto"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "422": {
-            "description": "Attribute values don't respect integrity constraints.Address : retrieve addresses information (addresses section) to know which one are available.",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "401": {
-            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "400": {
-            "description": "The request body is badly structured or formatted",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "500": {
-            "description": "Uncontrolled error appeared",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "201": {
-            "description": "Organisation created correctly",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      }
-    },
-    "/api/dir/v1/employees": {
+    "/api/directory/v1/employees/{idEmployee}": {
       "get": {
         "tags": [
           "employees"
         ],
-        "summary": "Retrieve all employees information",
-        "description": "Retrieve all employees information.",
-        "operationId": "getAllEmployees",
+        "summary": "Retrieve one employee information",
+        "description": "Retrieve one employee information, by providing its id.",
+        "operationId": "getEmployeeById",
+        "parameters": [
+          {
+            "name": "idEmployee",
+            "in": "path",
+            "description": "The employee username (6 characters identifier)",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
+          "401": {
+            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "404": {
+            "description": "Employee not found",
+            "content": {
+              "application/json": {}
+            }
+          },
           "200": {
-            "description": "Employees information retrieved correctly",
+            "description": "Employee information retrieved correctly",
             "content": {
               "application/json": {
                 "schema": {
@@ -306,10 +189,99 @@
               }
             }
           },
+          "500": {
+            "description": "Uncontrolled error appeared",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "employees"
+        ],
+        "summary": "Update an employee information",
+        "description": "Update an employee information, by providing the new one.",
+        "operationId": "updateEmployeeById",
+        "parameters": [
+          {
+            "name": "idEmployee",
+            "in": "path",
+            "description": "The employee username (6 characters identifier)",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmployeeUpdateRequestDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
           "401": {
             "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
             "content": {
               "application/json": {}
+            }
+          },
+          "404": {
+            "description": "Employee not found",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "204": {
+            "description": "Employee information updated correctly",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "422": {
+            "description": "Attribute values don't respect integrity constraints.<br>OrgUnit : retrieve organisations information (organisations section) to know which one are available.",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "500": {
+            "description": "Uncontrolled error appeared",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/directory/v1/employees": {
+      "get": {
+        "tags": [
+          "employees"
+        ],
+        "summary": "Retrieve all employees information",
+        "description": "Retrieve all employees information.",
+        "operationId": "getAllEmployees",
+        "responses": {
+          "401": {
+            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "200": {
+            "description": "Employees information retrieved correctly",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmployeeResponseDto"
+                }
+              }
             }
           },
           "500": {
@@ -331,7 +303,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/EmployeeRequestDto"
+                "$ref": "#/components/schemas/EmployeeCreationRequestDto"
               }
             }
           },
@@ -339,7 +311,7 @@
         },
         "responses": {
           "422": {
-            "description": "Attribute values don't respect integrity constraints.<br>Service : retrieve services information (services section) to know which one are available.",
+            "description": "Attribute values don't respect integrity constraints.<br>OrgUnit : retrieve organisations (organisations section) to know which one are available.",
             "content": {
               "application/json": {}
             }
@@ -350,8 +322,8 @@
               "application/json": {}
             }
           },
-          "400": {
-            "description": "The request body is badly structured or formatted",
+          "201": {
+            "description": "Employee created correctly",
             "content": {
               "application/json": {}
             }
@@ -362,8 +334,8 @@
               "application/json": {}
             }
           },
-          "201": {
-            "description": "Employee created correctly",
+          "400": {
+            "description": "The request body is badly structured or formatted",
             "content": {
               "application/json": {}
             }
@@ -371,7 +343,7 @@
         }
       }
     },
-    "/api/dir/v1/addresses": {
+    "/api/directory/v1/addresses": {
       "get": {
         "tags": [
           "addresses"
@@ -409,33 +381,27 @@
           "addresses"
         ],
         "summary": "Create a new address",
-        "description": "Create a new address by providing location information (see body type).<br>Information about it are available in URI given in the response header location.<br>Only available for admins.",
+        "description": "Create a new address by providing location information (see body type).<br>Only available for admins.",
         "operationId": "createAddress",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/AddressRequestDto"
+                "$ref": "#/components/schemas/AddressCreationRequestDto"
               }
             }
           },
           "required": true
         },
         "responses": {
+          "201": {
+            "description": "Address created correctly",
+            "content": {
+              "application/json": {}
+            }
+          },
           "401": {
             "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "400": {
-            "description": "The request body is badly structured or formatted",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "500": {
-            "description": "Uncontrolled error appeared",
             "content": {
               "application/json": {}
             }
@@ -446,257 +412,8 @@
               "application/json": {}
             }
           },
-          "201": {
-            "description": "Address created correctly",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      }
-    },
-    "/api/dir/v1/services/{idService}/organisation": {
-      "patch": {
-        "tags": [
-          "services"
-        ],
-        "summary": "Update a service organisation",
-        "description": "Update a service organisation, by providing a new organisation id.<br>Only available for admins.",
-        "operationId": "updateServiceOrganisation",
-        "parameters": [
-          {
-            "name": "idOrName",
-            "in": "query",
-            "description": "The service id as an integer"
-          },
-          {
-            "name": "idService",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "integer",
-                "format": "int32"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "422": {
-            "description": "Attribute values don't respect integrity constraints.<br>Organisation : retrieve organisations information (organisations section) to know which one are available.",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "401": {
-            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
-            "content": {
-              "application/json": {}
-            }
-          },
           "500": {
             "description": "Uncontrolled error appeared",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "204": {
-            "description": "Service organisation updated correctly",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "404": {
-            "description": "Service not found",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      }
-    },
-    "/api/dir/v1/services/{idService}/address": {
-      "patch": {
-        "tags": [
-          "services"
-        ],
-        "summary": "Update a service address",
-        "description": "Update a service address, by providing a new address as an integer.<br>Only available for admins.",
-        "operationId": "updateServiceAddress",
-        "parameters": [
-          {
-            "name": "idOrName",
-            "in": "query",
-            "description": "The service id as an integer"
-          },
-          {
-            "name": "idService",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "integer",
-                "format": "int32"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "401": {
-            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "204": {
-            "description": "Service address updated correctly",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "422": {
-            "description": "Attribute values don't respect integrity constraints.<br>Address : retrieve addresses information (addresses section) to know which one are available.",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "500": {
-            "description": "Uncontrolled error appeared",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "404": {
-            "description": "Service not found",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      }
-    },
-    "/api/dir/v1/roles/{role}/permissions": {
-      "patch": {
-        "tags": [
-          "roles"
-        ],
-        "summary": "Update a role permissions",
-        "description": "Update a role permissions, by providing a list of all the new ones.<br>Previous ones will be deleted.<br>Only available for admins.",
-        "operationId": "updateRolePermissions",
-        "parameters": [
-          {
-            "name": "role",
-            "in": "path",
-            "description": "The role name",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "401": {
-            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "404": {
-            "description": "Role not found",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "500": {
-            "description": "Uncontrolled error appeared",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "204": {
-            "description": "Role permissions updated correctly",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "422": {
-            "description": "Attribute values don't respect integrity constraints.<br>Permissions : retrieve permissions information (permissions section) to know which one are available",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      }
-    },
-    "/api/dir/v1/roles/{role}/enable": {
-      "patch": {
-        "tags": [
-          "roles"
-        ],
-        "summary": "Enable or disable a role",
-        "description": "Enable or disable a role, by providing a new enable value (true or false).<br>Only available for admins.",
-        "operationId": "updateRoleEnable",
-        "parameters": [
-          {
-            "name": "role",
-            "in": "path",
-            "description": "The role name",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "boolean"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "401": {
-            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "404": {
-            "description": "Role not found",
             "content": {
               "application/json": {}
             }
@@ -706,357 +423,33 @@
             "content": {
               "application/json": {}
             }
-          },
-          "500": {
-            "description": "Uncontrolled error appeared",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "204": {
-            "description": "Role enable attribute updated correctly",
-            "content": {
-              "application/json": {}
-            }
           }
         }
       }
     },
-    "/api/dir/v1/organisations/{idOrName}/address": {
-      "patch": {
-        "tags": [
-          "organisations"
-        ],
-        "summary": "Update an organisation address",
-        "description": "Update an organisation address, by providing a new address as an integer.<br>Only available for admins.",
-        "operationId": "updateOrganisationAddress",
-        "parameters": [
-          {
-            "name": "idOrName",
-            "in": "path",
-            "description": "The organisation id as an integer in a string or its name",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "integer",
-                "format": "int32"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "401": {
-            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "422": {
-            "description": "Attribute values don't respect integrity constraints.<br>Address : retrieve addresses information (addresses section) to know which one are available.",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "500": {
-            "description": "Uncontrolled error appeared",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "204": {
-            "description": "Organisation address updated correctly",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "404": {
-            "description": "Organisation not found",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      }
-    },
-    "/api/dir/v1/employees/{idOrEmail}/service": {
-      "patch": {
-        "tags": [
-          "employees"
-        ],
-        "summary": "Update an employee service",
-        "description": "Update an employee service, by providing the new one.",
-        "operationId": "updateEmployeeService",
-        "parameters": [
-          {
-            "name": "idOrEmail",
-            "in": "path",
-            "description": "The employee username (6 characters identifier) or email address",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "integer",
-                "format": "int32"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "422": {
-            "description": "Attribute values don't respect integrity constraints.<br>Service : retrieve services information (services section) to know which one are available.",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "401": {
-            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "500": {
-            "description": "Uncontrolled error appeared",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "204": {
-            "description": "Employee service updated correctly",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "404": {
-            "description": "Employee not found",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      }
-    },
-    "/api/dir/v1/employees/{idOrEmail}/info": {
-      "patch": {
-        "tags": [
-          "employees"
-        ],
-        "summary": "Update an employee information",
-        "description": "Update an employee last name, first name, email and / or phone number, by providing the new ones.",
-        "operationId": "updateEmployeeInfo",
-        "parameters": [
-          {
-            "name": "idOrEmail",
-            "in": "path",
-            "description": "The employee username (6 characters identifier) or email address",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/EmployeeRequestInfoDto"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "401": {
-            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "500": {
-            "description": "Uncontrolled error appeared",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "422": {
-            "description": "Attribute values don't respect integrity constraints.<br>Email : 63 characters for 'username', @, 63 for subdomain, and the rest for TLD. Maximum 320 characters.",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "204": {
-            "description": "Employee information updated correctly",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "404": {
-            "description": "Employee not found",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      }
-    },
-    "/api/dir/v1/employees/{idOrEmail}/enable": {
-      "patch": {
-        "tags": [
-          "employees"
-        ],
-        "summary": "Enable or disable an employee",
-        "description": "Enable or disable an employee, by providing a new enable value (true or false).<br>Only available for admins.",
-        "operationId": "updateEmployeeEnable",
-        "parameters": [
-          {
-            "name": "idOrEmail",
-            "in": "path",
-            "description": "The employee username (6 characters identifier) or email address",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "boolean"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "401": {
-            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "500": {
-            "description": "Uncontrolled error appeared",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "422": {
-            "description": "Attribute values don't respect integrity constraints.<br>Enable : boolean value (true or false).",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "404": {
-            "description": "Employee not found",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "204": {
-            "description": "Employee enable attribute updated correctly",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      }
-    },
-    "/api/dir/v1/services/{idService}": {
+    "/api/directory/v1/roles": {
       "get": {
         "tags": [
-          "services"
+          "roles"
         ],
-        "summary": "Retrieve one service information",
-        "description": "Retrieve one service information, by providing its id.",
-        "operationId": "getService",
-        "parameters": [
-          {
-            "name": "idService",
-            "in": "path",
-            "description": "The service id as an integer",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
+        "summary": "Retrieve all roles",
+        "description": "Retrieve all roles.<br>Only available for admins.",
+        "operationId": "getAllRoles",
         "responses": {
           "401": {
             "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "500": {
-            "description": "Uncontrolled error appeared",
             "content": {
               "application/json": {}
             }
           },
           "200": {
-            "description": "Service information retrieved correctly",
+            "description": "Roles information retrieved correctly",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ServiceResponseDto"
+                  "$ref": "#/components/schemas/RoleActivationResponseDto"
                 }
               }
-            }
-          },
-          "404": {
-            "description": "Service not found",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "services"
-        ],
-        "summary": "Delete a service",
-        "description": "Delete a service, by providing its id.<br>Only available for admins.",
-        "operationId": "deleteService",
-        "parameters": [
-          {
-            "name": "idService",
-            "in": "path",
-            "description": "The service id as an integer",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Service deleted correctly",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "401": {
-            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
-            "content": {
-              "application/json": {}
             }
           },
           "500": {
@@ -1064,24 +457,18 @@
             "content": {
               "application/json": {}
             }
-          },
-          "404": {
-            "description": "Service not found",
-            "content": {
-              "application/json": {}
-            }
           }
         }
       }
     },
-    "/api/dir/v1/roles/{role}": {
+    "/api/directory/v1/roles/{role}/activation": {
       "get": {
         "tags": [
           "roles"
         ],
-        "summary": "Retrieve one role information",
-        "description": "Retrieve one role information, by providing its name.<br>Only available for admins.",
-        "operationId": "getRole",
+        "summary": "Retrieve one role activation status for a microservice",
+        "description": "Retrieve one role activation status for a microservice, by providing its name.<br>Only available for admins.",
+        "operationId": "getRoleActivationByName",
         "parameters": [
           {
             "name": "role",
@@ -1100,84 +487,39 @@
               "application/json": {}
             }
           },
+          "200": {
+            "description": "Role activation status retrieved correctly",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoleActivationResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Uncontrolled error appeared",
+            "content": {
+              "application/json": {}
+            }
+          },
           "404": {
-            "description": "Role not found",
+            "description": "Role activation status not found for role provided",
             "content": {
               "application/json": {}
-            }
-          },
-          "500": {
-            "description": "Uncontrolled error appeared",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "200": {
-            "description": "Role information retrieved correctly",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RoleResponseDto"
-                }
-              }
             }
           }
         }
       }
     },
-    "/api/dir/v1/permissions": {
-      "get": {
-        "tags": [
-          "permissions"
-        ],
-        "summary": "Retrieve all permission values",
-        "description": "Retrieve all permission valus.<br>Only available for admins.",
-        "operationId": "getAllPermissions",
-        "responses": {
-          "401": {
-            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "500": {
-            "description": "Uncontrolled error appeared",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "200": {
-            "description": "Permission values retrieved correctly",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/dir/v1/organisations/{idOrName}": {
+    "/api/directory/v1/organisations": {
       "get": {
         "tags": [
           "organisations"
         ],
-        "summary": "Retrieve one organisation information",
-        "description": "Retrieve one organisation information, by providing its id or name.",
-        "operationId": "getOrganisation",
-        "parameters": [
-          {
-            "name": "idOrName",
-            "in": "path",
-            "description": "The organisation id as an integer in a string or its name",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "summary": "Retrieve all organisations information",
+        "description": "Retrieve all organisations information.",
+        "operationId": "getAllOrganisations",
         "responses": {
           "401": {
             "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
@@ -1185,14 +527,8 @@
               "application/json": {}
             }
           },
-          "500": {
-            "description": "Uncontrolled error appeared",
-            "content": {
-              "application/json": {}
-            }
-          },
           "200": {
-            "description": "Organisation information retrieved correctly",
+            "description": "Organisations information retrieved correctly",
             "content": {
               "application/json": {
                 "schema": {
@@ -1201,53 +537,8 @@
               }
             }
           },
-          "404": {
-            "description": "Organisation not found",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "organisations"
-        ],
-        "summary": "Delete an organisation",
-        "description": "Delete an organisation, by providing its id or name.<br>Only available for admins.",
-        "operationId": "deleteOrganisation",
-        "parameters": [
-          {
-            "name": "idOrName",
-            "in": "path",
-            "description": "The organisation id as an integer in a string or its name",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "401": {
-            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
-            "content": {
-              "application/json": {}
-            }
-          },
           "500": {
             "description": "Uncontrolled error appeared",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "204": {
-            "description": "Organisation deleted correctly",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "404": {
-            "description": "Organisation not found",
             "content": {
               "application/json": {}
             }
@@ -1255,7 +546,7 @@
         }
       }
     },
-    "/api/dir/v1/hello": {
+    "/api/directory/v1/hello": {
       "get": {
         "tags": [
           "hello"
@@ -1279,19 +570,19 @@
         }
       }
     },
-    "/api/dir/v1/employees/{idOrEmail}": {
+    "/api/directory/v1/employees/{idEmployee}/email": {
       "get": {
         "tags": [
           "employees"
         ],
-        "summary": "Retrieve one employee information",
-        "description": "Retrieve one employee information, by providing its id or email.",
-        "operationId": "getEmployee",
+        "summary": "Retrieve one employee email",
+        "description": "Retrieve one employee email, by providing its id.",
+        "operationId": "getEmployeeEmailById",
         "parameters": [
           {
-            "name": "idOrEmail",
+            "name": "idEmployee",
             "in": "path",
-            "description": "The employee username (6 characters identifier) or email address",
+            "description": "The employee username (6 characters identifier)",
             "required": true,
             "schema": {
               "type": "string"
@@ -1305,124 +596,26 @@
               "application/json": {}
             }
           },
-          "200": {
-            "description": "Employee information retrieved correctly",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/EmployeeResponseDto"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Uncontrolled error appeared",
-            "content": {
-              "application/json": {}
-            }
-          },
           "404": {
             "description": "Employee not found",
             "content": {
               "application/json": {}
             }
-          }
-        }
-      }
-    },
-    "/api/dir/v1/addresses/{idAddress}": {
-      "get": {
-        "tags": [
-          "addresses"
-        ],
-        "summary": "Retrieve one address information",
-        "description": "Retrieve one address information, by providing its id.",
-        "operationId": "getAddress",
-        "parameters": [
-          {
-            "name": "idAddress",
-            "in": "path",
-            "description": "The address id as an integer",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "401": {
-            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
+          },
+          "500": {
+            "description": "Uncontrolled error appeared",
             "content": {
               "application/json": {}
             }
           },
           "200": {
-            "description": "Address information retrieved correctly",
+            "description": "Employee email retrieved correctly",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AddressResponseDto"
+                  "$ref": "#/components/schemas/EmployeeEmailResponseDto"
                 }
               }
-            }
-          },
-          "500": {
-            "description": "Uncontrolled error appeared",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "404": {
-            "description": "Address not found",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "addresses"
-        ],
-        "summary": "Delete an address",
-        "description": "Delete one address, by providing its id.",
-        "operationId": "deleteAddress",
-        "parameters": [
-          {
-            "name": "idAddress",
-            "in": "path",
-            "description": "The address id as an integer",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "401": {
-            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "204": {
-            "description": "Address deleted correctly",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "500": {
-            "description": "Uncontrolled error appeared",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "404": {
-            "description": "Address not found",
-            "content": {
-              "application/json": {}
             }
           }
         }
@@ -1431,26 +624,11 @@
   },
   "components": {
     "schemas": {
-      "ServiceRequestDto": {
+      "RoleUpdateRequestDto": {
         "type": "object",
         "properties": {
-          "name": {
-            "type": "string"
-          },
-          "address": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "organisation": {
-            "type": "string"
-          }
-        }
-      },
-      "RoleRequestDto": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string"
+          "isEnable": {
+            "type": "boolean"
           },
           "permissions": {
             "uniqueItems": true,
@@ -1461,67 +639,7 @@
           }
         }
       },
-      "OrganisationRequestDto": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string"
-          },
-          "address": {
-            "type": "integer",
-            "format": "int32"
-          }
-        }
-      },
-      "EmployeeRequestDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "lastName": {
-            "type": "string"
-          },
-          "firstName": {
-            "type": "string"
-          },
-          "email": {
-            "type": "string"
-          },
-          "service": {
-            "type": "integer",
-            "format": "int32"
-          }
-        }
-      },
-      "AddressRequestDto": {
-        "type": "object",
-        "properties": {
-          "number": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "street": {
-            "type": "string"
-          },
-          "city": {
-            "type": "string"
-          },
-          "state": {
-            "type": "string"
-          },
-          "country": {
-            "type": "string"
-          },
-          "postalCode": {
-            "type": "string"
-          },
-          "info": {
-            "type": "string"
-          }
-        }
-      },
-      "EmployeeRequestInfoDto": {
+      "EmployeeUpdateRequestDto": {
         "type": "object",
         "properties": {
           "lastName": {
@@ -1535,49 +653,63 @@
           },
           "phoneNumber": {
             "type": "string"
+          },
+          "job": {
+            "type": "string"
+          },
+          "orgUnit": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },
-      "Address": {
-        "required": [
-          "city",
-          "country",
-          "postalCode",
-          "street"
-        ],
+      "EmployeeCreationRequestDto": {
         "type": "object",
         "properties": {
           "id": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phoneNumber": {
+            "type": "string"
+          },
+          "job": {
+            "type": "string"
+          },
+          "orgUnit": {
             "type": "integer",
             "format": "int32"
-          },
+          }
+        }
+      },
+      "AddressCreationRequestDto": {
+        "type": "object",
+        "properties": {
           "number": {
             "type": "integer",
             "format": "int32"
           },
           "street": {
-            "maxLength": 255,
-            "minLength": 0,
             "type": "string"
           },
           "city": {
-            "maxLength": 100,
-            "minLength": 0,
             "type": "string"
           },
           "state": {
-            "maxLength": 100,
-            "minLength": 0,
             "type": "string"
           },
           "country": {
-            "maxLength": 100,
-            "minLength": 0,
             "type": "string"
           },
-          "postalCode": {
-            "maxLength": 20,
-            "minLength": 0,
+          "zipcode": {
             "type": "string"
           },
           "info": {
@@ -1585,7 +717,47 @@
           }
         }
       },
-      "ServiceResponseDto": {
+      "RoleActivationResponseDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "microservice": {
+            "type": "string"
+          },
+          "isEnable": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PermissionDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "isEnable": {
+            "type": "boolean"
+          }
+        }
+      },
+      "RoleResponseDto": {
+        "type": "object",
+        "properties": {
+          "isEnable": {
+            "type": "boolean"
+          },
+          "permissions": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PermissionDto"
+            }
+          }
+        }
+      },
+      "OrgUnitResponseDto": {
         "type": "object",
         "properties": {
           "id": {
@@ -1594,37 +766,6 @@
           },
           "name": {
             "type": "string"
-          },
-          "address": {
-            "$ref": "#/components/schemas/Address"
-          },
-          "organisation": {
-            "type": "string"
-          },
-          "employees": {
-            "uniqueItems": true,
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          }
-        }
-      },
-      "RoleResponseDto": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string"
-          },
-          "enable": {
-            "type": "boolean"
-          },
-          "permissions": {
-            "uniqueItems": true,
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
           }
         }
       },
@@ -1638,47 +779,12 @@
           "name": {
             "type": "string"
           },
-          "address": {
-            "$ref": "#/components/schemas/Address"
-          },
-          "services": {
+          "orgUnits": {
             "uniqueItems": true,
             "type": "array",
             "items": {
-              "type": "integer",
-              "format": "int32"
+              "$ref": "#/components/schemas/OrgUnitResponseDto"
             }
-          }
-        }
-      },
-      "EmployeeResponseDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "creation": {
-            "type": "string",
-            "format": "date"
-          },
-          "enable": {
-            "type": "boolean"
-          },
-          "lastName": {
-            "type": "string"
-          },
-          "firstName": {
-            "type": "string"
-          },
-          "email": {
-            "type": "string"
-          },
-          "phoneNumber": {
-            "type": "string"
-          },
-          "service": {
-            "type": "integer",
-            "format": "int32"
           }
         }
       },
@@ -1686,8 +792,7 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "integer",
-            "format": "int32"
+            "type": "string"
           },
           "number": {
             "type": "integer",
@@ -1705,22 +810,78 @@
           "country": {
             "type": "string"
           },
-          "postalCode": {
+          "zipcode": {
             "type": "string"
           },
           "info": {
             "type": "string"
-          },
-          "organisation": {
+          }
+        }
+      },
+      "EmployeeResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
             "type": "string"
           },
-          "services": {
-            "uniqueItems": true,
-            "type": "array",
-            "items": {
-              "type": "integer",
-              "format": "int32"
-            }
+          "lastName": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phoneNumber": {
+            "type": "string"
+          },
+          "job": {
+            "type": "string"
+          },
+          "orgUnit": {
+            "$ref": "#/components/schemas/OrgUnitEmployeeResponseDto"
+          },
+          "organisation": {
+            "$ref": "#/components/schemas/OrganisationEmployeeResponseDto"
+          }
+        }
+      },
+      "OrgUnitEmployeeResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          },
+          "address": {
+            "$ref": "#/components/schemas/AddressResponseDto"
+          }
+        }
+      },
+      "OrganisationEmployeeResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "EmployeeEmailResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
           }
         }
       }

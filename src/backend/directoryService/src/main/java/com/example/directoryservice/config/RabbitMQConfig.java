@@ -1,41 +1,64 @@
 package com.example.directoryservice.config;
 
 import org.springframework.amqp.core.*;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
-import org.springframework.stereotype.Component;
 
 @Configuration
 @DependsOn({"securityConfig", "restConfig"})
 public class RabbitMQConfig {
 
+    /* Queues */
+
     @Bean
-    public DirectExchange rolesExchange() {
-        return new DirectExchange("roles-exchange");
+    public Queue rolesNewQueue() {
+        return new Queue("roles-new-queue");
     }
 
     @Bean
-    public FanoutExchange employeeSecExchange() {
-        return new FanoutExchange("employee-sec-exchange");
+    public Queue loginProfilesSecQueue() {
+        return new Queue("login-profiles-sec-queue");
+    }
+
+    /* Exchanges */
+
+    @Bean
+    public DirectExchange rolesDirectExchange() {
+        return new DirectExchange("roles-direct-exchange");
     }
 
     @Bean
-    public TopicExchange employeeInfoExchange() {
-        return new TopicExchange("employee-info-exchange");
+    public FanoutExchange rolesFanoutExchange() {
+        return new FanoutExchange("roles-fanout-exchange");
     }
 
     @Bean
-    public Queue employeeSecQueue() {
-        return new Queue("employee-sec-queue");
+    public FanoutExchange loginProfilesSecExchange() {
+        return new FanoutExchange("login-profiles-sec-exchange");
     }
 
     @Bean
-    public Binding employeeSecBinding(Queue employeeSecQueue,
-                                      Exchange employeeSecExchange) {
-        return BindingBuilder.bind(employeeSecQueue)
-                .to(employeeSecExchange)
+    public TopicExchange employeesExchange() {
+        return new TopicExchange("employees-exchange");
+    }
+
+    /* Bindings */
+
+    @Bean
+    public Binding rolesNewBinding(Queue rolesNewQueue,
+                                   Exchange rolesFanoutExchange) {
+        return BindingBuilder.bind(rolesNewQueue)
+                .to(rolesFanoutExchange)
+                .with("*")
+                .noargs();
+    }
+
+    @Bean
+    public Binding loginProfilesSecBinding(Queue loginProfilesSecQueue,
+                                           Exchange loginProfilesSecExchange) {
+        return BindingBuilder.bind(loginProfilesSecQueue)
+                .to(loginProfilesSecExchange)
                 .with("*")
                 .noargs();
     }

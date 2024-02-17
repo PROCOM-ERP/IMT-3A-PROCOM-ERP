@@ -29,18 +29,19 @@ public class Role {
 
     @Builder.Default
     @NotNull
-    @Column(name = "enable", nullable = false)
-    private Boolean enable = true;
+    @Column(name = "is_enable", nullable = false)
+    private Boolean isEnable = true;
 
     @Builder.Default
     @NotNull
-    @Column(name = "counter", nullable = false)
-    private Integer counter = 1;
+    @JsonIgnoreProperties("role")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "role")
+    private Set<RoleActivation> roleActivations = new LinkedHashSet<>();
 
     @Builder.Default
     @JsonIgnoreProperties("roles")
     @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
-    private Set<Employee> employees = new LinkedHashSet<>();
+    private Set<LoginProfile> loginProfiles = new LinkedHashSet<>();
 
     @Builder.Default
     @ElementCollection(fetch = FetchType.LAZY)

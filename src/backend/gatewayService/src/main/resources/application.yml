@@ -8,7 +8,6 @@ spring:
     gateway:
       httpclient:
         ssl:
-          enabled: true
           useInsecureTrustManager: true
       routes:
         - id: authentication-service
@@ -53,6 +52,7 @@ server:
     keyAlias: ${BACKEND_GATEWAY_SERVICE_HTTPS_KEY_STORE_ALIAS}
     trust-store: ${SECURITY_TRUST_STORE_PATH}
     trust-store-password: ${SECURITY_TRUST_STORE_PASSWORD}
+
 # eureka:
 #   instance:
 #     prefer-ip-address: true
