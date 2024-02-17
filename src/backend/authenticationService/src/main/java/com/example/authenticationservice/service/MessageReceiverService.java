@@ -26,8 +26,8 @@ public class MessageReceiverService {
             // try to save all microservice roles
             roleService.saveAllMicroserviceRoles(getAllRolesPath);
             logger.info("Roles successfully initialised");
-        } catch (RestClientException ignored) {
-            logger.error("Roles initialisation failed");
+        } catch (RestClientException e) {
+            logger.error("Roles initialisation failed", e);
         }
     }
 

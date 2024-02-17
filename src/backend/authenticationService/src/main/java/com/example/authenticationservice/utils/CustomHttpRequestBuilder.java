@@ -26,7 +26,7 @@ public class CustomHttpRequestBuilder {
     private final JwtService jwtService;
 
     public String buildPath(String version, String resource) {
-        return String.format("%s%s%s%s", Path.API, thisServiceGatewayPath, version, resource);
+        return String.format("%s/%s%s%s", Path.API, thisServiceGatewayPath, version, resource);
     }
 
     public String buildUrl(String path) {

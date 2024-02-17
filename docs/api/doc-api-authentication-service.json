@@ -23,23 +23,31 @@
     },
     {
       "name": "roles"
-    },
-    {
-      "name": "permissions"
     }
   ],
   "paths": {
-    "/api/auth/v1/roles": {
+    "/api/authentication/v1/roles/{role}": {
       "get": {
         "tags": [
           "roles"
         ],
-        "summary": "Retrieve all roles information",
-        "description": "Retrieve all roles information.<br>Only available for admins.",
-        "operationId": "getAllRoles",
+        "summary": "Retrieve one role permissions and activation status",
+        "description": "Retrieve one role permissions and activation status, by providing its name.<br>Only available for admins.",
+        "operationId": "getRoleByName",
+        "parameters": [
+          {
+            "name": "role",
+            "in": "path",
+            "description": "The role name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
-            "description": "Roles information retrieved correctly",
+            "description": "Role permissions and activation status retrieved correctly",
             "content": {
               "application/json": {
                 "schema": {
@@ -48,14 +56,233 @@
               }
             }
           },
+          "500": {
+            "description": "Uncontrolled error appeared",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "404": {
+            "description": "Role not found",
+            "content": {
+              "application/json": {}
+            }
+          },
           "401": {
             "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "roles"
+        ],
+        "summary": "Update a role permissions and / or activation status",
+        "description": "Update a role permissions and / or activation status, by providing a list of active ones.<br>Previous ones will be deleted.<br>Only available for admins.",
+        "operationId": "updateRoleByName",
+        "parameters": [
+          {
+            "name": "role",
+            "in": "path",
+            "description": "The role name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RoleUpdateRequestDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "422": {
+            "description": "Attribute values don't respect integrity constraints.<br>Permissions : retrieve a role information for the microservice, to know which one are available.<br>isEnable : provide a boolean to modify value (can be null to keep current value).",
             "content": {
               "application/json": {}
             }
           },
           "500": {
             "description": "Uncontrolled error appeared",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "400": {
+            "description": "The request body is badly structured or formatted",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "204": {
+            "description": "Role activation status and / or permissions updated correctly",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "404": {
+            "description": "Role not found",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "401": {
+            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/authentication/v1/login-profiles/{idLoginProfile}": {
+      "get": {
+        "tags": [
+          "login-profiles"
+        ],
+        "summary": "Retrieve one login profile roles and activations status",
+        "description": "Retrieve one login profile roles and activations status, by providing its id (username).",
+        "operationId": "getLoginProfileById",
+        "parameters": [
+          {
+            "name": "idLoginProfile",
+            "in": "path",
+            "description": "The login profile username (6 characters identifier)",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Uncontrolled error appeared",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "200": {
+            "description": "Login profile roles and activations status retrieved correctly",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginProfileResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Login profile not found",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "401": {
+            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "login-profiles"
+        ],
+        "summary": "Update a login profile roles and activation status",
+        "description": "Update a login profile roles, by providing a list of all the new ones.<br>Previous ones will be deleted.<br>Only available for admins.",
+        "operationId": "updateLoginProfileById",
+        "parameters": [
+          {
+            "name": "idLoginProfile",
+            "in": "path",
+            "description": "The login-profile username (6 characters identifier)",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginProfileUpdateRequestDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "500": {
+            "description": "Uncontrolled error appeared",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "422": {
+            "description": "Attribute values don't respect integrity constraints.<br>Roles : retrieve a login profile information to know which one are available<br>isEnable : provide a boolean to modify value (can be null to keep current value).",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "204": {
+            "description": "Login profile activation status and / or roles updated correctly",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "404": {
+            "description": "Login profile not found",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "401": {
+            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/authentication/v1/roles": {
+      "get": {
+        "tags": [
+          "roles"
+        ],
+        "summary": "Retrieve all role names",
+        "description": "Retrieve all role names.<br>Only available for admins.",
+        "operationId": "getAllRoleNames",
+        "responses": {
+          "500": {
+            "description": "Uncontrolled error appeared",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "200": {
+            "description": "Role names retrieved correctly",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
             "content": {
               "application/json": {}
             }
@@ -67,27 +294,27 @@
           "roles"
         ],
         "summary": "Create a new role",
-        "description": "Create a new role by providing its name and permissions.<br>Information about it are available in URI given in the response header location.<br>Only available for admins.",
+        "description": "Create a new role by providing its name and microservices where it operates.<br>Information about it are available in URI given in the response header location.<br>Only available for admins.",
         "operationId": "createRole",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/RoleRequestDto"
+                "$ref": "#/components/schemas/RoleCreationRequestDto"
               }
             }
           },
           "required": true
         },
         "responses": {
-          "422": {
-            "description": "Attribute values don't respect integrity constraints.<br>Name : 32 charactersPermissions : retrieve permissions information (permissions section) to know which one are available",
+          "500": {
+            "description": "Uncontrolled error appeared",
             "content": {
               "application/json": {}
             }
           },
-          "401": {
-            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
+          "400": {
+            "description": "The request body is badly structured or formatted",
             "content": {
               "application/json": {}
             }
@@ -98,38 +325,10 @@
               "application/json": {}
             }
           },
-          "500": {
-            "description": "Uncontrolled error appeared",
+          "422": {
+            "description": "Attribute values don't respect integrity constraints.<br>Name : 32 charactersMicroservices : check alias of available microservices",
             "content": {
               "application/json": {}
-            }
-          },
-          "400": {
-            "description": "The request body is badly structured or formatted",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      }
-    },
-    "/api/auth/v1/login-profiles": {
-      "get": {
-        "tags": [
-          "login-profiles"
-        ],
-        "summary": "Retrieve all login-profiles information",
-        "description": "Retrieve all login-profiles information.",
-        "operationId": "getAllLoginProfiles",
-        "responses": {
-          "200": {
-            "description": "Login-profiles information retrieved correctly",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LoginProfileResponseDto"
-                }
-              }
             }
           },
           "401": {
@@ -137,51 +336,29 @@
             "content": {
               "application/json": {}
             }
-          },
-          "500": {
-            "description": "Uncontrolled error appeared",
-            "content": {
-              "application/json": {}
-            }
           }
         }
-      },
+      }
+    },
+    "/api/authentication/v1/login-profiles": {
       "post": {
         "tags": [
           "login-profiles"
         ],
-        "summary": "Create a new login-profile",
-        "description": "Create a new login-profile by providing roles and plain text password.<br>Information about it are available in URI given in the response header location.",
+        "summary": "Create a new login profile",
+        "description": "Create a new login profile by providing roles and email address.<br>Information about it are available in URI given in the response header location.",
         "operationId": "createLoginProfile",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/LoginProfileRequestDto"
+                "$ref": "#/components/schemas/LoginProfileCreationRequestDto"
               }
             }
           },
           "required": true
         },
         "responses": {
-          "422": {
-            "description": "Attribute values don't respect integrity constraints.<br>Password : 12 characters, 1 uppercase letter, 1 lowercase letter, 1 digit, 1 special character in (@#$%^&+=!.*).<br>Roles : retrieve roles information (roles section) to know which one are available",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "201": {
-            "description": "Login-profile created correctly",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "401": {
-            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
-            "content": {
-              "application/json": {}
-            }
-          },
           "500": {
             "description": "Uncontrolled error appeared",
             "content": {
@@ -193,11 +370,29 @@
             "content": {
               "application/json": {}
             }
+          },
+          "422": {
+            "description": "Attribute values don't respect integrity constraints.<br>Email : email standard format.<br>Roles : retrieve roles information (roles section) to know which one are available",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "201": {
+            "description": "Login profile created correctly",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "401": {
+            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
+            "content": {
+              "application/json": {}
+            }
           }
         }
       }
     },
-    "/api/auth/v1/auth/jwt": {
+    "/api/authentication/v1/auth/jwt": {
       "post": {
         "tags": [
           "auth"
@@ -206,8 +401,8 @@
         "description": "Create Jwt encrypted token, by providing Basic authentication (username, password)",
         "operationId": "generateJwtToken",
         "responses": {
-          "200": {
-            "description": "Jwt token acquired correctly",
+          "500": {
+            "description": "Uncontrolled error appeared",
             "content": {
               "application/json": {}
             }
@@ -218,166 +413,34 @@
               "application/json": {}
             }
           },
+          "200": {
+            "description": "Jwt token acquired correctly",
+            "content": {
+              "application/json": {}
+            }
+          },
           "403": {
             "description": "Forbidden to get token because of no roles are available for the authenticated login-profile",
             "content": {
               "application/json": {}
             }
-          },
-          "500": {
-            "description": "Uncontrolled error appeared",
-            "content": {
-              "application/json": {}
-            }
           }
         }
       }
     },
-    "/api/auth/v1/roles/{role}/permissions": {
-      "patch": {
-        "tags": [
-          "roles"
-        ],
-        "summary": "Update a role permissions",
-        "description": "Update a role permissions, by providing a list of all the new ones.<br>Previous ones will be deleted.<br>Only available for admins.",
-        "operationId": "updateRolePermissions",
-        "parameters": [
-          {
-            "name": "role",
-            "in": "path",
-            "description": "The role name",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "422": {
-            "description": "Attribute values don't respect integrity constraints.<br>Permissions : retrieve permissions information (permissions section) to know which one are available",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "204": {
-            "description": "Role permissions updated correctly",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "404": {
-            "description": "Role not found",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "401": {
-            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "500": {
-            "description": "Uncontrolled error appeared",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      }
-    },
-    "/api/auth/v1/login-profiles/{idLoginProfile}/roles": {
+    "/api/authentication/v1/login-profiles/{idLoginProfile}/password": {
       "patch": {
         "tags": [
           "login-profiles"
         ],
-        "summary": "Update a login-profile roles",
-        "description": "Update a login-profile roles, by providing a list of all the new ones.<br>Previous ones will be deleted.<br>Only available for admins.",
-        "operationId": "updateLoginProfileRoles",
+        "summary": "Update a login profile password",
+        "description": "Update a login profile password. Only available for the login-profile itself.",
+        "operationId": "updateLoginProfilePasswordById",
         "parameters": [
           {
             "name": "idLoginProfile",
             "in": "path",
-            "description": "The login-profile username (6 characters identifier)",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "404": {
-            "description": "Login-profile not found",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "204": {
-            "description": "Login-profile roles updated correctly",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "401": {
-            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "422": {
-            "description": "Attribute values don't respect integrity constraints.<br>Roles : retrieve roles information (roles section) to know which one are available",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "500": {
-            "description": "Uncontrolled error appeared",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      }
-    },
-    "/api/auth/v1/login-profiles/{idLoginProfile}/password": {
-      "patch": {
-        "tags": [
-          "login-profiles"
-        ],
-        "summary": "Update a login-profile password",
-        "description": "Update a login-profile password. Only available for the login-profile itself.",
-        "operationId": "updateLoginProfilePassword",
-        "parameters": [
-          {
-            "name": "idLoginProfile",
-            "in": "path",
-            "description": "The login-profile username (6 characters identifier)",
+            "description": "The login profile username (6 characters identifier)",
             "required": true,
             "schema": {
               "type": "string"
@@ -397,6 +460,18 @@
         "responses": {
           "404": {
             "description": "Login-profile not found",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "422": {
+            "description": "Attribute values don't respect integrity constraints.<br>Password : 12 characters, 1 uppercase letter, 1 lowercase letter, 1 digit, 1 special character in (@#$%^&+=!.*).<br>",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "500": {
+            "description": "Uncontrolled error appeared",
             "content": {
               "application/json": {}
             }
@@ -407,26 +482,14 @@
               "application/json": {}
             }
           },
-          "401": {
-            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
-            "content": {
-              "application/json": {}
-            }
-          },
           "403": {
             "description": "Authenticated login-profile cannot update an other login-profile password",
             "content": {
               "application/json": {}
             }
           },
-          "500": {
-            "description": "Uncontrolled error appeared",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "422": {
-            "description": "Attribute values don't respect integrity constraints.<br>Password : 12 characters, 1 uppercase letter, 1 lowercase letter, 1 digit, 1 special character in (@#$%^&+=!.*).<br>",
+          "401": {
+            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
             "content": {
               "application/json": {}
             }
@@ -434,189 +497,14 @@
         }
       }
     },
-    "/api/auth/v1/login-profiles/{idLoginProfile}/enable": {
-      "get": {
-        "tags": [
-          "login-profiles"
-        ],
-        "summary": "Retrieve one login-profile information about activation status",
-        "description": "Retrieve one login-profile information about activation status, by providing its id (username).",
-        "operationId": "getLoginProfileEnable",
-        "parameters": [
-          {
-            "name": "idLoginProfile",
-            "in": "path",
-            "description": "The login-profile username (6 characters identifier)",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "404": {
-            "description": "Login-profile not found",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "200": {
-            "description": "Login-profile activation status retrieved correctly",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LoginProfileIsEnableMessageDto"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "500": {
-            "description": "Uncontrolled error appeared",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      },
-      "patch": {
-        "tags": [
-          "login-profiles"
-        ],
-        "summary": "Enable or disable a login-profile",
-        "description": "Enable or disable a login-profile, by providing a new enable value (true or false).<br>Only available for admins.",
-        "operationId": "updateLoginProfileEnable",
-        "parameters": [
-          {
-            "name": "idLoginProfile",
-            "in": "path",
-            "description": "The login-profile username (6 characters identifier)",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "boolean"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "204": {
-            "description": "Login-profile enable attribute updated correctly",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "404": {
-            "description": "Login-profile not found",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "401": {
-            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "422": {
-            "description": "Attribute values don't respect integrity constraints.<br>Enable : boolean value (true or false).",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "500": {
-            "description": "Uncontrolled error appeared",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      }
-    },
-    "/api/auth/v1/login-profiles/{idLoginProfile}/email": {
-      "patch": {
-        "tags": [
-          "login-profiles"
-        ],
-        "summary": "Update a login-profile email",
-        "description": "Update a login-profile email, by providing the new one.<br>Only available for admins.",
-        "operationId": "updateLoginProfileEmail",
-        "parameters": [
-          {
-            "name": "idLoginProfile",
-            "in": "path",
-            "description": "The login-profile username (6 characters identifier)",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "string"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "422": {
-            "description": "Attribute values don't respect integrity constraints.<br>Email : 63 characters for 'username', @, 63 for subdomain, and the rest for TLD. Maximum 320 characters.",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "204": {
-            "description": "Login-profile email updated correctly",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "404": {
-            "description": "Login-profile not found",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "401": {
-            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "500": {
-            "description": "Uncontrolled error appeared",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      }
-    },
-    "/api/auth/v1/roles/{role}": {
+    "/api/authentication/v1/roles/{role}/activation": {
       "get": {
         "tags": [
           "roles"
         ],
-        "summary": "Retrieve one role information",
-        "description": "Retrieve one role information, by providing its name.<br>Only available for admins.",
-        "operationId": "getRole",
+        "summary": "Retrieve one role activation status for a microservice",
+        "description": "Retrieve one role activation status for a microservice, by providing its name and the microservice alias.<br>Only available for admins.",
+        "operationId": "getRoleActivationByRoleAndMicroservice",
         "parameters": [
           {
             "name": "role",
@@ -626,87 +514,11 @@
             "schema": {
               "type": "string"
             }
-          }
-        ],
-        "responses": {
-          "404": {
-            "description": "Role not found",
-            "content": {
-              "application/json": {}
-            }
           },
-          "401": {
-            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "200": {
-            "description": "Role information retrieved correctly",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RoleResponseDto"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Uncontrolled error appeared",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      }
-    },
-    "/api/auth/v1/permissions": {
-      "get": {
-        "tags": [
-          "permissions"
-        ],
-        "summary": "Retrieve all permission values",
-        "description": "Retrieve all permission valus.<br>Only available for admins.",
-        "operationId": "getAllPermissions",
-        "responses": {
-          "401": {
-            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "200": {
-            "description": "Permission values retrieved correctly",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Uncontrolled error appeared",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      }
-    },
-    "/api/auth/v1/login-profiles/{idLoginProfile}": {
-      "get": {
-        "tags": [
-          "login-profiles"
-        ],
-        "summary": "Retrieve one login-profile information",
-        "description": "Retrieve one login-profile information, by providing its id (username).",
-        "operationId": "getLoginProfile",
-        "parameters": [
           {
-            "name": "idLoginProfile",
-            "in": "path",
-            "description": "The login-profile username (6 characters identifier)",
+            "name": "microservice",
+            "in": "query",
+            "description": "The microservice alias",
             "required": true,
             "schema": {
               "type": "string"
@@ -714,18 +526,58 @@
           }
         ],
         "responses": {
-          "404": {
-            "description": "Login-profile not found",
+          "500": {
+            "description": "Uncontrolled error appeared",
             "content": {
               "application/json": {}
             }
           },
           "200": {
-            "description": "Login-profile information retrieved correctly",
+            "description": "Role activation status retrieved correctly",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/LoginProfileResponseDto"
+                  "$ref": "#/components/schemas/RoleActivationResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Role activation status not found for role and microservice provided",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "401": {
+            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/authentication/v1/roles/microservices": {
+      "get": {
+        "tags": [
+          "roles"
+        ],
+        "summary": "Retrieve all role names and microservices alias",
+        "description": "Retrieve all roles names and microservices alias.<br>Only available for admins.",
+        "operationId": "getAllRolesAndMicroservices",
+        "responses": {
+          "500": {
+            "description": "Uncontrolled error appeared",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "200": {
+            "description": "Role names and microservices alias retrieved correctly",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RolesMicroservicesResponseDto"
                 }
               }
             }
@@ -735,9 +587,54 @@
             "content": {
               "application/json": {}
             }
+          }
+        }
+      }
+    },
+    "/api/authentication/v1/login-profiles/{idLoginProfile}/activation": {
+      "get": {
+        "tags": [
+          "login-profiles"
+        ],
+        "summary": "Retrieve one login profile activation status",
+        "description": "Retrieve one login profile activation status, by providing its id (username).",
+        "operationId": "getLoginProfileActivationById",
+        "parameters": [
+          {
+            "name": "idLoginProfile",
+            "in": "path",
+            "description": "The login profile username (6 characters identifier)",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Login profile activation status retrieved correctly",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginProfileActivationResponseDto"
+                }
+              }
+            }
           },
           "500": {
             "description": "Uncontrolled error appeared",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "404": {
+            "description": "Login profile not found",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "401": {
+            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
             "content": {
               "application/json": {}
             }
@@ -745,7 +642,7 @@
         }
       }
     },
-    "/api/auth/v1/hello": {
+    "/api/authentication/v1/hello": {
       "get": {
         "tags": [
           "hello"
@@ -754,14 +651,14 @@
         "description": "GET Hello World ! from AuthService",
         "operationId": "getHello",
         "responses": {
-          "200": {
-            "description": "Hello message retrieved correctly",
+          "500": {
+            "description": "Uncontrolled error appeared",
             "content": {
               "application/json": {}
             }
           },
-          "500": {
-            "description": "Uncontrolled error appeared",
+          "200": {
+            "description": "Hello message retrieved correctly",
             "content": {
               "application/json": {}
             }
@@ -772,11 +669,11 @@
   },
   "components": {
     "schemas": {
-      "RoleRequestDto": {
+      "RoleUpdateRequestDto": {
         "type": "object",
         "properties": {
-          "name": {
-            "type": "string"
+          "isEnable": {
+            "type": "boolean"
           },
           "permissions": {
             "uniqueItems": true,
@@ -787,12 +684,39 @@
           }
         }
       },
-      "LoginProfileRequestDto": {
+      "LoginProfileUpdateRequestDto": {
         "type": "object",
         "properties": {
-          "password": {
+          "isEnable": {
+            "type": "boolean"
+          },
+          "roles": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "RoleCreationRequestDto": {
+        "type": "object",
+        "properties": {
+          "name": {
             "type": "string"
           },
+          "microservices": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "LoginProfileCreationRequestDto": {
+        "type": "object",
+        "properties": {
           "email": {
             "type": "string"
           },
@@ -805,7 +729,7 @@
           }
         }
       },
-      "RoleResponseDto": {
+      "PermissionDto": {
         "type": "object",
         "properties": {
           "name": {
@@ -813,15 +737,49 @@
           },
           "isEnable": {
             "type": "boolean"
+          }
+        }
+      },
+      "RoleResponseDto": {
+        "type": "object",
+        "properties": {
+          "isEnable": {
+            "type": "boolean"
           },
           "permissions": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PermissionDto"
+            }
+          }
+        }
+      },
+      "RoleActivationResponseDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "microservice": {
+            "type": "string"
+          },
+          "isEnable": {
+            "type": "boolean"
+          }
+        }
+      },
+      "RolesMicroservicesResponseDto": {
+        "type": "object",
+        "properties": {
+          "roles": {
             "uniqueItems": true,
             "type": "array",
             "items": {
               "type": "string"
             }
           },
-          "loginProfiles": {
+          "microservices": {
             "uniqueItems": true,
             "type": "array",
             "items": {
@@ -833,22 +791,30 @@
       "LoginProfileResponseDto": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "string"
-          },
-          "email": {
-            "type": "string"
+          "isEnable": {
+            "type": "boolean"
           },
           "roles": {
             "uniqueItems": true,
             "type": "array",
             "items": {
-              "type": "string"
+              "$ref": "#/components/schemas/RoleDto"
             }
           }
         }
       },
-      "LoginProfileIsEnableMessageDto": {
+      "RoleDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "isEnable": {
+            "type": "boolean"
+          }
+        }
+      },
+      "LoginProfileActivationResponseDto": {
         "type": "object",
         "properties": {
           "id": {

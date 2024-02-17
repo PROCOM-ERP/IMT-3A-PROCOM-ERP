@@ -172,9 +172,9 @@ public class LoginProfileService {
         loginProfileRepository.save(loginProfile);
 
         // send message to other services to update jwt_min_creation for current loginProfile
-        if (loginProfileDto.getIsEnable() != null) {
+        if (loginProfileDto.getIsEnable() != null)
             messageSenderService.sendLoginProfileActivation(idLoginProfile);
-        } else if (loginProfileDto.getRoles() != null) {
+        if (loginProfileDto.getRoles() != null) {
             int row = loginProfileRepository.updateJwtGenMinAtById(idLoginProfile);
             // check if only 1 row was modified
             if (row != 1) {
