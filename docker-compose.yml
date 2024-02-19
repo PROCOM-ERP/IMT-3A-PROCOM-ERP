@@ -10,12 +10,12 @@ services:
   # +---------------------------------------------------------------------------+
 
   postgres-procom-erp-authentication-service:
-    hostname: ${DB_AUTHENTICATION_SERVICE_HOSTNAME}
     build:
       context: ${DB_AUTHENTICATION_SERVICE_PATH}
       dockerfile: Dockerfile
       args:
         DB_IMAGE: ${DB_IMAGE}
+    hostname: ${DB_AUTHENTICATION_SERVICE_HOSTNAME}
     environment:
       POSTGRES_DB: ${DB_AUTHENTICATION_SERVICE_DB}
       POSTGRES_PORT: ${DB_AUTHENTICATION_SERVICE_PORT_INT}
@@ -25,21 +25,21 @@ services:
       - DB_AUTHENTICATION_SERVICE_PASSWORD
     ports:
       - "${DB_AUTHENTICATION_SERVICE_PORT_EXT}:${DB_AUTHENTICATION_SERVICE_PORT_INT}"
-    networks:
-      - vnet-procom-erp
     volumes:
       - db-procom-erp-authentication-service-data:/var/lib/postgresql/data
+    networks:
+      - vnet-procom-erp
     command: -c 'config_file=/etc/postgresql/postgresql.conf'
 
   # +-----------------------------------------------------------------------------+
 
   postgres-procom-erp-directory-service:
-    hostname: ${DB_DIRECTORY_SERVICE_HOSTNAME}
     build:
       context: ${DB_DIRECTORY_SERVICE_PATH}
       dockerfile: Dockerfile
       args:
         DB_IMAGE: ${DB_IMAGE}
+    hostname: ${DB_DIRECTORY_SERVICE_HOSTNAME}
     environment:
       POSTGRES_DB: ${DB_DIRECTORY_SERVICE_DB}
       POSTGRES_PORT: ${DB_DIRECTORY_SERVICE_PORT_INT}
@@ -49,21 +49,21 @@ services:
       - DB_DIRECTORY_SERVICE_PASSWORD
     ports:
       - "${DB_DIRECTORY_SERVICE_PORT_EXT}:${DB_DIRECTORY_SERVICE_PORT_INT}"
-    networks:
-      - vnet-procom-erp
     volumes:
       - db-procom-erp-directory-service-data:/var/lib/postgresql/data
+    networks:
+      - vnet-procom-erp
     command: -c 'config_file=/etc/postgresql/postgresql.conf'
 
   # +-----------------------------------------------------------------------------+
 
   postgres-procom-erp-inventory-service:
-    hostname: ${DB_INVENTORY_SERVICE_HOSTNAME}
     build:
       context: ${DB_INVENTORY_SERVICE_PATH}
       dockerfile: Dockerfile
       args:
         DB_IMAGE: ${DB_IMAGE}
+    hostname: ${DB_INVENTORY_SERVICE_HOSTNAME}
     environment:
       POSTGRES_DB: ${DB_INVENTORY_SERVICE_DB}
       POSTGRES_PORT: ${DB_INVENTORY_SERVICE_PORT_INT}
@@ -75,10 +75,10 @@ services:
       - "${DB_INVENTORY_SERVICE_PORT_INT}"
     ports:
       - "${DB_INVENTORY_SERVICE_PORT_EXT}:${DB_INVENTORY_SERVICE_PORT_INT}"
-    networks:
-      - vnet-procom-erp
     volumes:
       - db-procom-erp-inventory-service-data:/var/lib/postgresql/data
+    networks:
+      - vnet-procom-erp
     command: -c 'config_file=/etc/postgresql/postgresql.conf'
 
   # +---------------------------------------------------------------------------+
@@ -86,13 +86,14 @@ services:
   # +---------------------------------------------------------------------------+
 
   springboot-procom-erp-message-broker-service:
-    hostname: ${BACKEND_MESSAGE_BROKER_SERVICE_HOSTNAME}
     build:
       context: ${BACKEND_MESSAGE_BROKER_SERVICE_PATH}
       dockerfile: Dockerfile
       args:
         RABBIT_MQ_IMAGE: ${RABBIT_MQ_IMAGE}
         BACKEND_MESSAGE_BROKER_SERVICE_PORT_INT: ${BACKEND_MESSAGE_BROKER_SERVICE_PORT_INT}
+    hostname: ${BACKEND_MESSAGE_BROKER_SERVICE_HOSTNAME}
+    env_file: ./.env
     secrets:
       - BACKEND_MESSAGE_BROKER_SERVICE_USERNAME
       - BACKEND_MESSAGE_BROKER_SERVICE_PASSWORD
@@ -101,16 +102,14 @@ services:
     ports:
       - "${BACKEND_MESSAGE_BROKER_SERVICE_PORT_EXT}:${BACKEND_MESSAGE_BROKER_SERVICE_PORT_INT}"
       - "${BACKEND_MESSAGE_BROKER_SERVICE_ADMIN_PORT_EXT}:${BACKEND_MESSAGE_BROKER_SERVICE_ADMIN_PORT_INT}"
-    env_file: ./.env
-    networks:
-      - vnet-procom-erp
     volumes:
       - procom-erp-message-broker-service-data:/var/lib/rabbitmq
+    networks:
+      - vnet-procom-erp
 
   # +-----------------------------------------------------------------------------+
 
   springboot-procom-erp-gateway-service:
-    hostname: ${BACKEND_GATEWAY_SERVICE_HOSTNAME}
     build:
       context: ${BACKEND_GATEWAY_SERVICE_PATH}
       dockerfile: Dockerfile
@@ -118,13 +117,14 @@ services:
         JAVA_IMAGE: ${JAVA_IMAGE}
         JAVA_BUILD_IMAGE: ${JAVA_BUILD_IMAGE}
         POM_JAVA_VERSION: ${POM_JAVA_VERSION}
-        MAVEN_COMPILER_SOURCE: ${MAVEN_COMPILER_SOURCE}
-        MAVEN_COMPILER_TARGET: ${MAVEN_COMPILER_TARGET}
+        BACKEND_GATEWAY_SERVICE_IMAGE_VERSION: ${BACKEND_GATEWAY_SERVICE_IMAGE_VERSION}
         SPRING_BOOT_VERSION: ${SPRING_BOOT_VERSION}
         SPRING_CLOUD_VERSION: ${SPRING_CLOUD_VERSION}
         BACKEND_GATEWAY_SERVICE_PORT_INT: ${BACKEND_GATEWAY_SERVICE_PORT_INT}
-        ENTRYPOINT: ${ENTRYPOINT}
         SECURITY_TRUST_STORE_PATH: ${SECURITY_TRUST_STORE_PATH}
+        ENTRYPOINT: ${ENTRYPOINT}
+    hostname: ${BACKEND_GATEWAY_SERVICE_HOSTNAME}
+    env_file: ./.env
     secrets:
       - BACKEND_GATEWAY_SERVICE_HTTPS_KEY_STORE_ALIAS
       - BACKEND_GATEWAY_SERVICE_HTTPS_KEY_STORE_PASSWORD
@@ -134,36 +134,28 @@ services:
       - SECURITY_TRUST_STORE_PASSWORD
     ports:
       - "${BACKEND_GATEWAY_SERVICE_PORT_EXT}:${BACKEND_GATEWAY_SERVICE_PORT_INT}"
-    env_file: ./.env
     networks:
       - vnet-procom-erp
 
   # +-----------------------------------------------------------------------------+
 
   springboot-procom-erp-authentication-service:
-    hostname: ${BACKEND_AUTHENTICATION_SERVICE_HOSTNAME}
     build:
       context: ${BACKEND_AUTHENTICATION_SERVICE_PATH}
       dockerfile: Dockerfile
       args:
+        JAVA_BUILD_IMAGE: ${JAVA_BUILD_IMAGE}
         JAVA_IMAGE: ${JAVA_IMAGE}
         POM_JAVA_VERSION: ${POM_JAVA_VERSION}
-        MAVEN_COMPILER_SOURCE: ${MAVEN_COMPILER_SOURCE}
-        MAVEN_COMPILER_TARGET: ${MAVEN_COMPILER_TARGET}
+        BACKEND_AUTHENTICATION_SERVICE_IMAGE_VERSION: ${BACKEND_AUTHENTICATION_SERVICE_IMAGE_VERSION}
         SPRING_BOOT_VERSION: ${SPRING_BOOT_VERSION}
-        LOMBOK_VERSION: ${LOMBOK_VERSION}
-        SPRING_CLOUD_VERSION: ${SPRING_CLOUD_VERSION}
-        AQMP_VERSION: ${AQMP_VERSION}
         SPRINGDOC_OPENAPI_VERSION: ${SPRINGDOC_OPENAPI_VERSION}
-        APACHE_HTTP_VERSION: ${APACHE_HTTP_VERSION}
-        POSTGRES_VERSION: ${POSTGRES_VERSION}
-        JUNIT_VERSION: ${JUNIT_VERSION}
-        MOCKITO_VERSION: ${MOCKITO_VERSION}
-        JAVA_BUILD_IMAGE: ${JAVA_BUILD_IMAGE}
         BACKEND_AUTHENTICATION_SERVICE_PORT_INT: ${BACKEND_AUTHENTICATION_SERVICE_PORT_INT}
-        ENTRYPOINT: ${ENTRYPOINT}
         BACKEND_MESSAGE_BROKER_SERVICE_PORT_INT: ${BACKEND_MESSAGE_BROKER_SERVICE_PORT_INT}
         SECURITY_TRUST_STORE_PATH: ${SECURITY_TRUST_STORE_PATH}
+        ENTRYPOINT: ${ENTRYPOINT}
+    hostname: ${BACKEND_AUTHENTICATION_SERVICE_HOSTNAME}
+    env_file: ./.env
     secrets:
       - DB_AUTHENTICATION_SERVICE_USER
       - DB_AUTHENTICATION_SERVICE_PASSWORD
@@ -182,36 +174,28 @@ services:
     depends_on:
       - postgres-procom-erp-authentication-service
       - springboot-procom-erp-message-broker-service
-    env_file: ./.env
     networks:
       - vnet-procom-erp
 
   # +-----------------------------------------------------------------------------+
 
   springboot-procom-erp-directory-service:
-    hostname: ${BACKEND_DIRECTORY_SERVICE_HOSTNAME}
     build:
       context: ${BACKEND_DIRECTORY_SERVICE_PATH}
       dockerfile: Dockerfile
       args:
+        JAVA_BUILD_IMAGE: ${JAVA_BUILD_IMAGE}
         JAVA_IMAGE: ${JAVA_IMAGE}
         POM_JAVA_VERSION: ${POM_JAVA_VERSION}
-        MAVEN_COMPILER_SOURCE: ${MAVEN_COMPILER_SOURCE}
-        MAVEN_COMPILER_TARGET: ${MAVEN_COMPILER_TARGET}
+        BACKEND_DIRECTORY_SERVICE_IMAGE_VERSION: ${BACKEND_DIRECTORY_SERVICE_IMAGE_VERSION}
         SPRING_BOOT_VERSION: ${SPRING_BOOT_VERSION}
-        LOMBOK_VERSION: ${LOMBOK_VERSION}
-        SPRING_CLOUD_VERSION: ${SPRING_CLOUD_VERSION}
-        AQMP_VERSION: ${AQMP_VERSION}
         SPRINGDOC_OPENAPI_VERSION: ${SPRINGDOC_OPENAPI_VERSION}
-        APACHE_HTTP_VERSION: ${APACHE_HTTP_VERSION}
-        POSTGRES_VERSION: ${POSTGRES_VERSION}
-        JUNIT_VERSION: ${JUNIT_VERSION}
-        MOCKITO_VERSION: ${MOCKITO_VERSION}
-        JAVA_BUILD_IMAGE: ${JAVA_BUILD_IMAGE}
         BACKEND_DIRECTORY_SERVICE_PORT_INT: ${BACKEND_DIRECTORY_SERVICE_PORT_INT}
-        ENTRYPOINT: ${ENTRYPOINT}
         BACKEND_MESSAGE_BROKER_SERVICE_PORT_INT: ${BACKEND_MESSAGE_BROKER_SERVICE_PORT_INT}
         SECURITY_TRUST_STORE_PATH: ${SECURITY_TRUST_STORE_PATH}
+        ENTRYPOINT: ${ENTRYPOINT}
+    hostname: ${BACKEND_DIRECTORY_SERVICE_HOSTNAME}
+    env_file: ./.env
     secrets:
       - DB_DIRECTORY_SERVICE_USER
       - DB_DIRECTORY_SERVICE_PASSWORD
@@ -226,31 +210,28 @@ services:
     depends_on:
       - postgres-procom-erp-directory-service
       - springboot-procom-erp-authentication-service
-    env_file: ./.env
     networks:
       - vnet-procom-erp
 
   # +-----------------------------------------------------------------------------+
 
   springboot-procom-erp-inventory-service:
-    hostname: ${BACKEND_INVENTORY_SERVICE_HOSTNAME}
     build:
       context: ${BACKEND_INVENTORY_SERVICE_PATH}
       dockerfile: Dockerfile
       args:
+        JAVA_BUILD_IMAGE: ${JAVA_BUILD_IMAGE}
         JAVA_IMAGE: ${JAVA_IMAGE}
         POM_JAVA_VERSION: ${POM_JAVA_VERSION}
-        MAVEN_COMPILER_SOURCE: ${MAVEN_COMPILER_SOURCE}
-        MAVEN_COMPILER_TARGET: ${MAVEN_COMPILER_TARGET}
+        BACKEND_INVENTORY_SERVICE_IMAGE_VERSION: ${BACKEND_INVENTORY_SERVICE_IMAGE_VERSION}
         SPRING_BOOT_VERSION: ${SPRING_BOOT_VERSION}
-        LOMBOK_VERSION: ${LOMBOK_VERSION}
-        POSTGRES_VERSION: ${POSTGRES_VERSION}
         SPRINGDOC_OPENAPI_VERSION: ${SPRINGDOC_OPENAPI_VERSION}
-        JAVA_BUILD_IMAGE: ${JAVA_BUILD_IMAGE}
         BACKEND_INVENTORY_SERVICE_PORT_INT: ${BACKEND_INVENTORY_SERVICE_PORT_INT}
-        ENTRYPOINT: ${ENTRYPOINT}
         BACKEND_MESSAGE_BROKER_SERVICE_PORT_INT: ${BACKEND_MESSAGE_BROKER_SERVICE_PORT_INT}
         SECURITY_TRUST_STORE_PATH: ${SECURITY_TRUST_STORE_PATH}
+        ENTRYPOINT: ${ENTRYPOINT}
+    hostname: ${BACKEND_INVENTORY_SERVICE_HOSTNAME}
+    env_file: ./.env
     secrets:
       - DB_INVENTORY_SERVICE_USER
       - DB_INVENTORY_SERVICE_PASSWORD
@@ -264,7 +245,6 @@ services:
       - SECURITY_TRUST_STORE_PASSWORD
     expose:
       - ${BACKEND_INVENTORY_SERVICE_PORT_INT}
-    env_file: ./.env
     depends_on:
       - "postgres-procom-erp-inventory-service"
       - "springboot-procom-erp-authentication-service"
@@ -276,17 +256,17 @@ services:
   # +---------------------------------------------------------------------------+
 
   react-procom-erp-webapp-service:
-    hostname: ${FRONTEND_WEBAPP_SERVICE_HOSTNAME}
     build:
       context: ${FRONTEND_WEBAPP_SERVICE_PATH}
       dockerfile: Dockerfile
       args:
-        FRONT_IMAGE: ${FRONT_IMAGE}
         FRONT_BUILD_IMAGE: ${FRONT_BUILD_IMAGE}
-    expose:
-      - ${FRONTEND_WEBAPP_SERVICE_PORT_EXT}
+        FRONT_IMAGE: ${FRONT_IMAGE}
+    hostname: ${FRONTEND_WEBAPP_SERVICE_HOSTNAME}
     environment:
       FRONTEND_WEBAPP_SERVICE_PORT_INT: ${FRONTEND_WEBAPP_SERVICE_PORT_INT}
+    expose:
+      - ${FRONTEND_WEBAPP_SERVICE_PORT_EXT}
     ports:
       - ${FRONTEND_WEBAPP_SERVICE_PORT_INT}:${FRONTEND_WEBAPP_SERVICE_PORT_EXT}
     depends_on:
