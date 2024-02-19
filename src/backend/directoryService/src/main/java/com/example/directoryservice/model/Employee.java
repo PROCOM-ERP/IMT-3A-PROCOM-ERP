@@ -1,51 +1,25 @@
 package com.example.directoryservice.model;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
 @Entity
 @Table(name = "employees", schema = "public", indexes = {
-        @Index(name = "employees_email_key", columnList = "email", unique = true)
+        @Index(name = "uq_employees_email", columnList = "email", unique = true)
 })
-@JsonIdentityInfo(
-        generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "id")
 public class Employee {
     @Id
     @Size(max = 6)
     @Column(name = "id", nullable = false, length = 6)
     private String id;
-
-    @Builder.Default
-    @NotNull
-    @Column(name = "creation", nullable = false)
-    private LocalDate creation = LocalDate.now();
-
-    @Builder.Default
-    @NotNull
-    @Column(name = "enable", nullable = false)
-    private Boolean enable = true;
-
-    @Builder.Default
-    @NotNull
-    @Column(name = "jwt_min_creation", nullable = false)
-    private LocalDateTime jwtMinCreation = LocalDateTime.now();
 
     @Size(max = 255)
     @NotNull
@@ -67,9 +41,14 @@ public class Employee {
     @Column(name = "phone_number", length = 24)
     private String phoneNumber = null;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @OnDelete(action = OnDeleteAction.SET_NULL)
-    @JoinColumn(name = "service")
-    private Service service;
+    @Builder.Default
+    @Size(max = 64)
+    @Column(name = "job", length = 64)
+    private String job = null;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "org_unit", nullable = false)
+    private OrgUnit orgUnit;
 
 }

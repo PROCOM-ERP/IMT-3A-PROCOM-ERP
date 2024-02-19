@@ -3,6 +3,7 @@ package com.example.authenticationservice.config;
 import java.io.FileInputStream;
 import java.security.*;
 import javax.net.ssl.SSLContext;
+
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.config.ConnectionConfig;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
@@ -28,45 +29,45 @@ import org.springframework.web.client.RestTemplate;
 @Component("restConfig")
 public class RestConfig {
 
-  @Value("${server.ssl.trust-store}")
-  private String trustStorePath;
+    @Value("${server.ssl.trust-store}")
+    private String trustStorePath;
 
-  @Value("${server.ssl.trust-store-password}")
-  private String trustStorePassword;
+    @Value("${server.ssl.trust-store-password}")
+    private String trustStorePassword;
 
-  @Bean
-  public RestTemplate restTemplate() throws Exception {
-    KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
-    trustStore.load(new FileInputStream(trustStorePath),
-                    trustStorePassword.toCharArray());
+    @Bean
+    public RestTemplate restTemplate() throws Exception {
+        KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
+        trustStore.load(new FileInputStream(trustStorePath),
+                trustStorePassword.toCharArray());
 
-    SSLContext sslContext =
-        new SSLContextBuilder().loadTrustMaterial(trustStore, null).build();
+        SSLContext sslContext =
+                new SSLContextBuilder().loadTrustMaterial(trustStore, null).build();
 
-    PoolingHttpClientConnectionManager connectionManager =
-        PoolingHttpClientConnectionManagerBuilder.create()
-            .setSSLSocketFactory(SSLConnectionSocketFactoryBuilder.create()
-                                     .setSslContext(sslContext)
-                                     .setTlsVersions(TLS.V_1_3)
-                                     .build())
-            .setDefaultSocketConfig(SocketConfig.custom()
-                                        .setSoTimeout(Timeout.ofMinutes(1))
+        PoolingHttpClientConnectionManager connectionManager =
+                PoolingHttpClientConnectionManagerBuilder.create()
+                        .setSSLSocketFactory(SSLConnectionSocketFactoryBuilder.create()
+                                .setSslContext(sslContext)
+                                .setTlsVersions(TLS.V_1_3)
+                                .build())
+                        .setDefaultSocketConfig(SocketConfig.custom()
+                                .setSoTimeout(Timeout.ofMinutes(1))
+                                .build())
+                        .setPoolConcurrencyPolicy(PoolConcurrencyPolicy.LAX)
+                        .setConnPoolPolicy(PoolReusePolicy.LIFO)
+                        .setDefaultConnectionConfig(
+                                ConnectionConfig.custom()
+                                        .setSocketTimeout(Timeout.ofMinutes(1))
+                                        .setConnectTimeout(Timeout.ofMinutes(1))
+                                        .setTimeToLive(TimeValue.ofMinutes(10))
                                         .build())
-            .setPoolConcurrencyPolicy(PoolConcurrencyPolicy.LAX)
-            .setConnPoolPolicy(PoolReusePolicy.LIFO)
-            .setDefaultConnectionConfig(
-                ConnectionConfig.custom()
-                    .setSocketTimeout(Timeout.ofMinutes(1))
-                    .setConnectTimeout(Timeout.ofMinutes(1))
-                    .setTimeToLive(TimeValue.ofMinutes(10))
-                    .build())
-            .build();
-    HttpClient httpClient = HttpClientBuilder.create()
-                                .setConnectionManager(connectionManager)
-                                .build();
+                        .build();
+        HttpClient httpClient = HttpClientBuilder.create()
+                .setConnectionManager(connectionManager)
+                .build();
 
-    ClientHttpRequestFactory requestFactory =
-        new HttpComponentsClientHttpRequestFactory(httpClient);
-    return new RestTemplate(requestFactory);
-  }
+        ClientHttpRequestFactory requestFactory =
+                new HttpComponentsClientHttpRequestFactory(httpClient);
+        return new RestTemplate(requestFactory);
+    }
 }

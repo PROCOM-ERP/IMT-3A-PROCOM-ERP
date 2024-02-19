@@ -1,7 +1,6 @@
 package com.example.authenticationservice.config;
 
 import org.springframework.amqp.core.*;
-// import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
@@ -10,73 +9,71 @@ import org.springframework.context.annotation.DependsOn;
 @DependsOn({"securityConfig", "restConfig"})
 public class RabbitMQConfig {
 
-  @Bean
-  public Queue roleEnableModifyQueue() {
-    return new Queue("role-enable-modify-queue");
-  }
+    /* Queues */
 
-  @Bean
-  public Queue rolesInitQueue() {
-    return new Queue("roles-init-queue");
-  }
+    @Bean
+    public Queue roleActivationQueue() {
+        return new Queue("role-activation-queue");
+    }
 
-  @Bean
-  public Queue rolesNewQueue() {
-    return new Queue("roles-new-queue");
-  }
+    @Bean
+    public Queue rolesInitQueue() {
+        return new Queue("roles-init-queue");
+    }
 
-  @Bean
-  public Queue employeeEmailQueue() {
-    return new Queue("employee-email-queue");
-  }
+    @Bean
+    public Queue employeeEmailQueue() {
+        return new Queue("employee-email-queue");
+    }
 
-  @Bean
-  public DirectExchange rolesExchange() {
-    return new DirectExchange("roles-exchange");
-  }
+    /* Exchanges */
 
-  @Bean
-  public TopicExchange employeeInfoExchange() {
-    return new TopicExchange("employee-info-exchange");
-  }
+    @Bean
+    public DirectExchange rolesDirectExchange() {
+        return new DirectExchange("roles-direct-exchange");
+    }
 
-  @Bean
-  public FanoutExchange employeeSecExchange() {
-    return new FanoutExchange("employee-sec-exchange");
-  }
+    @Bean
+    public FanoutExchange rolesFanoutExchange() {
+        return new FanoutExchange("roles-fanout-exchange");
+    }
 
-  @Bean
-  public Binding rolesInitBinding(Queue rolesInitQueue,
-                                  Exchange rolesExchange) {
-    return BindingBuilder.bind(rolesInitQueue)
-        .to(rolesExchange)
-        .with("roles.init")
-        .noargs();
-  }
+    @Bean
+    public FanoutExchange loginProfilesSecExchange() {
+        return new FanoutExchange("login-profiles-sec-exchange");
+    }
 
-  @Bean
-  public Binding roleEnableModifyBinding(Queue roleEnableModifyQueue,
-                                         Exchange rolesExchange) {
-    return BindingBuilder.bind(roleEnableModifyQueue)
-        .to(rolesExchange)
-        .with("role.enable.modify")
-        .noargs();
-  }
+    @Bean
+    public TopicExchange employeesExchange() {
+        return new TopicExchange("employees-exchange");
+    }
 
-  @Bean
-  public Binding rolesNewBinding(Queue rolesNewQueue, Exchange rolesExchange) {
-    return BindingBuilder.bind(rolesNewQueue)
-        .to(rolesExchange)
-        .with("roles.new")
-        .noargs();
-  }
+    /* Bindings */
 
-  @Bean
-  public Binding employeeEmailBinding(Queue employeeEmailQueue,
-                                      Exchange employeeInfoExchange) {
-    return BindingBuilder.bind(employeeEmailQueue)
-        .to(employeeInfoExchange)
-        .with("employee.email.*")
-        .noargs();
-  }
+    @Bean
+    public Binding rolesInitBinding(Queue rolesInitQueue,
+                                    Exchange rolesDirectExchange) {
+        return BindingBuilder.bind(rolesInitQueue)
+                .to(rolesDirectExchange)
+                .with("roles.init")
+                .noargs();
+    }
+
+    @Bean
+    public Binding roleActivationBinding(Queue roleActivationQueue,
+                                           Exchange rolesDirectExchange) {
+        return BindingBuilder.bind(roleActivationQueue)
+                .to(rolesDirectExchange)
+                .with("role.activation")
+                .noargs();
+    }
+
+    @Bean
+    public Binding employeeEmailBinding(Queue employeeEmailQueue,
+                                        Exchange employeesExchange) {
+        return BindingBuilder.bind(employeeEmailQueue)
+                .to(employeesExchange)
+                .with("employee.email.*")
+                .noargs();
+    }
 }

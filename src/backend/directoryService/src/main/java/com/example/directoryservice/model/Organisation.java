@@ -1,8 +1,6 @@
 package com.example.directoryservice.model;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -20,12 +18,8 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "organisations", schema = "public", indexes = {
-        @Index(name = "organisations_name_key", columnList = "name", unique = true),
-        @Index(name = "organisations_address_key", columnList = "address", unique = true)
+        @Index(name = "organisations_name_key", columnList = "name", unique = true)
 })
-@JsonIdentityInfo(
-        generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "name")
 public class Organisation {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "organisations_id_gen")
@@ -38,15 +32,15 @@ public class Organisation {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @OnDelete(action = OnDeleteAction.SET_NULL)
-    @JoinColumn(name = "address", nullable = false)
-    private Address address;
+    @Builder.Default
+    @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.SET_DEFAULT)
+    @JoinColumn(name = "address")
+    private Address address = null;
 
     @Builder.Default
-    @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(name = "services", joinColumns = @JoinColumn(name = "organisation"))
-    @Column(name = "id")
-    private Set<Integer> services = new LinkedHashSet<>();
+    @JsonIgnoreProperties(value = {"organisation"})
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "organisation")
+    private Set<OrgUnit> orgUnits = new LinkedHashSet<>();
 
 }

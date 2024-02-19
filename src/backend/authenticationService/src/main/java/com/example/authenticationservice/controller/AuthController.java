@@ -34,7 +34,7 @@ public class AuthController {
                     "Unauthorized to access this URL because Basis authentication failed",
                     content = {@Content(mediaType = "application/json")} ),
             @ApiResponse(responseCode = "403", description =
-                    "Forbidden to get token because of no roles are available for the authenticated employee",
+                    "Forbidden to get token because of no roles are available for the authenticated login-profile",
                     content = {@Content(mediaType = "application/json")} ),
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",

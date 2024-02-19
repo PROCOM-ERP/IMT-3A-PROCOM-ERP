@@ -1,15 +1,9 @@
 package com.example.directoryservice.model;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 @Builder
 @AllArgsConstructor
@@ -20,14 +14,13 @@ import java.util.Set;
 @Table(name = "addresses", schema = "public")
 public class Address {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "addresses_id_gen")
-    @SequenceGenerator(name = "addresses_id_gen", sequenceName = "addresses_id_seq", allocationSize = 1)
-    @Column(name = "id", nullable = false)
-    private Integer id;
+    @Size(max = 64)
+    @Column(name = "id", nullable = false, length = 64)
+    private String id;
 
-    @Builder.Default
-    @Column(name = "number")
-    private Integer number = null;
+    @NotNull
+    @Column(name = "number", nullable = false)
+    private Integer number;
 
     @Size(max = 255)
     @NotNull
@@ -51,21 +44,19 @@ public class Address {
 
     @Size(max = 20)
     @NotNull
-    @Column(name = "postal_code", nullable = false, length = 20)
-    private String postalCode;
+    @Column(name = "zipcode", nullable = false, length = 20)
+    private String zipcode;
 
     @Builder.Default
     @Column(name = "info", length = Integer.MAX_VALUE)
     private String info = null;
 
-    @Builder.Default
-    @OneToOne(mappedBy = "address")
-    private Organisation organisation = null;
+    /* No use for orgUnits and organisations fields
+    @OneToMany(mappedBy = "address")
+    private Set<OrgUnit> orgUnits = new LinkedHashSet<>();
 
-    @Builder.Default
-    @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(name = "services", joinColumns = @JoinColumn(name = "address"))
-    @Column(name = "id")
-    private Set<Integer> services = new LinkedHashSet<>();
+    @OneToMany(mappedBy = "address")
+    private Set<Organisation> organisations = new LinkedHashSet<>();
+     */
 
 }
