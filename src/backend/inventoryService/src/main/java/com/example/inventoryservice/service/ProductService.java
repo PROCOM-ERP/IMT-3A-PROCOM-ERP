@@ -9,6 +9,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -39,6 +40,11 @@ public class ProductService {
                 .toList();
     }
 
+    /**
+     * Function that creates a new product. This will create a Product. If the numberOfItem is greater than 0,
+     * an object Item and transaction will be created.
+     * @param productRequest : This requires to be compliant to the ProductRequestDto definition.
+     */
     @Transactional
     public void createProduct(ProductRequestDto productRequest){
 
@@ -48,7 +54,13 @@ public class ProductService {
                 .build();
 
         List<Category> categories = categoryService.getAllByIds(productRequest.getCategories());
-        for(Category category : categories) {
+
+        if (categories == null || categories.isEmpty()) {
+            // Error 422
+            logger.error("The returned category does not exists.");
+            throw new DataIntegrityViolationException("The id of the category does not exists in the database.");
+        }
+        for (Category category : categories) {
             category.getProducts().add(product);
         }
 
@@ -62,8 +74,13 @@ public class ProductService {
                         .build())
                 .collect(Collectors.toList());
 
-        Address address = addressService.getAddressById(productRequest.getAddress());
-        if ((productRequest.getNumberOfItem() >= 0) && address != null){
+        if ((productRequest.getNumberOfItem() > 0)){
+            Address address = addressService.getAddressById(productRequest.getAddress());
+            if (address == null){
+                // Error 422
+                logger.error("The returned address does not exists.");
+                throw new DataIntegrityViolationException("The id of the address does not exists in the database.");
+            }
 
             Item item = Item.builder()
                     .quantity(productRequest.getNumberOfItem())

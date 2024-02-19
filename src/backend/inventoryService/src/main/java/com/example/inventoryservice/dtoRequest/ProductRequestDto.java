@@ -4,6 +4,7 @@ import com.example.inventoryservice.dto.AddressDto;
 import com.example.inventoryservice.dto.CategoryDto;
 import com.example.inventoryservice.dto.ItemDto;
 import com.example.inventoryservice.dto.ProductMetaDto;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

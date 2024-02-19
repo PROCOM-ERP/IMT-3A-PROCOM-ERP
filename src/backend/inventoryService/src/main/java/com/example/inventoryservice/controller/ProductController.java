@@ -80,6 +80,9 @@ public class ProductController {
             @ApiResponse(responseCode = "404", description =
                     "Product not found",
                     content = {@Content(mediaType = "application/json")} ),
+            @ApiResponse(responseCode = "422", description =
+                    "Incorrect injected data. (Address or Category does not exists)",
+                    content = {@Content(mediaType = "application/json")} ),
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})

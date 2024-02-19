@@ -25,7 +25,7 @@ public class AddressService {
     }
 
     public Address getAddressById(int id){
-        return addressRepository.findById(id).orElseThrow();
+        return addressRepository.findById(id).orElse(null);
     }
 
     public AddressDto getAddressDtoById(int id) throws NoSuchElementException {
