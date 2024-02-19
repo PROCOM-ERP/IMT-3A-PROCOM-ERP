@@ -16,7 +16,8 @@ import java.util.List;
 @Table(name = "addresses")
 public class Address {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "addresses_id_address")
+    @SequenceGenerator(name = "addresses_id_address", sequenceName = "addresses_id_address_seq", allocationSize = 1)
     @Column(name = "id_address", nullable = false)
     private Integer id;
 

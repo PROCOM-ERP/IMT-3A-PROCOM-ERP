@@ -19,7 +19,8 @@ import java.util.Set;
 @Table(name = "products")
 public class Product {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "products_id_product")
+    @SequenceGenerator(name = "products_id_product", sequenceName = "products_id_product_seq", allocationSize = 1)
     @Column(name = "id_product", nullable = false)
     private Integer id;
 
@@ -36,7 +37,7 @@ public class Product {
     private List<Category> categories;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<Item> items;
+    private List<Item> products;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<ProductMeta> productMeta;

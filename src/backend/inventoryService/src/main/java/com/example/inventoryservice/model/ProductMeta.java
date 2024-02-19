@@ -14,7 +14,8 @@ import lombok.*;
 @Table(name = "product_meta")
 public class ProductMeta {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "productMeta_id_productMeta")
+    @SequenceGenerator(name = "productMeta_id_productMeta", sequenceName = "productMeta_id_productMeta_seq", allocationSize = 1)
     @Column(name = "id_product_meta", nullable = false)
     private Integer id;
 
