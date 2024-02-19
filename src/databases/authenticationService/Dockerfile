@@ -10,7 +10,6 @@ EXPOSE ${DB_AUTHENTICATION_SERVICE_PORT_INT}
 # Copy the custom entrypoint script to the image
 COPY ./db_entrypoint.sh ./config/db_entrypoint.sh
 COPY ./init.sql ./docker-entrypoint-initdb.d/init.sql
-COPY ./postgresql.conf ./etc/postgresql/postgresql.conf
 
 RUN chmod +x ./config/db_entrypoint.sh
 

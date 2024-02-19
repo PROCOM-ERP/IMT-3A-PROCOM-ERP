@@ -18,8 +18,6 @@ services:
     hostname: ${DB_AUTHENTICATION_SERVICE_HOSTNAME}
     environment:
       POSTGRES_DB: ${DB_AUTHENTICATION_SERVICE_DB}
-      POSTGRES_PORT: ${DB_AUTHENTICATION_SERVICE_PORT_INT}
-      PGPORT: ${DB_AUTHENTICATION_SERVICE_PORT_INT}
     secrets:
       - DB_AUTHENTICATION_SERVICE_USER
       - DB_AUTHENTICATION_SERVICE_PASSWORD
@@ -29,7 +27,7 @@ services:
       - db-procom-erp-authentication-service-data:/var/lib/postgresql/data
     networks:
       - vnet-procom-erp
-    command: -c 'config_file=/etc/postgresql/postgresql.conf'
+    command: -c 'port=${DB_AUTHENTICATION_SERVICE_PORT_INT}'
 
   # +-----------------------------------------------------------------------------+
 
@@ -42,8 +40,6 @@ services:
     hostname: ${DB_DIRECTORY_SERVICE_HOSTNAME}
     environment:
       POSTGRES_DB: ${DB_DIRECTORY_SERVICE_DB}
-      POSTGRES_PORT: ${DB_DIRECTORY_SERVICE_PORT_INT}
-      PGPORT: ${DB_DIRECTORY_SERVICE_PORT_INT}
     secrets:
       - DB_DIRECTORY_SERVICE_USER
       - DB_DIRECTORY_SERVICE_PASSWORD
@@ -53,7 +49,7 @@ services:
       - db-procom-erp-directory-service-data:/var/lib/postgresql/data
     networks:
       - vnet-procom-erp
-    command: -c 'config_file=/etc/postgresql/postgresql.conf'
+    command: -c 'port=${DB_DIRECTORY_SERVICE_PORT_INT}'
 
   # +-----------------------------------------------------------------------------+
 
@@ -66,20 +62,16 @@ services:
     hostname: ${DB_INVENTORY_SERVICE_HOSTNAME}
     environment:
       POSTGRES_DB: ${DB_INVENTORY_SERVICE_DB}
-      POSTGRES_PORT: ${DB_INVENTORY_SERVICE_PORT_INT}
-      PGPORT: ${DB_INVENTORY_SERVICE_PORT_INT}
     secrets:
       - DB_INVENTORY_SERVICE_USER
       - DB_INVENTORY_SERVICE_PASSWORD
-    expose:
-      - "${DB_INVENTORY_SERVICE_PORT_INT}"
     ports:
       - "${DB_INVENTORY_SERVICE_PORT_EXT}:${DB_INVENTORY_SERVICE_PORT_INT}"
     volumes:
       - db-procom-erp-inventory-service-data:/var/lib/postgresql/data
     networks:
       - vnet-procom-erp
-    command: -c 'config_file=/etc/postgresql/postgresql.conf'
+    command: -c 'port=${DB_INVENTORY_SERVICE_PORT_INT}'
 
   # +---------------------------------------------------------------------------+
   # | Backend containers section                                                |
@@ -169,8 +161,6 @@ services:
       - SECURITY_JWT_CLAIMS_KEY_ROLES
       - SECURITY_SERVICES_SHARED_KEY
       - SECURITY_TRUST_STORE_PASSWORD
-    ports:
-      - "${BACKEND_AUTHENTICATION_SERVICE_PORT_EXT}:${BACKEND_AUTHENTICATION_SERVICE_PORT_INT}"
     depends_on:
       - postgres-procom-erp-authentication-service
       - springboot-procom-erp-message-broker-service
@@ -243,8 +233,6 @@ services:
       - SECURITY_JWT_CLAIMS_KEY_ROLES
       - SECURITY_SERVICES_SHARED_KEY
       - SECURITY_TRUST_STORE_PASSWORD
-    expose:
-      - ${BACKEND_INVENTORY_SERVICE_PORT_INT}
     depends_on:
       - "postgres-procom-erp-inventory-service"
       - "springboot-procom-erp-authentication-service"
@@ -265,8 +253,6 @@ services:
     hostname: ${FRONTEND_WEBAPP_SERVICE_HOSTNAME}
     environment:
       FRONTEND_WEBAPP_SERVICE_PORT_INT: ${FRONTEND_WEBAPP_SERVICE_PORT_INT}
-    expose:
-      - ${FRONTEND_WEBAPP_SERVICE_PORT_EXT}
     ports:
       - ${FRONTEND_WEBAPP_SERVICE_PORT_INT}:${FRONTEND_WEBAPP_SERVICE_PORT_EXT}
     depends_on:
