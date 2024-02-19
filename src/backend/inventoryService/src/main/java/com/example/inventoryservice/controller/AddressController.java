@@ -13,12 +13,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @CrossOrigin(origins = "http://localhost")
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/address")
+@RequestMapping("/api/v1/addresses")
 public class AddressController {
     final private AddressService addressService;
 
