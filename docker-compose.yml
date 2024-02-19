@@ -1,5 +1,14 @@
 version: "3.8"
+
+# +-----------------------------------------------------------------------------+
+# | Services section                                                            |
+# +-----------------------------------------------------------------------------+
+
 services:
+  # +---------------------------------------------------------------------------+
+  # | Database section                                                          |
+  # +---------------------------------------------------------------------------+
+
   postgres-procom-erp-authentication-service:
     hostname: ${DB_AUTHENTICATION_SERVICE_HOSTNAME}
     build:
@@ -22,6 +31,8 @@ services:
       - db-procom-erp-authentication-service-data:/var/lib/postgresql/data
     command: -c 'config_file=/etc/postgresql/postgresql.conf'
 
+  # +-----------------------------------------------------------------------------+
+
   postgres-procom-erp-directory-service:
     hostname: ${DB_DIRECTORY_SERVICE_HOSTNAME}
     build:
@@ -43,6 +54,8 @@ services:
     volumes:
       - db-procom-erp-directory-service-data:/var/lib/postgresql/data
     command: -c 'config_file=/etc/postgresql/postgresql.conf'
+
+  # +-----------------------------------------------------------------------------+
 
   postgres-procom-erp-inventory-service:
     hostname: ${DB_INVENTORY_SERVICE_HOSTNAME}
@@ -68,6 +81,10 @@ services:
       - db-procom-erp-inventory-service-data:/var/lib/postgresql/data
     command: -c 'config_file=/etc/postgresql/postgresql.conf'
 
+  # +---------------------------------------------------------------------------+
+  # | Backend containers section                                                |
+  # +---------------------------------------------------------------------------+
+
   springboot-procom-erp-message-broker-service:
     hostname: ${BACKEND_MESSAGE_BROKER_SERVICE_HOSTNAME}
     build:
@@ -89,6 +106,8 @@ services:
       - vnet-procom-erp
     volumes:
       - procom-erp-message-broker-service-data:/var/lib/rabbitmq
+
+  # +-----------------------------------------------------------------------------+
 
   springboot-procom-erp-gateway-service:
     hostname: ${BACKEND_GATEWAY_SERVICE_HOSTNAME}
@@ -118,6 +137,8 @@ services:
     env_file: ./.env
     networks:
       - vnet-procom-erp
+
+  # +-----------------------------------------------------------------------------+
 
   springboot-procom-erp-authentication-service:
     hostname: ${BACKEND_AUTHENTICATION_SERVICE_HOSTNAME}
@@ -165,6 +186,8 @@ services:
     networks:
       - vnet-procom-erp
 
+  # +-----------------------------------------------------------------------------+
+
   springboot-procom-erp-directory-service:
     hostname: ${BACKEND_DIRECTORY_SERVICE_HOSTNAME}
     build:
@@ -207,6 +230,8 @@ services:
     networks:
       - vnet-procom-erp
 
+  # +-----------------------------------------------------------------------------+
+
   springboot-procom-erp-inventory-service:
     hostname: ${BACKEND_INVENTORY_SERVICE_HOSTNAME}
     build:
@@ -246,6 +271,10 @@ services:
     networks:
       - vnet-procom-erp
 
+  # +---------------------------------------------------------------------------+
+  # | Frontend containers section                                               |
+  # +---------------------------------------------------------------------------+
+
   react-procom-erp-webapp-service:
     hostname: ${FRONTEND_WEBAPP_SERVICE_HOSTNAME}
     build:
@@ -266,6 +295,10 @@ services:
     networks:
       - vnet-procom-erp
 
+# +-----------------------------------------------------------------------------+
+# | Networks section                                                            |
+# +-----------------------------------------------------------------------------+
+
 networks:
   vnet-procom-erp:
     driver: bridge
@@ -273,11 +306,19 @@ networks:
       config:
         - subnet: ${NETWORK_PROCOM_ERP}
 
+# +-----------------------------------------------------------------------------+
+# | Volumes  section                                                            |
+# +-----------------------------------------------------------------------------+
+
 volumes:
   db-procom-erp-authentication-service-data:
   db-procom-erp-directory-service-data:
   db-procom-erp-inventory-service-data:
   procom-erp-message-broker-service-data:
+
+# +-----------------------------------------------------------------------------+
+# | Secrets section                                                             |
+# +-----------------------------------------------------------------------------+
 
 secrets:
   DB_AUTHENTICATION_SERVICE_USER:
@@ -330,4 +371,3 @@ secrets:
     file: ${DOCKER_SECRETS_PATH}/SECURITY_TRUST_STORE_PASSWORD.txt
   SECURITY_TRUST_STORE_ALIAS:
     file: ${DOCKER_SECRETS_PATH}/SECURITY_TRUST_STORE_ALIAS.txt
-
