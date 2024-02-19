@@ -22,6 +22,12 @@ spring:
             - Path=/api/${BACKEND_DIRECTORY_SERVICE_NAME}/**
           filters:
             - RewritePath=/api/${BACKEND_DIRECTORY_SERVICE_NAME}/(?<segment>.*), /api/$\{segment}
+        - id: inventory-service
+          uri: https://${BACKEND_INVENTORY_SERVICE_HOSTNAME}:${BACKEND_INVENTORY_SERVICE_PORT_INT}
+          predicates:
+            - Path=/api/${BACKEND_INVENTORY_SERVICE_NAME}/**
+          filters:
+            - RewritePath=/api/${BACKEND_INVENTORY_SERVICE_NAME}/(?<segment>.*), /api/$\{segment}     
       # Global CORS configuration for all routes
       globalcors:
         cors-configurations:
@@ -39,7 +45,7 @@ spring:
               - Content-Type
               - Accept
             allow-credentials: true
-
+            
   security:
     require-ssl: true
 
