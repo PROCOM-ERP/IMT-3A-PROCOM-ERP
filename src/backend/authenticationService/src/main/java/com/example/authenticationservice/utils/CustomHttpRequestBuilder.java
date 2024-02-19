@@ -20,12 +20,13 @@ public class CustomHttpRequestBuilder {
     @Value("${BACKEND_GATEWAY_SERVICE_PORT_INT}")
     private String gatewayPort;
     private final Environment env;
-    private final String thisServiceGatewayPath = "/auth";
+    @Value("${security.service.name}")
+    private String thisServiceGatewayPath;
 
     private final JwtService jwtService;
 
     public String buildPath(String version, String resource) {
-        return String.format("%s%s%s%s", Path.API, thisServiceGatewayPath, version, resource);
+        return String.format("%s/%s%s%s", Path.API, thisServiceGatewayPath, version, resource);
     }
 
     public String buildUrl(String path) {

@@ -8,6 +8,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Component
 @RequiredArgsConstructor
@@ -20,17 +21,22 @@ public class CustomHttpRequestBuilder {
     @Value("${BACKEND_GATEWAY_SERVICE_PORT_INT}")
     private String gatewayPort;
     private final Environment env;
-    private final String thisServiceGatewayPath = "/dir";
+    @Value("${security.service.name}")
+    private String thisServiceGatewayPath;
 
     private final JwtService jwtService;
 
     public String buildPath(String version, String resource) {
-        return String.format("%s%s%s%s", Path.API, thisServiceGatewayPath, version, resource);
+        return String.format("%s/%s%s%s", Path.API, thisServiceGatewayPath, version, resource);
     }
 
     public String buildUrl(String path) {
         String protocol = isHttpsEnabled() ? "https" : "http";
         return String.format("%s://%s:%s%s", protocol, gatewayHostname, gatewayPort, path);
+    }
+
+    public String addQueryParamToUrl(String url, String param, String value) {
+       return UriComponentsBuilder.fromHttpUrl(url).queryParam(param, value).toUriString();
     }
 
     public HttpEntity<String> buildHttpEntity() {

@@ -18,14 +18,14 @@ import java.util.NoSuchElementException;
 @RequiredArgsConstructor
 public class ControllerExceptionHandler {
 
-    private final Logger logger = LoggerFactory.getLogger(ControllerExceptionHandler.class);
+    // private final Logger logger = LoggerFactory.getLogger(ControllerExceptionHandler.class);
 
+    /*
     @ExceptionHandler(Exception.class) // Http 500
     public ResponseEntity<String> handleAllExceptions(Exception e) {
-        logger.error(Arrays.toString(e.getStackTrace()));
         return ResponseEntity.internalServerError().build();
     }
-
+    */
     @ExceptionHandler(IllegalArgumentException.class) // Http 400
     public ResponseEntity<String> handleIllegalArgumentExceptions() {
         return ResponseEntity.badRequest().build();

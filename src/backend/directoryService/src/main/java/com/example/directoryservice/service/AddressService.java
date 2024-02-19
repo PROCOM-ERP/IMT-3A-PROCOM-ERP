@@ -1,6 +1,6 @@
 package com.example.directoryservice.service;
 
-import com.example.directoryservice.dto.AddressRequestDto;
+import com.example.directoryservice.dto.AddressCreationRequestDto;
 import com.example.directoryservice.dto.AddressResponseDto;
 import com.example.directoryservice.model.Address;
 import com.example.directoryservice.repository.AddressRepository;
@@ -10,8 +10,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.HexFormat;
+import java.util.Set;
+import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -21,42 +26,57 @@ public class AddressService {
 
     // private final Logger logger = LoggerFactory.getLogger(AddressService.class);
 
+    /* Public Methods */
+
     @Transactional
-    public Integer createAddress(AddressRequestDto addressRequestDto) {
+    public void createAddress(AddressCreationRequestDto addressDto) throws Exception {
         // create new entity
         Address address = Address.builder()
-                .number(addressRequestDto.getNumber())
-                .street(addressRequestDto.getStreet())
-                .city(addressRequestDto.getCity())
-                .state(addressRequestDto.getState())
-                .country(addressRequestDto.getCountry())
-                .postalCode(addressRequestDto.getPostalCode())
-                .info(addressRequestDto.getInfo())
+                .id(generateHashedIdAddressFromFields(addressDto))
+                .number(addressDto.getNumber())
+                .street(addressDto.getStreet())
+                .city(addressDto.getCity())
+                .state(addressDto.getState())
+                .country(addressDto.getCountry())
+                .zipcode(addressDto.getZipcode())
+                .info(addressDto.getInfo())
                 .build();
 
-        // try to save entity and return its id
-        return addressRepository.save(address).getId();
+        // try to save entity
+        addressRepository.save(address);
     }
 
-    public List<AddressResponseDto> getAllAddresses() {
+    public Set<AddressResponseDto> getAllAddresses() {
         return addressRepository.findAll().stream()
-                .map(AddressService::modelToResponseDto)
-                .toList();
+                .map(this::modelToResponseDto)
+                .collect(Collectors.toSet());
     }
 
-    public AddressResponseDto getAddress(Integer idAddress) throws NoSuchElementException {
-        return addressRepository.findById(idAddress)
-                .map(AddressService::modelToResponseDto)
-                .orElseThrow();
+    /* Private Methods */
+
+    private String generateHashedIdAddressFromFields(AddressCreationRequestDto addressDto)
+            throws Exception {
+        // join all fields before hashing operation
+        StringJoiner joiner = new StringJoiner("|");
+        if (addressDto.getNumber() != null) joiner.add(addressDto.getNumber().toString());
+        if (addressDto.getStreet() != null) joiner.add(addressDto.getStreet());
+        if (addressDto.getCity() != null) joiner.add(addressDto.getCity());
+        if (addressDto.getState() != null) joiner.add(addressDto.getState());
+        if (addressDto.getCountry() != null) joiner.add(addressDto.getCountry());
+        if (addressDto.getZipcode() != null) joiner.add(addressDto.getZipcode());
+        if (addressDto.getInfo() != null) joiner.add(addressDto.getInfo());
+
+        // hash char sequence and convert it into hexadecimal format
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hashedId = digest.digest(joiner.toString().getBytes(StandardCharsets.UTF_8));
+            return HexFormat.of().formatHex(hashedId);
+        } catch (NoSuchAlgorithmException e) {
+            throw new Exception(e);
+        }
     }
 
-    public void deleteAddress(Integer idAddress) throws NoSuchElementException {
-        if (! addressRepository.existsById(idAddress))
-            throw new NoSuchElementException();
-        addressRepository.deleteById(idAddress);
-    }
-
-    private static AddressResponseDto modelToResponseDto(Address address) {
+    AddressResponseDto modelToResponseDto(Address address) {
         return AddressResponseDto.builder()
                 .id(address.getId())
                 .number(address.getNumber())
@@ -64,10 +84,8 @@ public class AddressService {
                 .city(address.getCity())
                 .state(address.getState())
                 .country(address.getCountry())
-                .postalCode(address.getPostalCode())
+                .zipcode(address.getZipcode())
                 .info(address.getInfo())
-                .organisation(address.getOrganisation() != null ? address.getOrganisation().getName() :  "")
-                .services(address.getServices())
                 .build();
     }
 

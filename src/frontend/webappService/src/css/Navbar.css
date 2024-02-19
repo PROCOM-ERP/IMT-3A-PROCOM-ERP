@@ -1,0 +1,62 @@
+/* root variables are in App.css */
+
+.navigation {
+    height: 60px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    position: relative;
+    padding: 0.5rem 0rem;
+}
+
+.user {
+    background-color: var(--usr-nav-bg);
+}
+
+.admin {
+    background-color: var(--admin-nav-bg);
+}
+
+.brand-name {
+    font-family: var(--logo-family);
+    font-weight: var(--logo-weight);
+    font-size: var(--logo-size);
+    color: var(--logo-color);
+    text-decoration: none;
+    margin-left: 1rem;
+}
+
+.navigation-menu {
+    margin-left: auto;
+}
+
+.navigation-menu ul {
+    display: flex;
+    padding: 0;
+}
+
+.navigation-menu li {
+    /* removes default disc bullet for li tags */
+    list-style-type: none;
+    /* applies margin to left & right side */
+    margin: 0 1rem;
+}
+
+.navigation-menu li a {
+    font-family: var(--nav-text-family);
+    font-weight: var(--nav-text-weight);
+    font-size: var(--nav-text-size);
+    color: var(--nav-text-color);
+    /* increases the surface area of the anchor tag to span more than just the anchor text */
+    text-decoration: none;
+    display: block;
+    width: 100%;
+}
+
+.navigation-menu.user li a:hover {
+    color: var(--usr-nav-text-color-hover);
+}
+
+.navigation-menu.admin li a:hover {
+    color: var(--admin-nav-text-color-hover);
+}

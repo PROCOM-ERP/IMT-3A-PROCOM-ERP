@@ -5,8 +5,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
-
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -14,12 +12,12 @@ import java.time.LocalDate;
 public class EmployeeResponseDto {
 
     private String id;
-    private LocalDate creation;
-    private Boolean enable;
     private String lastName;
     private String firstName;
     private String email;
     private String phoneNumber;
-    private Integer service;
+    private String job;
+    private OrgUnitEmployeeResponseDto orgUnit;
+    private OrganisationEmployeeResponseDto organisation;
 
 }

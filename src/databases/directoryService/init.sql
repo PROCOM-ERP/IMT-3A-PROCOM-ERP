@@ -13,7 +13,7 @@
 CREATE TABLE roles
 (
     name VARCHAR(32) UNIQUE NOT NULL,
-    enable BOOLEAN NOT NULL DEFAULT true,
+    is_enable BOOLEAN NOT NULL DEFAULT true,
 
     CONSTRAINT pk_roles PRIMARY KEY (name)
 );
@@ -32,15 +32,30 @@ CREATE TABLE role_permissions
             ON UPDATE CASCADE ON DELETE CASCADE
 );
 
+-- +----------------------------------------------------------------------------------------------+
+
+CREATE TABLE login_profiles
+(
+    id CHAR(6) UNIQUE NOT NULL,
+    is_enable BOOLEAN NOT NULL DEFAULT true,
+    jwt_gen_min_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
+
+    CONSTRAINT pk_login_profiles PRIMARY KEY (id),
+    CONSTRAINT check_login_profiles_id
+        CHECK (login_profiles.id ~* '[A-Z][0-9]{5}')
+);
+
+-- +----------------------------------------------------------------------------------------------+
+
 CREATE TABLE addresses
 (
-    id SERIAL UNIQUE NOT NULL,
-    number INT,
+    id VARCHAR(64) UNIQUE NOT NULL,
+    number INT NOT NULL,
     street VARCHAR(255) NOT NULL,
     city VARCHAR(100) NOT NULL,
     state VARCHAR(100),
     country VARCHAR(100) NOT NULL,
-    postal_code VARCHAR(20) NOT NULL,
+    zipcode VARCHAR(20) NOT NULL,
     info TEXT,
 
     CONSTRAINT pk_addresses PRIMARY KEY (id)
@@ -53,32 +68,38 @@ CREATE TABLE organisations
 (
     id SERIAL UNIQUE NOT NULL,
     name VARCHAR(255) UNIQUE NOT NULL,
-    address INT UNIQUE,
+    address VARCHAR(64) DEFAULT NULL,
 
     CONSTRAINT pk_organisations
         PRIMARY KEY (id),
     CONSTRAINT fk_organisations_table_addresses
         FOREIGN KEY (address) REFERENCES addresses(id)
-            ON UPDATE CASCADE ON DELETE SET NULL
+            ON UPDATE CASCADE ON DELETE SET DEFAULT
 );
 
 -- +----------------------------------------------------------------------------------------------+
 
-CREATE TABLE services
+CREATE TABLE org_units
 (
     id SERIAL UNIQUE NOT NULL,
     name VARCHAR(255) NOT NULL,
-    address INT,
-    organisation INT,
+    org_unit INT DEFAULT NULL,
+    organisation INT NOT NULL,
+    address VARCHAR(64) DEFAULT NULL,
 
-    CONSTRAINT pk_services
+    CONSTRAINT pk_org_units
         PRIMARY KEY (id),
-    CONSTRAINT fk_services_table_addresses
-        FOREIGN KEY (address) REFERENCES addresses(id)
-            ON UPDATE CASCADE ON DELETE SET NULL,
-    CONSTRAINT fk_services_table_organisations
+    CONSTRAINT fk_org_units_table_org_units
+        FOREIGN KEY (org_unit) REFERENCES org_units(id)
+            ON UPDATE CASCADE ON DELETE SET DEFAULT,
+    CONSTRAINT fk_org_units_table_organisations
         FOREIGN KEY (organisation) REFERENCES organisations(id)
-            ON UPDATE CASCADE  ON DELETE SET NULL
+            ON UPDATE CASCADE,
+    CONSTRAINT fk_org_units_table_addresses
+        FOREIGN KEY (address) REFERENCES addresses(id)
+            ON UPDATE CASCADE ON DELETE SET DEFAULT,
+    CONSTRAINT uq_org_units_name_organisation
+        UNIQUE (name, organisation)
 );
 
 -- +----------------------------------------------------------------------------------------------+
@@ -86,26 +107,23 @@ CREATE TABLE services
 CREATE TABLE employees
 (
     id CHAR(6) UNIQUE NOT NULL,
-    creation DATE NOT NULL DEFAULT current_timestamp,
-    enable BOOLEAN NOT NULL DEFAULT true,
-    jwt_min_creation TIMESTAMP NOT NULL DEFAULT current_timestamp,
     last_name VARCHAR(255) NOT NULL,
     first_name VARCHAR(255) NOT NULL,
     email VARCHAR(320) UNIQUE NOT NULL,
     phone_number VARCHAR(24),
-    service INT,
+    job VARCHAR(64),
+    org_unit INT NOT NULL,
 
     CONSTRAINT pk_employees
         PRIMARY KEY (id),
-    CONSTRAINT fk_employees_table_services
-        FOREIGN KEY (service) REFERENCES services(id)
-            ON UPDATE CASCADE ON DELETE SET NULL,
-    CONSTRAINT check_employees_id
-        CHECK (employees.id ~* '[A-Z][0-9]{5}')-- ,
-    -- CONSTRAINT check_employees_email
-    -- CHECK (employees.email ~* '^[a-zA-Z0-9](?:[a-zA-Z0-9-._-]{0,62}[a-zA-Z0-9])?@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z]{2,})+$'),
-    -- CONSTRAINT check_employees_phone_number
-    -- CHECK (employees.phone_number ~* '^(\+((?:9[679]|8[0357-9]|6[7-9]|5[09]|42|3[578]|2[1-689])\d|9[0-58]|8[1246]|6[0-6]|5[1-8]|4[013-9]|3[0-469]|2[07]|[17])|0)\W?\d\W?\d\W?\d\W?\d\W?\d\W?\d\W?\d\W?\d\W?(\d{1,2})$')
+    CONSTRAINT fk_employees_table_login_profiles
+        FOREIGN KEY (id) REFERENCES login_profiles(id)
+            ON UPDATE CASCADE,
+    CONSTRAINT fk_employees_table_org_units
+        FOREIGN KEY (org_unit) REFERENCES org_units(id)
+            ON UPDATE CASCADE,
+    CONSTRAINT uq_employees_email
+        UNIQUE (email)
 );
 
 -- +----------------------------------------------------------------------------------------------+
@@ -114,65 +132,56 @@ CREATE TABLE employees
 
 INSERT INTO roles (name)
 VALUES ('admin'),
-       ('employee'),
-       ('HRManager');
+       ('user');
 
 -- +----------------------------------------------------------------------------------------------+
 
 INSERT INTO role_permissions (role, permission)
-VALUES ('admin', 'CanCreateRole'),
-       ('admin', 'CanReadRole'),
-       ('admin', 'CanModifyRolePermissions'),
-       ('admin', 'CanDeactivateRole'),
-       ('admin', 'CanReadPermission'),
+VALUES ('admin', 'CanBypassAccessDeny'),
        ('admin', 'CanCreateAddress'),
-       ('admin', 'CanReadAddress'),
-       ('admin', 'CanDeleteAddress'),
        ('admin', 'CanCreateEmployee'),
+       ('admin', 'CanModifyEmployee'),
+       ('admin', 'CanModifyRole'),
+       ('admin', 'CanReadAddress'),
        ('admin', 'CanReadEmployee'),
-       ('admin', 'CanModifyEmployeeInfo'),
-       ('admin', 'CanModifyEmployeeService'),
-       ('admin', 'CanDeactivateEmployee'),
-       ('admin', 'CanCreateOrganisation'),
        ('admin', 'CanReadOrganisation'),
-       ('admin', 'CanModifyOrganisationAddress'),
-       ('admin', 'CanDeleteOrganisation'),
-       ('admin', 'CanCreateService'),
-       ('admin', 'CanReadService'),
-       ('admin', 'CanModifyServiceAddress'),
-       ('admin', 'CanModifyServiceOrganisation'),
-       ('admin', 'CanDeleteService'),
+       ('admin', 'CanReadRole'),
 
-       ('employee', 'CanReadAddress'),
-       ('employee', 'CanReadEmployee'),
-       ('employee', 'CanModifyEmployeeInfo'),
-       ('employee', 'CanReadOrganisation'),
-       ('employee', 'CanReadService'),
+       ('user', 'CanModifyEmployee'),
+       ('user', 'CanReadAddress'),
+       ('user', 'CanReadEmployee'),
+       ('user', 'CanReadOrganisation');
 
-       ('HRManager', 'CanCreateAddress'),
-       ('HRManager', 'CanCreateEmployee'),
-       ('HRManager', 'CanModifyEmployeeService'),
-       ('HRManager', 'CanDeactivateEmployee'),
-       ('HRManager', 'CanModifyServiceAddress');
+-- +----------------------------------------------------------------------------------------------+
 
-INSERT INTO addresses (number, street, city, country, postal_code)
-VALUES (1, 'rue de la Paix', 'Paris', 'France', '75000'),
-       (2, 'rue de la Paix', 'Paris', 'France', '75000');
+INSERT INTO login_profiles (id)
+VALUES ('A00001'),
+       ('A00002');
+
+-- +----------------------------------------------------------------------------------------------+
+
+INSERT INTO addresses (id, number, street, city, country, zipcode)
+VALUES ('7d82842eb167c3ed224a329fba7fbb2820a8c99f3771f9e216b968c1cccd0d6e',
+        1, 'rue de la Paix', 'Paris', 'France', '75000'),
+       ('e8ffdf9a6ffc553cd234a04e6a5f63547838f367af45cb029f0c2a3412278412',
+        2, 'rue de la Paix', 'Paris', 'France', '75000');
 
 -- +----------------------------------------------------------------------------------------------+
 
 INSERT INTO organisations (name, address)
-VALUES ('Google', 1);
+VALUES ('Google', '7d82842eb167c3ed224a329fba7fbb2820a8c99f3771f9e216b968c1cccd0d6e'); -- id = 1
 
 -- +----------------------------------------------------------------------------------------------+
 
-INSERT INTO services (name, address, organisation)
-VALUES ('R&D', 2, 1),
-       ('HR', 1, 1);
+INSERT INTO org_units (name, org_unit, organisation, address)
+VALUES ('R&D', null, 1,
+        'e8ffdf9a6ffc553cd234a04e6a5f63547838f367af45cb029f0c2a3412278412'), -- id = 1
+       ('HR', null, 1,
+        '7d82842eb167c3ed224a329fba7fbb2820a8c99f3771f9e216b968c1cccd0d6e'); -- id = 2
 
 -- +----------------------------------------------------------------------------------------------+
 
-INSERT INTO employees (id, last_name, first_name, email, service)
+INSERT INTO employees (id, last_name, first_name, email, org_unit)
 VALUES ('A00001', 'Bonnot', 'Jean', 'jean.bonnot@gmail.com', 1),
        ('A00002', 'De La Compta', 'Séverine', 'severine.de-la-compta@gmail.com', 2);
 
