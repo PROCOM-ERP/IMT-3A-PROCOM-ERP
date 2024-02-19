@@ -45,7 +45,7 @@ public class ProductService {
                 .description(productRequest.getDescription())
                 .build();
 
-        List<Category> categories = categoryService.getCategoriesByIds(productRequest.getCategories());
+        List<Category> categories = categoryService.getAllByIds(productRequest.getCategories());
         for(Category category : categories) {
             category.getProducts().add(product);
         }

@@ -37,7 +37,7 @@ public class Product {
     private List<Category> categories;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<Item> products;
+    private List<Item> items;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<ProductMeta> productMeta;

@@ -35,7 +35,7 @@ public class CategoryService {
                 .toList();
     }
 
-    public List<Category> getCategoriesByIds(List<Integer> ids){
+    public List<Category> getAllByIds(List<Integer> ids){
         List<Category> categoryList = categoryRepository.findByIds(ids);
         return categoryList;
     }
