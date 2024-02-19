@@ -3,13 +3,16 @@ package com.example.inventoryservice.service;
 import com.example.inventoryservice.dto.AddressDto;
 import com.example.inventoryservice.dto.CategoryDto;
 import com.example.inventoryservice.dto.ProductDto;
+import com.example.inventoryservice.dtoRequest.CategoryRequestDto;
 import com.example.inventoryservice.model.Address;
 import com.example.inventoryservice.model.Category;
 import com.example.inventoryservice.model.Product;
 import com.example.inventoryservice.repository.CategoryRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -38,8 +41,31 @@ public class CategoryService {
     }
 
     public List<Category> getAllByIds(List<Integer> ids){
-        List<Category> categoryList = categoryRepository.findByIds(ids);
-        return categoryList;
+        return categoryRepository.findByIds(ids);
+    }
+
+    @Transactional
+    public void createCategory(CategoryRequestDto categoryRequest){
+
+        List<Category> categories = categoryRepository.findByTitle(categoryRequest.getTitle());
+        if (categories != null && !categories.isEmpty()){
+            // Error 422
+            logger.error("The requested category already exists.");
+            throw new DataIntegrityViolationException("The requested category already exists.");
+        }
+        if (categoryRequest.getTitle() == ""){
+            // Error 422
+            logger.error("Title is empty.");
+            throw new DataIntegrityViolationException("Title is empty.");
+        }
+
+        Category category = Category.builder()
+                .title(categoryRequest.getTitle())
+                .description(categoryRequest.getDescription())
+                .build();
+
+        categoryRepository.save(category);
+
     }
 
     static CategoryDto categoryOnlyToDto(Category category){
