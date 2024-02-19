@@ -5,6 +5,8 @@ We mainly use scripts to deploy this application, although we are researching ot
 
 > There also is a version for Windows developers, of all scripts in PowerShell
 
+> Check the Warning section at the end of this guide in case you're having an issue
+
 ### :exclamation: Requirements :exclamation:
 
 - Insure you have :whale: Docker installed. On Unix systems, run `docker --version`
@@ -36,3 +38,8 @@ This is going to activate :ship: Swarm mode :sailboat: for :whale: Docker, and c
 > If you would prefer to pull images from a docker registry on :whale: [Docker Hub](https://hub.docker.com) instead of building them locally, you can simply add `--pull "registry_or_username/repository"`, such as: `./deploy.sh --pull "gachille/erp"`.
 
 > If you would like to push you local images to a docker registry on :whale: [Docker Hub](https://hub.docker.com), you can simply add `--push "registry_or_username/repository"`, such as: `./deploy.sh --push "gachille/erp"`. It will automatically tag the images, and push one image with multiple tags, all named after the services, as not to bring chaos to the repository.
+
+## :warning: Warning !
+
+Having trouble deploying ? Maybe you're entering the good credentials, but still can't access the application ?
+In order to make sure services can communicate, after you just deployed the app, when it's your first time accessing the [frontend](https://localhost:3000/), please accept the prompt to proceed with adding an exception for the site, as it's certificates have yet to be validated by a known authority (it costs a certain sum of money). Be careful to do the same with the gateway using this [link](https://localhost:8041/api/authentication/v1/hello), so that the gateway can safely communicate information to the frontend.
