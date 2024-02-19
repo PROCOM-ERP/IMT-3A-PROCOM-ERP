@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -25,9 +26,10 @@ public class ProductService {
     private final AddressService addressService;
     private final Logger logger = LoggerFactory.getLogger(InventoryServiceApplication.class);
 
-    public Optional<ProductDto> getProductById(int id){
+    public ProductDto getProductById(int id)
+            throws NoSuchElementException {
         Optional<Product> productOptional = productRepository.findById(id);
-        return productOptional.map(ProductService::productToDto);
+        return productOptional.map(ProductService::productToDto).orElseThrow();
     }
 
     public List<ProductDto> getAllProducts(){

@@ -42,7 +42,7 @@ public class ProductController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<Optional<ProductDto>> getProductById(@PathVariable int id){
+    public ResponseEntity<ProductDto> getProductById(@PathVariable int id){
         return ResponseEntity.ok(productService.getProductById(id));
     }
 
