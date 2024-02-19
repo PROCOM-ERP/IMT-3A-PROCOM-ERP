@@ -84,8 +84,6 @@ services:
     hostname: ${DB_AUTHENTICATION_SERVICE_HOSTNAME}
     environment:
       POSTGRES_DB: ${DB_AUTHENTICATION_SERVICE_DB}
-      POSTGRES_PORT: ${DB_AUTHENTICATION_SERVICE_PORT_INT}
-      PGPORT: ${DB_AUTHENTICATION_SERVICE_PORT_INT}
     secrets:
       - DB_AUTHENTICATION_SERVICE_USER
       - DB_AUTHENTICATION_SERVICE_PASSWORD
@@ -102,7 +100,7 @@ services:
         window: 120s
     networks:
       - vnet-procom-erp
-    command: -c 'config_file=/etc/postgresql/postgresql.conf'
+    command: -c 'port=${DB_AUTHENTICATION_SERVICE_PORT_INT}'
 
   # +-----------------------------------------------------------------------------+
 
@@ -117,8 +115,6 @@ services:
     hostname: ${DB_DIRECTORY_SERVICE_HOSTNAME}
     environment:
       POSTGRES_DB: ${DB_DIRECTORY_SERVICE_DB}
-      POSTGRES_PORT: ${DB_DIRECTORY_SERVICE_PORT_INT}
-      PGPORT: ${DB_DIRECTORY_SERVICE_PORT_INT}
     secrets:
       - DB_DIRECTORY_SERVICE_USER
       - DB_DIRECTORY_SERVICE_PASSWORD
@@ -135,7 +131,7 @@ services:
         window: 120s
     networks:
       - vnet-procom-erp
-    command: -c 'config_file=/etc/postgresql/postgresql.conf'
+    command: -c 'port=${DB_DIRECTORY_SERVICE_PORT_INT}'
 
   # +-----------------------------------------------------------------------------+
 
@@ -149,8 +145,6 @@ services:
         ENTRYPOINT: ${DB_ENTRYPOINT}
     environment:
       POSTGRES_DB: ${DB_INVENTORY_SERVICE_DB}
-      POSTGRES_PORT: ${DB_INVENTORY_SERVICE_PORT_INT}
-      PGPORT: ${DB_INVENTORY_SERVICE_PORT_INT}
     hostname: ${DB_INVENTORY_SERVICE_HOSTNAME}
     secrets:
       - DB_INVENTORY_SERVICE_USER
@@ -168,7 +162,7 @@ services:
         window: 120s
     networks:
       - vnet-procom-erp
-    command: -c 'config_file=/etc/postgresql/postgresql.conf'
+    command: -c 'port=${DB_INVENTORY_SERVICE_PORT_INT}'
 
   # +---------------------------------------------------------------------------+
   # | Backend containers section                                                |
