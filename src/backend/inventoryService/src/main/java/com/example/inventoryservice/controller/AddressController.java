@@ -43,8 +43,8 @@ public class AddressController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<Optional<AddressDto>> getAddressById(@PathVariable int id){
-        return ResponseEntity.ok(addressService.getOptionalAddressById(id));
+    public ResponseEntity<AddressDto> getAddressById(@PathVariable int id){
+        return ResponseEntity.ok(addressService.getAddressDtoById(id));
     }
 
     @GetMapping

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -22,9 +23,10 @@ public class CategoryService {
     private final Logger logger = LoggerFactory.getLogger(CategoryService.class);
 
     final private CategoryRepository categoryRepository;
-    public Optional<CategoryDto> getCategoryById(Integer id){
+    public CategoryDto getCategoryById(Integer id)
+            throws NoSuchElementException {
         Optional<Category> categoryOptional = categoryRepository.findById(id);
-        return categoryOptional.map(CategoryService::categoryToDto);
+        return categoryOptional.map(CategoryService::categoryToDto).orElseThrow();
     }
 
     public List<CategoryDto> getAllCategories(){

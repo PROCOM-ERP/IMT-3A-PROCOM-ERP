@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -23,13 +24,12 @@ public class AddressService {
                 .toList();
     }
 
-    public Optional<AddressDto> getOptionalAddressById(int id){
-        Optional<Address> addressOptional = addressRepository.findById(id);
-        return addressOptional.map(AddressService::addressToDto);
-    }
-
     public Address getAddressById(int id){
         return addressRepository.findById(id).orElseThrow();
+    }
+
+    public AddressDto getAddressDtoById(int id) throws NoSuchElementException {
+        return addressRepository.findById(id).map(AddressService::addressToDto).orElseThrow();
     }
 
     static AddressDto addressToDto(Address address){
