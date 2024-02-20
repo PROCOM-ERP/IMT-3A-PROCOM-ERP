@@ -149,6 +149,7 @@ function DisplayPermissions() {
                     name={permission.name}
                     checked={permission.isEnabled}
                     onChange={handlePermissionChange}
+                    disabled={!isEnabled} // Disable checkbox if isEnabled is false
                   />
                   {permission.name}
                 </label>
