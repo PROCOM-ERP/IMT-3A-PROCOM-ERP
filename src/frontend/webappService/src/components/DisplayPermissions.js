@@ -1,26 +1,21 @@
 import React, { useEffect, useState } from 'react'
 
 function DisplayPermissions() {
-  const [services, setServices] = useState({ 0: "Authentification", 1: "Directory", 2: "Inventary" });
-  const [roles, setRoles] = useState({ 0: "Administrator", 1: "Employee" });
+  const [services, setServices] = useState({});
+  const [roles, setRoles] = useState({});
   const [selectedService, setSelectedService] = useState('');
   const [selectedRole, setSelectedRole] = useState('');
-  const [isEnabled, setIsEnabled] = useState();
-  const [permissions, setPermissions] = useState({});
+  const [isEnabled, setIsEnabled] = useState(false);
+  const [permissions, setPermissions] = useState([]);
 
   const [areSelected, setAreSelected] = useState(false); // to set true if a service AND a role is selected
 
   const user = localStorage.getItem('id');
   const token = localStorage.getItem('Token');
-
   const headers = { 'Authorization': `Bearer ${token}` };
 
   useEffect(() => {
-    // Simulate fetching services and roles from an API
-    // Replace with actual API calls
-    // fetchServicesAndRoles();
-    setServices({ 0: "Authentification", 1: "Directory", 2: "Inventory" });
-    setRoles({ 0: "Administrator", 1: "Employee" });
+    fetchServicesAndRoles();
   }, []);
 
   useEffect(() => {
@@ -30,32 +25,32 @@ function DisplayPermissions() {
       fetchPermissions(selectedService, selectedRole);
     } else {
       setAreSelected(false);
-      setPermissions({});
+      setPermissions([]);
     }
   }, [selectedService, selectedRole]);
 
   // TODO
-  // const fetchServicesAndRoles = async () => {
-  //   const apiUrl = "https://localhost:8041/api/auth/v1/auth/jwt"; // TODO: to change
-  //   // Make the API request
-  //   await fetch(apiUrl, {
-  //     method: "GET",
-  //     headers: headers,
-  //   })
-  //     .then((response) => {
-  //       if (!response.ok) throw new Error(response.status);
-  //       const res = response.json();
-  //       return res;
-  //     })
-  //     .then(data => {
-  //       setServices(data.services);
-  //       setRoles(data.roles)
-  //       console.log("[LOG] List of services and roles retrieved");
-  //     })
-  //     .catch(error => {
-  //       console.error('API request error: ', error);
-  //     });
-  // }
+  const fetchServicesAndRoles = async () => {
+    const apiUrl = "https://localhost:8041/api/authentication/v1/roles/microservices";
+    // Make the API request
+    await fetch(apiUrl, {
+      method: "GET",
+      headers: headers,
+    })
+      .then((response) => {
+        if (!response.ok) throw new Error(response.status);
+        const res = response.json();
+        return res;
+      })
+      .then(data => {
+        setServices(data.microservices);
+        setRoles(data.roles);
+        console.log("[LOG] List of services and roles retrieved");
+      })
+      .catch(error => {
+        console.error('API request error: ', error);
+      });
+  }
 
   const handleServiceChange = (e) => {
     setSelectedService(e.target.value);
@@ -73,15 +68,39 @@ function DisplayPermissions() {
     }));
   };
 
-  const fetchPermissions = (service, role) => {
-    // Simulate fetching permissions from an API
-    // Replace with actual API call
-    const fetchedPermissions = {
-      read: true,
-      write: false,
-      delete: true
-    };
-    setPermissions(fetchedPermissions);
+  const handleIsEnabledChange = (e) => {
+    const checked = e.target.checked;
+    setIsEnabled(checked);
+  };
+
+  const fetchPermissions = async (service, role) => {
+    // Get permissions from api thanks to service and role name
+    const apiUrl = `https://localhost:8041/api/${service}/v1/roles/${role}`;
+    // Make the API request
+    await fetch(apiUrl, {
+      method: "GET",
+      headers: headers,
+    })
+      .then((response) => {
+        if (!response.ok) throw new Error(response.status);
+        const res = response.json();
+        return res;
+      })
+      .then(data => {
+        console.log(data);
+        const fetchedPermissions = data.permissions;
+        // Construct an array of permissions with initial isEnabled values
+        const initialPermissions = fetchedPermissions.map(permission => ({
+          name: permission.name,
+          isEnabled: permission.isEnable
+        }));
+
+        setIsEnabled(data.isEnable);
+        setPermissions(initialPermissions);
+      })
+      .catch(error => {
+        console.error('API request error: ', error);
+      });
   };
 
   return (
@@ -109,21 +128,32 @@ function DisplayPermissions() {
         {areSelected && (
           <div>
             <h2>{selectedService} - {selectedRole}: Permissions Details</h2>
-            <form>
-              {Object.entries(permissions).map(([key, value]) => (
-                <div key={key}>
-                  <label>
-                    <input
-                      type="checkbox"
-                      name={key}
-                      checked={value}
-                      onChange={handlePermissionChange}
-                    />
-                    {key}
-                  </label>
-                </div>
-              ))}
-            </form>
+            <div>
+              <label>
+                <input
+                  type="checkbox"
+                  name={"isEnabled"}
+                  checked={isEnabled}
+                  onChange={handleIsEnabledChange}
+                />
+                Is active
+              </label>
+            </div>
+
+            {permissions.map((permission, index) => (
+              <div key={index}>
+                {console.log("permissions : " + index + " " + permission.name + " " + permission.isEnabled)}
+                <label>
+                  <input
+                    type="checkbox"
+                    name={permission.name}
+                    checked={permission.isEnabled}
+                    onChange={handlePermissionChange}
+                  />
+                  {permission.name}
+                </label>
+              </div>
+            ))}
           </div>
         )}
       </div>
