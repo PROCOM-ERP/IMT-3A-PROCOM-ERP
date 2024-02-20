@@ -24,14 +24,19 @@ function DirectoryTable() {
         navigate("/user/" + id);
     }
 
-    // TODO : tester si la valeur est null -> ne pas appliquer le filtre
-    let filteredUsers = users.filter(user =>
-        user.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.email.toLowerCase().includes(searchTerm.toLowerCase())
-        //user.phoneNumber.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    let filteredUsers = users.filter(user => {
+        const lowerCaseSearchTerm = searchTerm.toLowerCase();
+        return (
+            (user.id && user.id.toLowerCase().includes(lowerCaseSearchTerm)) ||
+            (user.firstName && user.firstName.toLowerCase().includes(lowerCaseSearchTerm)) ||
+            (user.lastName && user.lastName.toLowerCase().includes(lowerCaseSearchTerm)) ||
+            (user.email && user.email.toLowerCase().includes(lowerCaseSearchTerm)) ||
+            (user.job && user.job.toLowerCase().includes(lowerCaseSearchTerm)) ||
+            (user.organisation.name && user.organisation.name.toLowerCase().includes(lowerCaseSearchTerm)) ||
+            (user.orgUnit.address.city && user.orgUnit.address.city.toLowerCase().includes(lowerCaseSearchTerm)) ||
+            (user.phoneNumber && user.phoneNumber.toLowerCase().includes(lowerCaseSearchTerm))
+        );
+    });
 
     if (sortBy) {
         filteredUsers.sort((a, b) => {
@@ -43,7 +48,7 @@ function DirectoryTable() {
 
     const tokenName = "Token"; // Need to be the same name as in AuthForm.js components
     const token = localStorage.getItem(tokenName);
-    const apiUrl = "https://localhost:8041/api/dir/v1/employees";
+    const apiUrl = "https://localhost:8041/api/directory/v1/employees";
 
     const headers = {
         'Authorization': `Bearer ${token}`,
@@ -90,6 +95,9 @@ function DirectoryTable() {
                             <th onClick={() => handleSort('firstName')} >Firstname</th>
                             <th onClick={() => handleSort('lastName')} >Lastname</th>
                             <th onClick={() => handleSort('email')} >Email</th>
+                            <th onClick={() => handleSort('job')} >Job</th>
+                            <th onClick={() => handleSort('organisation')} >Organisation</th>
+                            <th onClick={() => handleSort('city')} >City</th>
                             <th onClick={() => handleSort('phoneNumber')} >Phone number</th>
                         </tr>
                     </thead>
@@ -97,13 +105,13 @@ function DirectoryTable() {
                         {filteredUsers.map((user, index) => {
                             return (
                                 <tr key={index} onClick={() => handleProfil(user.id)} >
-                                    <td>
-                                        {/* <Link className='table-link' to={`/user/${user.id}`}>{user.id} </Link> */}
-                                        {user.id}
-                                    </td>
+                                    <td>{user.id}</td>
                                     <td> {user.firstName} </td>
                                     <td> {user.lastName} </td>
                                     <td> {user.email} </td>
+                                    <td> {user.job} </td>
+                                    <td> {user.organisation.name} </td>
+                                    <td> {user.orgUnit.address.city} </td>
                                     <td> {user.phoneNumber} </td>
                                 </tr>
                             )
