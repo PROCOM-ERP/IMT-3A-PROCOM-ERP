@@ -111,6 +111,7 @@ function DisplayPermissions() {
         setPrevIsEnabled(data.isEnable);
         setPermissions(initialPermissions);
         setPrevPermissions(initialPermissions);
+        console.log("[LOG] permissions retrived")
       })
       .catch(error => {
         console.error('API request error: ', error);
@@ -140,10 +141,10 @@ function DisplayPermissions() {
         if (!response.ok) {
           throw new Error('Failed to save changes');
         }
-        // Handle success
+        console.log("[LOG] Permissions updated with success")
       })
       .catch(error => {
-        console.error('Error saving changes:', error);
+        console.error('Error saving changes for permissions:', error);
       });
   };
 
@@ -189,7 +190,6 @@ function DisplayPermissions() {
                 Is active
               </label>
             </div>
-
             {permissions.map((permission, index) => (
               <div key={index}>
                 <label>
@@ -204,11 +204,13 @@ function DisplayPermissions() {
                 </label>
               </div>
             ))}
+            <Button onClick={handleSaveChanges}>Save</Button>
+            <Button onClick={handleResetChanges}>Reset</Button>
           </div>
         )}
+
       </div>
-      <Button onClick={handleSaveChanges}>Save</Button>
-      <Button onClick={handleResetChanges}>Reset</Button>
+
     </>
   );
 }
