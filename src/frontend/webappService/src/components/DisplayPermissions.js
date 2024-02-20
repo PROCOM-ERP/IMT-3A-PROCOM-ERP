@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
+import Button from './Button';
 
 function DisplayPermissions() {
   const [services, setServices] = useState({});
@@ -7,12 +8,17 @@ function DisplayPermissions() {
   const [selectedRole, setSelectedRole] = useState('');
   const [isEnabled, setIsEnabled] = useState(false);
   const [permissions, setPermissions] = useState([]);
+  const [prevIsEnabled, setPrevIsEnabled] = useState(false);
+  const [prevPermissions, setPrevPermissions] = useState([]);
 
   const [areSelected, setAreSelected] = useState(false); // to set true if a service AND a role is selected
 
   const user = localStorage.getItem('id');
   const token = localStorage.getItem('Token');
-  const headers = { 'Authorization': `Bearer ${token}` };
+  const headers = {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${token}`
+  };
 
   useEffect(() => {
     fetchServicesAndRoles();
@@ -62,10 +68,16 @@ function DisplayPermissions() {
 
   const handlePermissionChange = (e) => {
     const { name, checked } = e.target;
-    setPermissions(prevPermissions => ({
-      ...prevPermissions,
-      [name]: checked
-    }));
+    // Update the permissions array
+    setPermissions(prevPermissions => {
+      // Find the index of the permission with the matching name
+      const index = prevPermissions.findIndex(permission => permission.name === name);
+      // Create a copy of the permissions array
+      const updatedPermissions = [...prevPermissions];
+      // Update the isEnabled property of the permission at the found index
+      updatedPermissions[index] = { ...updatedPermissions[index], isEnabled: checked };
+      return updatedPermissions;
+    });
   };
 
   const handleIsEnabledChange = (e) => {
@@ -96,11 +108,49 @@ function DisplayPermissions() {
         }));
 
         setIsEnabled(data.isEnable);
+        setPrevIsEnabled(data.isEnable);
         setPermissions(initialPermissions);
+        setPrevPermissions(initialPermissions);
       })
       .catch(error => {
         console.error('API request error: ', error);
       });
+  };
+
+
+  const handleSaveChanges = () => {
+    // Construct payload
+    const enabledPermissions = permissions // Get a list permission names enabled
+      .filter(permission => permission.isEnabled) // Filter permissions with isEnabled === true
+      .map(permission => permission.name); // Extract permission names
+    const payload = {
+      isEnable: isEnabled,
+      permissions: enabledPermissions
+    };
+
+    const apiUrl = `https://localhost:8041/api/${selectedService}/v1/roles/${selectedRole}`;
+
+    // Send API request to update database
+    fetch(apiUrl, {
+      method: 'PUT',
+      headers: headers,
+      body: JSON.stringify(payload)
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to save changes');
+        }
+        // Handle success
+      })
+      .catch(error => {
+        console.error('Error saving changes:', error);
+      });
+  };
+
+  const handleResetChanges = () => {
+    // Reset permissions and isEnabled to initial values
+    setIsEnabled(prevIsEnabled);
+    setPermissions(prevPermissions);
   };
 
   return (
@@ -142,7 +192,6 @@ function DisplayPermissions() {
 
             {permissions.map((permission, index) => (
               <div key={index}>
-                {console.log("permissions : " + index + " " + permission.name + " " + permission.isEnabled)}
                 <label>
                   <input
                     type="checkbox"
@@ -158,6 +207,8 @@ function DisplayPermissions() {
           </div>
         )}
       </div>
+      <Button onClick={handleSaveChanges}>Save</Button>
+      <Button onClick={handleResetChanges}>Reset</Button>
     </>
   );
 }
