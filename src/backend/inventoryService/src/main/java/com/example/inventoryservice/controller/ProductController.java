@@ -56,7 +56,7 @@ public class ProductController {
             @ApiResponse(responseCode = "200", description =
                     "Product information retrieved correctly",
                     content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ProductDto.class))} ),
+                            schema = @Schema(type = "array", implementation = ProductDto.class))} ),
             @ApiResponse(responseCode = "404", description =
                     "Product not found",
                     content = {@Content(mediaType = "application/json")} ),

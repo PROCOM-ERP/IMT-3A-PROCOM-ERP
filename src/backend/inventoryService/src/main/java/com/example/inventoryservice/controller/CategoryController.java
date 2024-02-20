@@ -24,6 +24,17 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @GetMapping("/{id}")
+    @Operation(operationId = "getCategoryById", tags = {"categories", "inventory"},
+            summary = "Returns one category",
+            description = "Returns the category with the associated information")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description =
+                    "Category retrieved correctly",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ProductDto.class))} ),
+            @ApiResponse(responseCode = "500", description =
+                    "Uncontrolled error appeared",
+                    content = {@Content(mediaType = "application/json")} )})
     public ResponseEntity<CategoryDto> getCategoryById(@PathVariable Integer id){
         return ResponseEntity.ok(categoryService.getCategoryById(id));
     }
@@ -36,10 +47,7 @@ public class CategoryController {
             @ApiResponse(responseCode = "200", description =
                     "All categories retrieved correctly",
                     content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ProductDto.class))} ),
-            @ApiResponse(responseCode = "404", description =
-                    "Product not found",
-                    content = {@Content(mediaType = "application/json")} ),
+                            schema = @Schema(type = "array", implementation = ProductDto.class))} ),
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
@@ -54,13 +62,9 @@ public class CategoryController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description =
                     "Category created correctly",
-                    content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = CategoryDto.class))} ),
-            @ApiResponse(responseCode = "404", description =
-                    "Category not found",
                     content = {@Content(mediaType = "application/json")} ),
             @ApiResponse(responseCode = "422", description =
-                    "Incorrect injected data. (Address or Category does not exists)",
+                    "Incorrect injected data.",
                     content = {@Content(mediaType = "application/json")} ),
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",

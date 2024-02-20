@@ -30,14 +30,11 @@ public class AddressController {
                     description = "id of the address")})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description =
-                    "Role information retrieved correctly",
+                    "Address information retrieved correctly",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = AddressDto.class))} ),
-            @ApiResponse(responseCode = "401", description =
-                    "Roles in Jwt token are insufficient to authorize the access to this URL",
-                    content = {@Content(mediaType = "application/json")} ),
             @ApiResponse(responseCode = "404", description =
-                    "Role not found",
+                    "Address not found",
                     content = {@Content(mediaType = "application/json")} ),
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
@@ -52,14 +49,11 @@ public class AddressController {
             description = "Returns the addresses information without items.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description =
-                    "Role information retrieved correctly",
+                    "Address information retrieved correctly",
                     content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = AddressDto.class))} ),
-            @ApiResponse(responseCode = "401", description =
-                    "Roles in Jwt token are insufficient to authorize the access to this URL",
-                    content = {@Content(mediaType = "application/json")} ),
+                            schema = @Schema(type = "array", implementation = AddressDto.class))} ),
             @ApiResponse(responseCode = "404", description =
-                    "Role not found",
+                    "Address not found",
                     content = {@Content(mediaType = "application/json")} ),
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
