@@ -89,4 +89,14 @@ public class ProductController {
         productService.createProduct(newProduct);
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/add")
+    public ResponseEntity<String> addQuantity(@RequestBody NewQuantityRequestDto newQuantoty){
+        pass
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<String> updateQuantity(@RequestBody QuantityUpdateRequestDto quantityUpdate){
+        pass
+    }
 }
