@@ -152,7 +152,7 @@ function DisplayPermissions() {
           title: 'Update Permissions',
           content: 'It worked. You have been disconnected. Login.'
         });
-        console.log("[LOG] Permissions updated with success")
+        console.log("[LOG] Permissions updated with success");
       })
       .catch(error => {
         console.error('Error saving changes for permissions:', error);
