@@ -1,8 +1,11 @@
 package com.example.inventoryservice.controller;
 
 import com.example.inventoryservice.dto.ProductDto;
+import com.example.inventoryservice.dtoRequest.NewQuantityRequestDto;
 import com.example.inventoryservice.dtoRequest.ProductRequestDto;
+import com.example.inventoryservice.dtoRequest.QuantityUpdateRequestDto;
 import com.example.inventoryservice.service.ProductService;
+import com.example.inventoryservice.service.ItemService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -90,13 +93,16 @@ public class ProductController {
         return ResponseEntity.ok().build();
     }
 
+    /*
     @PostMapping("/add")
-    public ResponseEntity<String> addQuantity(@RequestBody NewQuantityRequestDto newQuantoty){
-        pass
+    public ResponseEntity<String> addQuantity(@RequestBody NewQuantityRequestDto newQuantity){
+        ItemService.addItem(newQuantity);
+        return ResponseEntity.ok().build();
     }
 
     @PutMapping("/update")
     public ResponseEntity<String> updateQuantity(@RequestBody QuantityUpdateRequestDto quantityUpdate){
-        pass
-    }
+        ItemService.updateItem(quantityUpdate);
+        return ResponseEntity.ok().build();
+    }*/
 }

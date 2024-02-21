@@ -2,9 +2,12 @@ package com.example.inventoryservice.service;
 
 import com.example.inventoryservice.dto.*;
 import com.example.inventoryservice.dto.TransactionDto;
+import com.example.inventoryservice.dtoRequest.NewQuantityRequestDto;
 import com.example.inventoryservice.model.Transaction;
 import com.example.inventoryservice.model.Item;
 import com.example.inventoryservice.repository.ItemRepository;
+import com.example.inventoryservice.repository.ProductRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +18,10 @@ import java.util.List;
 public class ItemService {
     private final ItemRepository itemRepository;
 
-
+    @Transactional
+    public void addItem(NewQuantityRequestDto newQuantity){
+        //ProductRepository.
+    }
 
     static ItemDto itemAddressToDto(Item item){
         return ItemDto.builder()
