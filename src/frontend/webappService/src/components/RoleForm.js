@@ -1,5 +1,7 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
+import Button from './Button';
+import '../css/RoleForm.css';
 
 function RoleForm() {
   const [roleData, setRoleData] = useState({ name: '', microservices: [] });
@@ -44,16 +46,18 @@ function RoleForm() {
 
   return (
     <>
-      <h1>Create New Role</h1>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="name">Name:</label>
-          <input type="text" id="name" name="name" value={roleData.name} onChange={handleChange} />
-        </div>
-        <div>
-          <Button type="submit">Create Role</Button>
-        </div>
-      </form>
+      <div className='role-form-container'>
+        <h1>Create New Role</h1>
+        <form onSubmit={handleSubmit}>
+          <div>
+            <label htmlFor="name">Name:</label>
+            <input type="text" id="name" name="name" value={roleData.name} onChange={handleChange} />
+          </div>
+          <div>
+            <Button type="submit">Create Role</Button>
+          </div>
+        </form>
+      </div>
     </>
   );
 }

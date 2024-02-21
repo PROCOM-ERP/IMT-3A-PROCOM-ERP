@@ -1,5 +1,6 @@
-import React from 'react'
-import RoleForm from '../components/RoleForm'
+import React from 'react';
+import RoleForm from '../components/RoleForm';
+import Navbar from '../components/Navbar';
 
 function AddRole() {
   return (
