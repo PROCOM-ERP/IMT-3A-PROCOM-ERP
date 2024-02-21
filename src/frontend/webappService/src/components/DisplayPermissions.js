@@ -165,6 +165,10 @@ function DisplayPermissions() {
     setPermissions(prevPermissions);
   };
 
+  const handleAddRole = () => {
+    navigate("/addRole");
+  };
+
   const closeModal = () => {
     setShowModal(false);
     navigate('/'); // Navigate to "/"
@@ -190,6 +194,7 @@ function DisplayPermissions() {
             <option key={key} value={value}>{value}</option>
           ))}
         </select>
+        <Button onClick={handleAddRole}>Add role</Button>
       </div>
       <div>
         {areSelected && (
