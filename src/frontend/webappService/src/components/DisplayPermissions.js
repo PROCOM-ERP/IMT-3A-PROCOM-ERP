@@ -152,7 +152,7 @@ function DisplayPermissions() {
           title: 'Update Permissions',
           content: 'It worked. You have been disconnected. Login.'
         });
-        console.log("[LOG] Permissions updated with success")
+        console.log("[LOG] Permissions updated with success");
       })
       .catch(error => {
         console.error('Error saving changes for permissions:', error);
@@ -163,6 +163,10 @@ function DisplayPermissions() {
     // Reset permissions and isEnabled to initial values
     setIsEnabled(prevIsEnabled);
     setPermissions(prevPermissions);
+  };
+
+  const handleAddRole = () => {
+    navigate("/addRole");
   };
 
   const closeModal = () => {
@@ -190,6 +194,7 @@ function DisplayPermissions() {
             <option key={key} value={value}>{value}</option>
           ))}
         </select>
+        <Button onClick={handleAddRole}>Add role</Button>
       </div>
       <div>
         {areSelected && (

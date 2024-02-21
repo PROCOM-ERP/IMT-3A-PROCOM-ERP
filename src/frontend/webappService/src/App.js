@@ -12,6 +12,7 @@ import AdminUsers from './pages/AdminUsers.js';
 import AdminHome from './pages/AdminHome.js';
 import AdminPermissions from './pages/AdminPermissions.js';
 import ModifyProfil from './pages/ModifyProfil.js';
+import AddRole from './pages/AddRole.js';
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
           <Route path='/adminPermissions' exact Component={AdminPermissions} />
           <Route path='/adminDirectory' exact Component={AdminUsers} />
           <Route path='/modifyProfil' exact Component={ModifyProfil} />
+          <Route path='/addRole' exact Component={AddRole} />
         </Routes>
       </Router>
     </>
