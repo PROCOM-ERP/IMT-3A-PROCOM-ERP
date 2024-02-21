@@ -27,7 +27,7 @@ spring:
           predicates:
             - Path=/api/${BACKEND_INVENTORY_SERVICE_NAME}/**
           filters:
-            - RewritePath=/api/${BACKEND_INVENTORY_SERVICE_NAME}/(?<segment>.*), /api/$\{segment}     
+            - RewritePath=/api/${BACKEND_INVENTORY_SERVICE_NAME}/(?<segment>.*), /api/$\{segment}
       # Global CORS configuration for all routes
       globalcors:
         cors-configurations:
@@ -45,9 +45,9 @@ spring:
               - Content-Type
               - Accept
             allow-credentials: true
-            
-  security:
-    require-ssl: true
+
+  # security:
+  #   require-ssl: true
 
 server:
   port: ${BACKEND_GATEWAY_SERVICE_PORT_EXT}
@@ -58,7 +58,6 @@ server:
     keyAlias: ${BACKEND_GATEWAY_SERVICE_HTTPS_KEY_STORE_ALIAS}
     trust-store: ${SECURITY_TRUST_STORE_PATH}
     trust-store-password: ${SECURITY_TRUST_STORE_PASSWORD}
-
 # eureka:
 #   instance:
 #     prefer-ip-address: true
