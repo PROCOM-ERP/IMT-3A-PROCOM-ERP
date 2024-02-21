@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import Button from './Button';
+import Modal from './Popup';
+import { useNavigate } from 'react-router-dom';
+
 
 function DisplayPermissions() {
   const [services, setServices] = useState({});
@@ -10,6 +13,9 @@ function DisplayPermissions() {
   const [permissions, setPermissions] = useState([]);
   const [prevIsEnabled, setPrevIsEnabled] = useState(false);
   const [prevPermissions, setPrevPermissions] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [modalContent, setModalContent] = useState({});
+  const navigate = useNavigate();
 
   const [areSelected, setAreSelected] = useState(false); // to set true if a service AND a role is selected
 
@@ -141,6 +147,11 @@ function DisplayPermissions() {
         if (!response.ok) {
           throw new Error('Failed to save changes');
         }
+        setShowModal(true); // Show modal when update is successful
+        setModalContent({
+          title: 'Update Permissions',
+          content: 'It worked. You have been disconnected. Login.'
+        });
         console.log("[LOG] Permissions updated with success")
       })
       .catch(error => {
@@ -152,6 +163,11 @@ function DisplayPermissions() {
     // Reset permissions and isEnabled to initial values
     setIsEnabled(prevIsEnabled);
     setPermissions(prevPermissions);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    navigate('/'); // Navigate to "/"
   };
 
   return (
@@ -208,9 +224,14 @@ function DisplayPermissions() {
             <Button onClick={handleResetChanges}>Reset</Button>
           </div>
         )}
-
       </div>
-
+      {showModal && (
+        <Modal
+          title={modalContent.title}
+          content={modalContent.content}
+          onClose={closeModal}
+        />
+      )}
     </>
   );
 }
