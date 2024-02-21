@@ -144,6 +144,7 @@ CREATE TABLE order_products
     CONSTRAINT uq_order_products_reference_order UNIQUE (reference, "order")
 );
 
+-- +----------------------------------------------------------------------------------------------+
 
 CREATE TABLE join_orders_progress_status
 (
