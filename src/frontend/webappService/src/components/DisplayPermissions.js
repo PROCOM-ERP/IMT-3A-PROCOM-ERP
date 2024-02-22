@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Button from './Button';
-import Modal from './Popup';
+import Popup from './Popup';
 import { useNavigate } from 'react-router-dom';
 
 
@@ -13,8 +13,8 @@ function DisplayPermissions() {
   const [permissions, setPermissions] = useState([]);
   const [prevIsEnabled, setPrevIsEnabled] = useState(false);
   const [prevPermissions, setPrevPermissions] = useState([]);
-  const [showModal, setShowModal] = useState(false);
-  const [modalContent, setModalContent] = useState({});
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupContent, setPopupContent] = useState({});
   const navigate = useNavigate();
 
   const [areSelected, setAreSelected] = useState(false); // to set true if a service AND a role is selected
@@ -147,8 +147,8 @@ function DisplayPermissions() {
         if (!response.ok) {
           throw new Error('Failed to save changes');
         }
-        setShowModal(true); // Show modal when update is successful
-        setModalContent({
+        setShowPopup(true); // Show popup when update is successful
+        setPopupContent({
           title: 'Update Permissions',
           content: 'It worked. You have been disconnected. Login.'
         });
@@ -169,74 +169,75 @@ function DisplayPermissions() {
     navigate("/addRole");
   };
 
-  const closeModal = () => {
-    setShowModal(false);
-    navigate('/'); // Navigate to "/"
+  const closePopup = () => {
+    setShowPopup(false);
+    navigate('/'); // Navigate to "/" page to reconnect
   };
 
   return (
     <>
-      <h1>Permissions</h1>
-      <div>
-        <label htmlFor="services">Select Service:</label>
-        <select id="services" value={selectedService} onChange={handleServiceChange}>
-          <option value="">Select a service</option>
-          {Object.entries(services).map(([key, value]) => (
-            <option key={key} value={value}>{value}</option>
-          ))}
-        </select>
-      </div>
-      <div>
-        <label htmlFor="roles">Select Role:</label>
-        <select id="roles" value={selectedRole} onChange={handleRoleChange}>
-          <option value="">Select a role</option>
-          {Object.entries(roles).map(([key, value]) => (
-            <option key={key} value={value}>{value}</option>
-          ))}
-        </select>
-        <Button onClick={handleAddRole}>Add role</Button>
-      </div>
-      <div>
-        {areSelected && (
-          <div>
-            <h2>{selectedService} - {selectedRole}: Permissions Details</h2>
+      <div className='permissions-container'>
+        <div className='select-container'>
+          <label htmlFor="services">Select Service:</label>
+          <select id="services" value={selectedService} onChange={handleServiceChange}>
+            <option value="">Select a service</option>
+            {Object.entries(services).map(([key, value]) => (
+              <option key={key} value={value}>{value}</option>
+            ))}
+          </select>
+        </div>
+        <div className='select-container'>
+          <label htmlFor="roles">Select Role:</label>
+          <select id="roles" value={selectedRole} onChange={handleRoleChange}>
+            <option value="">Select a role</option>
+            {Object.entries(roles).map(([key, value]) => (
+              <option key={key} value={value}>{value}</option>
+            ))}
+          </select>
+          <div className='add-role-button'><Button onClick={handleAddRole}>Add role</Button></div>
+        </div>
+        <div className='checkbox-container'>
+          {areSelected && (
             <div>
-              <label>
-                <input
-                  type="checkbox"
-                  name={"isEnabled"}
-                  checked={isEnabled}
-                  onChange={handleIsEnabledChange}
-                />
-                Is active
-              </label>
-            </div>
-            {permissions.map((permission, index) => (
-              <div key={index}>
+              <h2>{selectedService} - {selectedRole}: Permissions Details</h2>
+              <div>
                 <label>
                   <input
                     type="checkbox"
-                    name={permission.name}
-                    checked={permission.isEnabled}
-                    onChange={handlePermissionChange}
-                    disabled={!isEnabled} // Disable checkbox if isEnabled is false
+                    name={"isEnabled"}
+                    checked={isEnabled}
+                    onChange={handleIsEnabledChange}
                   />
-                  {permission.name}
+                  Is active
                 </label>
               </div>
-            ))}
-            <Button onClick={handleSaveChanges}>Save</Button>
-            <Button onClick={handleResetChanges}>Reset</Button>
-          </div>
+              {permissions.map((permission, index) => (
+                <div key={index}>
+                  <label>
+                    <input
+                      type="checkbox"
+                      name={permission.name}
+                      checked={permission.isEnabled}
+                      onChange={handlePermissionChange}
+                      disabled={!isEnabled} // Disable checkbox if isEnabled is false
+                    />
+                    {permission.name}
+                  </label>
+                </div>
+              ))}
+              <Button onClick={handleSaveChanges}>Save</Button>
+              <Button onClick={handleResetChanges}>Reset</Button>
+            </div>
+          )}
+        </div>
+        {showPopup && (
+          <Popup
+            title={popupContent.title}
+            content={popupContent.content}
+            onClose={closePopup}
+          />
         )}
       </div>
-      {showModal && (
-        <Modal
-          title={modalContent.title}
-          content={modalContent.content}
-          onClose={closeModal}
-        />
-      )}
     </>
   );
 }
