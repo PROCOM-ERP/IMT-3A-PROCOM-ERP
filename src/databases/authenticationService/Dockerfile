@@ -13,5 +13,16 @@ COPY ./init.sql ./docker-entrypoint-initdb.d/init.sql
 
 RUN chmod +x ./config/db_entrypoint.sh
 
+# Create a group 'erp' if it doesn't already exist
+RUN groupadd -g 10001 erp
+
+# Create a user 'erp' if it doesn't already exist
+RUN useradd -r -u 10001 -g erp erp
+
+RUN chown erp:erp /var/run/postgresql
+RUN chown erp:erp /var/lib/postgresql/data
+
+USER erp
+
 # Set the custom entrypoint script as the entrypoint
 ENTRYPOINT ["./config/db_entrypoint.sh"]
