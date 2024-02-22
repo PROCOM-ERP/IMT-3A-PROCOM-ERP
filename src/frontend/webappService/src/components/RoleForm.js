@@ -46,17 +46,19 @@ function RoleForm() {
 
   return (
     <>
-      <div className='role-form-container'>
-        <h1>Create New Role</h1>
-        <form onSubmit={handleSubmit}>
-          <div>
-            <label htmlFor="name">Name:</label>
-            <input type="text" id="name" name="name" value={roleData.name} onChange={handleChange} />
-          </div>
-          <div>
-            <Button type="submit">Create Role</Button>
-          </div>
-        </form>
+      <div className='add-role-container'>
+        <div className='title'>Create New Role</div>
+        <div className='role-form-container'>
+          <form onSubmit={handleSubmit}>
+            <div className='input-container'>
+              <label htmlFor="name">Name</label>
+              <input type="text" id="name" name="name" value={roleData.name} onChange={handleChange} />
+            </div>
+            <div className='create-role-button'>
+              <Button type="submit">Create Role</Button>
+            </div>
+          </form>
+        </div>
       </div>
     </>
   );
