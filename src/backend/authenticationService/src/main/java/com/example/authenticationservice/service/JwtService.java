@@ -1,14 +1,13 @@
 package com.example.authenticationservice.service;
 
-import com.example.authenticationservice.model.Employee;
+import com.example.authenticationservice.model.LoginProfile;
 import com.example.authenticationservice.model.Role;
-import com.example.authenticationservice.repository.EmployeeRepository;
+import com.example.authenticationservice.repository.LoginProfileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.*;
 import org.springframework.stereotype.Service;
@@ -35,7 +34,7 @@ public class JwtService {
     private String jwtClaimRoles;
 
     private final JwtEncoder jwtEncoder;
-    private final EmployeeRepository employeeRepository;
+    private final LoginProfileRepository loginProfileRepository;
 
     //private final Logger logger = LoggerFactory.getLogger(JwtService.class);
 
@@ -51,7 +50,7 @@ public class JwtService {
                 .issuer("self")
                 .issuedAt(now)
                 .expiresAt(now.plus(duration, ChronoUnit.MINUTES)) // termination
-                .subject(authSubject) // employee receiving the Jwt token
+                .subject(authSubject) // loginProfile receiving the Jwt token
                 .claim(jwtClaimRoles, roles) // put roles into claims section
                 .build();
         JwtEncoderParameters jwtEncoderParameters = JwtEncoderParameters.from(JwsHeader.with(MacAlgorithm.HS256).build(), claims);
@@ -65,12 +64,12 @@ public class JwtService {
         if (Objects.equals(authSubject, sharedKey))
             return Collections.singletonList(serviceRole);
 
-        // check if employee exists
-        Employee employee = employeeRepository.findById(authSubject)
+        // check if loginProfile exists
+        LoginProfile loginProfile = loginProfileRepository.findById(authSubject)
                 .orElseThrow(() -> new InsufficientAuthenticationException(""));
         // get role names
-        List<String> roles =  employee.getRoles().stream()
-                .filter(role -> role.getCounter() > 0)
+        List<String> roles =  loginProfile.getRoles().stream()
+                .filter(Role::getIsEnable)
                 .map(Role::getName)
                 .toList();
         //logger.info("Roles in Repository : " + roles);

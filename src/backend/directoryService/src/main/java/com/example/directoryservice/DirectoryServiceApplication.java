@@ -19,10 +19,8 @@ import org.springframework.context.annotation.Profile;
                 @Tag(name = "hello"),
                 @Tag(name = "addresses"),
                 @Tag(name = "organisations"),
-                @Tag(name = "services"),
                 @Tag(name = "employees"),
-                @Tag(name = "roles"),
-                @Tag(name = "permissions")
+                @Tag(name = "roles")
         })
 public class DirectoryServiceApplication {
 

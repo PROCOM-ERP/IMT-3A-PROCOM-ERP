@@ -26,11 +26,33 @@ spring:
     servlet:
       load-on-startup: 1
   rabbitmq:
-    host: ${BACKEND_MESSAGE_BROKER_SERVICE_IP_INT}
+    host: ${BACKEND_MESSAGE_BROKER_SERVICE_HOSTNAME}
     port: ${BACKEND_MESSAGE_BROKER_SERVICE_PORT_INT}
     username: ${BACKEND_MESSAGE_BROKER_SERVICE_USERNAME}
     password: ${BACKEND_MESSAGE_BROKER_SERVICE_PASSWORD}
     virtual-host: /
+    ssl:
+      enabled: true
+      key-store: file:${BACKEND_AUTHENTICATION_SERVICE_HTTPS_KEY_STORE}
+      key-store-password: ${BACKEND_AUTHENTICATION_SERVICE_HTTPS_KEY_STORE_PASSWORD}
+      key-store-type: PKCS12
+      trust-store: file:${SECURITY_TRUST_STORE_PATH}
+      trust-store-password: ${SECURITY_TRUST_STORE_PASSWORD}
+      trust-store-type: JKS
+  mail:
+    host: ${BACKEND_MAIL_HOST}
+    port: ${BACKEND_MAIL_PORT}
+    username: ${BACKEND_MAIL_USERNAME}
+    password: ${BACKEND_MAIL_PASSWORD}
+    default-receiver: ${BACKEND_MAIL_USERNAME}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          ssl:
+            trust: ${BACKEND_MAIL_HOST}
+          starttls:
+            enable: true
 
 springdoc:
   api-docs:
@@ -42,6 +64,7 @@ springdoc:
 
 security:
   service:
+    name: ${BACKEND_AUTHENTICATION_SERVICE_NAME}
     sharedKey: ${SECURITY_SERVICES_SHARED_KEY}
     role: microservices
   jwt:
@@ -49,4 +72,4 @@ security:
     claim:
       roles: ${SECURITY_JWT_CLAIMS_KEY_ROLES}
     duration:
-      minutes: 1
+      minutes: 60

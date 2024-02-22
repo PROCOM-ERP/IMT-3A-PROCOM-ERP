@@ -1,6 +1,7 @@
 # IMT-3A-PROCOM-ERP
 
 ## Description
+
 IMT-3A-PROCOM-ERP is a project to develop a modular Enterprise Resource Planning system.
 The solution enables a ready-to-use product to be produced quickly,
 for new small businesses of all types (shops, restaurants, etc).
@@ -8,18 +9,24 @@ Depending on their needs, companies can have a package with only the necessary f
 while being able to add or remove functionality later almost instantaneously.
 
 For the moment, the modules on offer are:
-- Directory
+
 - Authentication service
+- Directory service
 
 Other services, such as an order and inventory service, are in the pipeline.
 
-***NB***: This project is part of the ProCom teaching unit in the 3rd year of the engineering course at IMT Atlantique.
+**_NB_**: This project is part of the ProCom teaching unit in the 3rd year of the engineering course at IMT Atlantique.
 It is not really intended to be marketed,
 but rather to demonstrate the feasibility of such a system with a Proof Of Concept.
 
+## Using / Deploying our system
+
+You can find a comprehensive [Deployment guide](./docs/DEPLOYING.md) on how to deploy and use our system, in the [documentation section](./docs/).
+
 ## Metadata
+
 - **Timestamp**: 2023-11-02
-- **Last update**: 2023-11-11
+- **Last update**: 2024-02-19
 - **Status**: In development
 - **Current Version**: 0.1.0
 - **Supported Platforms**: Windows (Linux and macOS untested)
@@ -44,40 +51,68 @@ but rather to demonstrate the feasibility of such a system with a Proof Of Conce
 ## Repository architecture
 
 ```
-IMT-3A-PROCOM-ERP/                     this repository
-├── README.md                          this document
-├── BACKLOG.md                         actions to realise (features, releases, fixes, etc)
-├── CONTRIBUTING.md                    explain how to contribute to the project, by respecting some rules
-├── CHANGELOG.md                       tracked changes in the project's lifecycle
+IMT-3A-PROCOM-ERP/                     This repository
+├── README.md                          This document
+├── BACKLOG.md                         Actions to realise (features, releases, fixes, etc)
+├── CONTRIBUTING.md                    Explains how to contribute to the project, by respecting some rules
+├── CHANGELOG.md                       Tracked changes in the project's lifecycle
+├── LICENSE.md                         License in place for this project
 ├── docker-compose.yml                 Docker containers build script to simulate the project
-├── pom.xml                            Maven parent configuration file for all backend services (modules)
-├── .env                               environment variables of the projet
-├── .github/                           used by GitHub for CI/CD processes
-│   ├── CODEOWNERS                     detail which team-member has to review which changes
-│   └── workflows/                     all CI/CD auto-running tasks depending on the triggered event
+├── docker-compose-swarm.yml           Docker containers build script to simulate the project Swarm mode
+├── deploy.sh                          Complete deploy script (available in a .ps1 for Windows devs)
+├── pom.xml                            Maven parent configuration file for all backend services (modules) for development purposes (IDE LSP detection)
+├── .env                               Environment variables of the projet
+├── .github/                           Used by GitHub for CI/CD processes
+│   ├── CODEOWNERS                     Detail which team-member has to review which changes
+│   └── workflows/                     All CI/CD auto-running tasks depending on the triggered event
 │       └── ...
-├── src/                               all the source code of the project
-│   ├── frontend/                      code for the UI
-│   │   └── react-project/             subproject with frontend code
-│   ├── backend/                       code for microservices
-│   │   ├── service-1/                 one service
-│   │   │   ├── pom.xml                Maven child configuration file for the service
-│   │   │   ├── src/                   backend source code
+├── src/                               All the source code of the project
+│   ├── frontend/                      Code for the UI
+│   │   ├── service-1/                 Subproject with frontend code
+│   │   │   ├── Dockerfile             Dockerfile describing the operations required to build each service's image
+│   │   │   ├── Public/                Frontend public source code
+│   │   │   ├── src/                   Frontend source code
 │   │   │   └── ...
-│   │   └── service-n/                 another service
+│   ├── backend/                       Code for microservices
+│   │   ├── service-1/                 One service
+│   │   │   ├── pom.xml                Maven child configuration file for the service in development (IDE LSP detection)
+│   │   │   ├── prod-pom.xml           Maven child configuration file for the service in production
+│   │   │   ├── Dockerfile             Dockerfile describing the operations required to build each service's image
+│   │   │   ├── src/                   Backend source code
+│   │   │   └── ...
+│   │   └── service-n/                 Another service
 │   │       └── ...
-│   └── databases/                     databases scripts and configurations
-│       ├── db-1/                      one database
-│       │   ├── reset.sql              script to reset all tables in a relationnal database
-│       │   └── init.sql               script to create tables in a relationnal database
-│       └── db-n/                      another database
-│           └── ...
-└── docs/                              all technical and GitHub workflows documentation
-    └── workflows/                     GitHub workflows as sequence diagrams
-        └── workflow-git-some-action.png         sequence diagram for a specific action to realise
+│   ├── databases/                     Databases scripts and configurations
+│   │   ├── db-1/                      One database
+│   │   │   ├── Dockerfile             Dockerfile describing the operations required to build each service's image
+│   │   │   ├── reset.sql              Script to reset all tables in a relationnal database
+│   │   │   └── init.sql               Script to create tables in a relationnal database
+│   │   └── db-n/                      Another database
+│   │       └── ...
+│   ├── security/                      Security scripts (./deploy.sh uses all except for clean_security.sh), all are available in a .ps1 for Windows devs
+│   │    ├── clean_security.sh         Cleans all certificates from the repository
+│   │    ├── docker_secrets.sh         Generates all the docker secrets necessary for the deployment with normal compose
+│   │    ├── docker_secrets_files.sh   Generates all docker secrets in swarm mode
+│   │    └── security_setup.sh         Generates all needed certificates in the repository
+│   │
+│   └── system/                        System files: all entrypoints specific scripts, and centralized certificates
+│       ├── db_entrypoint.sh           Entrypoint for the databases
+│       ├── entrypoint.sh              Entrypoint for the backend services
+│       ├── mvnw                       Maven Wrapper copied to every service to better control maven version
+│       └── wait-for-it.sh             Handy script that waits for the availability of an service to execute a given command
+│
+└── docs/                              All technical and GitHub workflows documentation
+    ├── workflows/                     GitHub workflows as sequence diagrams
+    │   └── workflow-git-action.png    Sequence diagram for a specific action to realise
+    ├── security/                      Security documentation for this project
+    │   └── README.md                  Security overview
+    ├── api/                           All APIs for all services are documented here
+    │   └── doc-api-xxx-service.json   An API documentation
+    └── DEPLOYING.md                   A comprehensive guide on how to deploy our system
 ```
 
 ## Organisation functioning
+
 The [PROCOM-ERP GitHub organisation](https://github.com/PROCOM-ERP) owns this repository,
 meaning that you have to be a member to contribute.
 In the organisation, several teams are created in order to affect responsibility, like code review, to members.
@@ -87,31 +122,38 @@ For instance: if `backend-owner` team owns `src/backend/`,
 any changes in this directory will need a review acceptation from a member of the team before being merged.
 
 ## Contributing
+
 [CONTRIBUTING.md](CONTRIBUTING.md) file explains how to contribute to the project,
 and what are the contributing rules.
 
 ## Roadmap
+
 The different steps to follow are described in the [BACKLOG.md](BACKLOG.md) file.
 They are assigned by the Product Owner of the project (see [Contributors](#contributors) section).
 
 ## Suggestions
+
 Any enhancement idea can be suggested in the [Suggestions](BACKLOG.md#suggestions) section of the BACKLOG file.
 
-## Licences
-NA
+## License
+
+We are under the MIT License, find out more in the [License](./LICENSE.md) section.
 
 ## Acknowledgements
+
 Many thanks to the different contributors for their contribution to the project.
 Find their names and missions in [Contributors](#contributors) section.
 
 Thanks also to external resources for their open-source samples / documentation:
+
 - [Baeldung](https://www.baeldung.com): Java Spring Boot tutorials and code samples
 - [Vertabelo](https://vertabelo.com): Data modeling
 - [vishnubob](https://github.com/vishnubob/wait-for-it): wait-for-it.sh script
 
 ## Contributors
-- BOPS: *Scrum Master*, *Backend Engineer & Developer*, *Head of Security*, *System Support*
-- maestro-bene: *Backend Engineer & Developer*, *System Administrator*, *Security Support*
-- Antoine: *Product Owner*, *Frontend & UI/UX Support*
-- ArthurMaquinImt: *Backend Engineer & Developer*
-- yunea: *Frontend & UI/UX Developer*
+
+- BOPS: _Scrum Master_, _Backend Engineer & Developer_, _Head of Security_, _System Support_
+- maestro-bene: _Backend Engineer & Developer_, _System Administrator_, _Security Support_
+- Antoine: _Product Owner_, _Frontend & UI/UX Support_
+- ArthurMaquinImt: _Backend Engineer & Developer_
+- yunea: _Frontend & UI/UX Developer_

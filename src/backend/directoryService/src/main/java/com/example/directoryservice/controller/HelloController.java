@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class HelloController {
 
-    @GetMapping
+    @GetMapping(produces = "application/json")
     @Operation(operationId = "getHello", tags = {"hello"},
             summary = "GET Hello World !", description =
             "GET Hello World ! from Directory Service")
@@ -30,5 +30,4 @@ public class HelloController {
     public ResponseEntity<String> getHello() {
         return ResponseEntity.ok("Hello World from DirectoryService!");
     }
-
 }

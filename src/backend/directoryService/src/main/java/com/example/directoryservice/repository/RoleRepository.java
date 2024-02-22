@@ -7,12 +7,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.lang.NonNull;
 
 import java.util.List;
+import java.util.Set;
 
 public interface RoleRepository extends JpaRepository<Role, String>, JpaSpecificationExecutor<Role> {
 
     @Query("SELECT DISTINCT p " +
             "FROM Role r JOIN r.permissions p " +
-            "WHERE r.enable = true AND r.name IN :roleNames")
-    List<String> findDistinctPermissionsByRoleNames(@NonNull List<String> roleNames);
+            "WHERE r.isEnable = true AND r.name IN :roleNames")
+    Set<String> findDistinctPermissionsByRoleNames(@NonNull List<String> roleNames);
 
 }
