@@ -16,6 +16,14 @@
   border-radius: 10px;
   padding: 5px;
   margin-bottom: 1rem;
+  margin-right: 10px;
+}
+
+.line-container {
+  display: flex;
+  /* Use flexbox */
+  align-items: center;
+  /* Align items vertically in the center */
 }
 
 /* Styles for the table */

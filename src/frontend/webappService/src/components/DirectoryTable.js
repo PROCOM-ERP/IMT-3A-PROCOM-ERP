@@ -96,7 +96,7 @@ function DirectoryTable({ isAdmin = false }) {
             value={searchTerm}
             onChange={handleChange}
           />
-          <div className="add-user-button"><Link to="/addUser">Add User</Link></div>
+          <Button className="add-user-button" onClick={handleAddUser}>Add User</Button>
         </div>
         <table className='table-container' >
           <thead className='table-head-container'>
