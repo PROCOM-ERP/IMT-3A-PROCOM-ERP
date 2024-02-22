@@ -7,6 +7,8 @@ import { useNavigate } from "react-router-dom";
 function UserProfil({ title, userId }) {
   const [user, setUser] = useState({});
   const navigate = useNavigate();
+  const [maxKeyWidth, setMaxKeyWidth] = useState(0);
+  const [maxValueWidth, setMaxValueWidth] = useState(0);
 
   const tokenName = "Token"; // Need to be the same name as in AuthForm.js components
   const token = localStorage.getItem(tokenName);
@@ -45,6 +47,9 @@ function UserProfil({ title, userId }) {
           Firstname: data.firstName,
           Email: data.email,
           "Phone Number": data.phoneNumber,
+          Job: data.job,
+          "Organization Unit": data.orgUnit?.name,
+          Organization: data.organisation?.name,
         }));
         console.info("[DATA] " + JSON.stringify(data));
         console.log("[LOG] profil info retrieve");
@@ -58,7 +63,7 @@ function UserProfil({ title, userId }) {
   const getUserAuth = async () => {
     // API URL
     const apiUrl =
-      "https://localhost:8041/api/authentication/v1/employees/" + userId;
+      "https://localhost:8041/api/authentication/v1/login-profiles/" + userId;
 
     await fetch(apiUrl, {
       method: "GET",
@@ -70,9 +75,10 @@ function UserProfil({ title, userId }) {
         return res;
       })
       .then((data) => {
+        const roleNames = data.roles.map((role) => role.name);
         setUser((prevUser) => ({
           ...prevUser,
-          Roles: data.roles,
+          Roles: roleNames,
         }));
         console.info("[DATA] " + JSON.stringify(data));
         console.log("[LOG] profil info retrieve");
@@ -89,6 +95,37 @@ function UserProfil({ title, userId }) {
     navigate("/modifyProfil"); // Navigate to the page
   }
 
+  // Calculate the maximum key width
+  useEffect(() => {
+    const entries = Object.entries(user);
+    let maxKeyWidth = 0;
+    let maxValueWidth = 0;
+
+    entries.forEach(([key, value]) => {
+      const keyWidth = getTextWidth(key); // Function to calculate text width for key
+      const valueWidth = getTextWidth(value); // Function to calculate text width for value
+      maxKeyWidth = Math.max(maxKeyWidth, keyWidth);
+      maxValueWidth = Math.max(maxValueWidth, valueWidth);
+    });
+
+    setMaxKeyWidth(maxKeyWidth);
+    setMaxValueWidth(maxValueWidth);
+  }, [user]);
+
+  const getTextWidth = (text) => {
+    const container = document.createElement("div"); // Create a temporary container
+    container.style.visibility = "hidden"; // Hide the container
+    container.style.whiteSpace = "nowrap"; // Prevent text wrapping
+    container.style.position = "absolute"; // Position off-screen
+    container.textContent = text; // Set the text content
+
+    document.body.appendChild(container); // Append container to the document body
+    const width = container.offsetWidth; // Get the width of the container
+    document.body.removeChild(container); // Remove container from the document body
+
+    return width; // Return the width
+  };
+
   const renderPasswordButton = () => {
     if (title.toLowerCase() === "profil") {
       return (
@@ -101,19 +138,27 @@ function UserProfil({ title, userId }) {
 
   return (
     <>
-      <div className="user-container">
+      <div className="user-form-container">
         <div className="title">{title}</div>
         <div className="information-container">
           {Object.entries(user).map(([key, value]) => (
             <div className="information">
-              <div className="key-container">{key}</div>
-              <div className="value-container">
+              <div
+                className="key-container"
+                style={{ width: `${maxKeyWidth}px` }}
+              >
+                {key}
+              </div>
+              <div
+                className="value-container"
+                style={{ width: `${maxValueWidth}px` }}
+              >
                 <span>{Array.isArray(value) ? value.join(", ") : value}</span>
               </div>
             </div>
           ))}
         </div>
-        {renderPasswordButton()}
+        <div className="modify-btn">{renderPasswordButton()}</div>
       </div>
     </>
   );

@@ -1,0 +1,54 @@
+.user-container {
+  background-color: var(--login-bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 50%;
+  margin: 5rem auto auto auto;
+  padding-bottom: 1rem;
+}
+
+.info-container {
+  font-family: var(--text-family);
+  font-size: var(--text-size);
+  font-weight: var(--text-weight);
+  flex-direction: column;
+  align-items: center;
+  width: 60%;
+}
+
+.input-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.label {
+  width: 30%;
+  text-align: left;
+}
+
+.input {
+  font-family: var(--text-family);
+  font-size: var(--text-size);
+  font-weight: var(--text-weight);
+  border-radius: 6px;
+  width: 30%;
+}
+
+select.input {
+  font-family: var(--text-family);
+  font-size: var(--text-size);
+  font-weight: var(--text-weight);
+  border-radius: 6px;
+  width: 30%;
+}
+.modify-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  padding-top: 1rem;
+}
