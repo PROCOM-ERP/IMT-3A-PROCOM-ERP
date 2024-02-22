@@ -144,7 +144,14 @@ function UserProfilAdmin({ title, userId }) {
     // Prevent the browser from reloading the page
     event.preventDefault();
     setModify(!modify);
-    setModifiedUserInfo(userInfo);
+    setModifiedUserInfo(prevUser => ({
+      ...prevUser,
+      Lastname: userInfo.lastName,
+      Firstname: userInfo.firstName,
+      Email: userInfo.email,
+      "Phone Number": userInfo.phoneNumber,
+      Job: userInfo.job,
+    }));
     setModifiedUserRoles(userRoles);
   }
 
