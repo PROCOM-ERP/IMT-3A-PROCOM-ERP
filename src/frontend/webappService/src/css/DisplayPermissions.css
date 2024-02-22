@@ -13,13 +13,13 @@
   /* Align items vertically */
   justify-content: space-between;
   /* Distribute items evenly */
-  width: 40%;
+  width: 35%;
   margin-bottom: 10px;
 }
 
 .select-container label {
   border: 2px solid #f1d394;
-  width: 3.5rem;
+  width: 15%;
   text-align: center;
   background: #f1d394;
   border-radius: 10px;
@@ -68,4 +68,42 @@
   border: 2px solid #0A316C;
   margin: 0;
   padding: 0.3rem 0.5rem;
+}
+
+.add-role-button button:hover {
+  background: #f1d394;
+  color: #0A316C;
+}
+
+.checkbox-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.checkbox-list-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  /* Align items to the left */
+  justify-content: center;
+  text-align: left;
+  /* Align text to the left */
+}
+
+.checkbox-item {
+  margin-bottom: 10px;
+  /* Adjust as needed */
+}
+
+.checkbox-item label {
+  margin-left: 10px;
+  /* Adjust as needed */
+}
+
+.checkbox-is-enabled {
+  margin-bottom: 30px;
+  /* Adjust as needed */
 }

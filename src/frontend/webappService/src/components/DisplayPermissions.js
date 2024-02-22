@@ -201,35 +201,33 @@ function DisplayPermissions() {
         </div>
         {areSelected && (
           <div className='checkbox-container'>
-            <h2 className='title2'>Detailed {selectedRole} permissions in {selectedService}</h2>
-            <div>
-              <div>
-                <label>
-                  <input
-                    type="checkbox"
-                    name={"isEnabled"}
-                    checked={isEnabled}
-                    onChange={handleIsEnabledChange}
-                  />
-                  Is active
-                </label>
+            <div className='title2'>Detailed {selectedRole} permissions in {selectedService}</div>
+            <div className='checkbox-list-container'>
+              <div className='checkbox-item checkbox-is-enabled'>
+                <input
+                  type="checkbox"
+                  name={"isEnabled"}
+                  checked={isEnabled}
+                  onChange={handleIsEnabledChange}
+                />
+                <label>Is active</label>
               </div>
               {permissions.map((permission, index) => (
-                <div key={index}>
-                  <label>
-                    <input
-                      type="checkbox"
-                      name={permission.name}
-                      checked={permission.isEnabled}
-                      onChange={handlePermissionChange}
-                      disabled={!isEnabled} // Disable checkbox if isEnabled is false
-                    />
-                    {permission.name}
-                  </label>
+                <div key={index} className='checkbox-item'>
+                  <input
+                    type="checkbox"
+                    name={permission.name}
+                    checked={permission.isEnabled}
+                    onChange={handlePermissionChange}
+                    disabled={!isEnabled} // Disable checkbox if isEnabled is false
+                  />
+                  <label>{permission.name}</label>
                 </div>
               ))}
-              <Button onClick={handleSaveChanges}>Save</Button>
-              <Button onClick={handleResetChanges}>Reset</Button>
+              <div className='button-container'>
+                <Button onClick={handleSaveChanges}>Save</Button>
+                <Button onClick={handleResetChanges}>Reset</Button>
+              </div>
             </div>
           </div>
         )}
