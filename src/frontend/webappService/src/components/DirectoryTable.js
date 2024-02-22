@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../css/DirectoryTable.css";
+import Button from "./Button";
 
 function DirectoryTable({ isAdmin = false }) {
   //const defaultUsers = data.users;
@@ -81,6 +82,10 @@ function DirectoryTable({ isAdmin = false }) {
     getEmployees();
   }, []);
 
+  function handleAddUser() {
+    navigate("/addUser");
+  }
+
   return (
     <>
       <div className='directory-container'>
@@ -90,6 +95,8 @@ function DirectoryTable({ isAdmin = false }) {
           value={searchTerm}
           onChange={handleChange}
         />
+        <div className="add-user-button" onClick={handleAddUser} ><Button >Add User</Button></div>
+
         <table className='table-container' >
           <thead className='table-head-container'>
             <tr>
