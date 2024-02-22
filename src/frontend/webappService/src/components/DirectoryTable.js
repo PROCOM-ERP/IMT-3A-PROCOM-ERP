@@ -89,14 +89,15 @@ function DirectoryTable({ isAdmin = false }) {
   return (
     <>
       <div className='directory-container'>
-        <input className='searchBar'
-          type="text"
-          placeholder="Search"
-          value={searchTerm}
-          onChange={handleChange}
-        />
-        <div className="add-user-button" onClick={handleAddUser} ><Button >Add User</Button></div>
-
+        <div className="line-container">
+          <input className='searchBar'
+            type="text"
+            placeholder="Search"
+            value={searchTerm}
+            onChange={handleChange}
+          />
+          <div className="add-user-button"><Link to="/addUser">Add User</Link></div>
+        </div>
         <table className='table-container' >
           <thead className='table-head-container'>
             <tr>
