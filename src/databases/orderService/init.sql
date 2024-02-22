@@ -69,8 +69,8 @@ CREATE TABLE employees
     login_profile CHAR(6) NOT NULL,
     last_name VARCHAR(255) NOT NULL,
     first_name VARCHAR(255) NOT NULL,
-    email VARCHAR(320) UNIQUE NOT NULL,
-    phone_number VARCHAR(24),
+    email VARCHAR(320) NOT NULL,
+    phone_number VARCHAR(24) NOT NULL,
 
     CONSTRAINT pk_employees
         PRIMARY KEY (id),
@@ -108,13 +108,18 @@ CREATE TABLE orders
     id SERIAL UNIQUE NOT NULL,
     total_amount NUMERIC(10, 2) NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
+    updated_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
     quote VARCHAR(64) NOT NULL DEFAULT '',
+    progress_status INT NOT NULL DEFAULT 1,
     address VARCHAR(64) NOT NULL DEFAULT '',
     provider INT NOT NULL,
     orderer INT NOT NULL,
-    approver INT NOT NULL,
+    approver INT,
 
     CONSTRAINT pk_orders PRIMARY KEY (id),
+    CONSTRAINT fk_orders_table_progress_status
+        FOREIGN KEY (progress_status) REFERENCES progress_status(id)
+            ON UPDATE CASCADE,
     CONSTRAINT fk_orders_table_address
         FOREIGN KEY (address) REFERENCES addresses(id)
             ON UPDATE CASCADE ON DELETE SET DEFAULT,
@@ -145,25 +150,6 @@ CREATE TABLE order_products
 );
 
 -- +----------------------------------------------------------------------------------------------+
-
-CREATE TABLE join_orders_progress_status
-(
-    id SERIAL UNIQUE NOT NULL,
-    "order" INT NOT NULL,
-    progress_status INT NOT NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
-
-    CONSTRAINT pk_join_orders_progress_status PRIMARY KEY (id),
-    CONSTRAINT fk_join_orders_progress_status_table_orders
-        FOREIGN KEY ("order") REFERENCES orders(id)
-            ON UPDATE CASCADE ON DELETE CASCADE,
-    CONSTRAINT fk_join_orders_progress_status_table_progress_status
-        FOREIGN KEY (progress_status) REFERENCES progress_status(id)
-            ON UPDATE CASCADE ON DELETE CASCADE,
-    CONSTRAINT uq_join_orders_progress_status_order_progress_status UNIQUE ("order", progress_status)
-);
-
--- +----------------------------------------------------------------------------------------------+
 -- | Insert into                                                                                  |
 -- +----------------------------------------------------------------------------------------------+
 
@@ -186,3 +172,49 @@ VALUES ('admin', 'CanBypassAccessDeny'),
 INSERT INTO login_profiles (id)
 VALUES ('A00001'),
        ('A00002');
+
+-- +----------------------------------------------------------------------------------------------+
+
+INSERT INTO addresses (id, number, street, city, country, zipcode)
+VALUES ('7d82842eb167c3ed224a329fba7fbb2820a8c99f3771f9e216b968c1cccd0d6e',
+        1, 'rue de la Paix', 'Paris', 'France', '75000'),
+       ('e8ffdf9a6ffc553cd234a04e6a5f63547838f367af45cb029f0c2a3412278412',
+        2, 'rue de la Paix', 'Paris', 'France', '75000');
+
+-- +----------------------------------------------------------------------------------------------+
+
+INSERT INTO employees (login_profile, last_name, first_name, email, phone_number)
+VALUES ('A00001', 'Bonnot', 'Jean', 'jean.bonnot@gmail.com', '+123456789'),
+       ('A00002', 'De La Compta', 'Séverine', 'severine.de-la-compta@gmail.com', '+987654321');
+
+-- +----------------------------------------------------------------------------------------------+
+
+INSERT INTO providers (name)
+VALUES ('Wool Factory'),
+       ('Cotton retailer');
+
+-- +----------------------------------------------------------------------------------------------+
+
+INSERT INTO progress_status (name)
+VALUES ('Created'),
+       ('Waiting for approval'),
+       ('Approved'),
+       ('Waiting for delivery'),
+       ('Received');
+
+-- +----------------------------------------------------------------------------------------------+
+
+INSERT INTO orders (total_amount, quote, provider, orderer, approver, address)
+VALUES (900.00, 'CRE0000000001', 2, 2, 1,
+        '7d82842eb167c3ed224a329fba7fbb2820a8c99f3771f9e216b968c1cccd0d6e'),
+       (1650.00, 'WFAEAD547FB00892387', 1, 1, 1,
+        'e8ffdf9a6ffc553cd234a04e6a5f63547838f367af45cb029f0c2a3412278412');
+
+-- +----------------------------------------------------------------------------------------------+
+
+INSERT INTO order_products (reference, unit_price, quantity, "order")
+VALUES ('Cotton1000', 5.00, 100, 1),
+       ('Polyester500', 8.00, 50, 1),
+
+       ('Silk300', 15.00, 50, 2),
+       ('Wool200', 12.00, 75, 2);
