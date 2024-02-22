@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Button from './Button';
 import Popup from './Popup';
 import { useNavigate } from 'react-router-dom';
+import '../css/DisplayPermissions.css';
 
 
 function DisplayPermissions() {
@@ -177,29 +178,31 @@ function DisplayPermissions() {
   return (
     <>
       <div className='permissions-container'>
-        <div className='select-container'>
-          <label htmlFor="services">Select Service:</label>
+        <div className='select-container service'>
+          <label htmlFor="services">Services</label>
           <select id="services" value={selectedService} onChange={handleServiceChange}>
-            <option value="">Select a service</option>
+            <option value="">Select</option>
             {Object.entries(services).map(([key, value]) => (
               <option key={key} value={value}>{value}</option>
             ))}
           </select>
         </div>
-        <div className='select-container'>
-          <label htmlFor="roles">Select Role:</label>
-          <select id="roles" value={selectedRole} onChange={handleRoleChange}>
-            <option value="">Select a role</option>
-            {Object.entries(roles).map(([key, value]) => (
-              <option key={key} value={value}>{value}</option>
-            ))}
-          </select>
-          <div className='add-role-button'><Button onClick={handleAddRole}>Add role</Button></div>
+        <div className='select-container role'>
+          <label htmlFor="roles">Roles</label>
+          <div className='select-button-container'>
+            <select id="roles" value={selectedRole} onChange={handleRoleChange}>
+              <option value="">Select</option>
+              {Object.entries(roles).map(([key, value]) => (
+                <option key={key} value={value}>{value}</option>
+              ))}
+            </select>
+            <div className='add-role-button'><Button onClick={handleAddRole}>+</Button></div>
+          </div>
         </div>
-        <div className='checkbox-container'>
-          {areSelected && (
+        {areSelected && (
+          <div className='checkbox-container'>
+            <h2 className='title2'>Detailed {selectedRole} permissions in {selectedService}</h2>
             <div>
-              <h2>{selectedService} - {selectedRole}: Permissions Details</h2>
               <div>
                 <label>
                   <input
@@ -228,8 +231,8 @@ function DisplayPermissions() {
               <Button onClick={handleSaveChanges}>Save</Button>
               <Button onClick={handleResetChanges}>Reset</Button>
             </div>
-          )}
-        </div>
+          </div>
+        )}
         {showPopup && (
           <Popup
             title={popupContent.title}

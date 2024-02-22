@@ -7,7 +7,7 @@ function AdminPermissions() {
   return (
     <>
       <Navbar navUser='admin' />
-      <div className='title'>Permissions</div>
+      <div className='title'>Permissions Management</div>
       <DisplayPermissions />
     </>
   )

@@ -44,3 +44,11 @@ h1 {
   padding: 2rem 0;
   text-align: center;
 }
+
+.title2 {
+  font-family: var(--title-family);
+  font-size: 1.8rem;
+  font-weight: 500;
+  padding: 2rem 0;
+  text-align: center;
+}
