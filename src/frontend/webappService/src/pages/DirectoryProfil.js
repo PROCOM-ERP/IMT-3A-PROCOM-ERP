@@ -6,7 +6,6 @@ import UserProfil from '../components/UserProfil';
 function DirectoryProfil() {
   const props = useParams();
   const userId = props.userId;
-  console.log(userId);
   return (
     <>
       <Navbar />

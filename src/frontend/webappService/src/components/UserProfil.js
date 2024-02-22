@@ -58,7 +58,7 @@ function UserProfil({ title, userId }) {
   const getUserAuth = async () => {
     // API URL
     const apiUrl =
-      "https://localhost:8041/api/authentication/v1/employees/" + userId;
+      "https://localhost:8041/api/authentication/v1/login-profiles/" + userId;
 
     await fetch(apiUrl, {
       method: "GET",
