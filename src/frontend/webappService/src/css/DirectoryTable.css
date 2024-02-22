@@ -10,20 +10,27 @@
   margin: auto;
 }
 
-.searchBar {
+.line-container {
+  /* Use flexbox */
+  display: flex;
+  /* Align items vertically in the center */
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.searchbar-container {
+  flex: 1
+}
+
+.searchbar {
   background-color: #D7EBFC;
   border: 1px solid #ddd;
   border-radius: 10px;
   padding: 5px;
-  margin-bottom: 1rem;
-  margin-right: 10px;
 }
 
-.line-container {
-  display: flex;
-  /* Use flexbox */
-  align-items: center;
-  /* Align items vertically in the center */
+.add-user-button {
+  margin: 0;
 }
 
 /* Styles for the table */
