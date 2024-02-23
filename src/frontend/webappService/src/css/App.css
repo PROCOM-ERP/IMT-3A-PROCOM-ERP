@@ -2,9 +2,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Dosis:wght@300;400;500;600&family=Roboto+Condensed:wght@300;400;500;600;700&family=Teko:wght@300;400;500;600&display=swap');
 
 :root {
+  /* Backgroungs */
+  --usr-bg: #D7EBFC;
+  --admin-bg: #F1D394;
   /* Navbar */
-  --usr-nav-bg: #D7EBFC;
-  --admin-nav-bg: #F1D394;
   --nav-text-family: Roboto Condensed;
   --nav-text-size: 1.2rem;
   --nav-text-weight: 600;
@@ -31,10 +32,6 @@ body {
   justify-content: center;
   padding: 0;
   margin: 0;
-}
-
-h1 {
-  font-family: var(--title-family);
 }
 
 .title {

@@ -1,41 +1,29 @@
 /* import all fonts */
-@import url('https://fonts.googleapis.com/css2?family=Dosis:wght@300;400;500;600&family=Roboto+Condensed:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Dosis:wght@300;400;500;600&display=swap');
 
-:root{
-    /* login background */
-    --login-bg: #D7EBFC;
-    /* title page */
-    --login-title-family: Roboto Condensed;
-    --login-title-size: 2.2rem;
-    --login-title-weight: 700;
+:root {
     /* text page */
     --login-text-family: Dosis;
     --login-text-size: medium;
     --login-text-weight: 400;
 }
 
-.authentification-container{
+.authentification-container {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    border: 1px solid var(--login-bg);
+    background-color: var(--usr-bg);
+    border: 1px solid var(--usr-bg);
     border-radius: 5px;
     margin: auto;
     margin-top: 5rem;
     padding: 1rem;
     width: 30rem;
-    background-color: var(--login-bg);
+
 }
 
-.login-title{
-    font-family: var(--login-title-family);
-    font-size: var(--login-title-size);
-    font-weight: var(--login-title-weight);
-    padding: 1rem 1rem 0.5rem 1rem;
-}
-
-form{
+form {
     display: block;
     flex-direction: column;
     margin: 0;
@@ -43,7 +31,7 @@ form{
     width: auto;
 }
 
-form label{
+form label {
     font-family: var(--login-text-family);
     font-size: var(--login-text-size);
     font-weight: var(--login-text-weight);
@@ -51,13 +39,13 @@ form label{
     margin: 1rem;
 }
 
-form input{
+form input {
     border-radius: 5px;
     border-color: white;
     border: 2px solid white;
 }
 
-.authentification-btn{
+.authentification-btn {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -65,14 +53,12 @@ form input{
     padding-top: 1rem;
 }
 
-.error{
-    /* display: flex; */
-    /* justify-content: center; */
-    padding-top: 0.6rem;
-    padding-left: 1rem;
-    margin-left: 1rem;
+.error {
     font-family: var(--login-text-family);
     font-size: var(--login-text-size);
     font-weight: var(--login-text-weight);
     color: red;
+    padding-top: 0.6rem;
+    padding-left: 1rem;
+    margin-left: 1rem;
 }
