@@ -1,6 +1,6 @@
-<mxfile host="Electron" modified="2024-02-23T16:53:45.179Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/22.1.2 Chrome/114.0.5735.289 Electron/25.9.4 Safari/537.36" etag="uJ4-pFWunri6_C1LMqYO" version="22.1.2" type="device">
+<mxfile host="Electron" modified="2024-02-23T17:05:11.292Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/22.1.2 Chrome/114.0.5735.289 Electron/25.9.4 Safari/537.36" etag="HopD4lDnXmGzVYZkplJW" version="22.1.2" type="device">
   <diagram name="Page-1" id="juLC3zvcWGA9uQwjYyNq">
-    <mxGraphModel dx="1014" dy="3217" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="878" dy="3217" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -58,7 +58,7 @@
         <mxCell id="imZKD1N6SDobM8C1172t-27" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="imZKD1N6SDobM8C1172t-14" target="imZKD1N6SDobM8C1172t-26" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="imZKD1N6SDobM8C1172t-14" value="Add new Item to address" style="swimlane;whiteSpace=wrap;html=1;startSize=23;" parent="1" vertex="1">
+        <mxCell id="imZKD1N6SDobM8C1172t-14" value="addNewItem: &lt;i&gt;&quot;/add&quot;&lt;/i&gt;" style="swimlane;whiteSpace=wrap;html=1;startSize=23;" parent="1" vertex="1">
           <mxGeometry x="1920" y="-1131" width="200" height="200" as="geometry" />
         </mxCell>
         <mxCell id="imZKD1N6SDobM8C1172t-19" value="&lt;ul&gt;&lt;li&gt;Product ID&lt;/li&gt;&lt;li&gt;Address ID&lt;/li&gt;&lt;li&gt;quantity&lt;/li&gt;&lt;li&gt;employee&lt;/li&gt;&lt;/ul&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="imZKD1N6SDobM8C1172t-14" vertex="1">
@@ -67,7 +67,7 @@
         <mxCell id="imZKD1N6SDobM8C1172t-65" value="Returns 422 if:&lt;br&gt;-&amp;gt; address does not exists&lt;br&gt;-&amp;gt; employee does not exists&lt;br&gt;-&amp;gt; item does not exists&lt;br&gt;quantity &amp;lt;= 0" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="imZKD1N6SDobM8C1172t-14" vertex="1">
           <mxGeometry x="18" y="131" width="162" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="ZWg43RYlgXbW-FR2VFtU-54" value="&lt;div style=&quot;background-color:#2b2b2b;color:#a9b7c6&quot;&gt;&lt;pre style=&quot;font-family:&#39;JetBrains Mono&#39;,monospace;font-size:9,8pt;&quot;&gt;NewQuantityRequestDto&lt;/pre&gt;&lt;/div&gt;" style="text;whiteSpace=wrap;html=1;" vertex="1" parent="imZKD1N6SDobM8C1172t-14">
+        <mxCell id="ZWg43RYlgXbW-FR2VFtU-54" value="&lt;div style=&quot;background-color:#2b2b2b;color:#a9b7c6&quot;&gt;&lt;pre style=&quot;font-family:&#39;JetBrains Mono&#39;,monospace;font-size:9,8pt;&quot;&gt;NewItemRequestDto&lt;/pre&gt;&lt;/div&gt;" style="text;whiteSpace=wrap;html=1;" vertex="1" parent="imZKD1N6SDobM8C1172t-14">
           <mxGeometry x="23" y="165" width="160" height="30" as="geometry" />
         </mxCell>
         <mxCell id="imZKD1N6SDobM8C1172t-20" value="" style="shape=curlyBracket;whiteSpace=wrap;html=1;rounded=1;labelPosition=left;verticalLabelPosition=middle;align=right;verticalAlign=middle;" parent="1" vertex="1">
@@ -81,7 +81,7 @@
             <mxPoint x="2240" y="-771" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="imZKD1N6SDobM8C1172t-23" value="Add/reduce quantity" style="swimlane;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+        <mxCell id="imZKD1N6SDobM8C1172t-23" value="updateQuantity: &lt;i&gt;&quot;/update&quot;&lt;/i&gt;" style="swimlane;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="1910" y="-871" width="200" height="200" as="geometry" />
         </mxCell>
         <mxCell id="imZKD1N6SDobM8C1172t-24" value="&lt;ul&gt;&lt;li&gt;Item ID&lt;/li&gt;&lt;li&gt;Quantity&lt;/li&gt;&lt;li&gt;employee&lt;/li&gt;&lt;/ul&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="imZKD1N6SDobM8C1172t-23" vertex="1">
@@ -166,7 +166,7 @@
             <mxPoint x="1700" y="-920" as="sourcePoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="imZKD1N6SDobM8C1172t-56" value="Move to address" style="swimlane;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+        <mxCell id="imZKD1N6SDobM8C1172t-56" value="moveToAddress: &lt;i&gt;&quot;/move&quot;&lt;/i&gt;" style="swimlane;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="1500" y="-1000" width="200" height="200" as="geometry" />
         </mxCell>
         <mxCell id="imZKD1N6SDobM8C1172t-57" value="&lt;ul&gt;&lt;li&gt;Item ID&lt;/li&gt;&lt;li&gt;Address ID&lt;/li&gt;&lt;li&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;employee&lt;/span&gt;&lt;br&gt;&lt;/li&gt;&lt;/ul&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="imZKD1N6SDobM8C1172t-56" vertex="1">

@@ -2,7 +2,6 @@ package com.example.inventoryservice.service;
 
 import com.example.inventoryservice.InventoryServiceApplication;
 import com.example.inventoryservice.dto.*;
-import com.example.inventoryservice.dtoRequest.NewQuantityRequestDto;
 import com.example.inventoryservice.dtoRequest.ProductRequestDto;
 import com.example.inventoryservice.model.*;
 import com.example.inventoryservice.repository.ProductRepository;

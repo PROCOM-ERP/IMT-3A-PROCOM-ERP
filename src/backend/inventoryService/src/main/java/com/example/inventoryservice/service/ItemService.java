@@ -2,7 +2,7 @@ package com.example.inventoryservice.service;
 
 import com.example.inventoryservice.dto.*;
 import com.example.inventoryservice.dto.TransactionDto;
-import com.example.inventoryservice.dtoRequest.NewQuantityRequestDto;
+import com.example.inventoryservice.dtoRequest.NewItemRequestDto;
 import com.example.inventoryservice.dtoRequest.QuantityUpdateRequestDto;
 import com.example.inventoryservice.model.Address;
 import com.example.inventoryservice.model.Product;
@@ -16,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -28,7 +27,7 @@ public class ItemService {
     private final AddressRepository addressRepository;
 
     @Transactional
-    public void addItem(NewQuantityRequestDto newQuantity){
+    public void addItem(NewItemRequestDto newQuantity){
         Product product = productRepository.findById(newQuantity.getProductId()).orElseThrow();
         Address address = addressRepository.findById(newQuantity.getAddressId()).orElseThrow();
 
