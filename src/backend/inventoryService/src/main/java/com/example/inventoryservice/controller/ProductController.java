@@ -1,6 +1,7 @@
 package com.example.inventoryservice.controller;
 
 import com.example.inventoryservice.dto.ProductDto;
+import com.example.inventoryservice.dtoRequest.MoveItemRequestDto;
 import com.example.inventoryservice.dtoRequest.NewItemRequestDto;
 import com.example.inventoryservice.dtoRequest.ProductRequestDto;
 import com.example.inventoryservice.dtoRequest.QuantityUpdateRequestDto;
@@ -96,20 +97,22 @@ public class ProductController {
 
 
     @PostMapping("/add")
-    public ResponseEntity<String> addNewItem(@RequestBody NewItemRequestDto newQuantity){
-        itemService.addItem(newQuantity);
+    public ResponseEntity<String> addNewItem(@RequestBody NewItemRequestDto newItem){
+        itemService.addNewItem(newItem);
         return ResponseEntity.ok().build();
     }
 
     @PutMapping("/update")
     public ResponseEntity<String> updateQuantity(@RequestBody QuantityUpdateRequestDto quantityUpdate){
-        itemService.updateItem(quantityUpdate);
+        itemService.updateQuantity(quantityUpdate);
         return ResponseEntity.ok().build();
     }
 
     @PutMapping("/move")
-    public ResponseEntity<String> moveToAddress(@RequestBody NewItemRequestDto newQuantity){
-        itemService.addItem(newQuantity);
+    public ResponseEntity<String> moveToAddress(@RequestBody MoveItemRequestDto newQuantity){
+        itemService.moveToAddress(newQuantity);
         return ResponseEntity.ok().build();
     }
+
+    //Later: add renameProduct(); changeMetaData(); addMetaData(); removeMetaData()
 }

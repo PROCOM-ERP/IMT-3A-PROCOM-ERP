@@ -2,6 +2,7 @@ package com.example.inventoryservice.service;
 
 import com.example.inventoryservice.dto.*;
 import com.example.inventoryservice.dto.TransactionDto;
+import com.example.inventoryservice.dtoRequest.MoveItemRequestDto;
 import com.example.inventoryservice.dtoRequest.NewItemRequestDto;
 import com.example.inventoryservice.dtoRequest.QuantityUpdateRequestDto;
 import com.example.inventoryservice.model.Address;
@@ -13,6 +14,7 @@ import com.example.inventoryservice.repository.ItemRepository;
 import com.example.inventoryservice.repository.ProductRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -27,7 +29,7 @@ public class ItemService {
     private final AddressRepository addressRepository;
 
     @Transactional
-    public void addItem(NewItemRequestDto newQuantity){
+    public void addNewItem(NewItemRequestDto newQuantity){
         Product product = productRepository.findById(newQuantity.getProductId()).orElseThrow();
         Address address = addressRepository.findById(newQuantity.getAddressId()).orElseThrow();
 
@@ -51,9 +53,22 @@ public class ItemService {
     }
 
     @Transactional
-    public void updateItem(QuantityUpdateRequestDto quantityUpdate){
+    public void updateQuantity(QuantityUpdateRequestDto quantityUpdate){
 
-        Item item = itemRepository.findById(quantityUpdate.getItemId()).orElseThrow();
+        Item item = itemRepository.findById(quantityUpdate.getItemId()).orElse(null);
+        // Employee employee = employee.findById(quantityUpdate.getEmployee()).orElse(null)
+        if (item == null){
+            throw new DataIntegrityViolationException("The item Id refers to a non existent item.");    // Error 422
+        }
+        else if(quantityUpdate.getQuantity() == 0){
+            throw new DataIntegrityViolationException("The quantity is null.");                         // Error 422
+        }
+        else if (quantityUpdate.getEmployee() != null){ // <- replace with employee != null
+            throw new DataIntegrityViolationException("The employee does not exists.");                 // Error 422
+        }
+        else if (quantityUpdate.getQuantity() + item.getQuantity() < 0){
+            throw new IllegalArgumentException("The new quantity cannot be lower than 0.");             // Error 400
+        }
 
         Transaction transaction = Transaction.builder()
                 .quantity(quantityUpdate.getQuantity())
@@ -65,6 +80,10 @@ public class ItemService {
         List<Transaction> transactionList = item.getTransactions();
         transactionList.add(transaction);
         item.setTransactions(transactionList);
+    }
+
+    public void moveToAddress(MoveItemRequestDto moveItemRequestDto){
+
     }
 
     static ItemDto itemAddressToDto(Item item){
