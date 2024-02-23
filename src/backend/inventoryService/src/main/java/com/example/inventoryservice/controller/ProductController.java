@@ -25,6 +25,7 @@ import java.util.List;
 public class ProductController {
 
     private final ProductService productService;
+    private final ItemService itemService;
 
     @GetMapping("/{id}")
     @Operation(operationId = "getProductById", tags = {"product", "inventory"},
@@ -93,16 +94,16 @@ public class ProductController {
         return ResponseEntity.ok().build();
     }
 
-    /*
+
     @PostMapping("/add")
     public ResponseEntity<String> addQuantity(@RequestBody NewQuantityRequestDto newQuantity){
-        ItemService.addItem(newQuantity);
+        itemService.addItem(newQuantity);
         return ResponseEntity.ok().build();
     }
 
     @PutMapping("/update")
     public ResponseEntity<String> updateQuantity(@RequestBody QuantityUpdateRequestDto quantityUpdate){
-        ItemService.updateItem(quantityUpdate);
+        itemService.updateItem(quantityUpdate);
         return ResponseEntity.ok().build();
-    }*/
+    }
 }

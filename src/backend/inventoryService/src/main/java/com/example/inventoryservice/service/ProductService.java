@@ -105,8 +105,6 @@ public class ProductService {
             itemList.add(item);
 
             product.setItems(itemList);
-
-
         }
         product.setProductMeta(productMetaList);
         product.setCategories(categories);
