@@ -1,5 +1,6 @@
 package com.example.inventoryservice.service;
 
+import com.example.inventoryservice.InventoryServiceApplication;
 import com.example.inventoryservice.dto.*;
 import com.example.inventoryservice.dto.TransactionDto;
 import com.example.inventoryservice.dtoRequest.MoveItemRequestDto;
@@ -14,10 +15,13 @@ import com.example.inventoryservice.repository.ItemRepository;
 import com.example.inventoryservice.repository.ProductRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -27,11 +31,22 @@ public class ItemService {
     private final ItemRepository itemRepository;
     private final ProductRepository productRepository;
     private final AddressRepository addressRepository;
+    private final Logger logger = LoggerFactory.getLogger(InventoryServiceApplication.class);
 
     @Transactional
     public void addNewItem(NewItemRequestDto newQuantity){
-        Product product = productRepository.findById(newQuantity.getProductId()).orElseThrow();
-        Address address = addressRepository.findById(newQuantity.getAddressId()).orElseThrow();
+
+        logger.info("Start adding a new item...");
+        Product product = productRepository.findById(newQuantity.getProductId()).orElseThrow(
+                () -> new DataIntegrityViolationException("The item Id refers to a non existent item."));
+        Address address = addressRepository.findById(newQuantity.getAddressId()).orElseThrow(
+                () -> new DataIntegrityViolationException("The address Id refers to a non existent address."));
+        // Employee employee = employeeRepository.findById(newQuantity.getEmployeeId()).orElseThrow(
+        //                () -> new DataIntegrityViolationException("The employee Id refers to a non existent employee."));
+
+        if (newQuantity.getQuantity() <= 0){
+            throw new DataIntegrityViolationException("The created item must be positive.");    // Error 422
+        }
 
         Item item = Item.builder()
                 .product(product)
@@ -55,16 +70,14 @@ public class ItemService {
     @Transactional
     public void updateQuantity(QuantityUpdateRequestDto quantityUpdate){
 
-        Item item = itemRepository.findById(quantityUpdate.getItemId()).orElse(null);
-        // Employee employee = employee.findById(quantityUpdate.getEmployee()).orElse(null)
-        if (item == null){
-            throw new DataIntegrityViolationException("The item Id refers to a non existent item.");    // Error 422
-        }
-        else if(quantityUpdate.getQuantity() == 0){
+        logger.info("Start updating the item...");
+        Item item = itemRepository.findById(quantityUpdate.getItemId()).orElseThrow(
+                () -> new DataIntegrityViolationException("The item Id refers to a non existent item."));
+        // Employee employee = employeeRepository.findById(newQuantity.getEmployeeId()).orElseThrow(
+        //                () -> new DataIntegrityViolationException("The employee Id refers to a non existent employee."));
+
+        if(quantityUpdate.getQuantity() == 0){
             throw new DataIntegrityViolationException("The quantity is null.");                         // Error 422
-        }
-        else if (quantityUpdate.getEmployee() != null){ // <- replace with employee != null
-            throw new DataIntegrityViolationException("The employee does not exists.");                 // Error 422
         }
         else if (quantityUpdate.getQuantity() + item.getQuantity() < 0){
             throw new IllegalArgumentException("The new quantity cannot be lower than 0.");             // Error 400
@@ -84,6 +97,23 @@ public class ItemService {
 
     public void moveToAddress(MoveItemRequestDto moveItemRequestDto){
 
+        logger.info("Start changing item address...");
+        Item item = itemRepository.findById(moveItemRequestDto.getItemId()).orElseThrow(
+                () -> new DataIntegrityViolationException("The item Id refers to a non existent item."));
+        Address address = addressRepository.findById(moveItemRequestDto.getAddressId()).orElseThrow(
+                () -> new DataIntegrityViolationException("The address Id refers to a non existent address."));
+        // Employee employee = employeeRepository.findById(newQuantity.getEmployeeId()).orElseThrow(
+        //                () -> new DataIntegrityViolationException("The employee Id refers to a non existent employee."));
+
+        List<Integer> itemIdList = new ArrayList<>();
+        for (Item ExistingItem: address.getItems())
+            itemIdList.add(ExistingItem.getId());
+        if (itemIdList.contains(item.getId()){
+            //
+        }
+        else{
+
+        }
     }
 
     static ItemDto itemAddressToDto(Item item){
