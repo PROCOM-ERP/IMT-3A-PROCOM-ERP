@@ -63,7 +63,9 @@ CREATE TABLE items (
     CONSTRAINT fk_items_table_products
         FOREIGN KEY (id_product) REFERENCES products(id_product),
     CONSTRAINT fk_items_table_addresses
-        FOREIGN KEY (id_address) REFERENCES addresses(id_address)
+        FOREIGN KEY (id_address) REFERENCES addresses(id_address),
+    CONSTRAINT positive_item_quantity
+        CHECK (quantity >= 0 OR quantity is NULL)
 );
 
 CREATE TABLE transactions (
