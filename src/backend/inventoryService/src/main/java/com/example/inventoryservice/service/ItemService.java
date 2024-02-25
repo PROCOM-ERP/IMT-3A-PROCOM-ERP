@@ -21,10 +21,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -47,11 +44,11 @@ public class ItemService {
 
         logger.info("Start adding a new item...");
         Product product = productRepository.findById(newQuantity.getProductId()).orElseThrow(
-                () -> new DataIntegrityViolationException("The item Id refers to a non-existent item."));       // E422
+                () -> new NoSuchElementException("The item Id refers to a non-existent item."));       // E404
         Address address = addressRepository.findById(newQuantity.getAddressId()).orElseThrow(
-                () -> new DataIntegrityViolationException("The address Id refers to a non-existent address.")); // E422
+                () -> new NoSuchElementException("The address Id refers to a non-existent address.")); // E404
         // Employee employee = employeeRepository.findById(newQuantity.getEmployeeId()).orElseThrow(
-        //                () -> new DataIntegrityViolationException("The employee Id refers to a non-existent employee."));
+        //                () -> new NoSuchElementException("The employee Id refers to a non-existent employee."));
 
         if (newQuantity.getQuantity() <= 0){
             throw new DataIntegrityViolationException("The created item must be positive.");    // Error 422
@@ -102,9 +99,9 @@ public class ItemService {
 
         logger.info("Start updating the item...");
         Item item = itemRepository.findById(quantityUpdate.getItemId()).orElseThrow(
-                () -> new DataIntegrityViolationException("The item Id refers to a non existent item."));// Error 422
+                () -> new NoSuchElementException("The item Id refers to a non existent item."));// Error 404
         // Employee employee = employeeRepository.findById(newQuantity.getEmployeeId()).orElseThrow(
-        //                () -> new DataIntegrityViolationException("The employee Id refers to a non-existent employee."));
+        //                () -> new NoSuchElementException("The employee Id refers to a non-existent employee."));
 
         if(quantityUpdate.getQuantity() == 0){
             throw new IllegalArgumentException("The quantity cannot be null.");                         // Error 400
@@ -139,11 +136,11 @@ public class ItemService {
 
         logger.info("Start changing item address...");
         Item item = itemRepository.findById(moveItemRequestDto.getItemId()).orElseThrow(
-                () -> new DataIntegrityViolationException("The item Id refers to a non existent item."));       // E422
+                () -> new NoSuchElementException("The item Id refers to a non existent item."));       // E404
         Address address = addressRepository.findById(moveItemRequestDto.getAddressId()).orElseThrow(
-                () -> new DataIntegrityViolationException("The address Id refers to a non existent address.")); // E422
+                () -> new NoSuchElementException("The address Id refers to a non existent address.")); // E404
         // Employee employee = employeeRepository.findById(newQuantity.getEmployeeId()).orElseThrow(
-        //                () -> new DataIntegrityViolationException("The employee Id refers to a non-existent employee."));
+        //                () -> new NoSuchElementException("The employee Id refers to a non-existent employee."));
 
         if (Objects.equals(address.getId(), moveItemRequestDto.getAddressId())){
             throw new DataIntegrityViolationException("The pointed address is the same as before.");            // E422
