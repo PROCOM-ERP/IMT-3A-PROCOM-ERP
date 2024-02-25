@@ -47,11 +47,11 @@ public class ItemService {
 
         logger.info("Start adding a new item...");
         Product product = productRepository.findById(newQuantity.getProductId()).orElseThrow(
-                () -> new DataIntegrityViolationException("The item Id refers to a non existent item."));
+                () -> new DataIntegrityViolationException("The item Id refers to a non-existent item."));       // E422
         Address address = addressRepository.findById(newQuantity.getAddressId()).orElseThrow(
-                () -> new DataIntegrityViolationException("The address Id refers to a non existent address."));
+                () -> new DataIntegrityViolationException("The address Id refers to a non-existent address.")); // E422
         // Employee employee = employeeRepository.findById(newQuantity.getEmployeeId()).orElseThrow(
-        //                () -> new DataIntegrityViolationException("The employee Id refers to a non existent employee."));
+        //                () -> new DataIntegrityViolationException("The employee Id refers to a non-existent employee."));
 
         if (newQuantity.getQuantity() <= 0){
             throw new DataIntegrityViolationException("The created item must be positive.");    // Error 422
@@ -102,9 +102,9 @@ public class ItemService {
 
         logger.info("Start updating the item...");
         Item item = itemRepository.findById(quantityUpdate.getItemId()).orElseThrow(
-                () -> new DataIntegrityViolationException("The item Id refers to a non existent item."));
+                () -> new DataIntegrityViolationException("The item Id refers to a non existent item."));// Error 422
         // Employee employee = employeeRepository.findById(newQuantity.getEmployeeId()).orElseThrow(
-        //                () -> new DataIntegrityViolationException("The employee Id refers to a non existent employee."));
+        //                () -> new DataIntegrityViolationException("The employee Id refers to a non-existent employee."));
 
         if(quantityUpdate.getQuantity() == 0){
             throw new IllegalArgumentException("The quantity cannot be null.");                         // Error 400
@@ -123,6 +123,8 @@ public class ItemService {
         List<Transaction> transactionList = item.getTransactions();
         transactionList.add(transaction);
         item.setTransactions(transactionList);
+
+        itemRepository.save(item);
     }
 
     /**
@@ -137,28 +139,56 @@ public class ItemService {
 
         logger.info("Start changing item address...");
         Item item = itemRepository.findById(moveItemRequestDto.getItemId()).orElseThrow(
-                () -> new DataIntegrityViolationException("The item Id refers to a non existent item."));
+                () -> new DataIntegrityViolationException("The item Id refers to a non existent item."));       // E422
         Address address = addressRepository.findById(moveItemRequestDto.getAddressId()).orElseThrow(
-                () -> new DataIntegrityViolationException("The address Id refers to a non existent address."));
+                () -> new DataIntegrityViolationException("The address Id refers to a non existent address.")); // E422
         // Employee employee = employeeRepository.findById(newQuantity.getEmployeeId()).orElseThrow(
         //                () -> new DataIntegrityViolationException("The employee Id refers to a non-existent employee."));
 
-        if (Objects.equals(item.getAddress().getId(), moveItemRequestDto.getAddressId())){
-            throw new
+        if (Objects.equals(address.getId(), moveItemRequestDto.getAddressId())){
+            throw new DataIntegrityViolationException("The pointed address is the same as before.");            // E422
         }
 
-        List<Integer> itemIdList = new ArrayList<>();
-        Integer quantity = item.getQuantity();
+        List<Item> neighborItems = item.getProduct().getItems();
+        for (Item neighborItem: neighborItems){
+            // This is true if another item of the same product has the address destination as address.
+            if(Objects.equals(neighborItem.getAddress().getId(), moveItemRequestDto.getAddressId())){
+                // If true, we just update the quantity of the both items.
 
-        for (Item existingItem: address.getItems())
-            if (Objects.equals(existingItem.getId(), item.getId())){
-                QuantityUpdateRequestDto quantityUpdateRequestDto = new QuantityUpdateRequestDto(item.getId(), item.getQuantity(), moveItemRequestDto.getEmployee());
-
-
-
+                // Cleans the previous Item:
+                QuantityUpdateRequestDto quantityCleanRequestDto = new QuantityUpdateRequestDto(
+                        moveItemRequestDto.getItemId(),
+                        -item.getQuantity(),
+                        moveItemRequestDto.getEmployee()
+                );
+                // Transfers the quantity to the destination Item.
+                QuantityUpdateRequestDto quantityTransferredRequestDto = new QuantityUpdateRequestDto(
+                        neighborItem.getId(),
+                        item.getQuantity(),
+                        moveItemRequestDto.getEmployee()
+                );
+                updateQuantity(quantityCleanRequestDto);
+                updateQuantity(quantityTransferredRequestDto);
                 return;
             }
-        //NewItemRequestDto newItemRequestDto = new NewItemRequestDto(existingItem.getProduct().getId(), item.getQuantity(), existingItem.);
+        }
+
+        // No other item belonging to the same product as the destination address.
+        //Creates the new Item:
+        NewItemRequestDto newItemRequestDto = new NewItemRequestDto(
+                item.getProduct().getId(),
+                item.getQuantity(),
+                moveItemRequestDto.getEmployee(),
+                moveItemRequestDto.getAddressId());
+
+        // Cleans the previous Item:
+        QuantityUpdateRequestDto quantityCleanRequestDto = new QuantityUpdateRequestDto(
+                moveItemRequestDto.getItemId(),
+                -item.getQuantity(),
+                moveItemRequestDto.getEmployee()
+        );
+        addNewItem(newItemRequestDto);
+        updateQuantity(quantityCleanRequestDto);
     }
 
     static ItemDto itemAddressToDto(Item item){
