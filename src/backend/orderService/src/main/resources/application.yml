@@ -1,0 +1,61 @@
+server:
+  port: ${BACKEND_ORDER_SERVICE_PORT_INT}
+  ssl:
+    key-store: ${BACKEND_ORDER_SERVICE_HTTPS_KEY_STORE}
+    key-store-password: ${BACKEND_ORDER_SERVICE_HTTPS_KEY_STORE_PASSWORD}
+    keyStoreType: PKCS12
+    keyAlias: ${BACKEND_ORDER_SERVICE_HTTPS_KEY_STORE_ALIAS}
+    trust-store: ${SECURITY_TRUST_STORE_PATH}
+    trust-store-password: ${SECURITY_TRUST_STORE_PASSWORD}
+
+spring:
+  main:
+    log-startup-info: off
+    banner-mode: off
+  profiles:
+    active: dev
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://${DB_ORDER_SERVICE_HOSTNAME}:${DB_ORDER_SERVICE_PORT_INT}/${DB_ORDER_SERVICE_DB}
+    username: ${DB_ORDER_SERVICE_USER}
+    password: ${DB_ORDER_SERVICE_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: update
+  mvc:
+    servlet:
+      load-on-startup: 1
+  rabbitmq:
+    host: ${BACKEND_MESSAGE_BROKER_SERVICE_HOSTNAME}
+    port: ${BACKEND_MESSAGE_BROKER_SERVICE_PORT_INT}
+    username: ${BACKEND_MESSAGE_BROKER_SERVICE_USERNAME}
+    password: ${BACKEND_MESSAGE_BROKER_SERVICE_PASSWORD}
+    virtual-host: /
+    ssl:
+      enabled: true
+      key-store: file:${BACKEND_ORDER_SERVICE_HTTPS_KEY_STORE}
+      key-store-password: ${BACKEND_ORDER_SERVICE_HTTPS_KEY_STORE_PASSWORD}
+      key-store-type: PKCS12
+      trust-store: file:${SECURITY_TRUST_STORE_PATH}
+      trust-store-password: ${SECURITY_TRUST_STORE_PASSWORD}
+      trust-store-type: JKS
+
+springdoc:
+  api-docs:
+    path: /api/v1/docs/info
+  swagger-ui:
+    path: /api/v1/docs/swagger
+    default-models-expand-depth: -1
+    operations-sorter: method
+
+security:
+  service:
+    name: ${BACKEND_ORDER_SERVICE_NAME}
+    sharedKey: ${SECURITY_SERVICES_SHARED_KEY}
+    role: microservices
+  jwt:
+    secretkey: ${SECURITY_JWT_SECRET_KEY}
+    claim:
+      roles: ${SECURITY_JWT_CLAIMS_KEY_ROLES}
+    duration:
+      minutes: 1
