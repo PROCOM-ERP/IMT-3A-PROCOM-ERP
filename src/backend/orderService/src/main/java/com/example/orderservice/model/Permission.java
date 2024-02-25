@@ -6,6 +6,7 @@ public enum Permission {
 
     CanModifyRole,
 
+    CanReadProvider,
     CanReadRole,
 
 }

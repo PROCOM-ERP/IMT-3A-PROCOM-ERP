@@ -8,6 +8,8 @@ import org.springframework.http.HttpMethod;
 @Getter
 public enum Endpoint {
 
+    GET_V1_PROVIDERS(HttpMethod.GET, Path.V1_PROVIDERS, Permission.CanReadProvider),
+
     GET_V1_ROLES(HttpMethod.GET, Path.V1_ROLES, Permission.CanReadRole),
     GET_V1_ROLES_ID(HttpMethod.GET, Path.V1_ROLES_ANYONE, Permission.CanReadRole),
     GET_V1_ROLES_ANYTHING(HttpMethod.GET, Path.V1_ROLES_ANYTHING, Permission.CanReadRole),
