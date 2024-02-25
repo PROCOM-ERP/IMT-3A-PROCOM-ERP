@@ -73,6 +73,28 @@ services:
       - vnet-procom-erp
     command: -c 'port=${DB_INVENTORY_SERVICE_PORT_INT}'
 
+  # +-----------------------------------------------------------------------------+
+
+  postgres-procom-erp-order-service:
+    build:
+      context: ${DB_ORDER_SERVICE_PATH}
+      dockerfile: Dockerfile
+      args:
+        DB_IMAGE: ${DB_IMAGE}
+    hostname: ${DB_ORDER_SERVICE_HOSTNAME}
+    environment:
+      POSTGRES_DB: ${DB_ORDER_SERVICE_DB}
+    secrets:
+      - DB_ORDER_SERVICE_USER
+      - DB_ORDER_SERVICE_PASSWORD
+    ports:
+      - "${DB_ORDER_SERVICE_PORT_EXT}:${DB_ORDER_SERVICE_PORT_INT}"
+    volumes:
+      - db-procom-erp-order-service-data:/var/lib/postgresql/data
+    networks:
+      - vnet-procom-erp
+    command: -c 'port=${DB_ORDER_SERVICE_PORT_INT}'
+
   # +---------------------------------------------------------------------------+
   # | Backend containers section                                                |
   # +---------------------------------------------------------------------------+
@@ -292,6 +314,7 @@ volumes:
   db-procom-erp-authentication-service-data:
   db-procom-erp-directory-service-data:
   db-procom-erp-inventory-service-data:
+  db-procom-erp-order-service-data:
   procom-erp-message-broker-service-data:
 
 # +-----------------------------------------------------------------------------+
@@ -311,6 +334,10 @@ secrets:
     file: ${DOCKER_SECRETS_PATH}/DB_INVENTORY_SERVICE_USER.txt
   DB_INVENTORY_SERVICE_PASSWORD:
     file: ${DOCKER_SECRETS_PATH}/DB_INVENTORY_SERVICE_PASSWORD.txt
+  DB_ORDER_SERVICE_USER:
+    file: ${DOCKER_SECRETS_PATH}/DB_ORDER_SERVICE_USER.txt
+  DB_ORDER_SERVICE_PASSWORD:
+    file: ${DOCKER_SECRETS_PATH}/DB_ORDER_SERVICE_PASSWORD.txt
   BACKEND_MAIL_USERNAME:
     file: ${DOCKER_SECRETS_PATH}/BACKEND_MAIL_USERNAME.txt
   BACKEND_MAIL_PASSWORD:
