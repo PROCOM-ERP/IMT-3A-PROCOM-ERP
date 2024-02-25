@@ -24,6 +24,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +34,10 @@ public class ItemService {
     private final AddressRepository addressRepository;
     private final Logger logger = LoggerFactory.getLogger(InventoryServiceApplication.class);
 
+    /**
+     * Function that adds a new item in the database.
+     * @param newQuantity = Integer productId; Integer quantity; String employee; Integer addressId;
+     */
     @Transactional
     public void addNewItem(NewItemRequestDto newQuantity){
 
@@ -46,6 +51,20 @@ public class ItemService {
 
         if (newQuantity.getQuantity() <= 0){
             throw new DataIntegrityViolationException("The created item must be positive.");    // Error 422
+        }
+
+        for (Item produtItem : product.getItems()){
+            // If this true, then this mean the address already exists. So me must not create another item with
+            // the same address:
+            if(Objects.equals(produtItem.getAddress().getId(), address.getId())){
+                QuantityUpdateRequestDto quantityUpdate = new QuantityUpdateRequestDto(
+                        produtItem.getId(),
+                        newQuantity.getQuantity(),
+                        newQuantity.getEmployee());
+                updateQuantity(quantityUpdate);
+                logger.warn("The client as tried to create another existing item. The item has been updated through.");
+                return;
+            }
         }
 
         Item item = Item.builder()
