@@ -19,7 +19,7 @@ public class MessageReceiverService {
 
     /* Public Methods */
 
-    @RabbitListener(queues = "roles-new-queue")
+    @RabbitListener(queues = "roles-new-queue-order")
     public void receiveRolesNewMessage(String getRoleByNamePath)
     {
         logger.info("Message received to create a role: " + getRoleByNamePath);
@@ -32,7 +32,7 @@ public class MessageReceiverService {
         }
     }
 
-    @RabbitListener(queues = "login-profiles-sec-queue")
+    @RabbitListener(queues = "login-profiles-sec-queue-order")
     public void receiveLoginProfilesSecMessage(String message, @Header("amqp_receivedRoutingKey") String routingKey)
     {
         switch (routingKey) {
