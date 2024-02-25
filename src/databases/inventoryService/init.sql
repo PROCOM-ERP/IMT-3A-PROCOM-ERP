@@ -26,7 +26,7 @@ CREATE TABLE addresses (
 
 CREATE TABLE products (
     id_product SERIAL NOT NULL ,
-    title VARCHAR(128) NOT NULL,
+    title VARCHAR(127) NOT NULL,
     description TEXT,
 
     CONSTRAINT pk_products PRIMARY KEY (id_product)
@@ -34,7 +34,7 @@ CREATE TABLE products (
 
 CREATE TABLE categories (
     id_category SERIAL NOT NULL,
-    title VARCHAR(128) NOT NULL,
+    title VARCHAR(127) NOT NULL,
     description TEXT,
 
     CONSTRAINT pk_categories PRIMARY KEY (id_category)
@@ -43,7 +43,7 @@ CREATE TABLE categories (
 CREATE TABLE product_meta (
     id_product_meta SERIAL NOT NULL,
     key VARCHAR(255) NOT NULL,
-    type VARCHAR(16) NOT NULL,
+    type VARCHAR(15) NOT NULL,
     value TEXT NOT NULL,
     description TEXT,
     id_product INT NOT NULL,

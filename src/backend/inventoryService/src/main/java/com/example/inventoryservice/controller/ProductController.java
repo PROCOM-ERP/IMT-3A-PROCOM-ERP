@@ -183,6 +183,9 @@ public class ProductController {
     }
 
     private boolean checkValidity(Object dtoObject){
+        if(dtoObject instanceof MoveItemRequestDto){
+            if
+        }
         return true;
     }
 
