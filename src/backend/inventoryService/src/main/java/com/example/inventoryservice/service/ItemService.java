@@ -36,7 +36,11 @@ public class ItemService {
 
     /**
      * Function that adds a new item in the database.
-     * @param newQuantity = Integer productId; Integer quantity; String employee; Integer addressId;
+     * @param newQuantity is a DTO that includes:
+     *                    Integer productId;    -> id of the managed product
+     *                    Integer quantity;     -> (positive) quantity added to the item
+     *                    String employee;      -> id of the employee/operator. ex: 'B00001'
+     *                    Integer addressId;    -> id of the allocated address
      */
     @Transactional
     public void addNewItem(NewItemRequestDto newQuantity){
@@ -61,8 +65,8 @@ public class ItemService {
                         produtItem.getId(),
                         newQuantity.getQuantity(),
                         newQuantity.getEmployee());
-                updateQuantity(quantityUpdate);
-                logger.warn("The client as tried to create another existing item. The item has been updated through.");
+                updateQuantity(quantityUpdate);     // This call the updateQuantity() function.
+                logger.warn("The client as tried to create another existing item. The item is being updated through.");
                 return;
             }
         }
@@ -82,10 +86,17 @@ public class ItemService {
 
         // Inject in the Item the previous transaction as a List of one element.
         item.setTransactions(Collections.singletonList(transaction));
-
         itemRepository.save(item);
+        logger.info("New item correctly added correctly.");
     }
 
+    /**
+     * Function that update the quantity of the item.
+     * @param quantityUpdate is a DTO that includes:
+     *                       Integer itemId;    -> id of the updated item
+     *                       Integer quantity;  -> (positive or negative) quantity added to the item
+     *                       String employee;   -> id of the employee/operator. ex: 'B00001'
+     */
     @Transactional
     public void updateQuantity(QuantityUpdateRequestDto quantityUpdate){
 
@@ -96,10 +107,10 @@ public class ItemService {
         //                () -> new DataIntegrityViolationException("The employee Id refers to a non existent employee."));
 
         if(quantityUpdate.getQuantity() == 0){
-            throw new DataIntegrityViolationException("The quantity is null.");                         // Error 422
+            throw new IllegalArgumentException("The quantity cannot be null.");                         // Error 400
         }
         else if (quantityUpdate.getQuantity() + item.getQuantity() < 0){
-            throw new IllegalArgumentException("The new quantity cannot be lower than 0.");             // Error 400
+            throw new DataIntegrityViolationException("The new quantity cannot be lower than 0.");      // Error 422
         }
 
         Transaction transaction = Transaction.builder()
@@ -114,6 +125,14 @@ public class ItemService {
         item.setTransactions(transactionList);
     }
 
+    /**
+     * Function that moves the whole quantity of an item to another item.
+     * @param moveItemRequestDto is a DTO that includes:
+     *                           Integer itemId;    -> id of the source item
+     *                           Integer addressId; -> id of the destination address
+     *                           String employee;   -> id of the employee/operator. ex: 'B00001'
+     */
+    @Transactional
     public void moveToAddress(MoveItemRequestDto moveItemRequestDto){
 
         logger.info("Start changing item address...");
@@ -122,17 +141,24 @@ public class ItemService {
         Address address = addressRepository.findById(moveItemRequestDto.getAddressId()).orElseThrow(
                 () -> new DataIntegrityViolationException("The address Id refers to a non existent address."));
         // Employee employee = employeeRepository.findById(newQuantity.getEmployeeId()).orElseThrow(
-        //                () -> new DataIntegrityViolationException("The employee Id refers to a non existent employee."));
+        //                () -> new DataIntegrityViolationException("The employee Id refers to a non-existent employee."));
+
+        if (Objects.equals(item.getAddress().getId(), moveItemRequestDto.getAddressId())){
+            throw new
+        }
 
         List<Integer> itemIdList = new ArrayList<>();
-        for (Item ExistingItem: address.getItems())
-            itemIdList.add(ExistingItem.getId());
-        if (itemIdList.contains(item.getId()){
-            //
-        }
-        else{
+        Integer quantity = item.getQuantity();
 
-        }
+        for (Item existingItem: address.getItems())
+            if (Objects.equals(existingItem.getId(), item.getId())){
+                QuantityUpdateRequestDto quantityUpdateRequestDto = new QuantityUpdateRequestDto(item.getId(), item.getQuantity(), moveItemRequestDto.getEmployee());
+
+
+
+                return;
+            }
+        //NewItemRequestDto newItemRequestDto = new NewItemRequestDto(existingItem.getProduct().getId(), item.getQuantity(), existingItem.);
     }
 
     static ItemDto itemAddressToDto(Item item){
