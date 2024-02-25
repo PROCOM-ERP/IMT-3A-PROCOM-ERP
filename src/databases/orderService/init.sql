@@ -71,6 +71,7 @@ CREATE TABLE employees
     first_name VARCHAR(255) NOT NULL,
     email VARCHAR(320) NOT NULL,
     phone_number VARCHAR(24) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
 
     CONSTRAINT pk_employees
         PRIMARY KEY (id),
@@ -111,7 +112,7 @@ CREATE TABLE orders
     updated_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
     quote VARCHAR(64) NOT NULL DEFAULT '',
     progress_status INT NOT NULL DEFAULT 1,
-    address VARCHAR(64) NOT NULL DEFAULT '',
+    address VARCHAR(64) NOT NULL,
     provider INT NOT NULL,
     orderer INT NOT NULL,
     approver INT,
@@ -122,7 +123,7 @@ CREATE TABLE orders
             ON UPDATE CASCADE,
     CONSTRAINT fk_orders_table_address
         FOREIGN KEY (address) REFERENCES addresses(id)
-            ON UPDATE CASCADE ON DELETE SET DEFAULT,
+            ON UPDATE CASCADE,
     CONSTRAINT fk_orders_table_providers
         FOREIGN KEY (provider) REFERENCES providers(id)
             ON UPDATE CASCADE,
