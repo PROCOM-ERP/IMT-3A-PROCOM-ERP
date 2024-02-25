@@ -14,8 +14,10 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -74,6 +76,7 @@ public class ProductController {
     }
 
     @PostMapping
+    @Validated
     @Operation(operationId = "createProduct", tags = {"product", "inventory"},
             summary = "Creates a new product",
             description = "Creates a new product according to the ProductRequestDto data")
@@ -91,7 +94,11 @@ public class ProductController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<String> createProduct(@RequestBody ProductRequestDto newProduct){
+    public ResponseEntity<String> createProduct(@Valid @RequestBody ProductRequestDto newProduct){
+        if (!checkValidity(newProduct)){
+            return ResponseEntity.badRequest().build();
+        }
+
         productService.createProduct(newProduct);
         return ResponseEntity.ok().build();
     }
@@ -173,6 +180,10 @@ public class ProductController {
     public ResponseEntity<String> moveToAddress(@RequestBody MoveItemRequestDto newQuantity){
         itemService.moveToAddress(newQuantity);
         return ResponseEntity.ok().build();
+    }
+
+    private boolean checkValidity(Object dtoObject){
+        return true;
     }
 
     //Later: add renameProduct(); changeMetaData(); addMetaData(); removeMetaData()
