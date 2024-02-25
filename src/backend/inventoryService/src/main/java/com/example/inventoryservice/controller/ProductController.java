@@ -1,5 +1,6 @@
 package com.example.inventoryservice.controller;
 
+import com.example.inventoryservice.dto.ItemDto;
 import com.example.inventoryservice.dto.ProductDto;
 import com.example.inventoryservice.dtoRequest.MoveItemRequestDto;
 import com.example.inventoryservice.dtoRequest.NewItemRequestDto;
@@ -97,18 +98,78 @@ public class ProductController {
 
 
     @PostMapping("/add")
+    @Operation(operationId = "addNewItem", tags = {"product", "inventory"},
+            summary = "Creates a new item in this product",
+            description = "Creates a item in this product and creates a new transaction.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description =
+                    "item created correctly",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ItemDto.class))} ),
+            @ApiResponse(responseCode = "400", description =
+                    "Bad request. Cannot process that request",
+                    content = {@Content(mediaType = "application/json")} ),
+            @ApiResponse(responseCode = "404", description =
+                    "Entity not found",
+                    content = {@Content(mediaType = "application/json")} ),
+            @ApiResponse(responseCode = "422", description =
+                    "Incorrect injected data. Cannot process that data",
+                    content = {@Content(mediaType = "application/json")} ),
+            @ApiResponse(responseCode = "500", description =
+                    "Uncontrolled error appeared",
+                    content = {@Content(mediaType = "application/json")} )})
     public ResponseEntity<String> addNewItem(@RequestBody NewItemRequestDto newItem){
         itemService.addNewItem(newItem);
         return ResponseEntity.ok().build();
     }
 
     @PutMapping("/update")
+    @Operation(operationId = "updateQuantity", tags = {"product", "inventory"},
+            summary = "Update the quantity of the Item",
+            description = "Update the quantity of the Item and creates a new transaction.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description =
+                    "item updated correctly",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ItemDto.class))} ),
+            @ApiResponse(responseCode = "400", description =
+                    "Bad request. Cannot process that request",
+                    content = {@Content(mediaType = "application/json")} ),
+            @ApiResponse(responseCode = "404", description =
+                    "Entity not found",
+                    content = {@Content(mediaType = "application/json")} ),
+            @ApiResponse(responseCode = "422", description =
+                    "Incorrect injected data. Cannot process that data",
+                    content = {@Content(mediaType = "application/json")} ),
+            @ApiResponse(responseCode = "500", description =
+                    "Uncontrolled error appeared",
+                    content = {@Content(mediaType = "application/json")} )})
     public ResponseEntity<String> updateQuantity(@RequestBody QuantityUpdateRequestDto quantityUpdate){
         itemService.updateQuantity(quantityUpdate);
         return ResponseEntity.ok().build();
     }
 
     @PutMapping("/move")
+    @Operation(operationId = "moveToAddress", tags = {"product", "inventory"},
+            summary = "Transfers the quantity of items to another address",
+            description = "Transfers the quantity of items to another address and creates a new transaction.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description =
+                    "item transferred correctly",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ItemDto.class))} ),
+            @ApiResponse(responseCode = "400", description =
+                    "Bad request. Cannot process that request",
+                    content = {@Content(mediaType = "application/json")} ),
+            @ApiResponse(responseCode = "404", description =
+                    "Entity not found",
+                    content = {@Content(mediaType = "application/json")} ),
+            @ApiResponse(responseCode = "422", description =
+                    "Incorrect injected data. Cannot process that data",
+                    content = {@Content(mediaType = "application/json")} ),
+            @ApiResponse(responseCode = "500", description =
+                    "Uncontrolled error appeared",
+                    content = {@Content(mediaType = "application/json")} )})
     public ResponseEntity<String> moveToAddress(@RequestBody MoveItemRequestDto newQuantity){
         itemService.moveToAddress(newQuantity);
         return ResponseEntity.ok().build();
