@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.lang.Nullable;
 
 import java.util.List;
 
@@ -24,7 +25,8 @@ public class ProductRequestDto {
     private List<Integer> categories;   // This contains the id of each category.
     private List<ProductMetaRequestDto> productMeta;
     @Min(0)
+    @NotNull
     private Integer numberOfItem;       // Defines the initial quantity of this product.
-    @Min(1)
+    @Min(0)
     private Integer address;    // Should be empty if numberOfItem == 0;
 }

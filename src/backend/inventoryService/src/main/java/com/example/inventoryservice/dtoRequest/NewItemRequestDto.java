@@ -12,8 +12,10 @@ import lombok.NoArgsConstructor;
 @Builder
 public class NewItemRequestDto {
     @Min(0)
+    @NotNull
     private Integer productId;
     @Min(0)
+    @NotNull
     private Integer quantity;
     @NotBlank
     @NotNull
@@ -21,5 +23,6 @@ public class NewItemRequestDto {
     @Pattern(regexp = "[A-Z][0-9]{5}")
     private String employee;
     @Min(0)
+    @NotNull
     private Integer addressId;
 }

@@ -183,8 +183,13 @@ public class ProductController {
     }
 
     private boolean checkValidity(Object dtoObject){
-        if(dtoObject instanceof MoveItemRequestDto){
-            if
+        if(dtoObject instanceof ProductRequestDto){
+            if(((ProductRequestDto) dtoObject).getNumberOfItem() > 0){
+                return ((ProductRequestDto) dtoObject).getAddress() != null && ((ProductRequestDto) dtoObject).getAddress() > 0;
+            }
+        }
+        else if(dtoObject instanceof NewItemRequestDto){
+
         }
         return true;
     }
