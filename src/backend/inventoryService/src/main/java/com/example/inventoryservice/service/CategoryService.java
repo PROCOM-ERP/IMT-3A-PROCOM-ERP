@@ -26,9 +26,9 @@ public class CategoryService {
     /**
      * Function that returns the category with the detailed information:
      *  - List of products that belong to this category. Each product is well detailed (EAGER).
-     * @param id
-     * @return
-     * @throws NoSuchElementException
+     * @param id: id of the category
+     * @return CategoryDto
+     * @throws NoSuchElementException "The category id refers to a non-existent category"
      */
     public CategoryDto getCategoryById(Integer id)
             throws NoSuchElementException {
@@ -62,7 +62,6 @@ public class CategoryService {
      * @param categoryRequest: is a DTO that includes:
      *                       String title       -> title of the created category
      *                       String description -> description of the created category
-     * @throws DataIntegrityViolationException:
      */
     @Transactional
     public void createCategory(CategoryRequestDto categoryRequest){

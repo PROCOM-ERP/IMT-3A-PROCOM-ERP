@@ -33,10 +33,10 @@ public class AddressService {
      * This function is made for the other services
      * @param id: id of the selected address
      * @return Address
+     * @throws NoSuchElementException "The address Id refers to a non-existent address"
      */
-    public Address getAddressById(int id){
-        return addressRepository.findById(id).orElseThrow(
-                () -> new NoSuchElementException("The address Id refers to a non existent address"));
+    public Address getAddressById(int id) throws NoSuchElementException{
+        return addressRepository.findById(id).orElseThrow();
     }
 
     /**
