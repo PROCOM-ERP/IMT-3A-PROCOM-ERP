@@ -51,7 +51,7 @@ public class ItemService {
         //                () -> new NoSuchElementException("The employee Id refers to a non-existent employee."));
 
         if (newQuantity.getQuantity() <= 0){
-            throw new DataIntegrityViolationException("The created item must be positive.");    // Error 422
+            throw new IllegalArgumentException("The created item must be positive.");                  // E400
         }
 
         for (Item produtItem : product.getItems()){
@@ -63,7 +63,9 @@ public class ItemService {
                         newQuantity.getQuantity(),
                         newQuantity.getEmployee());
                 updateQuantity(quantityUpdate);     // This call the updateQuantity() function.
-                logger.warn("The client as tried to create another existing item. The item is being updated through.");
+                logger.info("The new item refers to an already existing address.");
+                // The new item refers to an already existing address.
+                // So the item at this address is being updated instead.
                 return;
             }
         }
@@ -143,7 +145,7 @@ public class ItemService {
         //                () -> new NoSuchElementException("The employee Id refers to a non-existent employee."));
 
         if (Objects.equals(address.getId(), moveItemRequest.getAddressId())){
-            throw new DataIntegrityViolationException("The pointed address is the same as before.");            // E422
+            throw new DataIntegrityViolationException("The pointed address is the same as before.");   // E422
         }
 
         List<Item> neighborItems = item.getProduct().getItems();

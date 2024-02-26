@@ -21,8 +21,15 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CategoryService {
     private final Logger logger = LoggerFactory.getLogger(CategoryService.class);
+    private final CategoryRepository categoryRepository;
 
-    final private CategoryRepository categoryRepository;
+    /**
+     * Function that returns the category with the detailed information:
+     *  - List of products that belong to this category. Each product is well detailed (EAGER).
+     * @param id
+     * @return
+     * @throws NoSuchElementException
+     */
     public CategoryDto getCategoryById(Integer id)
             throws NoSuchElementException {
         Optional<Category> categoryOptional = categoryRepository.findById(id);
@@ -30,7 +37,7 @@ public class CategoryService {
     }
 
     /**
-     * Function that retrive all the categories
+     * Function that retrieve all the categories
      * @return List<CategoryDto>
      */
     public List<CategoryDto> getAllCategories(){
@@ -55,14 +62,16 @@ public class CategoryService {
      * @param categoryRequest: is a DTO that includes:
      *                       String title       -> title of the created category
      *                       String description -> description of the created category
+     * @throws DataIntegrityViolationException:
      */
     @Transactional
     public void createCategory(CategoryRequestDto categoryRequest){
 
+        //This should have {}
         List<Category> categories = categoryRepository.findByTitle(categoryRequest.getTitle());
         if (categories != null && !categories.isEmpty()){   // Error 422
             logger.error("The requested category already exists.");
-            throw new DataIntegrityViolationException("The requested category already exists.");
+            throw new DataIntegrityViolationException("Another category has the same name.");
         }
         if (Objects.equals(categoryRequest.getTitle(), "")){              // Error 422
             logger.error("Title is empty.");
