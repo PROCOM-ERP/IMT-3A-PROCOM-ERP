@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import "../css/App.css";
 import "../css/ProfilForm.css";
 import Button from "./Button";
 
@@ -20,7 +21,6 @@ function ProfilForm({ title, userId }) {
   // Get the user profil information
   useEffect(() => {
     getUserDir();
-    getUserAuth();
     getOrgUnits();
   }, []);
 
@@ -50,35 +50,6 @@ function ProfilForm({ title, userId }) {
           Job: data.job,
           "Organization Unit": data.orgUnit?.name,
           Organization: data.organisation?.name,
-        }));
-        console.info("[DATA] " + JSON.stringify(data));
-        console.log("[LOG] profil info retrieve");
-      })
-      .catch((error) => {
-        console.error("API request error: ", error);
-      });
-  };
-
-  // Get user from API Authentification
-  const getUserAuth = async () => {
-    // API URL
-    const apiUrl =
-      "https://localhost:8041/api/authentication/v1/login-profiles/" + userId;
-
-    await fetch(apiUrl, {
-      method: "GET",
-      headers: headers,
-    })
-      .then((response) => {
-        if (!response.ok) throw new Error(response.status);
-        const res = response.json();
-        return res;
-      })
-      .then((data) => {
-        const roleNames = data.roles.map((role) => role.name);
-        setUser((prevUser) => ({
-          ...prevUser,
-          Roles: roleNames,
         }));
         console.info("[DATA] " + JSON.stringify(data));
         console.log("[LOG] profil info retrieve");
@@ -170,24 +141,19 @@ function ProfilForm({ title, userId }) {
               <label className="label">{key}:</label>
               {key === "Id" || key === "Organization" ? (
                 <input type="text" className="input" disabled value={value} />
-              ) : key === "Roles" ? (
-                <input
-                  type="text"
-                  className="input"
-                  disabled
-                  value={value.sort().join(" ; ").toUpperCase()}
-                />
               ) : key === "Organization Unit" ? (
                 <select
                   className="input"
-                  value={modifiedUser.orgUnit || user.orgUnit}
                   onChange={(e) =>
                     handleChange("orgUnit", parseInt(e.target.value))
                   }
                 >
-                  <option value="">Select Organization Unit</option>
                   {orgUnits.map((unit) => (
-                    <option key={unit.id} value={unit.id}>
+                    <option
+                      key={unit.id}
+                      value={unit.id}
+                      selected={user["Organization Unit"] === unit.name}
+                    >
                       {unit.name}
                     </option>
                   ))}
