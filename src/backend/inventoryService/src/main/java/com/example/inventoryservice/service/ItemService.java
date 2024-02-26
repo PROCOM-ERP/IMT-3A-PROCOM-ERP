@@ -44,11 +44,11 @@ public class ItemService {
 
         logger.info("Start adding a new item...");
         Product product = productRepository.findById(newQuantity.getProductId()).orElseThrow(
-                () -> new NoSuchElementException("The item Id refers to a non-existent item."));       // E404
+                () -> new NoSuchElementException("The item id refers to a non-existent item."));       // E404
         Address address = addressRepository.findById(newQuantity.getAddressId()).orElseThrow(
-                () -> new NoSuchElementException("The address Id refers to a non-existent address.")); // E404
+                () -> new NoSuchElementException("The address id refers to a non-existent address.")); // E404
         // Employee employee = employeeRepository.findById(newQuantity.getEmployeeId()).orElseThrow(
-        //                () -> new NoSuchElementException("The employee Id refers to a non-existent employee."));
+        //                () -> new NoSuchElementException("The employee id refers to a non-existent employee."));
 
         if (newQuantity.getQuantity() <= 0){
             throw new IllegalArgumentException("The created item must be positive.");                  // E400
@@ -101,9 +101,9 @@ public class ItemService {
 
         logger.info("Start updating the item...");
         Item item = itemRepository.findById(quantityUpdate.getItemId()).orElseThrow(
-                () -> new NoSuchElementException("The item Id refers to a non existent item."));// Error 404
+                () -> new NoSuchElementException("The item id refers to a non existent item."));// Error 404
         // Employee employee = employeeRepository.findById(newQuantity.getEmployeeId()).orElseThrow(
-        //                () -> new NoSuchElementException("The employee Id refers to a non-existent employee."));
+        //                () -> new NoSuchElementException("The employee id refers to a non-existent employee."));
 
         if(quantityUpdate.getQuantity() == 0){
             throw new IllegalArgumentException("The quantity cannot be null.");                         // Error 400
@@ -138,9 +138,9 @@ public class ItemService {
 
         logger.info("Start changing item address...");
         Item item = itemRepository.findById(moveItemRequest.getItemId()).orElseThrow(
-                () -> new NoSuchElementException("The item Id refers to a non existent item."));       // E404
+                () -> new NoSuchElementException("The item id refers to a non existent item."));       // E404
         Address address = addressRepository.findById(moveItemRequest.getAddressId()).orElseThrow(
-                () -> new NoSuchElementException("The address Id refers to a non existent address.")); // E404
+                () -> new NoSuchElementException("The address id refers to a non existent address.")); // E404
         // Employee employee = employeeRepository.findById(newQuantity.getEmployeeId()).orElseThrow(
         //                () -> new NoSuchElementException("The employee Id refers to a non-existent employee."));
 
