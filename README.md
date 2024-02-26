@@ -26,9 +26,9 @@ You can find a comprehensive [Deployment guide](./docs/DEPLOYING.md) on how to d
 ## Metadata
 
 - **Timestamp**: 2023-11-02
-- **Last update**: 2024-02-19
+- **Last update**: 2024-02-26
 - **Status**: In development
-- **Current Version**: 0.1.0
+- **Current Version**: 1.0.0
 - **Supported Platforms**: Windows (Linux and macOS untested)
 - **Development Environment**:
   - [Intellij IDEA 2023.1](https://www.jetbrains.com/idea/)

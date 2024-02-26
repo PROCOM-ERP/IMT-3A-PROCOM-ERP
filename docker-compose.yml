@@ -73,6 +73,28 @@ services:
       - vnet-procom-erp
     command: -c 'port=${DB_INVENTORY_SERVICE_PORT_INT}'
 
+  # +-----------------------------------------------------------------------------+
+
+  postgres-procom-erp-order-service:
+    build:
+      context: ${DB_ORDER_SERVICE_PATH}
+      dockerfile: Dockerfile
+      args:
+        DB_IMAGE: ${DB_IMAGE}
+    hostname: ${DB_ORDER_SERVICE_HOSTNAME}
+    environment:
+      POSTGRES_DB: ${DB_ORDER_SERVICE_DB}
+    secrets:
+      - DB_ORDER_SERVICE_USER
+      - DB_ORDER_SERVICE_PASSWORD
+    ports:
+      - "${DB_ORDER_SERVICE_PORT_EXT}:${DB_ORDER_SERVICE_PORT_INT}"
+    volumes:
+      - db-procom-erp-order-service-data:/var/lib/postgresql/data
+    networks:
+      - vnet-procom-erp
+    command: -c 'port=${DB_ORDER_SERVICE_PORT_INT}'
+
   # +---------------------------------------------------------------------------+
   # | Backend containers section                                                |
   # +---------------------------------------------------------------------------+
@@ -251,6 +273,47 @@ services:
     networks:
       - vnet-procom-erp
 
+  # +-----------------------------------------------------------------------------+
+
+  springboot-procom-erp-order-service:
+    build:
+      context: ${BACKEND_ORDER_SERVICE_PATH}
+      dockerfile: Dockerfile
+      args:
+        JAVA_BUILD_IMAGE: ${JAVA_BUILD_IMAGE}
+        JAVA_IMAGE: ${JAVA_IMAGE}
+        MAVEN_JAVA_VERSION: ${MAVEN_JAVA_VERSION}
+        BACKEND_ORDER_SERVICE_IMAGE_VERSION: ${BACKEND_ORDER_SERVICE_IMAGE_VERSION}
+        MAVEN_SPRING_BOOT_VERSION: ${MAVEN_SPRING_BOOT_VERSION}
+        MAVEN_SPRINGDOC_OPENAPI_VERSION: ${MAVEN_SPRINGDOC_OPENAPI_VERSION}
+        MAVEN_APACHE_HTTP_VERSION: ${MAVEN_APACHE_HTTP_VERSION}
+        MAVEN_AMQP_VERSION: ${MAVEN_AMQP_VERSION}
+        MAVEN_POSTGRESQL_VERSION: ${MAVEN_POSTGRESQL_VERSION}
+        MAVEN_LOMBOK_VERSION: ${MAVEN_LOMBOK_VERSION}
+        MAVEN_SPRING_SECURITY_TEST_VERSION: ${MAVEN_SPRING_SECURITY_TEST_VERSION}
+        BACKEND_ORDER_SERVICE_PORT_INT: ${BACKEND_ORDER_SERVICE_PORT_INT}
+        BACKEND_MESSAGE_BROKER_SERVICE_PORT_INT: ${BACKEND_MESSAGE_BROKER_SERVICE_PORT_INT}
+        SECURITY_TRUST_STORE_PATH: ${SECURITY_TRUST_STORE_PATH}
+        ENTRYPOINT: ${ENTRYPOINT}
+    hostname: ${BACKEND_ORDER_SERVICE_HOSTNAME}
+    env_file: ./.env
+    secrets:
+      - DB_ORDER_SERVICE_USER
+      - DB_ORDER_SERVICE_PASSWORD
+      - BACKEND_MESSAGE_BROKER_SERVICE_USERNAME
+      - BACKEND_MESSAGE_BROKER_SERVICE_PASSWORD
+      - BACKEND_ORDER_SERVICE_HTTPS_KEY_STORE_ALIAS
+      - BACKEND_ORDER_SERVICE_HTTPS_KEY_STORE_PASSWORD
+      - SECURITY_JWT_SECRET_KEY
+      - SECURITY_JWT_CLAIMS_KEY_ROLES
+      - SECURITY_SERVICES_SHARED_KEY
+      - SECURITY_TRUST_STORE_PASSWORD
+    depends_on:
+      - "postgres-procom-erp-order-service"
+      - "springboot-procom-erp-authentication-service"
+    networks:
+      - vnet-procom-erp
+
   # +---------------------------------------------------------------------------+
   # | Frontend containers section                                               |
   # +---------------------------------------------------------------------------+
@@ -292,6 +355,7 @@ volumes:
   db-procom-erp-authentication-service-data:
   db-procom-erp-directory-service-data:
   db-procom-erp-inventory-service-data:
+  db-procom-erp-order-service-data:
   procom-erp-message-broker-service-data:
 
 # +-----------------------------------------------------------------------------+
@@ -311,6 +375,10 @@ secrets:
     file: ${DOCKER_SECRETS_PATH}/DB_INVENTORY_SERVICE_USER.txt
   DB_INVENTORY_SERVICE_PASSWORD:
     file: ${DOCKER_SECRETS_PATH}/DB_INVENTORY_SERVICE_PASSWORD.txt
+  DB_ORDER_SERVICE_USER:
+    file: ${DOCKER_SECRETS_PATH}/DB_ORDER_SERVICE_USER.txt
+  DB_ORDER_SERVICE_PASSWORD:
+    file: ${DOCKER_SECRETS_PATH}/DB_ORDER_SERVICE_PASSWORD.txt
   BACKEND_MAIL_USERNAME:
     file: ${DOCKER_SECRETS_PATH}/BACKEND_MAIL_USERNAME.txt
   BACKEND_MAIL_PASSWORD:
@@ -339,6 +407,10 @@ secrets:
     file: ${DOCKER_SECRETS_PATH}/BACKEND_INVENTORY_SERVICE_HTTPS_KEY_STORE_ALIAS.txt
   BACKEND_INVENTORY_SERVICE_HTTPS_KEY_STORE_PASSWORD:
     file: ${DOCKER_SECRETS_PATH}/BACKEND_INVENTORY_SERVICE_HTTPS_KEY_STORE_PASSWORD.txt
+  BACKEND_ORDER_SERVICE_HTTPS_KEY_STORE_ALIAS:
+    file: ${DOCKER_SECRETS_PATH}/BACKEND_ORDER_SERVICE_HTTPS_KEY_STORE_ALIAS.txt
+  BACKEND_ORDER_SERVICE_HTTPS_KEY_STORE_PASSWORD:
+    file: ${DOCKER_SECRETS_PATH}/BACKEND_ORDER_SERVICE_HTTPS_KEY_STORE_PASSWORD.txt
   SECURITY_JWT_SECRET_KEY:
     file: ${DOCKER_SECRETS_PATH}/SECURITY_JWT_SECRET_KEY.txt
   SECURITY_SERVICES_SHARED_KEY:
