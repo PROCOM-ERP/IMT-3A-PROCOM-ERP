@@ -29,6 +29,10 @@ public class CategoryService {
         return categoryOptional.map(CategoryService::categoryToDto).orElseThrow();  // E404
     }
 
+    /**
+     * Function that retrive all the categories
+     * @return List<CategoryDto>
+     */
     public List<CategoryDto> getAllCategories(){
         //logger.info("Hello !");
         return categoryRepository.findAll()
@@ -37,10 +41,21 @@ public class CategoryService {
                 .toList();
     }
 
+    /**
+     * Function that returns a list of categories
+     * @param ids: List of id of the categories
+     * @return List<Category>
+     */
     public List<Category> getAllByIds(List<Integer> ids){
         return categoryRepository.findByIds(ids);
     }
 
+    /**
+     * Function that creates a new category with a POST request
+     * @param categoryRequest: is a DTO that includes:
+     *                       String title       -> title of the created category
+     *                       String description -> description of the created category
+     */
     @Transactional
     public void createCategory(CategoryRequestDto categoryRequest){
 
@@ -62,6 +77,8 @@ public class CategoryService {
         categoryRepository.save(category);
 
     }
+
+    // DTO converters:
 
     static CategoryDto categoryOnlyToDto(Category category){
         return CategoryDto.builder()

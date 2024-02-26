@@ -126,43 +126,43 @@ public class ItemService {
 
     /**
      * Function that moves the whole quantity of an item to another item.
-     * @param moveItemRequestDto is a DTO that includes:
+     * @param moveItemRequest is a DTO that includes:
      *                           Integer itemId;    -> id of the source item
      *                           Integer addressId; -> id of the destination address
      *                           String employee;   -> id of the employee/operator. ex: 'B00001'
      */
     @Transactional
-    public void moveToAddress(MoveItemRequestDto moveItemRequestDto){
+    public void moveToAddress(MoveItemRequestDto moveItemRequest){
 
         logger.info("Start changing item address...");
-        Item item = itemRepository.findById(moveItemRequestDto.getItemId()).orElseThrow(
+        Item item = itemRepository.findById(moveItemRequest.getItemId()).orElseThrow(
                 () -> new NoSuchElementException("The item Id refers to a non existent item."));       // E404
-        Address address = addressRepository.findById(moveItemRequestDto.getAddressId()).orElseThrow(
+        Address address = addressRepository.findById(moveItemRequest.getAddressId()).orElseThrow(
                 () -> new NoSuchElementException("The address Id refers to a non existent address.")); // E404
         // Employee employee = employeeRepository.findById(newQuantity.getEmployeeId()).orElseThrow(
         //                () -> new NoSuchElementException("The employee Id refers to a non-existent employee."));
 
-        if (Objects.equals(address.getId(), moveItemRequestDto.getAddressId())){
+        if (Objects.equals(address.getId(), moveItemRequest.getAddressId())){
             throw new DataIntegrityViolationException("The pointed address is the same as before.");            // E422
         }
 
         List<Item> neighborItems = item.getProduct().getItems();
         for (Item neighborItem: neighborItems){
             // This is true if another item of the same product has the address destination as address.
-            if(Objects.equals(neighborItem.getAddress().getId(), moveItemRequestDto.getAddressId())){
+            if(Objects.equals(neighborItem.getAddress().getId(), moveItemRequest.getAddressId())){
                 // If true, we just update the quantity of the both items.
 
                 // Cleans the previous Item:
                 QuantityUpdateRequestDto quantityCleanRequestDto = new QuantityUpdateRequestDto(
-                        moveItemRequestDto.getItemId(),
+                        moveItemRequest.getItemId(),
                         -item.getQuantity(),
-                        moveItemRequestDto.getEmployee()
+                        moveItemRequest.getEmployee()
                 );
                 // Transfers the quantity to the destination Item.
                 QuantityUpdateRequestDto quantityTransferredRequestDto = new QuantityUpdateRequestDto(
                         neighborItem.getId(),
                         item.getQuantity(),
-                        moveItemRequestDto.getEmployee()
+                        moveItemRequest.getEmployee()
                 );
                 updateQuantity(quantityCleanRequestDto);
                 updateQuantity(quantityTransferredRequestDto);
@@ -175,18 +175,20 @@ public class ItemService {
         NewItemRequestDto newItemRequestDto = new NewItemRequestDto(
                 item.getProduct().getId(),
                 item.getQuantity(),
-                moveItemRequestDto.getEmployee(),
-                moveItemRequestDto.getAddressId());
+                moveItemRequest.getEmployee(),
+                moveItemRequest.getAddressId());
 
         // Cleans the previous Item:
         QuantityUpdateRequestDto quantityCleanRequestDto = new QuantityUpdateRequestDto(
-                moveItemRequestDto.getItemId(),
+                moveItemRequest.getItemId(),
                 -item.getQuantity(),
-                moveItemRequestDto.getEmployee()
+                moveItemRequest.getEmployee()
         );
         addNewItem(newItemRequestDto);
         updateQuantity(quantityCleanRequestDto);
     }
+
+    // DTO converters:
 
     static ItemDto itemAddressToDto(Item item){
         return ItemDto.builder()

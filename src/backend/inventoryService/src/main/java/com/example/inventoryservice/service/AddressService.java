@@ -17,6 +17,10 @@ import java.util.Optional;
 public class AddressService {
     final private AddressRepository addressRepository;
 
+    /**
+     * Function that retrieve all the categories
+     * @return List<AddressDto>
+     */
     public List<AddressDto> getAllAddress(){
         return addressRepository.findAll()
                 .stream()
@@ -24,15 +28,29 @@ public class AddressService {
                 .toList();
     }
 
+    /**
+     * Function that retrive on address with his associated id as parameter
+     * This function is made for the other services
+     * @param id: id of the selected address
+     * @return Address
+     */
     public Address getAddressById(int id){
         return addressRepository.findById(id).orElseThrow(
                 () -> new NoSuchElementException("The address Id refers to a non existent address"));
     }
 
+    /**
+     * Function that retrive on address as dto format with his associated id as parameter.
+     * This is supposed to be returned to the controller
+     * @param id: id of the selected address
+     * @return AddressDto
+     */
     public AddressDto getAddressDtoById(int id) {
         return addressRepository.findById(id).map(AddressService::addressToDto).orElseThrow(
                 () -> new NoSuchElementException("The address Id refers to a non existent address"));
     }
+
+    // DTO converters:
 
     static AddressDto addressToDto(Address address){
         return AddressDto.builder()
