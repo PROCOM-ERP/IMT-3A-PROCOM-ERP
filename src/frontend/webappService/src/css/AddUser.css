@@ -1,0 +1,31 @@
+.user-form-container {
+  background-color: var(--admin-bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 50%;
+  margin: 5rem auto auto auto;
+  padding-bottom: 1rem;
+}
+.select-role-container {
+  /* Display the form as a block element */
+  display: block;
+  /* Flex direction for the form */
+  flex-direction: column;
+  /* Reset margin for the form */
+  margin: 0;
+  /* Padding inside the form */
+  padding: 2rem;
+  /* Set width to auto */
+  width: auto;
+}
+
+.select-role-button-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  /* Align items to the left */
+  justify-content: center;
+  text-align: left;
+  /* Align text to the left */
+}
