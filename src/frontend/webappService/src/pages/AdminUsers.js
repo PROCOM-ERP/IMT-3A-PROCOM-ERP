@@ -3,10 +3,12 @@ import Navbar from '../components/Navbar'
 import DirectoryTable from '../components/DirectoryTable'
 
 function AdminUsers() {
+  // TODO: colors management for admin and links
   return (
     <>
       <Navbar navUser='admin' />
-      <DirectoryTable />
+      <div className='title'>Users</div>
+      <DirectoryTable isAdmin={true} />
     </>
   )
 }

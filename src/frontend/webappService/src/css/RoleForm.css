@@ -1,0 +1,68 @@
+/* Styles for the container holding the form to add a new role */
+.add-role-container {
+  /* Make the container a flex container with column direction */
+  display: flex;
+  flex-direction: column;
+  /* Center items horizontally */
+  align-items: center;
+  /* Center items vertically */
+  justify-content: center;
+  /* Background color for the container */
+  background-color: #F1D394;
+  /* Set margin for top, auto for left and right to center horizontally, and auto for bottom */
+  margin: 5rem auto auto;
+  /* Set width of the container */
+  width: 50%;
+  /* Add padding at the bottom */
+  padding-bottom: 2rem;
+}
+
+/* Styles for the form inside the add-role-container */
+.role-form-container form {
+  /* Reset margin and padding for the form */
+  margin: 0;
+  padding: 0;
+}
+
+/* Styles for the button used to create a new role */
+.create-role-button {
+  /* Make the button container a flex container with column direction */
+  display: flex;
+  flex-direction: column;
+  /* Center items horizontally */
+  align-items: center;
+  /* Center items vertically */
+  justify-content: center;
+}
+
+/* Styles for the button element */
+.create-role-button button {
+  /* Background color for the button */
+  background: #0A316C;
+  /* Font family for the button text */
+  font-family: var(--text-family);
+  /* Font size for the button text */
+  font-size: var(--text-size);
+  /* Font weight for the button text */
+  font-weight: var(--text-weight);
+  /* Text color for the button text */
+  color: #D7EBFC;
+  /* Border style for the button */
+  border: 2px solid #0A316C;
+}
+
+/* Styles for the button on hover state */
+.create-role-button button:hover {
+  /* Background color for the button on hover */
+  background: #f1d394;
+  /* Text color for the button text on hover */
+  color: #0A316C;
+}
+
+/* Styles for the label within the input container */
+.input-container label {
+  /* Set margin for the label (margin-right=15px) */
+  margin: 0 15px 0 0;
+  /* Reset padding for the label */
+  padding: 0;
+}

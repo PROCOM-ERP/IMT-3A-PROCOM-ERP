@@ -1,4 +1,3 @@
-import "../css/App.css";
 import "../css/AuthForm.css";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -98,7 +97,7 @@ function Form() {
   return (
     <>
       <div className="authentification-container">
-        <div className="login-title">Login</div>
+        <div className="title">Login</div>
         <form>
           <div className="usernameInput">
             <label>Username :</label>

@@ -1,0 +1,109 @@
+.permissions-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: var(--text-family);
+  font-size: var(--text-size);
+  font-weight: var(--text-weight);
+}
+
+.select-container {
+  display: flex;
+  align-items: center;
+  /* Align items vertically */
+  justify-content: space-between;
+  /* Distribute items evenly */
+  width: 35%;
+  margin-bottom: 10px;
+}
+
+.select-container label {
+  border: 2px solid #f1d394;
+  width: 15%;
+  text-align: center;
+  background: #f1d394;
+  border-radius: 10px;
+  padding: 0.3rem;
+}
+
+.select-container select {
+  background: #f1d394;
+  border: 2px solid #f1d394;
+  font-family: var(--text-family);
+  font-size: var(--text-size);
+  font-weight: var(--text-weight);
+  height: 100%;
+  margin: 0;
+  padding: 0.3rem;
+}
+
+.select-container.service select {
+  width: 80%;
+  border-radius: 10px;
+}
+
+.select-container.role select {
+  width: -moz-available;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+
+.select-button-container {
+  display: flex;
+  align-items: center;
+  /* Align items vertically */
+  justify-content: space-between;
+  width: 80%;
+  margin: 0;
+}
+
+.add-role-button button {
+  background: #0A316C;
+  font-family: var(--text-family);
+  font-size: var(--text-size);
+  font-weight: var(--text-weight);
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  color: #D7EBFC;
+  border: 2px solid #0A316C;
+  margin: 0;
+  padding: 0.3rem 0.5rem;
+}
+
+.add-role-button button:hover {
+  background: #f1d394;
+  color: #0A316C;
+}
+
+.checkbox-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.checkbox-list-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  /* Align items to the left */
+  justify-content: center;
+  text-align: left;
+  /* Align text to the left */
+}
+
+.checkbox-item {
+  margin-bottom: 10px;
+  /* Adjust as needed */
+}
+
+.checkbox-item label {
+  margin-left: 10px;
+  /* Adjust as needed */
+}
+
+.checkbox-is-enabled {
+  margin-bottom: 30px;
+  /* Adjust as needed */
+}
