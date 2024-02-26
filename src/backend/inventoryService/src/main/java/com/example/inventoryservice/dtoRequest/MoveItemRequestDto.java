@@ -12,8 +12,10 @@ import lombok.NoArgsConstructor;
 @Builder
 public class MoveItemRequestDto {
     @Min(0)
+    @NotNull
     private Integer itemId;
     @Min(0)
+    @NotNull
     private Integer addressId;
     @NotBlank
     @NotNull

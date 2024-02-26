@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class QuantityUpdateRequestDto {
     @Min(0)
+    @NotNull
     private Integer itemId;
     @NotNull
     private Integer quantity;
