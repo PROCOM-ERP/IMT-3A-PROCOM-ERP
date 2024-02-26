@@ -233,7 +233,7 @@ function UserProfilAdmin({ title, userId }) {
 
   return (
     <>
-      <div className="user-container">
+      <div className="user-form-container">
         <div className="title">{title}</div>
         <div className="information-container">
           {Object.entries(userInfo).map(([key, value]) => (
@@ -289,7 +289,7 @@ function UserProfilAdmin({ title, userId }) {
             )))}
           </div>
         </div>
-        <div>
+        <div className="button-container">
           <Button onClick={handleModif}> {modify ? "Save" : "Modify"} </Button>
           {(modify && (
             <Button onClick={handleBack}>Back</Button>
