@@ -1,62 +1,96 @@
 /* root variables are in App.css */
 
+/* Styles for the navigation bar */
 .navigation {
+    /* Set height of the navigation bar */
     height: 60px;
+    /* Set width of the navigation bar to fill the entire width */
     width: 100%;
+    /* Make the navigation bar a flex container with items aligned vertically */
     display: flex;
     align-items: center;
+    /* Position the navigation bar relatively */
     position: relative;
+    /* Add padding to the top and bottom of the navigation bar */
     padding: 0.5rem 0rem;
 }
 
+/* Styles for the user-specific navigation */
 .user {
-    background-color: var(--usr-nav-bg);
+    /* Background color for user-specific navigation */
+    background-color: var(--usr-bg);
 }
 
+/* Styles for the admin-specific navigation */
 .admin {
-    background-color: var(--admin-nav-bg);
+    /* Background color for admin-specific navigation */
+    background-color: var(--admin-bg);
 }
 
+/* Styles for the brand name */
 .brand-name {
+    /* Font family for the brand name */
     font-family: var(--logo-family);
+    /* Font weight for the brand name */
     font-weight: var(--logo-weight);
+    /* Font size for the brand name */
     font-size: var(--logo-size);
+    /* Color for the brand name */
     color: var(--logo-color);
+    /* Remove default underline for anchor text */
     text-decoration: none;
+    /* Add margin to the left of the brand name */
     margin-left: 1rem;
 }
 
+/* Styles for the navigation menu */
 .navigation-menu {
+    /* Align the navigation menu to the right */
     margin-left: auto;
 }
 
+/* Styles for the unordered list inside the navigation menu */
 .navigation-menu ul {
+    /* Make the list items displayed in a row */
     display: flex;
+    /* Remove padding for the unordered list */
     padding: 0;
 }
 
+/* Styles for the list items inside the navigation menu */
 .navigation-menu li {
-    /* removes default disc bullet for li tags */
+    /* Remove default disc bullet for list items */
     list-style-type: none;
-    /* applies margin to left & right side */
+    /* Apply margin to the left and right sides of list items */
     margin: 0 1rem;
 }
 
+/* Styles for the anchor tags inside list items */
 .navigation-menu li a {
+    /* Font family for the anchor text */
     font-family: var(--nav-text-family);
+    /* Font weight for the anchor text */
     font-weight: var(--nav-text-weight);
+    /* Font size for the anchor text */
     font-size: var(--nav-text-size);
+    /* Color for the anchor text */
     color: var(--nav-text-color);
-    /* increases the surface area of the anchor tag to span more than just the anchor text */
+    /* Remove default underline for anchor text */
     text-decoration: none;
+    /* Make the anchor tags block elements */
     display: block;
+    /* Set width to fill the entire width */
     width: 100%;
 }
 
+/* Styles for anchor tags on hover state in user-specific navigation */
 .navigation-menu.user li a:hover {
+    /* Change color on hover */
     color: var(--usr-nav-text-color-hover);
 }
 
+/* Styles for anchor tags on hover state in admin-specific navigation */
 .navigation-menu.admin li a:hover {
+    /* Change color on hover */
     color: var(--admin-nav-text-color-hover);
 }
