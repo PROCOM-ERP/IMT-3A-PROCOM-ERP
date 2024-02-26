@@ -115,7 +115,8 @@ VALUES ('A00001', 'admin'),
 -- +----------------------------------------------------------------------------------------------+
 
 INSERT INTO role_permissions (role, permission)
-VALUES ('admin', 'CanCreateLoginProfile'),
+VALUES ('admin', 'CanBypassAccessDeny'),
+       ('admin', 'CanCreateLoginProfile'),
        ('admin', 'CanReadLoginProfile'),
        ('admin', 'CanModifyLoginProfile'),
        ('admin', 'CanModifyLoginProfilePassword'),

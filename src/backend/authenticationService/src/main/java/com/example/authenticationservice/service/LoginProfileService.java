@@ -2,6 +2,7 @@ package com.example.authenticationservice.service;
 
 import com.example.authenticationservice.dto.*;
 import com.example.authenticationservice.model.LoginProfile;
+import com.example.authenticationservice.model.Permission;
 import com.example.authenticationservice.model.Role;
 import com.example.authenticationservice.repository.LoginProfileRepository;
 import com.example.authenticationservice.repository.RoleRepository;
@@ -19,6 +20,8 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -120,16 +123,22 @@ public class LoginProfileService {
                 .orElseThrow();
     }
 
-    public void updateLoginProfilePasswordById(String idLoginProfile, String password)
-            throws AccessDeniedException, NoSuchElementException {
-
-        // check if the loginProfile to be modified is the same as the authenticated one
-        String currentLoginProfileId = SecurityContextHolder.getContext().getAuthentication().getName();
-        if (!currentLoginProfileId.equals(idLoginProfile)) {
+    public void updateLoginProfilePasswordById(String idLoginProfile,
+                                               LoginProfilePasswordUpdateRequestDto passwordDto)
+            throws AccessDeniedException, NoSuchElementException
+    {
+        // check if the LoginProfile, for which the password will be modified,
+        // is the same as the authenticated one (or admin)
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentLoginProfileId = authentication.getName();
+        boolean canBypassAccessDeny = authentication.getAuthorities()
+                .contains(new SimpleGrantedAuthority(Permission.CanBypassAccessDeny.name()));
+        if (!currentLoginProfileId.equals(idLoginProfile) && !canBypassAccessDeny) {
             throw new AccessDeniedException("");
         }
 
         // check password validity
+        String password = passwordDto.getPassword();
         customPasswordGenerator.checkPasswordValidity(password);
 
         // try to update the password

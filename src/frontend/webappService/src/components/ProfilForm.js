@@ -131,6 +131,10 @@ function ProfilForm({ title, userId }) {
     }));
   };
 
+  function handleChangePassword() {
+    navigate("/updatePassword");
+  }
+
   return (
     <>
       <div className="user-container">
@@ -175,6 +179,7 @@ function ProfilForm({ title, userId }) {
           <Button type="back" value="back" onClick={handleBack}>
             Back
           </Button>
+          <Button onClick={handleChangePassword}>Modify Password</Button>
           <Button type="submit" value="Submit" onClick={handleSubmit}>
             Submit
           </Button>
