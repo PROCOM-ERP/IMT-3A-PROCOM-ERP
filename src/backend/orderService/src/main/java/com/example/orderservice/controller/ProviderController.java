@@ -24,7 +24,7 @@ public class ProviderController {
     private final ProviderService providerService;
 
     @GetMapping
-    @Operation(operationId = "getAllProvider", tags = {"providers"},
+    @Operation(operationId = "getAllProviders", tags = {"providers"},
             summary = "Retrieve all providers information", description =
             "Retrieve all providers information.")
     @ApiResponses(value = {

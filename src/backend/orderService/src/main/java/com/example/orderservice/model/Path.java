@@ -11,6 +11,9 @@ public class Path {
     public static final String PROVIDERS = "/providers";
     public static final String V1_PROVIDERS = API + V1 + PROVIDERS;
 
+    public static final String ORDERS = "/orders";
+    public static final String V1_ORDERS = API + V1 + ORDERS;
+
     public static final String ROLES = "/roles";
     public static final String V1_ROLES = API + V1 + ROLES;
     public static final String ROLE_NAME = "/{role}";
