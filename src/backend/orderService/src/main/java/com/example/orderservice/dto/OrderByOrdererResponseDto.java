@@ -18,7 +18,7 @@ public class OrderByOrdererResponseDto {
     private Date createdAt;
     private String provider;
     private BigDecimal totalAmount;
-    private Integer approver;
+    private String approver;
     private String status;
 
 }
