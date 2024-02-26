@@ -14,7 +14,7 @@ public class NewItemRequestDto {
     @Min(0)
     @NotNull
     private Integer productId;
-    @Min(0)
+    @Min(1)
     @NotNull
     private Integer quantity;
     @NotBlank

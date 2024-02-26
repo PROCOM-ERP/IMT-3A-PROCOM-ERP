@@ -105,6 +105,7 @@ public class ProductController {
 
 
     @PostMapping("/add")
+    @Validated
     @Operation(operationId = "addNewItem", tags = {"product", "inventory"},
             summary = "Creates a new item in this product",
             description = "Creates a item in this product and creates a new transaction.")
@@ -125,12 +126,13 @@ public class ProductController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<String> addNewItem(@RequestBody NewItemRequestDto newItem){
+    public ResponseEntity<String> addNewItem(@Valid @RequestBody NewItemRequestDto newItem){
         itemService.addNewItem(newItem);
         return ResponseEntity.ok().build();
     }
 
     @PutMapping("/update")
+    @Validated
     @Operation(operationId = "updateQuantity", tags = {"product", "inventory"},
             summary = "Update the quantity of the Item",
             description = "Update the quantity of the Item and creates a new transaction.")
@@ -151,12 +153,13 @@ public class ProductController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<String> updateQuantity(@RequestBody QuantityUpdateRequestDto quantityUpdate){
+    public ResponseEntity<String> updateQuantity(@Valid @RequestBody QuantityUpdateRequestDto quantityUpdate){
         itemService.updateQuantity(quantityUpdate);
         return ResponseEntity.ok().build();
     }
 
     @PutMapping("/move")
+    @Validated
     @Operation(operationId = "moveToAddress", tags = {"product", "inventory"},
             summary = "Transfers the quantity of items to another address",
             description = "Transfers the quantity of items to another address and creates a new transaction.")
@@ -177,19 +180,21 @@ public class ProductController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<String> moveToAddress(@RequestBody MoveItemRequestDto newQuantity){
+    public ResponseEntity<String> moveToAddress(@Valid @RequestBody MoveItemRequestDto newQuantity){
         itemService.moveToAddress(newQuantity);
         return ResponseEntity.ok().build();
     }
 
+    /**
+     * Function that check the values of the request.
+     * @param dtoObject
+     * @return
+     */
     private boolean checkValidity(Object dtoObject){
         if(dtoObject instanceof ProductRequestDto){
             if(((ProductRequestDto) dtoObject).getNumberOfItem() > 0){
                 return ((ProductRequestDto) dtoObject).getAddress() != null && ((ProductRequestDto) dtoObject).getAddress() > 0;
             }
-        }
-        else if(dtoObject instanceof NewItemRequestDto){
-
         }
         return true;
     }
