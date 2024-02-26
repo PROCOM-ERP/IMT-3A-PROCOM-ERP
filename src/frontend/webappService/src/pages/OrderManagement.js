@@ -4,8 +4,8 @@ import Navbar from '../components/Navbar'
 function OrderManagement() {
   return (
     <>
-    <Navbar/>
-    <h1>Order Management</h1>
+      <Navbar />
+      <div className='title'>Order Management</div>
     </>
   )
 }
