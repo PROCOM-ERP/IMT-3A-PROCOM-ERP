@@ -1,9 +1,12 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react';
+import Button from './Button';
+import { useNavigate } from 'react-router-dom';
 
 function DisplayOrders() {
   const navigate = useNavigate();
   const userId = localStorage.getItem("id");
-  const [users, setUsers] = useState([]);
+  const [userOrders, setUserOrders] = useState({});
+  const [managerOrders, setManagerOrders] = useState({});
 
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState(null);
@@ -17,25 +20,23 @@ function DisplayOrders() {
   };
 
   const handleProfil = (id) => {
-    isAdmin ? navigate("/manageUser/" + id) : navigate("/user/" + id);
+    // isAdmin ? navigate("/manageUser/" + id) : navigate("/user/" + id);
   };
 
-  let filteredUsers = users.filter(user => {
+  let filteredUserOrders = Object.values(userOrders).filter(order => {
     const lowerCaseSearchTerm = searchTerm.toLowerCase();
     return (
-      (user.id && user.id.toLowerCase().includes(lowerCaseSearchTerm)) ||
-      (user.firstName && user.firstName.toLowerCase().includes(lowerCaseSearchTerm)) ||
-      (user.lastName && user.lastName.toLowerCase().includes(lowerCaseSearchTerm)) ||
-      (user.email && user.email.toLowerCase().includes(lowerCaseSearchTerm)) ||
-      (user.job && user.job.toLowerCase().includes(lowerCaseSearchTerm)) ||
-      (user.organisation.name && user.organisation.name.toLowerCase().includes(lowerCaseSearchTerm)) ||
-      (user.orgUnit.address.city && user.orgUnit.address.city.toLowerCase().includes(lowerCaseSearchTerm)) ||
-      (user.phoneNumber && user.phoneNumber.toLowerCase().includes(lowerCaseSearchTerm))
+      (order.id.toString() && order.id.toString().toLowerCase().includes(lowerCaseSearchTerm)) ||
+      (order.createdAt && order.createdAt.toLowerCase().includes(lowerCaseSearchTerm)) ||
+      (order.provider && order.provider.toLowerCase().includes(lowerCaseSearchTerm)) ||
+      (order.totalAmount && order.totalAmount.toLowerCase().includes(lowerCaseSearchTerm)) ||
+      (order.approver && order.approver.toLowerCase().includes(lowerCaseSearchTerm)) ||
+      (order.status && order.status.toLowerCase().includes(lowerCaseSearchTerm))
     );
   });
 
   if (sortBy) {
-    filteredUsers.sort((a, b) => {
+    filteredUserOrders.sort((a, b) => {
       if (a[sortBy] < b[sortBy]) return -1;
       if (a[sortBy] > b[sortBy]) return 1;
       return 0;
@@ -44,13 +45,14 @@ function DisplayOrders() {
 
   const tokenName = "Token"; // Need to be the same name as in AuthForm.js components
   const token = localStorage.getItem(tokenName);
-  const apiUrl = "https://localhost:8041/api/directory/v1/employees";
+  const apiUrl = "https://localhost:8041/api/order/v1/orders?idLoginProfile=" + userId;
 
   const headers = {
-    Authorization: `Bearer ${token}`,
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${token}`,
   };
 
-  const getEmployees = async () => {
+  const getOrders = async () => {
     // Make the API request
     await fetch(apiUrl, {
       method: "GET",
@@ -62,8 +64,9 @@ function DisplayOrders() {
         return res;
       })
       .then((data) => {
-        setUsers(data);
-        console.log("[LOG] Users profil information retrieved");
+        setUserOrders(data.ordersByOrderer);
+        setManagerOrders(data.ordersByApprover);
+        console.log("[LOG] Order list retrieved");
       })
       .catch((error) => {
         console.error("API request error: ", error);
@@ -71,19 +74,17 @@ function DisplayOrders() {
   };
 
   useEffect(() => {
-    getEmployees();
+    getOrders();
+
   }, []);
 
-  useEffect(() => {
-    getEmployees();
-  }, []);
-
-  function handleAddUser() {
-    navigate("/addUser");
+  function handleAddOrder() {
+    navigate("/addOrder");
   }
+
   return (
     <>
-      <div className='directory-container'>
+      <div className='order-container'>
         <div className="line-container">
           <div className="searchbar-container">
             <input className='searchbar'
@@ -93,33 +94,30 @@ function DisplayOrders() {
               onChange={handleChange}
             />
           </div>
-          {isAdmin && (<Button className="add-user-button" onClick={handleAddUser}>Add User</Button>)}
+          {/* {isAdmin && (<Button className="add-user-button" onClick={handleAddOrder}>Add User</Button>)} */}
         </div>
         <table className='table-container' >
           <thead className='table-head-container'>
             <tr>
               <th onClick={() => handleSort('id')} >ID</th>
-              <th onClick={() => handleSort('firstName')} >Firstname</th>
-              <th onClick={() => handleSort('lastName')} >Lastname</th>
-              <th onClick={() => handleSort('email')} >Email</th>
-              <th onClick={() => handleSort('job')} >Job</th>
-              <th onClick={() => handleSort('organisation')} >Organisation</th>
-              <th onClick={() => handleSort('city')} >City</th>
-              <th onClick={() => handleSort('phoneNumber')} >Phone number</th>
+              <th onClick={() => handleSort('provider')} >Provider</th>
+              <th onClick={() => handleSort('approver')} >Approver</th>
+              <th onClick={() => handleSort('createdAt')} >Created</th>
+              <th onClick={() => handleSort('status')} >Status</th>
+              <th onClick={() => handleSort('totalAmount')} >Amount</th>
             </tr>
           </thead>
+
           <tbody className='table-body-container'>
-            {filteredUsers.map((user, index) => {
+            {filteredUserOrders.map((order, index) => {
               return (
-                <tr key={index} onClick={() => handleProfil(user.id)} >
-                  <td>{user.id}</td>
-                  <td> {user.firstName} </td>
-                  <td> {user.lastName} </td>
-                  <td> {user.email} </td>
-                  <td> {user.job} </td>
-                  <td> {user.organisation.name} </td>
-                  <td> {user.orgUnit.address.city} </td>
-                  <td> {user.phoneNumber} </td>
+                <tr key={index} onClick={() => handleProfil(order.id)} >
+                  <td>{order.id}</td>
+                  <td> {order.provider} </td>
+                  <td> {order.approver} </td>
+                  <td> {order.createdAt} </td>
+                  <td> {order.status} </td>
+                  <td> {order.totalAmount} </td>
                 </tr>
               )
             })}
