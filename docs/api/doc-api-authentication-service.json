@@ -46,6 +46,12 @@
           }
         ],
         "responses": {
+          "401": {
+            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
+            "content": {
+              "application/json": {}
+            }
+          },
           "200": {
             "description": "Role permissions and activation status retrieved correctly",
             "content": {
@@ -56,20 +62,14 @@
               }
             }
           },
-          "500": {
-            "description": "Uncontrolled error appeared",
-            "content": {
-              "application/json": {}
-            }
-          },
           "404": {
             "description": "Role not found",
             "content": {
               "application/json": {}
             }
           },
-          "401": {
-            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
+          "500": {
+            "description": "Uncontrolled error appeared",
             "content": {
               "application/json": {}
             }
@@ -105,20 +105,8 @@
           "required": true
         },
         "responses": {
-          "422": {
-            "description": "Attribute values don't respect integrity constraints.<br>Permissions : retrieve a role information for the microservice, to know which one are available.<br>isEnable : provide a boolean to modify value (can be null to keep current value).",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "500": {
-            "description": "Uncontrolled error appeared",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "400": {
-            "description": "The request body is badly structured or formatted",
+          "401": {
+            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
             "content": {
               "application/json": {}
             }
@@ -129,14 +117,26 @@
               "application/json": {}
             }
           },
+          "400": {
+            "description": "The request body is badly structured or formatted",
+            "content": {
+              "application/json": {}
+            }
+          },
           "404": {
             "description": "Role not found",
             "content": {
               "application/json": {}
             }
           },
-          "401": {
-            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
+          "500": {
+            "description": "Uncontrolled error appeared",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "422": {
+            "description": "Attribute values don't respect integrity constraints.<br>Permissions : retrieve a role information for the microservice, to know which one are available.<br>isEnable : provide a boolean to modify value (can be null to keep current value).",
             "content": {
               "application/json": {}
             }
@@ -164,8 +164,14 @@
           }
         ],
         "responses": {
-          "500": {
-            "description": "Uncontrolled error appeared",
+          "401": {
+            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "404": {
+            "description": "Login profile not found",
             "content": {
               "application/json": {}
             }
@@ -180,14 +186,8 @@
               }
             }
           },
-          "404": {
-            "description": "Login profile not found",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "401": {
-            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
+          "500": {
+            "description": "Uncontrolled error appeared",
             "content": {
               "application/json": {}
             }
@@ -223,8 +223,14 @@
           "required": true
         },
         "responses": {
-          "500": {
-            "description": "Uncontrolled error appeared",
+          "401": {
+            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "404": {
+            "description": "Login profile not found",
             "content": {
               "application/json": {}
             }
@@ -241,14 +247,8 @@
               "application/json": {}
             }
           },
-          "404": {
-            "description": "Login profile not found",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "401": {
-            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
+          "500": {
+            "description": "Uncontrolled error appeared",
             "content": {
               "application/json": {}
             }
@@ -265,8 +265,8 @@
         "description": "Retrieve all role names.<br>Only available for admins.",
         "operationId": "getAllRoleNames",
         "responses": {
-          "500": {
-            "description": "Uncontrolled error appeared",
+          "401": {
+            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
             "content": {
               "application/json": {}
             }
@@ -281,8 +281,8 @@
               }
             }
           },
-          "401": {
-            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
+          "500": {
+            "description": "Uncontrolled error appeared",
             "content": {
               "application/json": {}
             }
@@ -307,20 +307,8 @@
           "required": true
         },
         "responses": {
-          "500": {
-            "description": "Uncontrolled error appeared",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "400": {
-            "description": "The request body is badly structured or formatted",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "201": {
-            "description": "Role created correctly",
+          "401": {
+            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
             "content": {
               "application/json": {}
             }
@@ -331,8 +319,20 @@
               "application/json": {}
             }
           },
-          "401": {
-            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
+          "201": {
+            "description": "Role created correctly",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "400": {
+            "description": "The request body is badly structured or formatted",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "500": {
+            "description": "Uncontrolled error appeared",
             "content": {
               "application/json": {}
             }
@@ -359,8 +359,8 @@
           "required": true
         },
         "responses": {
-          "500": {
-            "description": "Uncontrolled error appeared",
+          "401": {
+            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
             "content": {
               "application/json": {}
             }
@@ -377,14 +377,14 @@
               "application/json": {}
             }
           },
-          "201": {
-            "description": "Login profile created correctly",
+          "500": {
+            "description": "Uncontrolled error appeared",
             "content": {
               "application/json": {}
             }
           },
-          "401": {
-            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
+          "201": {
+            "description": "Login profile created correctly",
             "content": {
               "application/json": {}
             }
@@ -401,26 +401,26 @@
         "description": "Create Jwt encrypted token, by providing Basic authentication (username, password)",
         "operationId": "generateJwtToken",
         "responses": {
-          "500": {
-            "description": "Uncontrolled error appeared",
-            "content": {
-              "application/json": {}
-            }
-          },
           "401": {
             "description": "Unauthorized to access this URL because Basis authentication failed",
             "content": {
               "application/json": {}
             }
           },
-          "200": {
-            "description": "Jwt token acquired correctly",
+          "500": {
+            "description": "Uncontrolled error appeared",
             "content": {
               "application/json": {}
             }
           },
           "403": {
             "description": "Forbidden to get token because of no roles are available for the authenticated login-profile",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "200": {
+            "description": "Jwt token acquired correctly",
             "content": {
               "application/json": {}
             }
@@ -451,15 +451,21 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "string"
+                "$ref": "#/components/schemas/LoginProfilePasswordUpdateRequestDto"
               }
             }
           },
           "required": true
         },
         "responses": {
-          "404": {
-            "description": "Login-profile not found",
+          "204": {
+            "description": "Login-profile password updated correctly",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "401": {
+            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
             "content": {
               "application/json": {}
             }
@@ -470,26 +476,20 @@
               "application/json": {}
             }
           },
-          "500": {
-            "description": "Uncontrolled error appeared",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "204": {
-            "description": "Login-profile password updated correctly",
-            "content": {
-              "application/json": {}
-            }
-          },
           "403": {
             "description": "Authenticated login-profile cannot update an other login-profile password",
             "content": {
               "application/json": {}
             }
           },
-          "401": {
-            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
+          "404": {
+            "description": "Login-profile not found",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "500": {
+            "description": "Uncontrolled error appeared",
             "content": {
               "application/json": {}
             }
@@ -526,8 +526,14 @@
           }
         ],
         "responses": {
-          "500": {
-            "description": "Uncontrolled error appeared",
+          "401": {
+            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "404": {
+            "description": "Role activation status not found for role and microservice provided",
             "content": {
               "application/json": {}
             }
@@ -542,14 +548,8 @@
               }
             }
           },
-          "404": {
-            "description": "Role activation status not found for role and microservice provided",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "401": {
-            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
+          "500": {
+            "description": "Uncontrolled error appeared",
             "content": {
               "application/json": {}
             }
@@ -566,8 +566,8 @@
         "description": "Retrieve all roles names and microservices alias.<br>Only available for admins.",
         "operationId": "getAllRolesAndMicroservices",
         "responses": {
-          "500": {
-            "description": "Uncontrolled error appeared",
+          "401": {
+            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
             "content": {
               "application/json": {}
             }
@@ -582,8 +582,8 @@
               }
             }
           },
-          "401": {
-            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
+          "500": {
+            "description": "Uncontrolled error appeared",
             "content": {
               "application/json": {}
             }
@@ -611,18 +611,8 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "Login profile activation status retrieved correctly",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LoginProfileActivationResponseDto"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Uncontrolled error appeared",
+          "401": {
+            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
             "content": {
               "application/json": {}
             }
@@ -633,10 +623,20 @@
               "application/json": {}
             }
           },
-          "401": {
-            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
+          "500": {
+            "description": "Uncontrolled error appeared",
             "content": {
               "application/json": {}
+            }
+          },
+          "200": {
+            "description": "Login profile activation status retrieved correctly",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginProfileActivationResponseDto"
+                }
+              }
             }
           }
         }
@@ -651,14 +651,14 @@
         "description": "GET Hello World ! from AuthService",
         "operationId": "getHello",
         "responses": {
-          "500": {
-            "description": "Uncontrolled error appeared",
+          "200": {
+            "description": "Hello message retrieved correctly",
             "content": {
               "application/json": {}
             }
           },
-          "200": {
-            "description": "Hello message retrieved correctly",
+          "500": {
+            "description": "Uncontrolled error appeared",
             "content": {
               "application/json": {}
             }
@@ -726,6 +726,14 @@
             "items": {
               "type": "string"
             }
+          }
+        }
+      },
+      "LoginProfilePasswordUpdateRequestDto": {
+        "type": "object",
+        "properties": {
+          "password": {
+            "type": "string"
           }
         }
       },

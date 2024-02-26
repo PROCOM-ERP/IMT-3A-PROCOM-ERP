@@ -175,17 +175,6 @@ function ProfilForm({ title, userId }) {
             </div>
           ))}
         </div>
-        <div className="info-container">
-          <div className="input-container" key="Password">
-            <label className="label">Password:</label>
-            <input
-              type="password"
-              className="input"
-              disabled
-              value={"*".repeat(12)}
-            />
-          </div>
-        </div>
         <div className="authentification-btn">
           <Button type="back" value="back" onClick={handleBack}>
             Back
