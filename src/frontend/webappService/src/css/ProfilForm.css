@@ -1,5 +1,5 @@
 .user-container {
-  background-color: var(--login-bg);
+  background-color: var(--usr-bg);
   display: flex;
   flex-direction: column;
   align-items: center;
