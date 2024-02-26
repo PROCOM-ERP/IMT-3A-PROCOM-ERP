@@ -1,9 +1,6 @@
 package com.example.authenticationservice.controller;
 
-import com.example.authenticationservice.dto.LoginProfileActivationResponseDto;
-import com.example.authenticationservice.dto.LoginProfileCreationRequestDto;
-import com.example.authenticationservice.dto.LoginProfileResponseDto;
-import com.example.authenticationservice.dto.LoginProfileUpdateRequestDto;
+import com.example.authenticationservice.dto.*;
 import com.example.authenticationservice.model.Path;
 import com.example.authenticationservice.service.LoginProfileService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -138,9 +135,10 @@ public class LoginProfileController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<String> updateLoginProfilePasswordById(@PathVariable String idLoginProfile,
-                                                         @RequestBody String password) {
-        loginProfileService.updateLoginProfilePasswordById(idLoginProfile, password);
+    public ResponseEntity<String> updateLoginProfilePasswordById(
+            @PathVariable String idLoginProfile,
+            @RequestBody LoginProfilePasswordUpdateRequestDto passwordDto) {
+        loginProfileService.updateLoginProfilePasswordById(idLoginProfile, passwordDto);
         return ResponseEntity.noContent().build();
     }
 
