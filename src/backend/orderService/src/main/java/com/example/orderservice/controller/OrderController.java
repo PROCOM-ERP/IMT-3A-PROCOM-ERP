@@ -2,7 +2,6 @@ package com.example.orderservice.controller;
 
 import com.example.orderservice.dto.OrdersByIdLoginProfileResponseDto;
 import com.example.orderservice.model.Path;
-import com.example.orderservice.model.Provider;
 import com.example.orderservice.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
