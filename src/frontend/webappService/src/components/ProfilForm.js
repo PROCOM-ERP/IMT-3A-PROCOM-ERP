@@ -131,6 +131,10 @@ function ProfilForm({ title, userId }) {
     }));
   };
 
+  function handleChangePassword() {
+    navigate("/updatePassword");
+  }
+
   return (
     <>
       <div className="user-container">
@@ -171,10 +175,22 @@ function ProfilForm({ title, userId }) {
             </div>
           ))}
         </div>
+        <div className="info-container">
+          <div className="input-container" key="Password">
+            <label className="label">Password:</label>
+            <input
+              type="password"
+              className="input"
+              disabled
+              value={"*".repeat(12)}
+            />
+          </div>
+        </div>
         <div className="authentification-btn">
           <Button type="back" value="back" onClick={handleBack}>
             Back
           </Button>
+          <Button onClick={handleChangePassword}>Modify Password</Button>
           <Button type="submit" value="Submit" onClick={handleSubmit}>
             Submit
           </Button>
