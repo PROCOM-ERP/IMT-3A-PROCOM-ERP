@@ -94,7 +94,7 @@ function DisplayOrders() {
               onChange={handleChange}
             />
           </div>
-          {/* {isAdmin && (<Button className="add-user-button" onClick={handleAddOrder}>Add User</Button>)} */}
+          <Button onClick={handleAddOrder}>Add Order</Button>
         </div>
         <table className='table-container' >
           <thead className='table-head-container'>
