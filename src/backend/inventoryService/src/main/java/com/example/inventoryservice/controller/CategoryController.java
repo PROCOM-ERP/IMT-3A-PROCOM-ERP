@@ -32,6 +32,9 @@ public class CategoryController {
                     "Category retrieved correctly",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = ProductDto.class))} ),
+            @ApiResponse(responseCode = "404", description =
+                    "Entity not found",
+                    content = {@Content(mediaType = "application/json")} ),
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
@@ -62,6 +65,9 @@ public class CategoryController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description =
                     "Category created correctly",
+                    content = {@Content(mediaType = "application/json")} ),
+            @ApiResponse(responseCode = "400", description =
+                    "Bad request. Cannot process that request",
                     content = {@Content(mediaType = "application/json")} ),
             @ApiResponse(responseCode = "422", description =
                     "Incorrect injected data.",

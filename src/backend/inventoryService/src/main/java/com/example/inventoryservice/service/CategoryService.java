@@ -1,10 +1,8 @@
 package com.example.inventoryservice.service;
 
-import com.example.inventoryservice.dto.AddressDto;
 import com.example.inventoryservice.dto.CategoryDto;
 import com.example.inventoryservice.dto.ProductDto;
 import com.example.inventoryservice.dtoRequest.CategoryRequestDto;
-import com.example.inventoryservice.model.Address;
 import com.example.inventoryservice.model.Category;
 import com.example.inventoryservice.model.Product;
 import com.example.inventoryservice.repository.CategoryRepository;
@@ -14,10 +12,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -29,7 +26,7 @@ public class CategoryService {
     public CategoryDto getCategoryById(Integer id)
             throws NoSuchElementException {
         Optional<Category> categoryOptional = categoryRepository.findById(id);
-        return categoryOptional.map(CategoryService::categoryToDto).orElseThrow();
+        return categoryOptional.map(CategoryService::categoryToDto).orElseThrow();  // E404
     }
 
     public List<CategoryDto> getAllCategories(){
@@ -48,13 +45,11 @@ public class CategoryService {
     public void createCategory(CategoryRequestDto categoryRequest){
 
         List<Category> categories = categoryRepository.findByTitle(categoryRequest.getTitle());
-        if (categories != null && !categories.isEmpty()){
-            // Error 422
+        if (categories != null && !categories.isEmpty()){   // Error 422
             logger.error("The requested category already exists.");
             throw new DataIntegrityViolationException("The requested category already exists.");
         }
-        if (categoryRequest.getTitle() == ""){
-            // Error 422
+        if (Objects.equals(categoryRequest.getTitle(), "")){              // Error 422
             logger.error("Title is empty.");
             throw new DataIntegrityViolationException("Title is empty.");
         }

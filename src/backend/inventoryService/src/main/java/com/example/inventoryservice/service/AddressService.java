@@ -25,11 +25,13 @@ public class AddressService {
     }
 
     public Address getAddressById(int id){
-        return addressRepository.findById(id).orElse(null);
+        return addressRepository.findById(id).orElseThrow(
+                () -> new NoSuchElementException("The address Id refers to a non existent address"));
     }
 
-    public AddressDto getAddressDtoById(int id) throws NoSuchElementException {
-        return addressRepository.findById(id).map(AddressService::addressToDto).orElseThrow();
+    public AddressDto getAddressDtoById(int id) {
+        return addressRepository.findById(id).map(AddressService::addressToDto).orElseThrow(
+                () -> new NoSuchElementException("The address Id refers to a non existent address"));
     }
 
     static AddressDto addressToDto(Address address){
