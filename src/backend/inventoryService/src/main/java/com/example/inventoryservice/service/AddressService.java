@@ -28,18 +28,18 @@ public class AddressService {
     }
 
     /**
-     * Function that retrive on address with his associated id as parameter
+     * Function that retrieve on address with his associated id as parameter
      * This function is made for the other services
      * @param id: id of the selected address
      * @return Address
-     * @throws NoSuchElementException "The address Id refers to a non-existent address"
+     * @throws NoSuchElementException "The address id refers to a non-existent address"
      */
     public Address getAddressById(int id) throws NoSuchElementException{
         return addressRepository.findById(id).orElseThrow();
     }
 
     /**
-     * Function that retrive on address as dto format with his associated id as parameter.
+     * Function that retrieve on address as dto format with his associated id as parameter.
      * This is supposed to be returned to the controller
      * @param id: id of the selected address
      * @return AddressDto
