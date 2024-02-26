@@ -46,6 +46,11 @@ function PasswordChangeForm() {
   const handleSubmit = (event) => {
     event.preventDefault();
 
+    // Prepare the data to be sent
+    const requestBody = {
+      password: user.newPassword
+    }
+
     const apiUrl =
       "https://localhost:8041/api/authentication/v1/login-profiles/" +
       user.username +
@@ -54,7 +59,7 @@ function PasswordChangeForm() {
     fetch(apiUrl, {
       method: "PATCH",
       headers: headers,
-      body: JSON.stringify(user.newPassword),
+      body: JSON.stringify(requestBody),
     })
       .then((response) => {
         if (!response.ok) throw new Error(response.status);
