@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "../css/AddUser.css";
 
-function AddUserForm() {
+function AddUserForm({ title }) {
   const [roles, setRoles] = useState({});
   const [selectedRoles, setSelectedRoles] = useState([]);
   const [userEmail, setUserEmail] = useState("");
@@ -71,33 +71,40 @@ function AddUserForm() {
   return (
     <>
       <div className="user-form-container">
-        <div className="email-input-container">
-          <label htmlFor="email">Email</label>
-          <input
-            type="text"
-            id="email"
-            value={userEmail}
-            onChange={handleEmailChange}
-          />
-        </div>
-        <div className="select-role-container">
-          <label htmlFor="roles">Roles</label>
-          <div className="select-role-button-container">
-            {Array.isArray(roles) &&
-              roles.map((role, index) => (
-                <div key={index} className="checkbox-item">
-                  <input
-                    type="checkbox"
-                    name={role}
-                    checked={selectedRoles.includes(role)}
-                    onChange={(e) => handleRoleChange(role, e.target.checked)}
-                  />
-                  <label>{role}</label>
-                </div>
-              ))}
+        <div className="title">{title}</div>
+        <form className="add-user-form" onSubmit={handleSubmit}>
+          <div className="email-input-container">
+            <label className="add-user-label">Email</label>
+            <input
+              className="add-user-input"
+              type="text"
+              id="email"
+              value={userEmail}
+              onChange={handleEmailChange}
+            />
           </div>
-          <button onClick={handleSubmit}>Submit</button>
-        </div>
+          <div className="select-role-container">
+            <label className="add-user-label">Roles</label>
+            <div className="select-role-button-container">
+              {Array.isArray(roles) &&
+                roles.map((role, index) => (
+                  <div key={index} className="add-user-checkbox-item">
+                    <input
+                      className="add-user-input"
+                      type="checkbox"
+                      name={role}
+                      checked={selectedRoles.includes(role)}
+                      onChange={(e) => handleRoleChange(role, e.target.checked)}
+                    />
+                    <label className="add-user-roles">{role}</label>
+                  </div>
+                ))}
+            </div>
+          </div>
+          <button className="add-user-button" onClick={handleSubmit}>
+            Submit
+          </button>
+        </form>
       </div>
     </>
   );

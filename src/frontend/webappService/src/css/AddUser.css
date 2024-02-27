@@ -7,25 +7,78 @@
   margin: 5rem auto auto auto;
   padding-bottom: 1rem;
 }
-.select-role-container {
-  /* Display the form as a block element */
-  display: block;
-  /* Flex direction for the form */
+
+.add-user-form {
+  display: flex;
   flex-direction: column;
-  /* Reset margin for the form */
+  width: 70%;
   margin: 0;
-  /* Padding inside the form */
-  padding: 2rem;
-  /* Set width to auto */
-  width: auto;
+  padding: 0;
+  align-items: center;
+  justify-content: center;
+}
+
+.email-input-container {
+  display: flex;
+  flex-direction: row;
+  padding: 1rem;
+  align-items: center;
+  justify-content: center;
+  width: 70%;
+}
+
+.select-role-container {
+  display: flex;
+  flex-direction: row;
+  padding: 1rem;
+  align-items: center;
+  justify-content: center;
+  width: 70%;
+}
+
+.add-user-checkbox-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.add-user-roles {
+  width: 40%;
+  text-align: left;
+  margin: 0;
+  padding: 0;
+}
+
+.add-user-label {
+  width: 40%;
+  text-align: left;
+  margin: 0;
+  padding: 0;
+}
+
+.add-user-input {
+  font-family: var(--text-family);
+  font-size: var(--text-size);
+  font-weight: var(--text-weight);
+  border-radius: 6px;
+  width: 40%;
 }
 
 .select-role-button-container {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  /* Align items to the left */
   justify-content: center;
   text-align: left;
-  /* Align text to the left */
+  width: 43%;
+}
+
+.add-user-button {
+  --btn-bg: #0a316c;
+  --btn-bg-hover: #d7ebfc;
+  --btn-text-color: #f1d394;
+  --btn-text-color-hover: #000000;
+  margin: 1rem;
 }

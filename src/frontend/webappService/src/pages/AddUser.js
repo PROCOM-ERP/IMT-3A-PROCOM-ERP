@@ -6,7 +6,7 @@ function AddUser() {
   return (
     <>
       <Navbar navUser="admin" />
-      <AddUserForm />
+      <AddUserForm title="Add a User" />
     </>
   );
 }
