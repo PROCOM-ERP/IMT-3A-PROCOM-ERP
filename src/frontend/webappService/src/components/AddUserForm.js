@@ -4,7 +4,14 @@ import "../css/AddUser.css";
 function AddUserForm({ title }) {
   const [roles, setRoles] = useState({});
   const [selectedRoles, setSelectedRoles] = useState([]);
-  const [userEmail, setUserEmail] = useState("");
+  const [userInfo, setUserInfo] = useState({
+    lastName: "",
+    firstName: "",
+    email: "",
+    phoneNumber: "",
+    job: "",
+    orgUnit: "",
+  });
 
   useEffect(() => {
     fetchRoles();
@@ -30,8 +37,11 @@ function AddUserForm({ title }) {
     }
   };
 
-  const handleEmailChange = (e) => {
-    setUserEmail(e.target.value);
+  const handleInfoChange = (fieldName, value) => {
+    setUserInfo((prevUserInfo) => ({
+      ...prevUserInfo,
+      [fieldName]: value,
+    }));
   };
 
   const handleRoleChange = (role, checked) => {
@@ -44,7 +54,8 @@ function AddUserForm({ title }) {
     }
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     try {
       const response = await fetch(
         "https://localhost:8041/api/authentication/v1/login-profiles",
@@ -54,7 +65,30 @@ function AddUserForm({ title }) {
             "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("Token")}`,
           },
-          body: JSON.stringify({ email: userEmail, roles: selectedRoles }),
+          body: JSON.stringify({ email: userInfo.email, roles: selectedRoles }),
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to submit user email");
+      }
+
+      // Handle success response
+      console.log("User email submitted successfully");
+    } catch (error) {
+      console.error("Error submitting user email:", error);
+    }
+
+    try {
+      const response = await fetch(
+        "https://localhost:8041/api/directory/v1/employees",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("Token")}`,
+          },
+          body: JSON.stringify(userInfo),
         },
       );
 
@@ -68,21 +102,33 @@ function AddUserForm({ title }) {
       console.error("Error submitting user email:", error);
     }
   };
+
+  // Function to transform camelCase string to title case with spaces
+  const camelToTitleCase = (str) => {
+    // Insert a space before all caps
+    const spacedStr = str.replace(/([A-Z])/g, " $1");
+    // Capitalize the first letter and lowercase the rest
+    return spacedStr.charAt(0).toUpperCase() + spacedStr.slice(1).toLowerCase();
+  };
+
   return (
     <>
       <div className="user-form-container">
         <div className="title">{title}</div>
         <form className="add-user-form" onSubmit={handleSubmit}>
-          <div className="email-input-container">
-            <label className="add-user-label">Email</label>
-            <input
-              className="add-user-input"
-              type="text"
-              id="email"
-              value={userEmail}
-              onChange={handleEmailChange}
-            />
-          </div>
+          {Object.entries(userInfo).map(([fieldName, fieldValue]) => (
+            <div key={fieldName} className="input-container">
+              <label className="add-user-label">
+                {camelToTitleCase(fieldName)}
+              </label>
+              <input
+                className="add-user-input"
+                type="text"
+                value={fieldValue}
+                onChange={(e) => handleInfoChange(fieldName, e.target.value)}
+              />
+            </div>
+          ))}
           <div className="select-role-container">
             <label className="add-user-label">Roles</label>
             <div className="select-role-button-container">
