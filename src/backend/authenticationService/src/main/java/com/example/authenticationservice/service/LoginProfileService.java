@@ -49,7 +49,10 @@ public class LoginProfileService {
     /* Public Methods */
 
     @Transactional
-    public String createLoginProfile(LoginProfileCreationRequestDto loginProfileCreationRequestDto) throws Exception {
+    public LoginProfileIdResponseDto createLoginProfile(
+            LoginProfileCreationRequestDto loginProfileCreationRequestDto)
+            throws Exception
+    {
         logger.info("Start login profile creation...");
         long startTimeNano = performanceTracker.getCurrentTime();
 
@@ -83,7 +86,7 @@ public class LoginProfileService {
         // return generated idLoginProfile
         long elapsedTimeMillis = performanceTracker.getElapsedTimeMillis(startTimeNano);
         logger.info("Elapsed time to create new login profile : " + elapsedTimeMillis + " ms");
-        return idLoginProfile;
+        return LoginProfileIdResponseDto.builder().id(idLoginProfile).build();
     }
 
     public LoginProfileResponseDto getLoginProfileById(String idLoginProfile)

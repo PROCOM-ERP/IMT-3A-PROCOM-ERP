@@ -1,9 +1,6 @@
 package com.example.authenticationservice.controller;
 
-import com.example.authenticationservice.dto.LoginProfileActivationResponseDto;
-import com.example.authenticationservice.dto.LoginProfileCreationRequestDto;
-import com.example.authenticationservice.dto.LoginProfileResponseDto;
-import com.example.authenticationservice.dto.LoginProfileUpdateRequestDto;
+import com.example.authenticationservice.dto.*;
 import com.example.authenticationservice.model.Path;
 import com.example.authenticationservice.service.LoginProfileService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,7 +31,8 @@ public class LoginProfileController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description =
                     "Login profile created correctly",
-                    content = {@Content(mediaType = "application/json") }),
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = LoginProfileIdResponseDto.class)) }),
             @ApiResponse(responseCode = "400", description =
                     "The request body is badly structured or formatted",
                     content = {@Content(mediaType = "application/json") }),
@@ -49,19 +47,20 @@ public class LoginProfileController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<String> createLoginProfile(
+    public ResponseEntity<LoginProfileIdResponseDto> createLoginProfile(
             @RequestBody LoginProfileCreationRequestDto loginProfileCreationRequestDto)
             throws Exception {
         // try to create a new loginProfile
-        String idLoginProfile = loginProfileService.createLoginProfile(loginProfileCreationRequestDto);
+        LoginProfileIdResponseDto idLoginProfile = loginProfileService
+                .createLoginProfile(loginProfileCreationRequestDto);
         // generate URI location to inform the client how to get information on the new loginProfile
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path(Path.LOGIN_PROFILE_ID)
-                .buildAndExpand(idLoginProfile)
+                .buildAndExpand(idLoginProfile.getId())
                 .toUri();
         // send the response with 201 Http status
-        return ResponseEntity.created(location).build();
+        return ResponseEntity.created(location).body(idLoginProfile);
     }
 
     @GetMapping(Path.LOGIN_PROFILE_ID)
