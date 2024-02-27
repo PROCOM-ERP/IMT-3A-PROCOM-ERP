@@ -4,7 +4,11 @@ import "../css/AddUser.css";
 function AddUserForm({ title }) {
   const [roles, setRoles] = useState({});
   const [selectedRoles, setSelectedRoles] = useState([]);
+  const [organizations, setOrganizations] = useState([]);
+  const [orgUnits, setOrgUnits] = useState([]);
+  const [selectedOrg, setSelectedOrg] = useState("");
   const [userInfo, setUserInfo] = useState({
+    id: "A00012",
     lastName: "",
     firstName: "",
     email: "",
@@ -15,7 +19,16 @@ function AddUserForm({ title }) {
 
   useEffect(() => {
     fetchRoles();
+    fetchOrgUnits();
   }, []);
+
+  useEffect(() => {
+    if (selectedOrg) {
+      setOrgUnits(selectedOrg.orgUnits);
+    } else {
+      setOrgUnits([]);
+    }
+  }, [selectedOrg]);
 
   const fetchRoles = async () => {
     const apiUrl = "https://localhost:8041/api/authentication/v1/roles";
@@ -32,6 +45,26 @@ function AddUserForm({ title }) {
       }
       const data = await response.json();
       setRoles(data);
+    } catch (error) {
+      console.error("API request error: ", error);
+    }
+  };
+
+  const fetchOrgUnits = async () => {
+    const apiUrl = "https://localhost:8041/api/directory/v1/organisations";
+    try {
+      const response = await fetch(apiUrl, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("Token")}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error(response.status);
+      }
+      const data = await response.json();
+      setOrganizations(data);
     } catch (error) {
       console.error("API request error: ", error);
     }
@@ -116,19 +149,56 @@ function AddUserForm({ title }) {
       <div className="user-form-container">
         <div className="title">{title}</div>
         <form className="add-user-form" onSubmit={handleSubmit}>
-          {Object.entries(userInfo).map(([fieldName, fieldValue]) => (
-            <div key={fieldName} className="input-container">
-              <label className="add-user-label">
-                {camelToTitleCase(fieldName)}
-              </label>
-              <input
-                className="add-user-input"
-                type="text"
-                value={fieldValue}
-                onChange={(e) => handleInfoChange(fieldName, e.target.value)}
-              />
-            </div>
-          ))}
+          {Object.entries(userInfo)
+            .filter(([key]) => key !== "orgUnit")
+            .map(([fieldName, fieldValue]) => (
+              <div key={fieldName} className="input-container">
+                <label className="add-user-label">
+                  {camelToTitleCase(fieldName)}
+                </label>
+                <input
+                  className="add-user-input"
+                  type="text"
+                  value={fieldValue}
+                  onChange={(e) => handleInfoChange(fieldName, e.target.value)}
+                />
+              </div>
+            ))}
+          <div className="input-container">
+            <label className="add-user-label">Organization</label>
+            <select
+              className="add-user-input"
+              value={selectedOrg}
+              onChange={(e) => {
+                const orgId = e.target.value;
+                setSelectedOrg(organizations.find((org) => org.id == orgId));
+              }}
+            >
+              {!selectedOrg && <option value="">Select Organization</option>}
+              {organizations.map((org) => (
+                <option key={org.id} value={org.id}>
+                  {org.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="input-container">
+            <label className="add-user-label">Organization Unit</label>
+            <select
+              className="add-user-input"
+              value={userInfo.orgUnit}
+              onChange={(e) => handleInfoChange("orgUnit", e.target.value)}
+            >
+              {!userInfo.orgUnit && (
+                <option value="">Select Organization</option>
+              )}
+              {orgUnits.map((unit) => (
+                <option key={unit.id} value={unit.id}>
+                  {unit.name}
+                </option>
+              ))}
+            </select>
+          </div>
           <div className="select-role-container">
             <label className="add-user-label">Roles</label>
             <div className="select-role-button-container">
