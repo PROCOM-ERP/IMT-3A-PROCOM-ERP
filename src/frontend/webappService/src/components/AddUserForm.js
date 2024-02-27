@@ -8,7 +8,7 @@ function AddUserForm({ title }) {
   const [orgUnits, setOrgUnits] = useState([]);
   const [selectedOrg, setSelectedOrg] = useState("");
   const [userInfo, setUserInfo] = useState({
-    id: "A00012",
+    id: "",
     lastName: "",
     firstName: "",
     email: "",
@@ -103,34 +103,44 @@ function AddUserForm({ title }) {
       );
 
       if (!response.ok) {
-        throw new Error("Failed to submit user email");
+        throw new Error("Failed to submit user email for login-profile");
       }
+      const data = await response.json();
+      setUserInfo((prevUserInfo) => ({
+        ...prevUserInfo,
+        id: data.id,
+      }));
 
       // Handle success response
-      console.log("User email submitted successfully");
-    } catch (error) {
-      console.error("Error submitting user email:", error);
-    }
-
-    try {
-      const response = await fetch(
-        "https://localhost:8041/api/directory/v1/employees",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("Token")}`,
-          },
-          body: JSON.stringify(userInfo),
-        },
+      console.log(
+        "User email submitted successfully for login-profile creation",
       );
 
-      if (!response.ok) {
-        throw new Error("Failed to submit user email");
-      }
+      try {
+        const secondResponse = await fetch(
+          "https://localhost:8041/api/directory/v1/employees",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("Token")}`,
+            },
+            body: JSON.stringify({
+              ...userInfo, // Include updated userInfo
+              id: data.id, // Use the id from data
+            }),
+          },
+        );
 
-      // Handle success response
-      console.log("User email submitted successfully");
+        if (!secondResponse.ok) {
+          throw new Error("Failed to submit user information for creation");
+        }
+
+        // Handle success response for the second request
+        console.log("User creation request successful");
+      } catch (error) {
+        console.error("Error submitting user email:", error);
+      }
     } catch (error) {
       console.error("Error submitting user email:", error);
     }
@@ -151,6 +161,7 @@ function AddUserForm({ title }) {
         <form className="add-user-form" onSubmit={handleSubmit}>
           {Object.entries(userInfo)
             .filter(([key]) => key !== "orgUnit")
+            .filter(([key]) => key !== "id")
             .map(([fieldName, fieldValue]) => (
               <div key={fieldName} className="input-container">
                 <label className="add-user-label">
