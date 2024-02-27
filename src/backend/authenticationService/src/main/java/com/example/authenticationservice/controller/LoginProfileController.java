@@ -51,16 +51,16 @@ public class LoginProfileController {
             @RequestBody LoginProfileCreationRequestDto loginProfileCreationRequestDto)
             throws Exception {
         // try to create a new loginProfile
-        LoginProfileIdResponseDto idLoginProfile = loginProfileService
+        LoginProfileIdResponseDto loginProfileIdResponseDto = loginProfileService
                 .createLoginProfile(loginProfileCreationRequestDto);
         // generate URI location to inform the client how to get information on the new loginProfile
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path(Path.LOGIN_PROFILE_ID)
-                .buildAndExpand(idLoginProfile.getId())
+                .buildAndExpand(loginProfileIdResponseDto.getId())
                 .toUri();
         // send the response with 201 Http status
-        return ResponseEntity.created(location).body(idLoginProfile);
+        return ResponseEntity.created(location).body(loginProfileIdResponseDto);
     }
 
     @GetMapping(Path.LOGIN_PROFILE_ID)
