@@ -9,6 +9,8 @@ function ProfilForm({ title, userId }) {
   const [user, setUser] = useState({});
   const [modifiedUser, setModifiedUser] = useState({});
   const [orgUnits, setOrgUnits] = useState([]);
+  const [organizations, setOrganizations] = useState([]);
+  const [selectedOrg, setSelectedOrg] = useState(null);
 
   const tokenName = "Token"; // Need to be the same name as in AuthForm.js components
   const token = localStorage.getItem(tokenName);
@@ -48,8 +50,8 @@ function ProfilForm({ title, userId }) {
           Email: data.email,
           "Phone Number": data.phoneNumber,
           Job: data.job,
-          "Organization Unit": data.orgUnit?.name,
           Organization: data.organisation?.name,
+          "Organization Unit": data.orgUnit?.id,
         }));
         console.info("[DATA] " + JSON.stringify(data));
         console.log("[LOG] profil info retrieve");
@@ -72,6 +74,7 @@ function ProfilForm({ title, userId }) {
         throw new Error("Failed to fetch organization units");
       }
       const data = await response.json();
+      setOrganizations(data);
 
       // Flatten the orgUnits array from each organization object
       const flattenedOrgUnits = data.reduce((acc, org) => {
@@ -129,6 +132,8 @@ function ProfilForm({ title, userId }) {
       ...prevState,
       [fieldName]: value,
     }));
+    console.log(user["Organization Unit"]);
+    console.log(modifiedUser.orgUnit);
   };
 
   function handleChangePassword() {
@@ -143,20 +148,42 @@ function ProfilForm({ title, userId }) {
           {Object.entries(user).map(([key, value]) => (
             <div className="input-container" key={key}>
               <label className="label">{key}:</label>
-              {key === "Id" || key === "Organization" ? (
+              {key === "Id" ? (
                 <input type="text" className="input" disabled value={value} />
+              ) : key === "Organization" ? (
+                <select
+                  className="add-user-input"
+                  value={selectedOrg}
+                  onChange={(e) => {
+                    const orgId = e.target.value;
+                    setSelectedOrg(
+                      organizations.find((org) => org.id == orgId),
+                    );
+                  }}
+                  defaultValue={user.Organization}
+                >
+                  {organizations.map((org) => (
+                    <option
+                      key={org.id}
+                      value={org.id}
+                      selected={selectedOrg === user.Organization}
+                    >
+                      {org.name}
+                    </option>
+                  ))}
+                </select>
               ) : key === "Organization Unit" ? (
                 <select
-                  className="input"
-                  onChange={(e) =>
-                    handleChange("orgUnit", parseInt(e.target.value))
-                  }
+                  className="add-user-input"
+                  value={modifiedUser.orgUnit || user["Organization Unit"]}
+                  onChange={(e) => handleChange("orgUnit", e.target.value)}
+                  defaultValue={user["Organization Unit"]}
                 >
                   {orgUnits.map((unit) => (
                     <option
                       key={unit.id}
                       value={unit.id}
-                      selected={user["Organization Unit"] === unit.name}
+                      selected={user["Organization Unit"] === unit.id}
                     >
                       {unit.name}
                     </option>

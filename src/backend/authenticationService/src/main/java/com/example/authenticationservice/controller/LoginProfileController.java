@@ -31,7 +31,8 @@ public class LoginProfileController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description =
                     "Login profile created correctly",
-                    content = {@Content(mediaType = "application/json") }),
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = LoginProfileIdResponseDto.class)) }),
             @ApiResponse(responseCode = "400", description =
                     "The request body is badly structured or formatted",
                     content = {@Content(mediaType = "application/json") }),
@@ -46,19 +47,20 @@ public class LoginProfileController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<String> createLoginProfile(
+    public ResponseEntity<LoginProfileIdResponseDto> createLoginProfile(
             @RequestBody LoginProfileCreationRequestDto loginProfileCreationRequestDto)
             throws Exception {
         // try to create a new loginProfile
-        String idLoginProfile = loginProfileService.createLoginProfile(loginProfileCreationRequestDto);
+        LoginProfileIdResponseDto loginProfileIdResponseDto = loginProfileService
+                .createLoginProfile(loginProfileCreationRequestDto);
         // generate URI location to inform the client how to get information on the new loginProfile
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path(Path.LOGIN_PROFILE_ID)
-                .buildAndExpand(idLoginProfile)
+                .buildAndExpand(loginProfileIdResponseDto.getId())
                 .toUri();
         // send the response with 201 Http status
-        return ResponseEntity.created(location).build();
+        return ResponseEntity.created(location).body(loginProfileIdResponseDto);
     }
 
     @GetMapping(Path.LOGIN_PROFILE_ID)
