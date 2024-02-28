@@ -36,7 +36,7 @@ public class OrderService {
         Address address = addressService.createAddress(orderDto.getAddress());
 
         // retrieve Employee entity if it already exists, else create and save it
-        Employee orderer = employeeService.createEmployee(orderDto.getEmployee());
+        Employee orderer = employeeService.createEmployee(orderDto.getOrderer());
 
         // retrieve all other field entities
         ProgressStatus defaultProgressStatus = progressStatusRepository.findById(1).orElseThrow();
