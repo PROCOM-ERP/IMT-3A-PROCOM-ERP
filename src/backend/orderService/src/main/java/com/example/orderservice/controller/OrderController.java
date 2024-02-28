@@ -45,7 +45,7 @@ public class OrderController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<String> createOrder(OrderCreationRequestDto orderDto)
+    public ResponseEntity<String> createOrder(@RequestBody OrderCreationRequestDto orderDto)
             throws Exception
     {
         // try to create a new entity
