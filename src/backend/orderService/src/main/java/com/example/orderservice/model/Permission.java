@@ -4,6 +4,8 @@ public enum Permission {
 
     CanBypassAccessDeny,
 
+    CanCreateOrder,
+
     CanModifyRole,
 
     CanReadOrder,
