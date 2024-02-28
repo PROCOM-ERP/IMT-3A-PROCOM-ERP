@@ -66,7 +66,7 @@ public class ProductService {
                 .description(productRequest.getDescription())
                 .build();
 
-        List<Category> categories = categoryService.getAllByIds(productRequest.getCategories());
+        List<Category> categories = categoryService.getAllByIds(productRequest.getCategories());    
 
         if (categories == null || categories.isEmpty()) {
             // Error 422

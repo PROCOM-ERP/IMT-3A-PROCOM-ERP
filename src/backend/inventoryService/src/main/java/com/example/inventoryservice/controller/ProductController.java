@@ -187,8 +187,8 @@ public class ProductController {
 
     /**
      * Function that check the values of the request.
-     * @param dtoObject
-     * @return
+     * @param dtoObject: input object.
+     * @return boolean
      */
     private boolean checkValidity(Object dtoObject){
         if(dtoObject instanceof ProductRequestDto){
