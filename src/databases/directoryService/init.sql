@@ -161,23 +161,23 @@ VALUES ('A00001'),
 -- +----------------------------------------------------------------------------------------------+
 
 INSERT INTO addresses (id, number, street, city, country, zipcode)
-VALUES ('7d82842eb167c3ed224a329fba7fbb2820a8c99f3771f9e216b968c1cccd0d6e',
+VALUES ('681370aec431f01f00f0949eecdd5afb640f6f9a195d14d5d229e722bc1ceb92',
         1, 'rue de la Paix', 'Paris', 'France', '75000'),
-       ('e8ffdf9a6ffc553cd234a04e6a5f63547838f367af45cb029f0c2a3412278412',
+       ('72e08cc844ccc2cde34dc2372166fe808f667d4dadbc4dd114386e4d9f88c574',
         2, 'rue de la Paix', 'Paris', 'France', '75000');
 
 -- +----------------------------------------------------------------------------------------------+
 
 INSERT INTO organisations (name, address)
-VALUES ('Google', '7d82842eb167c3ed224a329fba7fbb2820a8c99f3771f9e216b968c1cccd0d6e'); -- id = 1
+VALUES ('Google', '681370aec431f01f00f0949eecdd5afb640f6f9a195d14d5d229e722bc1ceb92'); -- id = 1
 
 -- +----------------------------------------------------------------------------------------------+
 
 INSERT INTO org_units (name, org_unit, organisation, address)
 VALUES ('R&D', null, 1,
-        'e8ffdf9a6ffc553cd234a04e6a5f63547838f367af45cb029f0c2a3412278412'), -- id = 1
+        '72e08cc844ccc2cde34dc2372166fe808f667d4dadbc4dd114386e4d9f88c574'), -- id = 1
        ('HR', null, 1,
-        '7d82842eb167c3ed224a329fba7fbb2820a8c99f3771f9e216b968c1cccd0d6e'); -- id = 2
+        '681370aec431f01f00f0949eecdd5afb640f6f9a195d14d5d229e722bc1ceb92'); -- id = 2
 
 -- +----------------------------------------------------------------------------------------------+
 
