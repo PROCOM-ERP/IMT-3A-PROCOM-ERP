@@ -58,13 +58,20 @@ public class AddressService {
             throws Exception {
         // join all fields before hashing operation
         StringJoiner joiner = new StringJoiner("|");
-        if (addressDto.getNumber() != null) joiner.add(addressDto.getNumber().toString());
-        if (addressDto.getStreet() != null) joiner.add(addressDto.getStreet());
-        if (addressDto.getCity() != null) joiner.add(addressDto.getCity());
-        if (addressDto.getState() != null) joiner.add(addressDto.getState());
-        if (addressDto.getCountry() != null) joiner.add(addressDto.getCountry());
-        if (addressDto.getZipcode() != null) joiner.add(addressDto.getZipcode());
-        if (addressDto.getInfo() != null) joiner.add(addressDto.getInfo());
+        if (addressDto.getNumber() != null)
+            joiner.add(addressDto.getNumber().toString());
+        if (addressDto.getStreet() != null && ! addressDto.getStreet().isBlank())
+            joiner.add(addressDto.getStreet().trim().toLowerCase());
+        if (addressDto.getCity() != null && ! addressDto.getCity().isBlank())
+            joiner.add(addressDto.getCity().trim().toLowerCase());
+        if (addressDto.getState() != null && ! addressDto.getState().isBlank())
+            joiner.add(addressDto.getState().trim().toLowerCase());
+        if (addressDto.getCountry() != null && ! addressDto.getCountry().isBlank())
+            joiner.add(addressDto.getCountry().trim().toLowerCase());
+        if (addressDto.getZipcode() != null && ! addressDto.getZipcode().isBlank())
+            joiner.add(addressDto.getZipcode().trim().toLowerCase());
+        if (addressDto.getInfo() != null && ! addressDto.getInfo().isBlank())
+            joiner.add(addressDto.getInfo().trim().toLowerCase());
 
         // hash char sequence and convert it into hexadecimal format
         try {
