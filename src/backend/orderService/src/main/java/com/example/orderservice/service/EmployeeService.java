@@ -1,6 +1,7 @@
 package com.example.orderservice.service;
 
 import com.example.orderservice.dto.EmployeeCreationRequestDto;
+import com.example.orderservice.dto.EmployeeResponseDto;
 import com.example.orderservice.model.Employee;
 import com.example.orderservice.model.LoginProfile;
 import com.example.orderservice.repository.EmployeeRepository;
@@ -10,6 +11,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
+import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -29,16 +31,22 @@ public class EmployeeService {
                 .orElseThrow(() -> new DataIntegrityViolationException("Non-existing LoginProfile for this id"));
 
         // retrieve Employee entity if it already exists, else create and save it
-        return employeeRepository.findLastCreatedEmployeeMatchingCriteria(
-                employeeDto.getId(),
-                employeeDto.getLastName(),
-                employeeDto.getFirstName(),
-                employeeDto.getEmail(),
-                employeeDto.getPhoneNumber())
-                .stream()
+        return employeeRepository.findAllEmployeesById(employeeDto.getId())
+                .stream().filter(e -> e.getLastName().equals(employeeDto.getLastName()) &&
+                e.getFirstName().equals(employeeDto.getFirstName()) &&
+                e.getEmail().equals(employeeDto.getEmail()) &&
+                e.getPhoneNumber().equals(employeeDto.getPhoneNumber()))
                 .max(Comparator.comparing(Employee::getCreatedAt))
                 .orElse(employeeRepository.save(creationRequestDtoToModel(employeeDto, loginProfile)));
+    }
 
+    public EmployeeResponseDto getEmployeeById(String idEmployee) throws
+            NoSuchElementException
+    {
+        return employeeRepository.findAllEmployeesById(idEmployee).stream()
+                .max(Comparator.comparing(Employee::getCreatedAt))
+                .map(this::modelToResponseDto)
+                .orElseThrow();
     }
 
     /* Private Methods */
@@ -60,6 +68,17 @@ public class EmployeeService {
                 .email(employeeDto.getEmail())
                 .phoneNumber(employeeDto.getPhoneNumber())
                 .loginProfile(loginProfile)
+                .build();
+    }
+
+    private EmployeeResponseDto modelToResponseDto(Employee employee)
+    {
+        return EmployeeResponseDto.builder()
+                .id(employee.getLoginProfile().getId())
+                .lastName(employee.getLastName())
+                .firstName(employee.getFirstName())
+                .email(employee.getEmail())
+                .phoneNumber(employee.getPhoneNumber())
                 .build();
     }
 
