@@ -1,22 +1,16 @@
-package com.example.directoryservice.service;
+package com.example.orderservice.service;
 
-import com.example.directoryservice.dto.AddressCreationRequestDto;
-import com.example.directoryservice.dto.AddressResponseDto;
-import com.example.directoryservice.model.Address;
-import com.example.directoryservice.repository.AddressRepository;
+import com.example.orderservice.dto.AddressCreationRequestDto;
+import com.example.orderservice.model.Address;
+import com.example.orderservice.repository.AddressRepository;
 import lombok.RequiredArgsConstructor;
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HexFormat;
-import java.util.Set;
 import java.util.StringJoiner;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,12 +18,8 @@ public class AddressService {
 
     private final AddressRepository addressRepository;
 
-    // private final Logger logger = LoggerFactory.getLogger(AddressService.class);
-
     /* Public Methods */
-
-    @Transactional
-    public void createAddress(AddressCreationRequestDto addressDto)
+    public Address createAddress(AddressCreationRequestDto addressDto)
             throws Exception
     {
         // check fields before sanitization
@@ -44,14 +34,11 @@ public class AddressService {
         // create Address entity hashed id
         String idAddress = generateHashedIdAddressFromFields(addressDto);
 
-        // create new Address entity and save it
-        addressRepository.save(creationRequestDtoToModel(idAddress, addressDto));
-    }
-
-    public Set<AddressResponseDto> getAllAddresses() {
-        return addressRepository.findAll().stream()
-                .map(this::modelToResponseDto)
-                .collect(Collectors.toSet());
+        // retrieve Address entity if it already exists, else create and save it
+        return addressRepository
+                .findById(idAddress)
+                .orElse(addressRepository.save(
+                        creationRequestDtoToModel(idAddress, addressDto)));
     }
 
     /* Private Methods */
@@ -107,18 +94,4 @@ public class AddressService {
             throw new Exception(e);
         }
     }
-
-    AddressResponseDto modelToResponseDto(Address address) {
-        return AddressResponseDto.builder()
-                .id(address.getId())
-                .number(address.getNumber())
-                .street(address.getStreet())
-                .city(address.getCity())
-                .state(address.getState())
-                .country(address.getCountry())
-                .zipcode(address.getZipcode())
-                .info(address.getInfo())
-                .build();
-    }
-
 }

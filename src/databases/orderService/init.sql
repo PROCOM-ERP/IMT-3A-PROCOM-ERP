@@ -141,7 +141,7 @@ CREATE TABLE order_products
     reference VARCHAR(128) NOT NULL,
     unit_price NUMERIC(10, 2) NOT NULL,
     quantity INT NOT NULL,
-    "order" INT NOT NULL,
+    "order" INT NOT NULL, -- quotes because order is a PostgreSQL reserved keyword
 
     CONSTRAINT pk_order_products PRIMARY KEY (id),
     CONSTRAINT fk_order_products_table_orders
@@ -162,11 +162,13 @@ VALUES ('admin'),
 
 INSERT INTO role_permissions (role, permission)
 VALUES ('admin', 'CanBypassAccessDeny'),
+       ('admin', 'CanCreateOrder'),
        ('admin', 'CanModifyRole'),
        ('admin', 'CanReadOrder'),
        ('admin', 'CanReadProvider'),
        ('admin', 'CanReadRole'),
 
+       ('user', 'CanCreateOrder'),
        ('user', 'CanReadOrder'),
        ('user', 'CanReadProvider');
 
@@ -179,10 +181,10 @@ VALUES ('A00001'),
 -- +----------------------------------------------------------------------------------------------+
 
 INSERT INTO addresses (id, number, street, city, country, zipcode)
-VALUES ('7d82842eb167c3ed224a329fba7fbb2820a8c99f3771f9e216b968c1cccd0d6e',
-        1, 'rue de la Paix', 'Paris', 'France', '75000'),
-       ('e8ffdf9a6ffc553cd234a04e6a5f63547838f367af45cb029f0c2a3412278412',
-        2, 'rue de la Paix', 'Paris', 'France', '75000');
+VALUES ('681370aec431f01f00f0949eecdd5afb640f6f9a195d14d5d229e722bc1ceb92',
+        1, 'Rue de la Paix', 'Paris', 'France', '75000'),
+       ('72e08cc844ccc2cde34dc2372166fe808f667d4dadbc4dd114386e4d9f88c574',
+        2, 'Rue de la Paix', 'Paris', 'France', '75000');
 
 -- +----------------------------------------------------------------------------------------------+
 
@@ -209,13 +211,13 @@ VALUES ('Created'),
 
 INSERT INTO orders (total_amount, quote, provider, orderer, approver, address)
 VALUES (900.00, 'CRE0000000001', 2, 2, 1,
-        '7d82842eb167c3ed224a329fba7fbb2820a8c99f3771f9e216b968c1cccd0d6e'),
+        '681370aec431f01f00f0949eecdd5afb640f6f9a195d14d5d229e722bc1ceb92'),
        (1650.00, 'WFAEAD547FB00892387', 1, 1, 1,
-        'e8ffdf9a6ffc553cd234a04e6a5f63547838f367af45cb029f0c2a3412278412');
+        '72e08cc844ccc2cde34dc2372166fe808f667d4dadbc4dd114386e4d9f88c574');
 
 -- +----------------------------------------------------------------------------------------------+
 
-INSERT INTO order_products (reference, unit_price, quantity, "order")
+INSERT INTO order_products (reference, unit_price, quantity, "order") -- quotes because order is a PostgreSQL reserved keyword
 VALUES ('Cotton1000', 5.00, 100, 1),
        ('Polyester500', 8.00, 50, 1),
 

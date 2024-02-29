@@ -1,8 +1,8 @@
-package com.example.directoryservice.dto;
+package com.example.orderservice.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.lang.Nullable;
 
 @Builder

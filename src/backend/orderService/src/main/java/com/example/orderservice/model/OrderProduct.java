@@ -38,7 +38,7 @@ public class OrderProduct {
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order")
+    @JoinColumn(name = "\"order\"") // quotes (escaped) because order is a PostgreSQL reserved keyword
     private Order order;
 
 }

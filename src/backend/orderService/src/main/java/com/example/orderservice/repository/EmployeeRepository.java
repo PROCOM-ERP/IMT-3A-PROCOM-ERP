@@ -17,4 +17,19 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer>, Jp
             "WHERE e.loginProfile.id = :idLoginProfile")
     Set<Integer> findAllIdsByIdLoginProfile(@NonNull @Param("idLoginProfile") String idLoginProfile);
 
+    @Query(value =
+            "SELECT e " +
+            "FROM Employee e " +
+            "WHERE e.loginProfile.id = :idLoginProfile AND " +
+                    "e.lastName = :lastName AND " +
+                    "e.firstName = :firstName AND " +
+                    "e.email = :email AND " +
+                    "e.phoneNumber = :phoneNumber")
+    Set<Employee> findLastCreatedEmployeeMatchingCriteria(
+            @NonNull @Param("idLoginProfile") String idLoginProfile,
+            @NonNull @Param("lastName") String lastName,
+            @NonNull @Param("firstName") String firstName,
+            @NonNull @Param("email") String email,
+            @NonNull @Param("phoneNumber") String phoneNumber);
+
 }
