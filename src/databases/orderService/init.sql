@@ -141,7 +141,7 @@ CREATE TABLE order_products
     reference VARCHAR(128) NOT NULL,
     unit_price NUMERIC(10, 2) NOT NULL,
     quantity INT NOT NULL,
-    "order" INT NOT NULL,
+    "order" INT NOT NULL, -- quotes because order is a PostgreSQL reserved keyword
 
     CONSTRAINT pk_order_products PRIMARY KEY (id),
     CONSTRAINT fk_order_products_table_orders
@@ -217,7 +217,7 @@ VALUES (900.00, 'CRE0000000001', 2, 2, 1,
 
 -- +----------------------------------------------------------------------------------------------+
 
-INSERT INTO order_products (reference, unit_price, quantity, "order")
+INSERT INTO order_products (reference, unit_price, quantity, "order") -- quotes because order is a PostgreSQL reserved keyword
 VALUES ('Cotton1000', 5.00, 100, 1),
        ('Polyester500', 8.00, 50, 1),
 
