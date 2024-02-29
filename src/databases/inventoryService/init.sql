@@ -13,19 +13,19 @@
 -- Creation of 'inventories'
 CREATE TABLE addresses (
     id_address SERIAL NOT NULL,
-    number VARCHAR(31),
-    street VARCHAR (255),
-    city VARCHAR (63) ,
-    state VARCHAR (63),
-    country VARCHAR (63),
-    postal_code VARCHAR(15),
+    number VARCHAR(31) NOT NULL,
+    street VARCHAR (255) NOT NULL,
+    city VARCHAR (63) NOT NULL,
+    state VARCHAR (63) NOT NULL,
+    country VARCHAR (63) NOT NULL,
+    postal_code VARCHAR(15) NOT NULL,
     info TEXT,
 
     CONSTRAINT pk_addresses PRIMARY KEY (id_address)
 );
 
 CREATE TABLE products (
-    id_product SERIAL NOT NULL ,
+    id_product SERIAL NOT NULL,
     title VARCHAR(127) NOT NULL,
     description TEXT,
 

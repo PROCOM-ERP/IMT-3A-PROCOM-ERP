@@ -1,6 +1,7 @@
 package com.example.inventoryservice.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
@@ -21,26 +22,32 @@ public class Address {
     private Integer id;
 
     @Size(max = 32)
+    @NotNull
     @Column(name = "number", length = 32)
     private String number;
 
     @Size(max = 255)
+    @NotNull
     @Column(name = "street")
     private String street;
 
     @Size(max = 63)
+    @NotNull
     @Column(name = "city", length = 63)
     private String city;
 
     @Size(max = 63)
+    @NotNull
     @Column(name = "state", length = 63)
     private String state;
 
     @Size(max = 63)
+    @NotNull
     @Column(name = "country", length = 63)
     private String country;
 
     @Size(max = 15)
+    @NotNull
     @Column(name = "postal_code", length = 15)
     private String postalCode;
 
