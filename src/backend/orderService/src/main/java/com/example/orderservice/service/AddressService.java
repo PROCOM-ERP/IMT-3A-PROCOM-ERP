@@ -60,14 +60,14 @@ public class AddressService {
     private void sanitizeAddressCreationRequestDto(AddressCreationRequestDto addressDto)
     {
         // sanitize fields before Address entity creation
-        addressDto.setStreet(addressDto.getStreet().trim().toLowerCase());
-        addressDto.setCity(addressDto.getCity().trim().toLowerCase());
+        addressDto.setStreet(addressDto.getStreet().trim());
+        addressDto.setCity(addressDto.getCity().trim());
         if (addressDto.getState() != null)
-            addressDto.setState(addressDto.getState().trim().toLowerCase());
-        addressDto.setCountry(addressDto.getCountry().trim().toLowerCase());
-        addressDto.setZipcode(addressDto.getZipcode().trim().toLowerCase());
+            addressDto.setState(addressDto.getState().trim());
+        addressDto.setCountry(addressDto.getCountry().trim());
+        addressDto.setZipcode(addressDto.getZipcode().trim());
         if (addressDto.getInfo() != null)
-            addressDto.setInfo(addressDto.getInfo().trim().toLowerCase());
+            addressDto.setInfo(addressDto.getInfo().trim());
     }
 
 
@@ -75,17 +75,15 @@ public class AddressService {
             AddressCreationRequestDto addressDto)
             throws Exception
     {
-        // join all fields before hashing operation
+        // join all fields (except state cause included in zipcode field) before hashing operation
         StringJoiner joiner = new StringJoiner("|");
         joiner.add(addressDto.getNumber().toString());
-        joiner.add(addressDto.getStreet());
-        joiner.add(addressDto.getCity());
-        if (addressDto.getState() != null)
-            joiner.add(addressDto.getState());
-        joiner.add(addressDto.getCountry());
-        joiner.add(addressDto.getZipcode());
+        joiner.add(addressDto.getStreet().toLowerCase());
+        joiner.add(addressDto.getCity().toLowerCase());
+        joiner.add(addressDto.getCountry().toLowerCase());
+        joiner.add(addressDto.getZipcode().toLowerCase());
         if (addressDto.getInfo() != null)
-            joiner.add(addressDto.getInfo());
+            joiner.add(addressDto.getInfo().toLowerCase());
 
         // hash char sequence and convert it into hexadecimal format
         try {
