@@ -182,9 +182,9 @@ VALUES ('A00001'),
 
 INSERT INTO addresses (id, number, street, city, country, zipcode)
 VALUES ('681370aec431f01f00f0949eecdd5afb640f6f9a195d14d5d229e722bc1ceb92',
-        1, 'rue de la Paix', 'Paris', 'France', '75000'),
+        1, 'rue de la paix', 'paris', 'france', '75000'),
        ('72e08cc844ccc2cde34dc2372166fe808f667d4dadbc4dd114386e4d9f88c574',
-        2, 'rue de la Paix', 'Paris', 'France', '75000');
+        2, 'rue de la paix', 'paris', 'france', '75000');
 
 -- +----------------------------------------------------------------------------------------------+
 

@@ -11,6 +11,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -23,6 +25,8 @@ import java.net.URI;
 public class OrderController {
 
     private final OrderService orderService;
+
+    private final Logger logger = LoggerFactory.getLogger(OrderController.class);
 
     @PostMapping
     @Operation(operationId = "createOrder", tags = {"orders"},
@@ -49,15 +53,20 @@ public class OrderController {
             throws Exception
     {
         // try to create a new entity
-        Integer idOrder = orderService.createOrder(orderDto);
-        // generate URI location to inform the client how to get information on the new entity
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .path(Path.ORDER_ID)
-                .buildAndExpand(idOrder)
-                .toUri();
-        // send the response with 201 Http status
-        return ResponseEntity.created(location).build();
+        try {
+            Integer idOrder = orderService.createOrder(orderDto);
+            // generate URI location to inform the client how to get information on the new entity
+            URI location = ServletUriComponentsBuilder
+                    .fromCurrentRequest()
+                    .path(Path.ORDER_ID)
+                    .buildAndExpand(idOrder)
+                    .toUri();
+            // send the response with 201 Http status
+            return ResponseEntity.created(location).build();
+        } catch (Exception e) {
+            logger.error("Something wrong occured", e);
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
     }
 
     @GetMapping
@@ -79,10 +88,15 @@ public class OrderController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<OrdersByIdLoginProfileResponseDto> getAllOrdersByIdLoginProfile(
+    public ResponseEntity<?> getAllOrdersByIdLoginProfile(
             @RequestParam("idLoginProfile") String idLoginProfile)
     {
-        return ResponseEntity.ok(orderService.getAllOrdersByIdLoginProfile(idLoginProfile));
+        try {
+            return ResponseEntity.ok(orderService.getAllOrdersByIdLoginProfile(idLoginProfile));
+        } catch (Exception e) {
+            logger.error("Something wrong occured", e);
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
     }
 
 }

@@ -131,7 +131,9 @@ public class OrderService {
                 .createdAt(Date.from(order.getCreatedAt()))
                 .provider(order.getProvider().getName())
                 .totalAmount(order.getTotalAmount())
-                .approver(order.getApprover().getFirstName() + " " + order.getApprover().getLastName())
+                .approver(order.getApprover() != null ?
+                        order.getApprover().getFirstName() + " " + order.getApprover().getLastName() :
+                        null)
                 .status(order.getProgressStatus().getName())
                 .build();
     }

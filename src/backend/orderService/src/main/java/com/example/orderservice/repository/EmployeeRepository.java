@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.lang.NonNull;
 
-import java.util.Optional;
 import java.util.Set;
 
 public interface EmployeeRepository extends JpaRepository<Employee, Integer>, JpaSpecificationExecutor<Employee> {
@@ -26,7 +25,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer>, Jp
                     "e.firstName = :firstName AND " +
                     "e.email = :email AND " +
                     "e.phoneNumber = :phoneNumber")
-    Optional<Employee> findLastCreatedEmployeeMatchingCriteria(
+    Set<Employee> findLastCreatedEmployeeMatchingCriteria(
             @NonNull @Param("idLoginProfile") String idLoginProfile,
             @NonNull @Param("lastName") String lastName,
             @NonNull @Param("firstName") String firstName,

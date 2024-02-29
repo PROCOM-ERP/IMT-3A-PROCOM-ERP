@@ -38,7 +38,7 @@ public class OrderProduct {
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order")
+    @JoinColumn(name = "\"order\"")
     private Order order;
 
 }
