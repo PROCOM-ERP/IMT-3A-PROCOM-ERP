@@ -45,8 +45,7 @@ public class EmployeeService {
     }
 
     public EmployeeResponseDto getEmployeeAndAddressById(String idEmployee) throws
-            NoSuchElementException
-    {
+            NoSuchElementException {
         List<Object[]> results = employeeRepository.findEmployeeAndLastOrderAddressByIdLoginProfile(
                 idEmployee, PageRequest.of(0, 1));
         if (!results.isEmpty()) {
@@ -54,8 +53,9 @@ public class EmployeeService {
             Employee employee = (Employee) result[0];
             Address address = (Address) result[1];
             return employeeAndAddressToEmployeeResponseDto(employee, address);
+        } else {
+            throw new NoSuchElementException("No employee and address information found in orders for this ID");
         }
-        throw new NoSuchElementException("No employee and address information found in orders for this ID");
     }
 
     /* Private Methods */
