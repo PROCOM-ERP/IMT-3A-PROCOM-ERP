@@ -49,16 +49,6 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "Role information retrieved correctly",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RoleResponseDto"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Uncontrolled error appeared",
             "content": {
@@ -75,6 +65,16 @@
             "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
             "content": {
               "application/json": {}
+            }
+          },
+          "200": {
+            "description": "Role information retrieved correctly",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoleResponseDto"
+                }
+              }
             }
           }
         }
@@ -108,26 +108,26 @@
           "required": true
         },
         "responses": {
-          "400": {
-            "description": "The request body is badly structured or formatted",
-            "content": {
-              "application/json": {}
-            }
-          },
-          "204": {
-            "description": "Role permissions and / or activation status updated correctly",
-            "content": {
-              "application/json": {}
-            }
-          },
           "422": {
             "description": "Attribute values don't respect integrity constraints.<br>Permissions : retrieve a role information for the microservice, to know which one are available.<br>isEnable : provide a boolean to modify value (can be null to keep current value).",
             "content": {
               "application/json": {}
             }
           },
+          "400": {
+            "description": "The request body is badly structured or formatted",
+            "content": {
+              "application/json": {}
+            }
+          },
           "500": {
             "description": "Uncontrolled error appeared",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "204": {
+            "description": "Role permissions and / or activation status updated correctly",
             "content": {
               "application/json": {}
             }
@@ -209,8 +209,8 @@
           "required": true
         },
         "responses": {
-          "201": {
-            "description": "Order created correctly",
+          "422": {
+            "description": "Attribute values don't respect integrity constraints.",
             "content": {
               "application/json": {}
             }
@@ -227,14 +227,14 @@
               "application/json": {}
             }
           },
-          "422": {
-            "description": "Attribute values don't respect integrity constraints.",
+          "401": {
+            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
             "content": {
               "application/json": {}
             }
           },
-          "401": {
-            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
+          "201": {
+            "description": "Order created correctly",
             "content": {
               "application/json": {}
             }
@@ -251,16 +251,6 @@
         "description": "Retrieve all roles.<br>Only available for admins.",
         "operationId": "getAllRoles",
         "responses": {
-          "200": {
-            "description": "Roles information retrieved correctly",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RoleActivationResponseDto"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Uncontrolled error appeared",
             "content": {
@@ -271,6 +261,16 @@
             "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
             "content": {
               "application/json": {}
+            }
+          },
+          "200": {
+            "description": "Roles information retrieved correctly",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoleActivationResponseDto"
+                }
+              }
             }
           }
         }
@@ -302,6 +302,12 @@
               "application/json": {}
             }
           },
+          "401": {
+            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
+            "content": {
+              "application/json": {}
+            }
+          },
           "404": {
             "description": "Role activation status not found for role provided",
             "content": {
@@ -316,12 +322,6 @@
                   "$ref": "#/components/schemas/RoleActivationResponseDto"
                 }
               }
-            }
-          },
-          "401": {
-            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
-            "content": {
-              "application/json": {}
             }
           }
         }
@@ -391,8 +391,8 @@
           "employees"
         ],
         "summary": "Retrieve one employee information",
-        "description": "Retrieve one employee information, by providing its id.",
-        "operationId": "getEmployeeById",
+        "description": "Retrieve one employee information, including its address, by providing its id.",
+        "operationId": "getEmployeeAndAddressById",
         "parameters": [
           {
             "name": "idEmployee",
@@ -405,14 +405,20 @@
           }
         ],
         "responses": {
-          "404": {
-            "description": "Employee not found",
+          "500": {
+            "description": "Uncontrolled error appeared",
             "content": {
               "application/json": {}
             }
           },
-          "500": {
-            "description": "Uncontrolled error appeared",
+          "401": {
+            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "404": {
+            "description": "Employee not found",
             "content": {
               "application/json": {}
             }
@@ -425,12 +431,6 @@
                   "$ref": "#/components/schemas/EmployeeResponseDto"
                 }
               }
-            }
-          },
-          "401": {
-            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
-            "content": {
-              "application/json": {}
             }
           }
         }
@@ -695,8 +695,43 @@
           }
         }
       },
+      "AddressResponseDto": {
+        "required": [
+          "city",
+          "country",
+          "number",
+          "street",
+          "zipcode"
+        ],
+        "type": "object",
+        "properties": {
+          "number": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "street": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string"
+          },
+          "zipcode": {
+            "type": "string"
+          },
+          "info": {
+            "type": "string"
+          }
+        }
+      },
       "EmployeeResponseDto": {
         "required": [
+          "address",
           "email",
           "firstName",
           "id",
@@ -719,6 +754,9 @@
           },
           "phoneNumber": {
             "type": "string"
+          },
+          "address": {
+            "$ref": "#/components/schemas/AddressResponseDto"
           }
         }
       }
