@@ -22,5 +22,7 @@ public class EmployeeResponseDto {
     private String email;
     @NotNull
     private String phoneNumber;
+    @NotNull
+    private AddressResponseDto address;
 
 }

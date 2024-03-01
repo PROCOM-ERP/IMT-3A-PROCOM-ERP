@@ -24,9 +24,9 @@ public class EmployeeController {
     private final EmployeeService employeeService;
 
     @GetMapping(Path.EMPLOYEE_ID)
-    @Operation(operationId = "getEmployeeById", tags = {"employees"},
+    @Operation(operationId = "getEmployeeAndAddressById", tags = {"employees"},
             summary = "Retrieve one employee information", description =
-            "Retrieve one employee information, by providing its id.",
+            "Retrieve one employee information, including its address, by providing its id.",
             parameters = {@Parameter(name = "idEmployee", description =
                     "The employee username (6 characters identifier)")})
     @ApiResponses(value = {
@@ -43,8 +43,9 @@ public class EmployeeController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<EmployeeResponseDto> getEmployeeById(@PathVariable String idEmployee)
+    public ResponseEntity<EmployeeResponseDto> getEmployeeAndAddressById(
+            @PathVariable String idEmployee)
     {
-        return ResponseEntity.ok(employeeService.getEmployeeById(idEmployee));
+        return ResponseEntity.ok(employeeService.getEmployeeAndAddressById(idEmployee));
     }
 }

@@ -1,16 +1,20 @@
 package com.example.orderservice.service;
 
+import com.example.orderservice.dto.AddressResponseDto;
 import com.example.orderservice.dto.EmployeeCreationRequestDto;
 import com.example.orderservice.dto.EmployeeResponseDto;
+import com.example.orderservice.model.Address;
 import com.example.orderservice.model.Employee;
 import com.example.orderservice.model.LoginProfile;
 import com.example.orderservice.repository.EmployeeRepository;
 import com.example.orderservice.repository.LoginProfileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
@@ -40,13 +44,18 @@ public class EmployeeService {
                 .orElse(employeeRepository.save(creationRequestDtoToModel(employeeDto, loginProfile)));
     }
 
-    public EmployeeResponseDto getEmployeeById(String idEmployee) throws
+    public EmployeeResponseDto getEmployeeAndAddressById(String idEmployee) throws
             NoSuchElementException
     {
-        return employeeRepository.findAllEmployeesById(idEmployee).stream()
-                .max(Comparator.comparing(Employee::getCreatedAt))
-                .map(this::modelToResponseDto)
-                .orElseThrow();
+        List<Object[]> results = employeeRepository.findEmployeeAndLastOrderAddressByIdLoginProfile(
+                idEmployee, PageRequest.of(0, 1));
+        if (!results.isEmpty()) {
+            Object[] result = results.get(0);
+            Employee employee = (Employee) result[0];
+            Address address = (Address) result[1];
+            return employeeAndAddressToEmployeeResponseDto(employee, address);
+        }
+        throw new NoSuchElementException("No employee and address information found in orders for this ID");
     }
 
     /* Private Methods */
@@ -71,14 +80,22 @@ public class EmployeeService {
                 .build();
     }
 
-    private EmployeeResponseDto modelToResponseDto(Employee employee)
-    {
+    private EmployeeResponseDto employeeAndAddressToEmployeeResponseDto(Employee employee, Address address) {
         return EmployeeResponseDto.builder()
                 .id(employee.getLoginProfile().getId())
                 .lastName(employee.getLastName())
                 .firstName(employee.getFirstName())
                 .email(employee.getEmail())
                 .phoneNumber(employee.getPhoneNumber())
+                .address(AddressResponseDto.builder()
+                        .number(address.getNumber())
+                        .street(address.getStreet())
+                        .city(address.getCity())
+                        .state(address.getState())
+                        .country(address.getCountry())
+                        .zipcode(address.getZipcode())
+                        .info(address.getInfo())
+                        .build())
                 .build();
     }
 

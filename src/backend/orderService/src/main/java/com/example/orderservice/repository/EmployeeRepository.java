@@ -1,12 +1,14 @@
 package com.example.orderservice.repository;
 
 import com.example.orderservice.model.Employee;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.lang.NonNull;
 
+import java.util.List;
 import java.util.Set;
 
 public interface EmployeeRepository extends JpaRepository<Employee, Integer>, JpaSpecificationExecutor<Employee> {
@@ -23,5 +25,13 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer>, Jp
             "WHERE e.loginProfile.id = :idLoginProfile " +
             "ORDER BY e.createdAt DESC")
     Set<Employee> findAllEmployeesById(@NonNull @Param("idLoginProfile") String idLoginProfile);
+
+    @Query("SELECT e, a " +
+            "FROM Employee e " +
+            "JOIN Order o ON e.id = o.orderer.id " +
+            "JOIN Address a ON o.address.id = a.id " +
+            "WHERE e.loginProfile.id = :idLoginProfile " +
+            "ORDER BY o.createdAt DESC")
+    List<Object[]> findEmployeeAndLastOrderAddressByIdLoginProfile(@Param("idLoginProfile") String idLoginProfile, Pageable pageable);
 
 }
