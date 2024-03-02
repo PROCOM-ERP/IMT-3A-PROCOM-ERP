@@ -17,6 +17,7 @@ import org.springframework.context.annotation.Profile;
                         "Service to manage orders for the company."),
         tags = {
                 @Tag(name = "hello"),
+                @Tag(name = "employees"),
                 @Tag(name = "orders"),
                 @Tag(name = "providers"),
                 @Tag(name = "roles")

@@ -8,6 +8,8 @@ import org.springframework.http.HttpMethod;
 @Getter
 public enum Endpoint {
 
+    GET_V1_EMPLOYEES_ID(HttpMethod.GET, Path.V1_EMPLOYEES_ANYONE, Permission.CanReadEmployee),
+
     GET_V1_PROVIDERS(HttpMethod.GET, Path.V1_PROVIDERS, Permission.CanReadProvider),
 
     GET_V1_ORDERS(HttpMethod.GET, Path.V1_ORDERS, Permission.CanReadOrder),
