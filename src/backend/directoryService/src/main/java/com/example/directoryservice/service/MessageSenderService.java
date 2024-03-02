@@ -7,6 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.TopicExchange;
+import org.springframework.amqp.core.MessageDeliveryMode;
+import org.springframework.amqp.core.MessagePostProcessor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
@@ -27,7 +29,25 @@ public class MessageSenderService implements CommandLineRunner {
         logger.info("Sending message about service initialisation to retrieve its roles...");
         String resource = Path.ROLES;
         String path = customHttpRequestBuilder.buildPath(Path.V1, resource);
-        rabbitTemplate.convertAndSend(rolesDirectExchange.getName(), "roles.init", path);
+
+        // Setting the init roles messages to mandatory, as well as return message
+        // format
+        // We will have more information if the message is sent back
+        RabbitTemplate mandatoryTemplate = rabbitTemplate;
+        mandatoryTemplate.setMandatory(true);
+        mandatoryTemplate.setReturnsCallback(returned -> {
+            logger.error("Message returned with reply code: " + returned.getReplyCode() +
+                    ", reply text: " + returned.getReplyText() +
+                    ", exchange: " + returned.getExchange() +
+                    ", routingKey: " + returned.getRoutingKey());
+        });
+
+        MessagePostProcessor messagePostProcessor = message -> {
+            message.getMessageProperties().setDeliveryMode(MessageDeliveryMode.PERSISTENT);
+            return message;
+        };
+
+        mandatoryTemplate.convertAndSend(rolesDirectExchange.getName(), "roles.init", path, messagePostProcessor);
         logger.info("Message sent");
     }
 
