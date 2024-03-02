@@ -21,12 +21,15 @@ public class ProductRequestDto {
     private String title;
     @Pattern(regexp = "^[^';\"\\\\]*$")
     private String description;
-    @NotEmpty
+    @Pattern(regexp = "^[^';\"\\\\]*$")
     private List<Integer> categories;   // This contains the id of each category.
+    @Pattern(regexp = "^[^';\"\\\\]*$")
     private List<ProductMetaRequestDto> productMeta;
     @Min(0)
     @NotNull
+    @Pattern(regexp = "^[^';\"\\\\]*$")
     private Integer numberOfItem;       // Defines the initial quantity of this product.
     @Min(0)
+    @Pattern(regexp = "^[^';\"\\\\]*$")
     private Integer address;    // Should be empty if numberOfItem == 0;
 }

@@ -1,5 +1,6 @@
 package com.example.inventoryservice.controller;
 
+import com.example.inventoryservice.InventoryServiceApplication;
 import com.example.inventoryservice.dto.ItemDto;
 import com.example.inventoryservice.dto.ProductDto;
 import com.example.inventoryservice.dtoRequest.MoveItemRequestDto;
@@ -16,6 +17,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +33,7 @@ public class ProductController {
 
     private final ProductService productService;
     private final ItemService itemService;
+    private final Logger logger = LoggerFactory.getLogger(InventoryServiceApplication.class);
 
     @GetMapping("/{id}")
     @Operation(operationId = "getProductById", tags = {"product", "inventory"},
@@ -186,18 +190,25 @@ public class ProductController {
     }
 
     /**
-     * Function that check the values of the request.
+     * Function that check the values of the request. Returns true if the fields are valid.
      * @param dtoObject: input object.
      * @return boolean
      */
     private boolean checkValidity(Object dtoObject){
-        if(dtoObject instanceof ProductRequestDto){
-            if(((ProductRequestDto) dtoObject).getNumberOfItem() > 0){
-                return ((ProductRequestDto) dtoObject).getAddress() != null &&
-                        ((ProductRequestDto) dtoObject).getAddress() > 0;
+        if(dtoObject instanceof ProductRequestDto request){
+            if (request.getNumberOfItem() == 0){
+                return (request.getAddress() == null);
+            }
+            else if (request.getNumberOfItem() <= 0){
+                return false;
+            }
+            else{
+                return (request.getAddress() != null &&
+                        request.getAddress() > 0);
             }
         }
-        return true;
+        // Should always return false:
+        return false;
     }
 
     //Later: add renameProduct(); changeMetaData(); addMetaData(); removeMetaData()
