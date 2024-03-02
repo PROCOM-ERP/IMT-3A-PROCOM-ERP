@@ -207,7 +207,7 @@ public class ProductController {
                         request.getAddress() > 0);
             }
         }
-        // Should always return false:
+        // This should be nether be reached:
         return false;
     }
 
