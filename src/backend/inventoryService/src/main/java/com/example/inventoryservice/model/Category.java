@@ -32,7 +32,7 @@ public class Category {
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-            name = "category_product",
+            name = "joint_category_product",
             joinColumns = @JoinColumn(name = "id_category"),
             inverseJoinColumns = @JoinColumn(name = "id_product")
     )
