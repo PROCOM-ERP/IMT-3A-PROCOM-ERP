@@ -109,7 +109,7 @@ VALUES (1, 1),
 
 INSERT INTO addresses (number, street, city, state, country, postal_code, info)
 VALUES ('15', 'entrepot de Malta Shopper', 'Malte', 'Valleta', 'Malte', '66666', 'je n''y reviendrai plus jamais !'),
-       ('100', 'Rue Louis veuillot', 'Brest', 'Bretage', 'France', '27000', '@ du challet';
+       ('100', 'Rue Louis veuillot', 'Brest', 'Bretage', 'France', '27000', '@ du challet');
 
 INSERT INTO items (quantity, id_address, id_product)
 VALUES (12, 1, 1),

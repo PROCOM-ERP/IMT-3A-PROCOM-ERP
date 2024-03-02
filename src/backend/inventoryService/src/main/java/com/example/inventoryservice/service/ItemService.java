@@ -144,7 +144,7 @@ public class ItemService {
         // Employee employee = employeeRepository.findById(newQuantity.getEmployeeId()).orElseThrow(
         //                () -> new NoSuchElementException("The employee Id refers to a non-existent employee."));
 
-        if (Objects.equals(address.getId(), moveItemRequest.getAddressId())){
+        if (Objects.equals(item.getAddress().getId(), moveItemRequest.getAddressId())){
             throw new DataIntegrityViolationException("The pointed address is the same as before.");   // E422
         }
 
