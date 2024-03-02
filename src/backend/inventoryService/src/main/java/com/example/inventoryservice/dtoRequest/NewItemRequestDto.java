@@ -21,6 +21,7 @@ public class NewItemRequestDto {
     @NotNull
     @Size(max=6)
     @Pattern(regexp = "[A-Z][0-9]{5}")
+    @Pattern(regexp = "^[^';\"\\\\]*$")
     private String employee;
     @Min(0)
     @NotNull

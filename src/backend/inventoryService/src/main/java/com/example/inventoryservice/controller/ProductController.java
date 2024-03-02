@@ -33,7 +33,7 @@ public class ProductController {
 
     private final ProductService productService;
     private final ItemService itemService;
-    private final Logger logger = LoggerFactory.getLogger(InventoryServiceApplication.class);
+    //private final Logger logger = LoggerFactory.getLogger(InventoryServiceApplication.class);
 
     @GetMapping("/{id}")
     @Operation(operationId = "getProductById", tags = {"product", "inventory"},
