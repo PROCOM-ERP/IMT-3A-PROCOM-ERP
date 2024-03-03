@@ -39,9 +39,10 @@ public class MessageReceiverService {
         try {
             if ("/api/directory/v1/roles".equals(getAllRolesPath) && retryCount == null) {
                 try {
-                    logger.info(
-                            "Begginning sleep, for demonstration purpose, you have 20 seconds to pause Springboot Directory container");
-                    Thread.sleep(20000);
+                    // logger.info(
+                    // "Begginning sleep, for demonstration purpose, you have 20 seconds to pause
+                    // Springboot Directory container");
+                    // Thread.sleep(20000);
                 } catch (Exception e) {
                     logger.error("Failed to sleep for the demonstration", e);
                 }
