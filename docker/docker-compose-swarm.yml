@@ -35,6 +35,10 @@ secrets:
     external: true
   DB_INVENTORY_SERVICE_PASSWORD:
     external: true
+  DB_ORDER_SERVICE_USER:
+    external: true
+  DB_ORDER_SERVICE_PASSWORD:
+    external: true
   BACKEND_MESSAGE_BROKER_SERVICE_USERNAME:
     external: true
   BACKEND_MESSAGE_BROKER_SERVICE_PASSWORD:
@@ -58,6 +62,10 @@ secrets:
   BACKEND_INVENTORY_SERVICE_HTTPS_KEY_STORE_ALIAS:
     external: true
   BACKEND_INVENTORY_SERVICE_HTTPS_KEY_STORE_PASSWORD:
+    external: true
+  BACKEND_ORDER_SERVICE_HTTPS_KEY_STORE_ALIAS:
+    external: true
+  BACKEND_ORDER_SERVICE_HTTPS_KEY_STORE_PASSWORD:
     external: true
   FRONTEND_WEBAPP_SERVICE_HTTPS_KEY_STORE_ALIAS:
     external: true
@@ -163,6 +171,36 @@ services:
     networks:
       - vnet-procom-erp
     command: -c 'port=${DB_INVENTORY_SERVICE_PORT_INT}'
+
+  # +-----------------------------------------------------------------------------+
+
+  postgres-procom-erp-order-service:
+    image: ${DB_ORDER_SERVICE_HOSTNAME}:${DB_ORDER_SERVICE_IMAGE_VERSION}
+    build:
+      context: ${DB_ORDER_SERVICE_PATH}
+      dockerfile: Dockerfile
+      args:
+        DB_IMAGE: ${DB_IMAGE}
+    hostname: ${DB_ORDER_SERVICE_HOSTNAME}
+    environment:
+      POSTGRES_DB: ${DB_ORDER_SERVICE_DB}
+    secrets:
+      - DB_ORDER_SERVICE_USER
+      - DB_ORDER_SERVICE_PASSWORD
+    ports:
+      - "${DB_ORDER_SERVICE_PORT_EXT}:${DB_ORDER_SERVICE_PORT_INT}"
+    volumes:
+      - db-procom-erp-order-service-data:/var/lib/postgresql/data
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    networks:
+      - vnet-procom-erp
+    command: -c 'port=${DB_ORDER_SERVICE_PORT_INT}'
 
   # +---------------------------------------------------------------------------+
   # | Backend containers section                                                |
@@ -334,6 +372,52 @@ services:
 
   # +---------------------------------------------------------------------------+
 
+  springboot-procom-erp-order-service:
+    image: ${BACKEND_ORDER_SERVICE_HOSTNAME}:${BACKEND_ORDER_SERVICE_IMAGE_VERSION}
+    build:
+      context: ${BACKEND_ORDER_SERVICE_PATH}
+      dockerfile: Dockerfile
+      args:
+        JAVA_BUILD_IMAGE: ${JAVA_BUILD_IMAGE}
+        JAVA_IMAGE: ${JAVA_IMAGE}
+        MAVEN_JAVA_VERSION: ${MAVEN_JAVA_VERSION}
+        BACKEND_ORDER_SERVICE_IMAGE_VERSION: ${BACKEND_ORDER_SERVICE_IMAGE_VERSION}
+        MAVEN_SPRING_BOOT_VERSION: ${MAVEN_SPRING_BOOT_VERSION}
+        MAVEN_SPRINGDOC_OPENAPI_VERSION: ${MAVEN_SPRINGDOC_OPENAPI_VERSION}
+        MAVEN_APACHE_HTTP_VERSION: ${MAVEN_APACHE_HTTP_VERSION}
+        MAVEN_AMQP_VERSION: ${MAVEN_AMQP_VERSION}
+        MAVEN_POSTGRESQL_VERSION: ${MAVEN_POSTGRESQL_VERSION}
+        MAVEN_LOMBOK_VERSION: ${MAVEN_LOMBOK_VERSION}
+        MAVEN_SPRING_SECURITY_TEST_VERSION: ${MAVEN_SPRING_SECURITY_TEST_VERSION}
+        BACKEND_ORDER_SERVICE_PORT_INT: ${BACKEND_ORDER_SERVICE_PORT_INT}
+        BACKEND_MESSAGE_BROKER_SERVICE_PORT_INT: ${BACKEND_MESSAGE_BROKER_SERVICE_PORT_INT}
+        SECURITY_TRUST_STORE_PATH: ${SECURITY_TRUST_STORE_PATH}
+        ENTRYPOINT: ${ENTRYPOINT}
+    hostname: ${BACKEND_ORDER_SERVICE_HOSTNAME}
+    env_file: ./.env
+    secrets:
+      - DB_ORDER_SERVICE_USER
+      - DB_ORDER_SERVICE_PASSWORD
+      - BACKEND_MESSAGE_BROKER_SERVICE_USERNAME
+      - BACKEND_MESSAGE_BROKER_SERVICE_PASSWORD
+      - BACKEND_ORDER_SERVICE_HTTPS_KEY_STORE_ALIAS
+      - BACKEND_ORDER_SERVICE_HTTPS_KEY_STORE_PASSWORD
+      - SECURITY_JWT_SECRET_KEY
+      - SECURITY_JWT_CLAIMS_KEY_ROLES
+      - SECURITY_SERVICES_SHARED_KEY
+      - SECURITY_TRUST_STORE_PASSWORD
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    networks:
+      - vnet-procom-erp
+
+  # +---------------------------------------------------------------------------+
+
   springboot-procom-erp-inventory-service:
     image: ${BACKEND_INVENTORY_SERVICE_HOSTNAME}:${BACKEND_INVENTORY_SERVICE_IMAGE_VERSION}
     build:
@@ -424,4 +508,5 @@ volumes:
   db-procom-erp-authentication-service-data:
   db-procom-erp-directory-service-data:
   db-procom-erp-inventory-service-data:
+  db-procom-erp-order-service-data:
   procom-erp-message-broker-service-data:
