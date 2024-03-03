@@ -11,9 +11,23 @@
 # | System-relative Functions                                                   |
 # +-----------------------------------------------------------------------------+
 
-security() {
-    $(${security_path}/security_setup.sh)
+clean_security() {
+    if [ "$CA" == "true" ]; then
+        echo "Cleaning certificates along with the CA's"
+        ${security_path}/clean_security.sh "--CA" >/dev/null 2>&1;
+    else
+        echo "Cleaning certificates"
+        ${security_path}/clean_security.sh >/dev/null 2>&1;
+    fi
 }
+
+# +-----------------------------------------------------------------------------+
+
+security() {
+    echo "Generating certificates"
+    ${security_path}/security_setup.sh
+}
+
 
 # +-----------------------------------------------------------------------------+
 
@@ -235,6 +249,8 @@ if ! [ -f "${docker_path}/docker-compose-swarm.yml" ]; then
 fi
 
 SWARM=false
+CLEAN_SEC=false
+CA=false
 SEC=false
 PUSH=false
 PULL=false
@@ -253,6 +269,15 @@ while [[ $# -gt 0 ]]; do
             SWARM=true
             COMPOSE_FILE="${docker_path}/docker-compose-swarm.yml"
             shift
+            ;;
+        --clean-sec)
+            CLEAN_SEC=true
+            if [ -n "$2" ] && [ "${2:0:1}" != "-" ] && [ "$2" == "CA" ]; then
+                CA=true
+                shift 2
+            else
+                shift
+            fi
             ;;
         --sec)
             SEC=true
@@ -299,20 +324,21 @@ while [[ $# -gt 0 ]]; do
             shift
             ;;
         --help)
-            echo "Usage: ./deploy.sh '--option' [value]"
+            echo "Usage: ./deploy.sh '--option' \"[value]\""
             echo " "
             echo "Possible options:"
             echo "        '--swarm': ------------------->  Deploy using Docker Swarm mode."
+            echo "        '--clean-sec' \"[CA]\": ---------->  Execute the clean security setup script as well, --sec option is required if you use this option. CA is optional"
             echo "        '--sec'  --------------------->  Execute the security setup script as well."
-            echo "        '--push' [repository/image]: ->  Tag and push Docker images to a repository, then deploy."
-            echo "        '--pull' [repository/image]: ->  Pull Docker images from a repository from which to deploy."
-            echo "        '--version' [version]: ------->  Specify the version of the images to use for the pull option."
+            echo "        '--push' \"[repository/image]\": ->  Tag and push Docker images to a repository, then deploy."
+            echo "        '--pull' \"[repository/image]\": ->  Pull Docker images from a repository from which to deploy, --version is required if you use this option"
+            echo "        '--version' \"[version]\": ------->  Specify the version of the images to use for the pull option."
             echo "        '--hot': --------------------->  Force redeployment even if the stack is already running, for swarm mode."
             echo "        '--help': -------------------->  Display this help message."
             echo "        '--doc': --------------------->  Display the deployment documentation."
             echo " "
             echo "Examples:"
-            echo "        './deploy.sh --swarm --sec --pull --version 1.0.0 --hot'"
+            echo "        './deploy.sh --swarm --clean-sec CA --sec --pull --version 1.0.0 --hot'"
             echo "        './deploy.sh --help'"
             echo "        './deploy.sh --doc'"
             echo " "
@@ -339,10 +365,21 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
+# +-----------------------------------------------------------------------------+
+
 if [ "$PULL" != "$VERSION_SPECIFIED" ]; then
     echo "Usage:    "
     echo " "
     echo "When using --pull 'registry/image', please also use --version to specify the version you'd like to pull."
+    exit 1
+fi
+
+# +-----------------------------------------------------------------------------+
+
+if [ "$SEC" != "$CLEAN_SEC" ]  && [ "$CLEAN_SEC" == "true" ]; then
+    echo "Usage:    "
+    echo " "
+    echo "When using --clean-sec, please also use --sec option, otherwise you'll face certificate problems."
     exit 1
 fi
 
@@ -359,7 +396,8 @@ if [ "$SWARM" == "true" ]; then
         docker swarm init > /dev/null 2>&1
         echo "Swarm initialized"
         # +---Docker Secrets for swarm mode-------------------------------------+
-        $(${security_path}/docker_secrets.sh) > /dev/null 2>&1
+        echo "Generating docker secrets for Swarm"
+        ${security_path}/docker_secrets.sh > /dev/null 2>&1
     else
         echo "Swarm detected"
     fi
@@ -378,11 +416,16 @@ if [ "$SWARM" == "true" ]; then
         fi
     done
 else
-# +---Docker Secrets for simple compose-----------------------------------------+
-    $(${security_path}/docker_secrets_files.sh) > /dev/null 2>&1
+    # +---Docker Secrets for simple compose-------------------------------------+
+    echo "Generating docker secrets"
+    ${security_path}/docker_secrets_files.sh
 fi
 
 # +---System-relative setup-----------------------------------------------------+
+
+if [ "$CLEAN_SEC" == "true" ]; then
+    clean_security
+fi
 
 if [ "$SEC" == "true" ]; then
     security
