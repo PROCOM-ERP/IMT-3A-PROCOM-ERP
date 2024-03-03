@@ -306,7 +306,7 @@ while [[ $# -gt 0 ]]; do
             echo "        '--sec'  --------------------->  Execute the security setup script as well."
             echo "        '--push' [repository/image]: ->  Tag and push Docker images to a repository, then deploy."
             echo "        '--pull' [repository/image]: ->  Pull Docker images from a repository from which to deploy."
-            echo "        '--version' [version]: ------>  Specify the version of the images to use for the pull option."
+            echo "        '--version' [version]: ------->  Specify the version of the images to use for the pull option."
             echo "        '--hot': --------------------->  Force redeployment even if the stack is already running, for swarm mode."
             echo "        '--help': -------------------->  Display this help message."
             echo "        '--doc': --------------------->  Display the deployment documentation."
