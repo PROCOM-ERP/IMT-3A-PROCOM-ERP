@@ -14,7 +14,7 @@ if docker info 2>/dev/null | grep -q "Swarm: active"; then
     docker swarm leave --force
 else
     cd ${docker_path}
-    docker-compose down
+    docker compose down
+    cd ../
 fi
 
-cd ../
