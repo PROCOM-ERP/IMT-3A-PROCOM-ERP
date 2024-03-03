@@ -86,6 +86,9 @@ move_service_files() {
 
     mv "${src_path}/${service_type}/${service}Service/${service}-service-keystore.p12" "${archive_dir}/" 2>/dev/null
 
+    if [[ "${include_ca}" == "true" ]]; then
+        mv "${src_path}/${service_type}/${service}Service/procom-erp-truststore.jks" "${archive_dir}/" 2>/dev/null
+    fi
     
     # If the service is 'message-broker', move the PEM files as well
     if [ "${service}" = "message-broker" ]; then
@@ -97,8 +100,8 @@ move_service_files() {
     
     # If the service is 'webapp', move the PEM files as well
     if [ "${service}" = "webapp" ]; then
-        rm "${src_path}/${service_type}/${service}Service/${service}-service.crt"
-        rm "${src_path}/${service_type}/${service}Service/${service}-service.key"
+        rm "${src_path}/${service_type}/${service}Service/${service}-service.crt" 2>/dev/null
+        rm "${src_path}/${service_type}/${service}Service/${service}-service.key" 2>/dev/null
 
         if [[ "${include_ca}" == "true" ]]; then
             mv "${src_path}/${service_type}/${service}Service/procom-erp-ca.pem" "${archive_dir}/" 2>/dev/null
@@ -127,12 +130,12 @@ done
 
 # Move all remaining unused certificates and security files created by the script to the archive directory
 for dir in ./*; do
-    if [[ -d "${dir}" && "${dir}" != "./archive" ]]; then
+    if [[ -d "${dir}" && "${dir}" != "./archive" && "${dir}" != "./secrets" ]]; then
         if [[ "${include_ca}" == "true" ]]; then
             # If include_ca is true, move everything except the archive directory
             mv "${dir}" "${archive_dir}/"
         else
-            # If include_ca is false, move everything except archive and CA directory
+            # If include_ca is false, move everything except archive, secrets and CA directory
             if [[ "${dir}" != "./CA" ]]; then
                 mv "${dir}" "${archive_dir}/"
             fi
@@ -141,8 +144,8 @@ for dir in ./*; do
 done
 
 if [[ "${include_ca}" == "true" ]]; then
-    mv "${system_path}/procom-erp-truststore.jks" "${archive_dir}"
-    rm "${system_path}/procom-erp-ca.pem"
+    mv "${system_path}/procom-erp-truststore.jks" "${archive_dir}" 2>/dev/null
+    rm "${system_path}/procom-erp-ca.pem" 2>/dev/null
 fi
 
 # Change back to the original directory
