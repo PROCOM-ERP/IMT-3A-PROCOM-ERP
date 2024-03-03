@@ -13,8 +13,6 @@ if docker info 2>/dev/null | grep -q "Swarm: active"; then
     docker stack rm ERP
     docker swarm leave --force
 else
-    cd ${docker_path}
-    docker compose down
-    cd ../
+    $(docker compose -f ${docker_path}/docker-compose.yml -p erp down)
 fi
 
