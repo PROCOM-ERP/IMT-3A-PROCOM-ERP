@@ -3,7 +3,7 @@
 # Description: Opposite of "security_setup.sh"
 # Author: maestro-bene (GitHub)
 # Date Created: 2024-01-15
-# Last Modified: 2024-03-03
+# Last Modified: 2024-02-03
 # Version: 1.3
 # Usage: Just run the script, it will analyze the backend and frontend directory and remove every keys, certs, csr, etc.
 # Notes: Another scripts "security_setup.sh" works with this one to undo the changes made by this script.
@@ -151,3 +151,4 @@ cd "$currentDir" || exit
 # Notify the user
 echo "Specific files created by the script moved to ${archive_dir}"
 
+# +----End of this handy script------------------------------------------------+

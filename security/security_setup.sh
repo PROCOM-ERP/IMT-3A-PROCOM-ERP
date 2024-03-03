@@ -4,9 +4,13 @@
 # Author: maestro-bene (GitHub)
 # Date Created: 2024-01-15
 # Last Modified: 2024-03-03
-# Version: 1.3
+# Version: 1.4
 # Usage: Just run the script within the src/security directory, it will analyze the frontend and backend directories.
 # Notes: Another scripts "clean_security.sh" works with this one to undo the changes made by this script, by giving the names.
+
+# +-----------------------------------------------------------------------------+
+# | Setup & Verification                                                        |
+# +-----------------------------------------------------------------------------+
 
 # Check if OpenSSL is installed
 if ! command -v openssl &> /dev/null; then
@@ -14,17 +18,70 @@ if ! command -v openssl &> /dev/null; then
     exit 1
 fi
 
+# +-----------------------------------------------------------------------------+
+
 # Check if keytool is installed
 if ! command -v keytool &> /dev/null; then
     echo "keytool is not installed. Please install an openjdk 17-jre-headless and try again."
     exit 1
 fi
 
+# +-----------------------------------------------------------------------------+
+
 # Save the current directory
 currentDir=$(pwd)
 
 # Change directory to ./security
 cd ./security || exit
+
+# +-----------------------------------------------------------------------------+
+
+# Initialize arrays for services and hostnames
+backend_services=()
+backend_service_directories=($(find ../src/backend/ -maxdepth 1 -type d -name '*Service'))
+
+frontend_services=()
+frontend_service_directories=($(find ../src/frontend/ -maxdepth 1 -type d -name '*Service'))
+
+# +-----------------------------------------------------------------------------+
+
+ca_dir="./CA"
+
+# +-----------------------------------------------------------------------------+
+
+if [ ! -f "./CA/procom-erp-ca.crt" ] || [ ! -f "./CA/procom-erp-ca.key" ]; then
+    CA_exists="true"
+    ca_crt="procom-erp-ca.crt"
+    ca_key="procom-erp-ca.key"
+else
+    CA_exists="false"
+    ca_crt="${ca_dir}/procom-erp-ca.crt"
+    ca_key="${ca_dir}/procom-erp-ca.key"
+fi
+
+# +-----------------------------------------------------------------------------+
+
+# Extract service names and count them
+for dir in "${backend_service_directories[@]}"; do
+    service_name=$(basename "$dir" | sed 's/Service$//')
+    backend_services+=("$service_name")
+done
+
+for dir in "${frontend_service_directories[@]}"; do
+    service_name=$(basename "$dir" | sed 's/Service$//')
+    frontend_services+=("$service_name")
+done
+
+# +-----------------------------------------------------------------------------+
+
+# Calculate the total number of services
+num_backend_services=${#backend_services[@]}
+num_frontend_services=${#frontend_services[@]}
+num_services=$((num_backend_services + num_frontend_services))
+
+# +-----------------------------------------------------------------------------+
+# | Core Functions                                                              |
+# +-----------------------------------------------------------------------------+
 
 # Function to generate certificates for a service
 generate_certificate() {
@@ -39,33 +96,18 @@ generate_certificate() {
 
     # Step 2: Sign the CSR with Your CA
     openssl x509 -req -days 365 -in "${service_name}-service.csr" -CA "${ca_crt}" -CAkey "${ca_key}" -out "${service_name}-service.crt" 2>/dev/null
-
-
-    expect <<EOF > /dev/null 2>&1
-spawn openssl pkcs12 -export -in "${service}-service.crt" -inkey "${service}-service.key" -out "${service}-service-keystore.p12" -name "${service}"
-expect "Enter Export Password:"
-send "procom-erp-${service}-service-secure-keystore\r"
-expect "Verifying - Enter Export Password:"
-send "procom-erp-${service}-service-secure-keystore\r"
-expect eof
-EOF
+    
+    # +-Calling external generation---------------------------------------------+
+    ./generate_certificate_passwords.sh ${service_name}
     
     # Move the generated files to the service directory
     service_dir="../src/${service_type}/${service_name}Service"
     mkdir -p "${service_dir}"
     mkdir -p "./${service}"
     
-    # If the service is 'message-broker', also create PEM files
+    # If the service is 'message-broker', move PEM files
     if [ "${service}" = "message-broker" ]; then
-        expect <<EOF > /dev/null 2>&1
-spawn openssl pkcs12 -in "${service}-service-keystore.p12" -clcerts -nokeys -nodes -out "${service}-service-certificate.pem"
-expect "Enter Import Password:"
-send "procom-erp-${service}-service-secure-keystore\r"
-spawn openssl pkcs12 -in "${service}-service-keystore.p12" -nocerts -nodes -out "${service}-service-key.pem"
-expect "Enter Import Password:"
-send "procom-erp-${service}-service-secure-keystore\r"
-expect eof
-EOF
+
         mv "${service}-service-key.pem" "${service_dir}" 2>/dev/null
 
         mv "${service}-service-certificate.pem" "${service_dir}" 2>/dev/null
@@ -85,10 +127,9 @@ EOF
     echo "Certificates for ${service_name} moved to ./${service} and the keystore to ${service_dir}"
 }
 
-# Step 4: Check if CA files exist or generate them if needed
-if [ ! -f "./CA/procom-erp-ca.crt" ] || [ ! -f "./CA/procom-erp-ca.key" ]; then
-    ca_crt="procom-erp-ca.crt"
-    ca_key="procom-erp-ca.key"
+# +-----------------------------------------------------------------------------+
+
+generate_CA(){
     # Generate the Root Key
     openssl genrsa -out procom-erp-ca.key 4096 2>/dev/null
 
@@ -100,34 +141,22 @@ if [ ! -f "./CA/procom-erp-ca.crt" ] || [ ! -f "./CA/procom-erp-ca.key" ]; then
 
     
     # Create a trust store for the services to trust
-    keytool -importcert -noprompt -alias ca_cert -file procom-erp-ca.crt -keystore procom-erp-truststore.jks --store-pass "super-secure-password-for-trust-store" >/dev/null 2>&1
+    CA_password=$(./generate_certificate_passwords.sh "CA")
+
+    keytool -importcert -noprompt -alias ca_cert -file procom-erp-ca.crt -keystore procom-erp-truststore.jks --store-pass "${CA_password}" 2>/dev/null
     echo "New CA files generated."
-else
-    ca_crt="./CA/procom-erp-ca.crt"
-    ca_key="./CA/procom-erp-ca.key"
+}
+
+# +-----------------------------------------------------------------------------+
+# | Main Logic                                                                  |
+# +-----------------------------------------------------------------------------+
+
+# Check if CA files exist or generate them if needed
+if [ "${CA_exists}" == "true" ]; then
+    generate_CA
 fi
 
-# Initialize arrays for services and hostnames
-backend_services=()
-backend_service_directories=($(find ../src/backend/ -maxdepth 1 -type d -name '*Service'))
-frontend_services=()
-frontend_service_directories=($(find ../src/frontend/ -maxdepth 1 -type d -name '*Service'))
-
-# Extract service names and count them
-for dir in "${backend_service_directories[@]}"; do
-    service_name=$(basename "$dir" | sed 's/Service$//')
-    backend_services+=("$service_name")
-done
-
-for dir in "${frontend_service_directories[@]}"; do
-    service_name=$(basename "$dir" | sed 's/Service$//')
-    frontend_services+=("$service_name")
-done
-
-# Calculate the total number of services
-num_backend_services=${#backend_services[@]}
-num_frontend_services=${#frontend_services[@]}
-num_services=$((num_backend_services + num_frontend_services))
+# +-----------------------------------------------------------------------------+
 
 # Generate certificates for each service
 for ((i=0; i<num_services; i++)); do
@@ -145,19 +174,23 @@ for ((i=0; i<num_services; i++)); do
     generate_certificate "${service}" "${service_type}"
 done
 
+# +-----------------------------------------------------------------------------+
+
 # Move the CA's keys and certificates to the CA directory
-ca_dir="./CA"
 mkdir -p "${ca_dir}"
-mv procom-erp-truststore.jks "../system/" 2>/dev/null
+mv procom-erp-truststore.jks "../system/"
 
 openssl x509 -in "${ca_crt}" -out "../system/procom-erp-ca.pem" -outform PEM 2>/dev/null
 
 mv "${ca_key}" "${ca_crt}" "${ca_dir}/" 2>/dev/null
-
 
 echo "CA's keys and certificates moved to ${ca_dir}"
 
 # Change back to the original directory
 cd "$currentDir" || exit
 
+# +-----------------------------------------------------------------------------+
+
 echo "Certificates generation completed."
+
+# +----End of this handy script------------------------------------------------+
