@@ -11,6 +11,7 @@ import org.springframework.amqp.core.AmqpMessageReturnedException;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.amqp.core.MessageDeliveryMode;
 import org.springframework.amqp.core.MessagePostProcessor;
 import org.springframework.boot.CommandLineRunner;
@@ -38,22 +39,18 @@ public class MessageSenderService implements CommandLineRunner {
         // Setting the init roles messages to mandatory, as well as return message
         // format
         // We will have more information if the message is sent back
-        RabbitTemplate mandatoryTemplate = rabbitTemplate;
-        mandatoryTemplate.setMandatory(true);
-        mandatoryTemplate.setReturnsCallback(returned -> {
-            logger.error("Message returned with reply code: " + returned.getReplyCode() +
-                    ", reply text: " + returned.getReplyText() +
-                    ", exchange: " + returned.getExchange() +
-                    ", routingKey: " + returned.getRoutingKey());
-        });
 
         MessagePostProcessor messagePostProcessor = message -> {
             message.getMessageProperties().setDeliveryMode(MessageDeliveryMode.PERSISTENT);
             return message;
         };
+        RabbitTemplate mandatoryTemplate = rabbitTemplate;
+        mandatoryTemplate.setMandatory(true);
 
-        mandatoryTemplate.convertAndSend(rolesDirectExchange.getName(), "roles.init", path, messagePostProcessor);
-        logger.info("Message sent");
+        MessageConverter messageConverter = mandatoryTemplate.getMessageConverter();
+        Message message = messageConverter.toMessage(path, null);
+
+        sendWithRetry(rolesDirectExchange.getName(), "roles.init", message, messagePostProcessor, 0);
     }
 
     public void sendRoleActivationMessage(String roleName) {
