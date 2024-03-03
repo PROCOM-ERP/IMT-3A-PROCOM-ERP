@@ -50,11 +50,11 @@ ca_dir="./CA"
 # +-----------------------------------------------------------------------------+
 
 if [ ! -f "./CA/procom-erp-ca.crt" ] || [ ! -f "./CA/procom-erp-ca.key" ]; then
-    CA_exists="true"
+    CA_exists="false"
     ca_crt="procom-erp-ca.crt"
     ca_key="procom-erp-ca.key"
 else
-    CA_exists="false"
+    CA_exists="true"
     ca_crt="${ca_dir}/procom-erp-ca.crt"
     ca_key="${ca_dir}/procom-erp-ca.key"
 fi
@@ -152,7 +152,7 @@ generate_CA(){
 # +-----------------------------------------------------------------------------+
 
 # Check if CA files exist or generate them if needed
-if [ "${CA_exists}" == "true" ]; then
+if [ "${CA_exists}" == "false" ]; then
     generate_CA
 fi
 
