@@ -11,14 +11,12 @@ if (-not (Get-Command "openssl" -ErrorAction SilentlyContinue)) {
 }
 
 # Verify running from the correct directory
-$expectedLastEntries = "src\security"
+$expectedLastEntries = "security"
 $currentPath = Get-Location
-$parentPath = Split-Path -Path $currentPath -Parent
-$parentPathLast = Split-Path -Path $parentPath -Leaf
 $currentPathLast = Split-Path -Path $currentPath -Leaf
-$lastTwoEntries = "$parentPathLast\$currentPathLast"
+$lastEntry = "$currentPathLast"
 
-if ($lastTwoEntries -ne $expectedLastEntries) {
+if ($lastEntry -ne $expectedLastEntries) {
     Write-Host "Please run this script from the '${expectedLastEntries}' directory."
     exit
 }
@@ -29,7 +27,7 @@ function Generate-Certificate {
         [string]$serviceName,
         [string]$serviceType
     )
-    $serviceDir = "..\$serviceType\$($serviceName)Service"
+    $serviceDir = "..\src\$serviceType\$($serviceName)Service"
     $certDir = ".\$serviceName"
 
     # Ensure directories exist
@@ -81,8 +79,8 @@ $caCrt = "$caDir\$caCrt"
 $caKey = "$caDir\$caKey"
 
 # Discover service directories and generate certificates
-$backendServices = Get-ChildItem -Path "../backend" -Directory | Where-Object { $_.Name -match "Service$" }
-$frontendServices = Get-ChildItem -Path "../frontend" -Directory | Where-Object { $_.Name -match "Service$" }
+$backendServices = Get-ChildItem -Path "..\src\backend" -Directory | Where-Object { $_.Name -match "Service$" }
+$frontendServices = Get-ChildItem -Path "..\src\frontend" -Directory | Where-Object { $_.Name -match "Service$" }
 
 foreach ($service in $backendServices + $frontendServices) {
     $serviceName = $service.Name -replace "Service$"

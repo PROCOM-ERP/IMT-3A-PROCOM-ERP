@@ -4,7 +4,7 @@
 # Author: maestro-bene (GitHub)
 # Date Created: 2024-01-15
 # Last Modified: 2024-02-05
-# Version: 1.2
+# Version: 1.3
 # Usage: Just run the script, it will analyze the backend and frontend directory and remove every keys, certs, csr, etc.
 # Notes: Another scripts "security_setup.sh" works with this one to undo the changes made by this script.
 # Option: --CA includes all CA keys, certs, and trust stores as well, to fully clean your environment
@@ -26,20 +26,9 @@ done
 # Save the current directory
 currentDir=$(pwd)
 
-# Change directory to ./src/security
-cd ./src/security || exit
+# Change directory to ./security
+cd ./security || exit
 
-# Define the expected last three directory entries
-expected_last_entries="src/security"
-
-# Get the last two entries of the current working directory path
-last_two_entries=$(pwd | rev | cut -d'/' -f1,2 | rev)
-
-# Check if the last two entries match the expected ones
-if [ "$last_two_entries" != "$expected_last_entries" ]; then
-    echo "Please run this script from the '${expected_last_entries}' directory."
-    exit 1
-fi
 
 backend_services=()
 backend_service_directories=($(find ../backend/ -maxdepth 1 -type d -name '*Service'))
@@ -83,9 +72,7 @@ for ((i=0; i<num_services; i++)); do
         service="${frontend_services[index]}"
         service_type="frontend"
     fi
-
-    # echo ${service}
-    # echo ${service_type}
+    
     # Move the .p12 file to the archive directory
     mv "../${service_type}/${service}Service/${service}-service-keystore.p12" "${archive_dir}/"
     

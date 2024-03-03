@@ -14,23 +14,17 @@ if ! command -v openssl &> /dev/null; then
     exit 1
 fi
 
+# Check if keytool is installed
+if ! command -v keytool &> /dev/null; then
+    echo "keytool is not installed. Please install an openjdk 17-jre-headless and try again."
+    exit 1
+fi
+
 # Save the current directory
 currentDir=$(pwd)
 
-# Change directory to ./src/security
-cd ./src/security || exit
-
-# Define the expected last three directory entries
-expected_last_entries="src/security"
-
-# Get the last two entries of the current working directory path
-last_two_entries=$(pwd | rev | cut -d'/' -f1,2 | rev)
-
-# Check if the last two entries match the expected ones
-if [ "$last_two_entries" != "$expected_last_entries" ]; then
-    echo "Please run this script from the '${expected_last_entries}' directory."
-    exit 1
-fi
+# Change directory to ./security
+cd ./security || exit
 
 # Function to generate certificates for a service
 generate_certificate() {
@@ -54,7 +48,7 @@ expect eof
 EOF
     
     # Move the generated files to the service directory
-    service_dir="../${service_type}/${service_name}Service"
+    service_dir="../src/${service_type}/${service_name}Service"
     mkdir -p "${service_dir}"
     mkdir -p "./${service}"
     
@@ -104,9 +98,9 @@ fi
 
 # Initialize arrays for services and hostnames
 backend_services=()
-backend_service_directories=($(find ../backend/ -maxdepth 1 -type d -name '*Service'))
+backend_service_directories=($(find ../src/backend/ -maxdepth 1 -type d -name '*Service'))
 frontend_services=()
-frontend_service_directories=($(find ../frontend/ -maxdepth 1 -type d -name '*Service'))
+frontend_service_directories=($(find ../src/frontend/ -maxdepth 1 -type d -name '*Service'))
 
 # Extract service names and count them
 for dir in "${backend_service_directories[@]}"; do

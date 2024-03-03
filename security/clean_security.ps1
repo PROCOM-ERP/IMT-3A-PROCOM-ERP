@@ -9,12 +9,10 @@ param (
 )
 
 # Verify running from the correct directory
-$expectedLastEntries = "src\security"
+$expectedLastEntries = "security"
 $currentPath = Get-Location
-$parentPath = Split-Path -Path $currentPath -Parent
-$parentPathLast = Split-Path -Path $parentPath -Leaf
 $currentPathLast = Split-Path -Path $currentPath -Leaf
-$lastTwoEntries = "$parentPathLast\$currentPathLast"
+$lastentry = "$currentPathLast"
 
 if ($lastTwoEntries -ne $expectedLastEntries) {
     Write-Host "Please run this script from the '${expectedLastEntries}' directory."
@@ -22,8 +20,8 @@ if ($lastTwoEntries -ne $expectedLastEntries) {
 }
 
 # Discover service directories
-$backendServiceDirs = Get-ChildItem -Path "../backend" -Directory | Where-Object { $_.Name -match "Service$" }
-$frontendServiceDirs = Get-ChildItem -Path "../frontend" -Directory | Where-Object { $_.Name -match "Service$" }
+$backendServiceDirs = Get-ChildItem -Path "..\src\backend" -Directory | Where-Object { $_.Name -match "Service$" }
+$frontendServiceDirs = Get-ChildItem -Path "..\src\frontend" -Directory | Where-Object { $_.Name -match "Service$" }
 
 # Archive directory setup
 $currentDateTime = Get-Date -Format "yyyy-MM-dd-HH-mm-ss"
@@ -35,7 +33,7 @@ foreach ($dir in $backendServiceDirs + $frontendServiceDirs) {
     $serviceType = if ($dir.FullName -match "backend") { "backend" } else { "frontend" }
     
     # Archive service-specific keystores and PEM files if applicable
-    $servicePath = "..\$serviceType\$($dir.Name)"
+    $servicePath = "..\src\$serviceType\$($dir.Name)"
     $filesToMove = @("$servicePath\$serviceName-service-keystore.p12")
     
     if ($serviceName -eq "message-broker") {
