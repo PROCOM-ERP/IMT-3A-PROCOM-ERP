@@ -1,48 +1,43 @@
 # Security
 
-Voici un guide rapide portant sur la sécurité, le chiffrement, etc au sein de notre projet d'ERP modulaire.
-Déstinés aux parties prenantes et membres du projet, non aux utilisateurs finaux.
+Here is a quick guide focusing on security, encryption, etc., within our modular ERP project. Intended for stakeholders and project members, not for end-users.
 
-### Pré-requis
+### Prerequisites
 
-- Assurez-vous que **OpenSSL** est installé sur votre système pour la gestion des certificats SSL.
-- Assurez-vous que **keytool**(outil préinstallé par java, à vérifier sur votre machine en essayant de lancer un `keytool --version`) est installé sur votre système pour la gestion des certificats SSL.
+- Ensure that **OpenSSL** is installed on your system for managing SSL certificates. Verify on your machine by trying to run `openssl --version` or `openssl -v`.
+- Ensure that **keytool** (a pre-installed tool by Java) is installed on your system for managing SSL certificates. Verify on your machine by trying to run `keytool --version`. Otherwise, install a JDK, such as openjdk-17-jre-headless.
+- Ensure you have the `generate_certificate_passwords.sh` script (or `generate_certificate_passwords.ps1` on Windows) present in the `./security` directory. It is essential for using the `security_setup.sh` script.
 
-### Utilisation de `security_setup.sh`
+### Using `security_setup.sh`
 
-Ce script génere (s'il n'en trouve pas déjà) une clé pour la CA, un certificat, et un trust store. Ensuite une clé et un certificat (signé par la CA) pour chaque service demandé.
-Il répartit les trust store (fichiers `.p12`) dans chaque service (a chaque service son trust store uniquement), le trust store de la CA (fichier `.jks` dans le répertoire system, qui est passé a tous les services au démarrage).
-Il vient ensuite placer toutes les clés et certificats, ainsi que demandes de signatures (fichiers `.key`, `.crt`, `.csr`) dans des répertoires créés pour l'occasion au sein du répetoire `./security/`.
+This script generates (if not already present) a key for the CA, a certificate, and a trust store. Then, a key and a certificate (signed by the CA) for each requested service. It distributes the trust stores (`.p12` files) to each service (each service gets its trust store only), and the CA's trust store (`.jks` file in the system directory, which is passed to all services at startup). It then places all keys and certificates, as well as certificate signing requests (`.key`, `.crt`, `.csr` files) in directories created for the occasion within the `./security/` directory.
 
-1. **Lancement du Script** :
-   - Ouvrez un terminal, et placez vous dans le répertoire de securité `./src/security`
-   - Exécutez le script avec la commande : `./security_setup.sh`.
-   - Entrez le nombre de services demandés (avec authentication, directory, gateway, et message-broker on est déjà à 4 par exemple)
-   - Entrez le nom de chaque service, un par un.
+1. **Launching the Script**:
 
-Attention : Le service s'occupant de RabbitMQ (Queues/Event Management) doit s'appeler `message-broker` pour que le script fonctionne et que les clés soient placés aux bons endroits
+   - Execute the script with the command: `./security/security_setup.sh`. It is automatically launched by the deployment script if the `--sec` option is used.
 
-2. **Génération des Certificats** :
+2. **Generating Certificates**:
 
-   - Le script va générer des certificats pour les services spécifiés.
-   - Il créera des clés, des demandes de signature de certificat (CSR), et signera ces CSR.
+   - The script will generate certificates for the specified services.
+   - It will create keys, certificate signing requests (CSRs), and sign these CSRs.
 
-3. **Configuration des Keystores** :
-   - Le script s'occupe également de la création des keystores nécessaires pour les services, ainsi que de leur distribution
+3. **Configuring Keystores**:
+   - The script also takes care of creating the necessary keystores for the services, as well as their distribution across all services in your `./src/backend` and `./src/frontend` folders.
 
-### Utilisation de `clean_security.sh`
+### Using `clean_security.sh`
 
-Ce script fait l'inverse du premier, et essaie de trouver les clés, certificats, demande de signature, trust store, etc aux endroits auxuels ils sont sensé être en fonction du nombre de service et leur nom (même prompt que le script précédent)
-Il va tout mettre dans un dossier `./security/archives/Y-M-D-h-m`, et si l'option `--CA` est séléctionnée, alors les cles et certificats de la CA seront aussi archivée (on peut vouloir simplement refaire les certficats des services en gardant la même CA)
+This script does the opposite of the first one and tries to find keys, certificates, signing requests, trust stores, etc., in the places where they are supposed to be based on the number of services and their names (same prompt as the previous script). It will move everything to a folder `./security/archives/Y-M-D-h-m`, and if the `--CA` option is selected, then the CA's keys and certificates will also be archived (one might want to simply redo the service certificates while keeping the same CA).
 
-- Ce script sert à nettoyer ou à réinitialiser les configurations établies par `security_setup.sh`.
-- Pour l'utiliser, exécutez : `./clean_security.sh`.
-- Une option `--CA` est disponnible afin d'archiver aussi les clés et le trust store de l'autorité de certification.
+- This script is used to clean or reset configurations established by `security_setup.sh`.
+- To use it, execute: `./security/clean_security.sh`.
+- A `--CA` option is available to also archive the CA's keys and trust store.
 
-Pour l'éxecution sur Windows du script powershell `./clean_security.ps1`, l'option à rentrer est -IncludeCA
+For executing the PowerShell script `./security/clean_security.ps1` on Windows, the option to enter is -IncludeCA
 
-### Utilisation de `docker_secrets.sh`
+### Using `docker_secrets.sh`
 
-Ce script génère en local les secrets nécessaire au déploiement de l'application.
-Il n'y a pas d'options particulières.
-Pour des raisons évidentes de sécurité, il n'est pas géré dans ce répertoire git.
+This script generates locally the necessary secrets for deploying the application. There are no specific options. For obvious security reasons, it is not managed in this git repository.
+
+### Using `docker_secrets_files.sh`
+
+This script generates locally the secret files necessary for deploying the application, within the `./security/secrets/` folder. There are no specific options. For obvious security reasons, it is not managed in this git repository.

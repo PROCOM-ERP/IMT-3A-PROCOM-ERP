@@ -3,6 +3,8 @@
 Here is the complete guide on how to deploy your ERP.
 We mainly use scripts to deploy this application, although we are researching other deployment tools.
 
+There are multiple scripts you need to have, that are not followed within this repository because of security reasons, but you can find their template in the `./docs/security/templates` directory.
+
 > There also is a version for Windows developers, of all scripts in PowerShell
 
 > Check the Warning section at the end of this guide in case you're having an issue
@@ -11,10 +13,11 @@ We mainly use scripts to deploy this application, although we are researching ot
 
 - Insure you have :whale: Docker installed. On Unix systems, run `docker --version`.
 - Insure you have a :whale: Docker daemon running. On Windows check if :whale: Docker desktop app is running, on Unix systems,run: `sudo systemctl status docker`.
-- Insure you have :lock: OpenSSL installed. Run: `openssl --version`.
+- Insure you have :lock: OpenSSL installed. Run: `openssl --version` or `openssl -v`.
 - Insure you have :coffee: Java installed (we use keytools to generate some trust stores for the application).
   - Insure you have :lock: keytool installed. Run: `keytool --version`.
 - Finally, insure you have expect installed. Run: `expect --version`.
+- Insure you have the script `./security/generate_certificate_password.sh` (and `./security/generate_certificate_password.ps1` for :grimacing: Windows devs).
 
 ## :hammer: **For Development** :
 
