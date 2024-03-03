@@ -3,13 +3,18 @@
 # Description: Opposite of "security_setup.sh"
 # Author: maestro-bene (GitHub)
 # Date Created: 2024-01-15
-# Last Modified: 2024-02-05
+# Last Modified: 2024-03-03
 # Version: 1.3
 # Usage: Just run the script, it will analyze the backend and frontend directory and remove every keys, certs, csr, etc.
 # Notes: Another scripts "security_setup.sh" works with this one to undo the changes made by this script.
 # Option: --CA includes all CA keys, certs, and trust stores as well, to fully clean your environment
 
+# +-----------------------------------------------------------------------------+
+# | Initial Setup & Argument Parsing                                            |
+# +-----------------------------------------------------------------------------+
+
 include_ca=false
+
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --CA)
@@ -23,17 +28,24 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
+# +-----------------------------------------------------------------------------+
+
 # Save the current directory
 currentDir=$(pwd)
 
 # Change directory to ./security
 cd ./security || exit
 
+src_path="../src"
+system_path="../system"
+
+# +-----------------------------------------------------------------------------+
 
 backend_services=()
-backend_service_directories=($(find ../backend/ -maxdepth 1 -type d -name '*Service'))
+backend_service_directories=($(find ${src_path}/backend/ -maxdepth 1 -type d -name '*Service'))
+
 frontend_services=()
-frontend_service_directories=($(find ../frontend/ -maxdepth 1 -type d -name '*Service'))
+frontend_service_directories=($(find ${src_path}/frontend/ -maxdepth 1 -type d -name '*Service'))
 
 # Extract service names and count them
 for dir in "${backend_service_directories[@]}"; do
@@ -50,7 +62,8 @@ done
 num_backend_services=${#backend_services[@]}
 num_frontend_services=${#frontend_services[@]}
 num_services=$((num_backend_services + num_frontend_services))
-# echo ${num_services}
+
+# +-----------------------------------------------------------------------------+
 
 # Get the current date and time
 current_datetime=$(date +"%Y-%m-%d-%H-%M-%S")
@@ -62,6 +75,43 @@ mkdir -p "${archive_dir}"
 # Initialize arrays for services and hostnames
 services=()
 
+# +-----------------------------------------------------------------------------+
+# | Core Function                                                               |
+# +-----------------------------------------------------------------------------+
+
+# Function to move service related files to the archive directory
+move_service_files() {
+    local service=$1
+    local service_type=$2
+
+    mv "${src_path}/${service_type}/${service}Service/${service}-service-keystore.p12" "${archive_dir}/" 2>/dev/null
+
+    
+    # If the service is 'message-broker', move the PEM files as well
+    if [ "${service}" = "message-broker" ]; then
+        mv "${src_path}/${service_type}/${service}Service/${service}-service-key.pem" "${archive_dir}/" 2>/dev/null
+
+        mv "${src_path}/${service_type}/${service}Service/${service}-service-certificate.pem" "${archive_dir}/" 2>/dev/null
+
+    fi
+    
+    # If the service is 'webapp', move the PEM files as well
+    if [ "${service}" = "webapp" ]; then
+        rm "${src_path}/${service_type}/${service}Service/${service}-service.crt"
+        rm "${src_path}/${service_type}/${service}Service/${service}-service.key"
+
+        if [[ "${include_ca}" == "true" ]]; then
+            mv "${src_path}/${service_type}/${service}Service/procom-erp-ca.pem" "${archive_dir}/" 2>/dev/null
+
+        fi
+    fi
+}
+
+# +-----------------------------------------------------------------------------+
+# | Main Logic                                                                  |
+# +-----------------------------------------------------------------------------+
+
+
 # Move only the specific files created by the script to the archive directory
 for ((i=0; i<num_services; i++)); do
     if [ $i -lt $num_backend_services ]; then
@@ -72,28 +122,10 @@ for ((i=0; i<num_services; i++)); do
         service="${frontend_services[index]}"
         service_type="frontend"
     fi
-    
-    # Move the .p12 file to the archive directory
-    mv "../${service_type}/${service}Service/${service}-service-keystore.p12" "${archive_dir}/"
-    
-    # If the service is 'message-broker', move the PEM files as well
-    if [ "${service}" = "message-broker" ]; then
-        mv "../${service_type}/${service}Service/${service}-service-key.pem" "${archive_dir}/"
-        mv "../${service_type}/${service}Service/${service}-service-certificate.pem" "${archive_dir}/"
-    fi
-    
-    # If the service is 'webapp', move the PEM files as well
-    if [ "${service}" = "webapp" ]; then
-        mv "../${service_type}/${service}Service/${service}-service.crt" "${archive_dir}/"
-        mv "../${service_type}/${service}Service/${service}-service.key" "${archive_dir}/"
-        if [[ "${include_ca}" == "true" ]]; then
-            mv "../${service_type}/${service}Service/procom-erp-ca.pem" "${archive_dir}/"
-        fi
-    fi
-    # Move the entire service directory to the archive directory
-    mv "./${service}" "${archive_dir}/"
+    move_service_files $service $service_type
 done
 
+# Move all remaining unused certificates and security files created by the script to the archive directory
 for dir in ./*; do
     if [[ -d "${dir}" && "${dir}" != "./archive" ]]; then
         if [[ "${include_ca}" == "true" ]]; then
@@ -109,8 +141,8 @@ for dir in ./*; do
 done
 
 if [[ "${include_ca}" == "true" ]]; then
-    mv "../system/procom-erp-truststore.jks" "${archive_dir}"
-    rm "../system/procom-erp-ca.pem"
+    mv "${system_path}/procom-erp-truststore.jks" "${archive_dir}"
+    rm "${system_path}/procom-erp-ca.pem"
 fi
 
 # Change back to the original directory

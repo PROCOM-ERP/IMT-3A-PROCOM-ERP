@@ -3,8 +3,8 @@
 # Description: Generate CA and services security essentials, and moves them to the correct spot.
 # Author: maestro-bene (GitHub)
 # Date Created: 2024-01-15
-# Last Modified: 2024-02-05
-# Version: 1.2
+# Last Modified: 2024-03-03
+# Version: 1.3
 # Usage: Just run the script within the src/security directory, it will analyze the frontend and backend directories.
 # Notes: Another scripts "clean_security.sh" works with this one to undo the changes made by this script, by giving the names.
 
@@ -32,13 +32,16 @@ generate_certificate() {
     local service_type="$2"
 
     # Step 1: Generate Certificates for the Service
-    openssl genrsa -out "${service_name}-service.key" 4096
-    openssl req -new -key "${service_name}-service.key" -out "${service_name}-service.csr" -subj "/C=FR/ST=France/L=Paris/O=Procom-ERP/OU=IT/CN=springboot-procom-erp-${service_name}-service"
+    openssl genrsa -out "${service_name}-service.key" 4096 2>/dev/null
+
+    openssl req -new -key "${service_name}-service.key" -out "${service_name}-service.csr" -subj "/C=FR/ST=France/L=Paris/O=Procom-ERP/OU=IT/CN=springboot-procom-erp-${service_name}-service" 2>/dev/null
+
 
     # Step 2: Sign the CSR with Your CA
-    openssl x509 -req -days 365 -in "${service_name}-service.csr" -CA "${ca_crt}" -CAkey "${ca_key}" -out "${service_name}-service.crt"
+    openssl x509 -req -days 365 -in "${service_name}-service.csr" -CA "${ca_crt}" -CAkey "${ca_key}" -out "${service_name}-service.crt" 2>/dev/null
 
-    expect <<EOF
+
+    expect <<EOF > /dev/null 2>&1
 spawn openssl pkcs12 -export -in "${service}-service.crt" -inkey "${service}-service.key" -out "${service}-service-keystore.p12" -name "${service}"
 expect "Enter Export Password:"
 send "procom-erp-${service}-service-secure-keystore\r"
@@ -54,7 +57,7 @@ EOF
     
     # If the service is 'message-broker', also create PEM files
     if [ "${service}" = "message-broker" ]; then
-        expect <<EOF
+        expect <<EOF > /dev/null 2>&1
 spawn openssl pkcs12 -in "${service}-service-keystore.p12" -clcerts -nokeys -nodes -out "${service}-service-certificate.pem"
 expect "Enter Import Password:"
 send "procom-erp-${service}-service-secure-keystore\r"
@@ -63,17 +66,22 @@ expect "Enter Import Password:"
 send "procom-erp-${service}-service-secure-keystore\r"
 expect eof
 EOF
-        mv "${service}-service-key.pem" "${service_dir}"
-        mv "${service}-service-certificate.pem" "${service_dir}"
+        mv "${service}-service-key.pem" "${service_dir}" 2>/dev/null
+
+        mv "${service}-service-certificate.pem" "${service_dir}" 2>/dev/null
+
     fi
 
     if [ "${service}" = "webapp" ]; then
         cp "${service_name}-service.key" "${service_name}-service.crt" "${service_dir}/"
-        openssl x509 -in "${ca_crt}" -out "${service_dir}/procom-erp-ca.pem" -outform PEM
+        openssl x509 -in "${ca_crt}" -out "${service_dir}/procom-erp-ca.pem" -outform PEM 2>/dev/null
+
     fi
 
-    mv "${service_name}-service.key" "${service_name}-service.csr" "${service_name}-service.crt" "./${service}/"
-    mv "${service_name}-service-keystore.p12" "${service_dir}/"
+    mv "${service_name}-service.key" "${service_name}-service.csr" "${service_name}-service.crt" "./${service}/" 2>/dev/null
+
+    mv "${service_name}-service-keystore.p12" "${service_dir}/" 2>/dev/null
+
     echo "Certificates for ${service_name} moved to ./${service} and the keystore to ${service_dir}"
 }
 
@@ -82,11 +90,14 @@ if [ ! -f "./CA/procom-erp-ca.crt" ] || [ ! -f "./CA/procom-erp-ca.key" ]; then
     ca_crt="procom-erp-ca.crt"
     ca_key="procom-erp-ca.key"
     # Generate the Root Key
-    openssl genrsa -out procom-erp-ca.key 4096
+    openssl genrsa -out procom-erp-ca.key 4096 2>/dev/null
+
 
     # Create and Self-Sign the Root Certificate
-    openssl req -new -x509 -days 3650 -key procom-erp-ca.key -out procom-erp-ca.crt -subj "/C=FR/ST=France/L=Paris/O=Procom-ERP/OU=IT/CN=Procom-ERP"
-openssl x509 -in "${ca_crt}" -out "../system/procom-erp-ca.pem" -outform PEM
+    openssl req -new -x509 -days 3650 -key procom-erp-ca.key -out procom-erp-ca.crt -subj "/C=FR/ST=France/L=Paris/O=Procom-ERP/OU=IT/CN=Procom-ERP" 2>/dev/null
+
+    openssl x509 -in "${ca_crt}" -out "../system/procom-erp-ca.pem" -outform PEM 2>/dev/null
+
     
     # Create a trust store for the services to trust
     keytool -importcert -noprompt -alias ca_cert -file procom-erp-ca.crt -keystore procom-erp-truststore.jks --store-pass "super-secure-password-for-trust-store" >/dev/null 2>&1
@@ -132,16 +143,17 @@ for ((i=0; i<num_services; i++)); do
     echo "Generating certificates for ${service} (${service_type})"
     
     generate_certificate "${service}" "${service_type}"
-    
-    echo "Certificates generated for ${service} (${service_type})"
 done
 
 # Move the CA's keys and certificates to the CA directory
 ca_dir="./CA"
 mkdir -p "${ca_dir}"
-mv procom-erp-truststore.jks "../system/"
-openssl x509 -in "${ca_crt}" -out "../system/procom-erp-ca.pem" -outform PEM
-mv "${ca_key}" "${ca_crt}" "${ca_dir}/"
+mv procom-erp-truststore.jks "../system/" 2>/dev/null
+
+openssl x509 -in "${ca_crt}" -out "../system/procom-erp-ca.pem" -outform PEM 2>/dev/null
+
+mv "${ca_key}" "${ca_crt}" "${ca_dir}/" 2>/dev/null
+
 
 echo "CA's keys and certificates moved to ${ca_dir}"
 

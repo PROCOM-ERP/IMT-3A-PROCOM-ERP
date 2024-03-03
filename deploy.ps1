@@ -1,9 +1,16 @@
 # PowerShell Script: deploy.ps1
+# Usage: see .sh script, this is only an adaptation of it, not maintained as well.
+
+# +-----------------------------------------------------------------------------+
+# | System-relative Functions                                                   |
+# +-----------------------------------------------------------------------------+
 
 function Security {
     # Execute the security_setup.sh script using bash
     & .\src\security\security_setup.ps1
 }
+
+# +-----------------------------------------------------------------------------+
 
 function Copy-SystemFiles {
     # Define paths to backend and frontend directories
@@ -15,23 +22,21 @@ function Copy-SystemFiles {
     # Copy system files to backend services
     foreach ($backendPath in $backendPaths) {
         if (Test-Path -Path $backendPath.FullName) {
-            Write-Output "Copying system files to $($backendPath.FullName)"
-            Copy-Item -Path ".\src\system\entrypoint.sh" -Destination $backendPath.FullName -Force
-            Copy-Item -Path ".\src\system\wait-for-it.sh" -Destination $backendPath.FullName -Force
-            Copy-Item -Path ".\src\system\procom-erp-truststore.jks" -Destination $backendPath.FullName -Force
-            Copy-Item -Path ".\src\system\procom-erp-ca.pem" -Destination $backendPath.FullName -Force
+            Copy-Item -Path "$systemPath\entrypoint.sh" -Destination $backendPath.FullName -Force
+            Copy-Item -Path "$systemPath\wait-for-it.sh" -Destination $backendPath.FullName -Force
+            Copy-Item -Path "$systemPath\procom-erp-truststore.jks" -Destination $backendPath.FullName -Force
+            Copy-Item -Path "$systemPath\procom-erp-ca.pem" -Destination $backendPath.FullName -Force
             # Copy Maven Wrapper (mvnw) to backend services
-            Copy-Item -Path ".\src\system\mvnw" -Destination $backendPath.FullName -Force
-            Copy-Item -Path ".\src\system\.mvn" -Destination "$($backendPath.FullName)" -Recurse -Force
+            Copy-Item -Path "$systemPath\mvnw" -Destination $backendPath.FullName -Force
+            Copy-Item -Path "$systemPath\.mvn" -Destination "$($backendPath.FullName)" -Recurse -Force
         }
     }
 
     # Copy system files to frontend services
     foreach ($frontendPath in $frontendPaths) {
         if (Test-Path -Path $frontendPath.FullName) {
-            Write-Output "Copying system files to $($frontendPath.FullName)"
-            Copy-Item -Path ".\src\system\procom-erp-truststore.jks" -Destination $frontendPath.FullName -Force
-            Copy-Item -Path ".\src\system\procom-erp-ca.pem" -Destination $frontendPath.FullName -Force
+            Copy-Item -Path "$systemPath\procom-erp-truststore.jks" -Destination $frontendPath.FullName -Force
+            Copy-Item -Path "$systemPath\procom-erp-ca.pem" -Destination $frontendPath.FullName -Force
         }
     }
 
@@ -39,11 +44,12 @@ function Copy-SystemFiles {
     foreach ($db_path in $db_paths) {
         Get-ChildItem $db_path -Directory | ForEach-Object {
             $servicePath = $_.FullName
-            Write-Host "Copying system files to $servicePath"
-            Copy-Item -Path ".\src\system\db_entrypoint.sh" -Destination $servicePath
+            Copy-Item -Path "$systemPath\db_entrypoint.sh" -Destination $servicePath
         }
     }
 }
+
+# +-----------------------------------------------------------------------------+
 
 function Clean-SystemFiles {
     # Define paths to backend, frontend, and database directories
@@ -81,16 +87,9 @@ function Clean-SystemFiles {
     }
 }
 
-function Initialize-Swarm {
-    $swarmActive = docker info 2>$null | Select-String "Swarm: active"
-    if (-not $swarmActive) {
-        docker swarm init > $null 2>&1
-        Write-Host "Swarm initialized"
-        .\src\security\docker_secrets.ps1 > $null 2>&1
-    } else {
-        Write-Host "Swarm detected"
-    }
-}
+# +-----------------------------------------------------------------------------+
+# | Helper Functions                                                            |
+# +-----------------------------------------------------------------------------+
 
 function Is-StackRunning {
     param (
@@ -100,8 +99,9 @@ function Is-StackRunning {
     return [string]::IsNullOrWhiteSpace($stackStatus) -eq $false
 }
 
+# +-----------------------------------------------------------------------------+
+
 function Import-DotEnv {
-    $envPath = ".\.env"
     if (Test-Path $envPath) {
         Get-Content $envPath | ForEach-Object {
             if ($_ -match '^\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*=\s*(.*)$') {
@@ -112,15 +112,15 @@ function Import-DotEnv {
                 [System.Environment]::SetEnvironmentVariable($name, $value, [System.EnvironmentVariableTarget]::Process)
             }
         }
-        Write-Host "Environment variables imported from .env file."
     }
     else {
-        Write-Host ".env file not found"
+        Write-Host "System error: .env file not found"
     }
 }
 
+# +-----------------------------------------------------------------------------+
+
 function Get-ImageVersions {
-    $envPath = ".\.env"
     $global:imageNames = @{}
     $global:imageVersions = @{}
 
@@ -137,10 +137,12 @@ function Get-ImageVersions {
             }
         }
     } else {
-        Write-Host ".env file not found"
+        Write-Host "System error: .env file not found"
         exit
     }
 }
+
+# +-----------------------------------------------------------------------------+
 
 function Latest-ImageExists {
     param (
@@ -150,11 +152,17 @@ function Latest-ImageExists {
     return $null -ne $latestImage
 }
 
+# +-----------------------------------------------------------------------------+
+# | Core Functions                                                              |
+# +-----------------------------------------------------------------------------+
+
 function Build-Images {
-    docker-compose -f docker-compose.yml build
+    docker-compose -f $composeFile build
 }
 
-function Build-And-PushImages {
+# +-----------------------------------------------------------------------------+
+
+function PushImages {
     param (
         [string]$dockerRegistry
     )
@@ -163,49 +171,57 @@ function Build-And-PushImages {
         $imageVersion = $global:imageVersions[$imageName]
         $fullImageName = "$dockerRegistry\{$imageName}:$imageVersion"
         
-        if (-not (Latest-ImageExists -imageName $imageName)) {
-            Write-Host "Latest image for $imageName does not exist. Building..."
-            Build-Images
-        }
-        
         Write-Host "Tagging and pushing $fullImageName"
         docker tag "${imageName}:$imageVersion" $fullImageName
         docker push $fullImageName
     }
 }
 
+# +-----------------------------------------------------------------------------+
+
 function Pull-Images {
     param (
         [string]$dockerRegistry
     )
-    $services = docker-compose -f docker-compose.yml config --services
+    $services = docker-compose -f $composeFile config --services
     foreach ($service in $services) {
-        $imageName = "$dockerRegistry\$service-latest"
+        $imageName = "$dockerRegistry\$service-$version"
         Write-Host "Pulling $imageName"
         docker pull $imageName
     }
 }
 
+# +-----------------------------------------------------------------------------+
+
 function Deploy {
     if ($swarm) {
         docker stack deploy -c $composeFile ERP
     } else {
-        docker-compose -f $composeFile up -d --build
+        docker-compose -f $composeFile up -d
     }
 }
 
-if (-not (Test-Path ".\.env")) {
-    Write-Host ".env file not found"
+# +-----------------------------------------------------------------------------+
+# | Setup & Verification                                                        |
+# +-----------------------------------------------------------------------------+
+
+$securityPath = ".\security"
+$systemPath = ".\system"
+$dockerPath = ".\docker"
+$envPath = "$dockerPath\.env"
+
+if (-not (Test-Path "$envPath")) {
+    Write-Host "System error: .env file not found"
     exit
 }
 
-if (-not (Test-Path ".\docker-compose.yml")) {
-    Write-Host "docker-compose.yml file not found"
+if (-not (Test-Path "$systemPath\docker-compose.yml")) {
+    Write-Host "System error: docker-compose.yml file not found"
     exit
 }
 
-if (-not (Test-Path ".\docker-compose-swarm.yml")) {
-    Write-Host "docker-compose-swarm.yml file not found"
+if (-not (Test-Path "$dockerPath\docker-compose-swarm.yml")) {
+    Write-Host "System error: docker-compose-swarm.yml file not found"
     exit
 }
 
@@ -216,24 +232,49 @@ $push = $false
 $pull = $false
 $hot = $false
 $dockerRegistry = ""
-$composeFile = "docker-compose.yml"
+$composeFile = "$dockerPath\docker-compose.yml"
+$version = "latest"
+$version_specified = $false
+
+# +-----------------------------------------------------------------------------+
+# | Argument Parsing                                                            |
+# +-----------------------------------------------------------------------------+
 
 for ($i = 0; $i -lt $args.Count; $i++) {
     switch ($args[$i]) {
         "--swarm" {
             $swarm = $true
-            $composeFile = "docker-compose-swarm.yml"
-            "--sec" {
-                $sec = $true
-            }
+            $composeFile = "$dockerPath\docker-compose-swarm.yml"
+        }
+        "--sec" {
+            $sec = $true
         }
         "--push" {
             $push = $true
-            $dockerRegistry = $args[++$i]
+            if ($i + 1 -lt $args.Count -and $args[$i + 1] -notmatch "^--") {
+                $dockerRegistry = $args[++$i]
+            } else {
+                Write-Host "Error: --push option requires a value."
+                exit 1
+            }
         }
         "--pull" {
             $pull = $true
-            $dockerRegistry = $args[++$i]
+            if ($i + 1 -lt $args.Count -and $args[$i + 1] -notmatch "^--") {
+                $dockerRegistry = $args[++$i]
+            } else {
+                Write-Host "Error: --pull option requires a value."
+                exit 1
+            }
+        }
+        "--version" {
+            if ($i + 1 -lt $args.Count -and $args[$i + 1] -notmatch "^--") {
+                $version = $args[++$i]
+                $version_specified = $true
+            } else {
+                Write-Host "Error: --version option requires a value."
+                exit 1
+            }
         }
         "--hot" {
             $hot = $true
@@ -245,6 +286,16 @@ for ($i = 0; $i -lt $args.Count; $i++) {
     }
 }
 
+if ($pull -and -not $version_specified) {
+    Write-Host "Error: --pull option requires --version to be specified."
+    exit 1
+}
+
+# +-----------------------------------------------------------------------------+
+# | MAIN LOGIC                                                                  |
+# +-----------------------------------------------------------------------------+
+
+# +---Swarm Specific------------------------------------------------------------+
 if ($swarm) {
 
     Import-DotEnv
@@ -253,42 +304,51 @@ if ($swarm) {
     if (-not $swarmActive) {
         docker swarm init > $null 2>&1
         Write-Host "Swarm initialized"
+        $securityPath\docker_secrets.ps1 > $null 2>&1
     } else {
         Write-Host "Swarm detected"
     }
 
     if (Is-StackRunning -stackName "ERP") {
         if (-not $hot) {
-            Write-Host "The stack is already running. Use --hot option to force redeployment."
+            Write-Host "Error: The stack is already running. Use --hot option to force redeployment."
             exit 1
         } else {
             Write-Host "Hot deployment requested. Stopping the stack..."
             docker stack rm ERP
-            Start-Sleep -Seconds 30 # TODO dynamic redeployment
+            while (Is-StackRunning -stackName "ERP") {
+                Start-Sleep -Seconds 3
+            }
         }
     }
-    Initialize-Swarm
+} else {
+# +---Docker Secrets for simple compose-----------------------------------------+
+    $securityPath\docker_secrets_files.ps1 > $null 2>&1
 }
 
-Copy-SystemFiles
+# +---System-relative setup-----------------------------------------------------+
 
 if ($sec) {
     Security
 }
 
+Copy-SystemFiles
+
 Get-ImageVersions
+
+# +---Deployment----------------------------------------------------------------+
 
 if ($push) {
     docker login
-    Build-And-PushImages -dockerRegistry $dockerRegistry
-} elseif ($pull) {
+    Build-Images
+    PushImages -dockerRegistry $dockerRegistry
+} elseif ($pull -and $version_specified) {
     docker login
     Pull-Images -dockerRegistry $dockerRegistry
 } else {
     # When neither push nor pull is specified, build images locally
     # This assumes that building images is necessary before deployment
     # Adjust this section if your workflow differs
-    Write-Host "Building images locally..."
     Build-Images
 }
 
@@ -296,3 +356,4 @@ if ($push) {
 Deploy
 
 Clean-SystemFiles
+# +----End of this handy script------------------------------------------------+
