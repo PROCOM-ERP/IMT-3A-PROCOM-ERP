@@ -458,5 +458,7 @@ fi
 deploy
 clean_system_files
 
+echo -e "\a"
+
 exit 0
 # +----End of this handy script------------------------------------------------+
