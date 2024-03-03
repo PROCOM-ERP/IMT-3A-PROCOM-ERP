@@ -57,11 +57,9 @@ IMT-3A-PROCOM-ERP/                     This repository
 ├── CONTRIBUTING.md                    Explains how to contribute to the project, by respecting some rules
 ├── CHANGELOG.md                       Tracked changes in the project's lifecycle
 ├── LICENSE.md                         License in place for this project
-├── docker-compose.yml                 Docker containers build script to simulate the project
-├── docker-compose-swarm.yml           Docker containers build script to simulate the project Swarm mode
 ├── deploy.sh                          Complete deploy script (available in a .ps1 for Windows devs)
+├── undeploy.sh                        Undeploy script (available in a .ps1 for Windows devs)
 ├── pom.xml                            Maven parent configuration file for all backend services (modules) for development purposes (IDE LSP detection)
-├── .env                               Environment variables of the projet
 ├── .github/                           Used by GitHub for CI/CD processes
 │   ├── CODEOWNERS                     Detail which team-member has to review which changes
 │   └── workflows/                     All CI/CD auto-running tasks depending on the triggered event
@@ -82,24 +80,31 @@ IMT-3A-PROCOM-ERP/                     This repository
 │   │   │   └── ...
 │   │   └── service-n/                 Another service
 │   │       └── ...
-│   ├── databases/                     Databases scripts and configurations
-│   │   ├── db-1/                      One database
-│   │   │   ├── Dockerfile             Dockerfile describing the operations required to build each service's image
-│   │   │   ├── reset.sql              Script to reset all tables in a relationnal database
-│   │   │   └── init.sql               Script to create tables in a relationnal database
-│   │   └── db-n/                      Another database
-│   │       └── ...
-│   ├── security/                      Security scripts (./deploy.sh uses all except for clean_security.sh), all are available in a .ps1 for Windows devs
-│   │    ├── clean_security.sh         Cleans all certificates from the repository
-│   │    ├── docker_secrets.sh         Generates all the docker secrets necessary for the deployment with normal compose
-│   │    ├── docker_secrets_files.sh   Generates all docker secrets in swarm mode
-│   │    └── security_setup.sh         Generates all needed certificates in the repository
-│   │
-│   └── system/                        System files: all entrypoints specific scripts, and centralized certificates
-│       ├── db_entrypoint.sh           Entrypoint for the databases
-│       ├── entrypoint.sh              Entrypoint for the backend services
-│       ├── mvnw                       Maven Wrapper copied to every service to better control maven version
-│       └── wait-for-it.sh             Handy script that waits for the availability of an service to execute a given command
+│   └── databases/                     Databases scripts and configurations
+│       ├── db-1/                      One database
+│       │   ├── Dockerfile             Dockerfile describing the operations required to build each service's image
+│       │   ├── reset.sql              Script to reset all tables in a relationnal database
+│       │   └── init.sql               Script to create tables in a relationnal database
+│       └── db-n/                      Another database
+│           └── ...
+│
+├── system/                            System files: all entrypoints specific scripts, and centralized certificates
+│   ├── db_entrypoint.sh               Entrypoint for the databases
+│   ├── entrypoint.sh                  Entrypoint for the backend services
+│   ├── mvnw                           Maven Wrapper copied to every service to better control maven version
+│   └── wait-for-it.sh                 Handy script that waits for the availability of an service to execute a given command
+│
+├── security/                          Security scripts (./deploy.sh uses all except for clean_security.sh), all are available in a .ps1 for Windows devs
+│    ├── clean_security.sh             Cleans all certificates from the repository
+│    ├── docker_secrets.sh             Generates all the docker secrets necessary for the deployment with normal compose
+│    ├── docker_secrets_files.sh       Generates all docker secrets in swarm mode
+│    ├── security_setup.sh             Generates all needed certificates in the repository
+│    └── ...                           Other scripts, such as the docker secrets scripts, or certicate generations
+│
+├── docker/                            Directory for Docker related files
+│    ├── .env                          Environment variables of the projet
+│    ├── docker-compose.yml            Docker containers build script to simulate the project
+│    └── docker-compose-swarm.yml      Docker containers build script to simulate the project Swarm mode
 │
 └── docs/                              All technical and GitHub workflows documentation
     ├── workflows/                     GitHub workflows as sequence diagrams
