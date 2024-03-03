@@ -7,9 +7,10 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
-import org.springframework.amqp.core.MessagePostProcessor;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.support.AmqpHeaders;
+
+import com.example.authenticationservice.utils.MessageUtils;
 import com.rabbitmq.client.Channel;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Service;
@@ -22,11 +23,11 @@ public class MessageReceiverService {
     private final RoleService roleService;
     private final LoginProfileService loginProfileService;
     private final MessageSenderService messageSenderService;
+    private final MessageUtils messageUtils;
 
     private final Logger logger = LoggerFactory.getLogger(MessageReceiverService.class);
 
-    private static final int MAX_RETRIES = 5; // Example max retries
-    private static final long BASE_DELAY = 1000; // Base delay in milliseconds
+    private static final int MAX_RETRIES = 6;
 
     /* Public Methods */
     @RabbitListener(queues = "roles-init-queue", containerFactory = "autoAckListenerContainerFactory")
@@ -39,8 +40,8 @@ public class MessageReceiverService {
             if ("/api/directory/v1/roles".equals(getAllRolesPath) && retryCount == null) {
                 try {
                     logger.info(
-                            "Begginning sleep, for demonstration purpose, you can pause Springboot Directory container");
-                    Thread.sleep(30000);
+                            "Begginning sleep, for demonstration purpose, you have 20 seconds to pause Springboot Directory container");
+                    Thread.sleep(20000);
                 } catch (Exception e) {
                     logger.error("Failed to sleep for the demonstration", e);
                 }
@@ -91,16 +92,16 @@ public class MessageReceiverService {
         logger.info("Received a message in DLQ, with original queue: " + originalQueue + ", and already retried: "
                 + retryCount + " times.");
 
-        long delay = calculateExponentialBackoff(retryCount);
-
-        logger.info("Exponential backoff delay to sleep is now: " + delay);
-
         // Increment retry count for the next attempt
         retryCount++;
         failedMessage.getMessageProperties().setHeader("x-retry-count", retryCount);
 
         // Optionally, you can decide on a maximum retry count here
         if (retryCount <= MAX_RETRIES) {
+            long delay = messageUtils.calculateExponentialBackoff(retryCount);
+
+            logger.info("Exponential backoff duration to sleep is now: " + delay);
+
             messageSenderService.resendMessageWithDelay(failedMessage, originalQueue, delay);
             try {
                 channel.basicAck(deliveryTag, false);
@@ -120,7 +121,4 @@ public class MessageReceiverService {
         logger.info("Email successfully updated");
     }
 
-    private long calculateExponentialBackoff(int retryCount) {
-        return (long) (Math.pow(2, retryCount) * BASE_DELAY);
-    }
 }

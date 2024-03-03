@@ -82,9 +82,7 @@ public class MessageSenderService {
     public void resendMessageWithDelay(Message message, String originalQueue, long delay) {
         // Resend the message after the delay
         try {
-            logger.info("Exponential backoff, sleeping start");
             Thread.sleep(delay);
-            logger.info("Exponential backoff, sleeping end");
             rabbitTemplate.convertAndSend(originalQueue, message);
         } catch (Exception e) {
             logger.error("Failed to sleep exponential delay time", e);
