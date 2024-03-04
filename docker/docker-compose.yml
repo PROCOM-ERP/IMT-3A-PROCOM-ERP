@@ -10,6 +10,8 @@ services:
   # +---------------------------------------------------------------------------+
 
   postgres-procom-erp-authentication-service:
+    container_name: ${DB_AUTHENTICATION_SERVICE_HOSTNAME}
+    image: ${DB_AUTHENTICATION_SERVICE_HOSTNAME}:${DB_AUTHENTICATION_SERVICE_IMAGE_VERSION}
     build:
       context: ${DB_AUTHENTICATION_SERVICE_PATH}
       dockerfile: Dockerfile
@@ -32,6 +34,8 @@ services:
   # +-----------------------------------------------------------------------------+
 
   postgres-procom-erp-directory-service:
+    container_name: ${DB_DIRECTORY_SERVICE_HOSTNAME}
+    image: ${DB_DIRECTORY_SERVICE_HOSTNAME}:${DB_DIRECTORY_SERVICE_IMAGE_VERSION}
     build:
       context: ${DB_DIRECTORY_SERVICE_PATH}
       dockerfile: Dockerfile
@@ -54,6 +58,8 @@ services:
   # +-----------------------------------------------------------------------------+
 
   postgres-procom-erp-inventory-service:
+    container_name: ${DB_INVENTORY_SERVICE_HOSTNAME}
+    image: ${DB_INVENTORY_SERVICE_HOSTNAME}:${DB_INVENTORY_SERVICE_IMAGE_VERSION}
     build:
       context: ${DB_INVENTORY_SERVICE_PATH}
       dockerfile: Dockerfile
@@ -76,6 +82,8 @@ services:
   # +-----------------------------------------------------------------------------+
 
   postgres-procom-erp-order-service:
+    container_name: ${DB_ORDER_SERVICE_HOSTNAME}
+    image: ${DB_ORDER_SERVICE_HOSTNAME}:${DB_ORDER_SERVICE_IMAGE_VERSION}
     build:
       context: ${DB_ORDER_SERVICE_PATH}
       dockerfile: Dockerfile
@@ -100,6 +108,8 @@ services:
   # +---------------------------------------------------------------------------+
 
   springboot-procom-erp-message-broker-service:
+    container_name: ${BACKEND_MESSAGE_BROKER_SERVICE_HOSTNAME}
+    image: ${BACKEND_MESSAGE_BROKER_SERVICE_HOSTNAME}:${BACKEND_MESSAGE_BROKER_SERVICE_IMAGE_VERSION}
     build:
       context: ${BACKEND_MESSAGE_BROKER_SERVICE_PATH}
       dockerfile: Dockerfile
@@ -124,6 +134,8 @@ services:
   # +-----------------------------------------------------------------------------+
 
   springboot-procom-erp-gateway-service:
+    container_name: ${BACKEND_GATEWAY_SERVICE_HOSTNAME}
+    image: ${BACKEND_GATEWAY_SERVICE_HOSTNAME}:${BACKEND_GATEWAY_SERVICE_IMAGE_VERSION}
     build:
       context: ${BACKEND_GATEWAY_SERVICE_PATH}
       dockerfile: Dockerfile
@@ -154,6 +166,8 @@ services:
   # +-----------------------------------------------------------------------------+
 
   springboot-procom-erp-authentication-service:
+    container_name: ${BACKEND_AUTHENTICATION_SERVICE_HOSTNAME}
+    image: ${BACKEND_AUTHENTICATION_SERVICE_HOSTNAME}:${BACKEND_AUTHENTICATION_SERVICE_IMAGE_VERSION}
     build:
       context: ${BACKEND_AUTHENTICATION_SERVICE_PATH}
       dockerfile: Dockerfile
@@ -197,6 +211,8 @@ services:
   # +-----------------------------------------------------------------------------+
 
   springboot-procom-erp-directory-service:
+    container_name: ${BACKEND_DIRECTORY_SERVICE_HOSTNAME}
+    image: ${BACKEND_DIRECTORY_SERVICE_HOSTNAME}:${BACKEND_DIRECTORY_SERVICE_IMAGE_VERSION}
     build:
       context: ${BACKEND_DIRECTORY_SERVICE_PATH}
       dockerfile: Dockerfile
@@ -238,6 +254,8 @@ services:
   # +-----------------------------------------------------------------------------+
 
   springboot-procom-erp-inventory-service:
+    container_name: ${BACKEND_INVENTORY_SERVICE_HOSTNAME}
+    image: ${BACKEND_INVENTORY_SERVICE_HOSTNAME}:${BACKEND_INVENTORY_SERVICE_IMAGE_VERSION}
     build:
       context: ${BACKEND_INVENTORY_SERVICE_PATH}
       dockerfile: Dockerfile
@@ -276,6 +294,8 @@ services:
   # +-----------------------------------------------------------------------------+
 
   springboot-procom-erp-order-service:
+    container_name: ${BACKEND_ORDER_SERVICE_HOSTNAME}
+    image: ${BACKEND_ORDER_SERVICE_HOSTNAME}:${BACKEND_ORDER_SERVICE_IMAGE_VERSION}
     build:
       context: ${BACKEND_ORDER_SERVICE_PATH}
       dockerfile: Dockerfile
@@ -319,6 +339,8 @@ services:
   # +---------------------------------------------------------------------------+
 
   react-procom-erp-webapp-service:
+    container_name: ${FRONTEND_WEBAPP_SERVICE_HOSTNAME}
+    image: ${FRONTEND_WEBAPP_SERVICE_HOSTNAME}:${FRONTEND_WEBAPP_SERVICE_IMAGE_VERSION}
     build:
       context: ${FRONTEND_WEBAPP_SERVICE_PATH}
       dockerfile: Dockerfile

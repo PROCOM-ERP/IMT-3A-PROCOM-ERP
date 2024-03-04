@@ -5,6 +5,8 @@ import com.example.authenticationservice.utils.CustomHttpRequestBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.FanoutExchange;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessageBuilder;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -23,7 +25,8 @@ public class MessageSenderService {
     private final Logger logger = LoggerFactory.getLogger(MessageSenderService.class);
 
     @Autowired
-    public MessageSenderService(CustomHttpRequestBuilder customHttpRequestBuilder, RabbitTemplate rabbitTemplate, FanoutExchange rolesFanoutExchange, FanoutExchange loginProfilesSecExchange) {
+    public MessageSenderService(CustomHttpRequestBuilder customHttpRequestBuilder, RabbitTemplate rabbitTemplate,
+            FanoutExchange rolesFanoutExchange, FanoutExchange loginProfilesSecExchange) {
         this.customHttpRequestBuilder = customHttpRequestBuilder;
         this.rabbitTemplate = rabbitTemplate;
         this.rolesFanoutExchange = rolesFanoutExchange;
@@ -52,8 +55,20 @@ public class MessageSenderService {
 
     public void sendLoginProfileJwtDisableOldMessage(String idLoginProfile) {
         logger.info("Sending message to expire a login profile Jwt...");
-        rabbitTemplate.convertAndSend(loginProfilesSecExchange.getName(), "login-profile.jwt.disable.old", idLoginProfile);
+        rabbitTemplate.convertAndSend(loginProfilesSecExchange.getName(), "login-profile.jwt.disable.old",
+                idLoginProfile);
         logger.info("Message sent");
+    }
+
+    public void sendToDeadLetterQueueFrom(Message originalMessage, String originalQueue) {
+        Message dlqMessage = MessageBuilder.withBody(originalMessage.getBody())
+                .setContentType(originalMessage.getMessageProperties().getContentType())
+                .setHeader("x-original-queue", originalQueue)
+                .setHeader("x-retry-count", originalMessage.getMessageProperties().getHeader("x-retry-count"))
+                .build();
+
+        // Send to DLQ (assuming you have a DLQ setup with routing and exchanges)
+        rabbitTemplate.send("dead-letter-exchange", "dead.letter", dlqMessage);
     }
 
     public void sendLoginProfileActivation(String idLoginProfile) {
@@ -62,5 +77,15 @@ public class MessageSenderService {
         String path = customHttpRequestBuilder.buildPath(Path.V1, resource);
         rabbitTemplate.convertAndSend(loginProfilesSecExchange.getName(), "login-profile.activation", path);
         logger.info("Message sent");
+    }
+
+    public void resendMessageWithDelay(Message message, String originalQueue, long delay) {
+        // Resend the message after the delay
+        try {
+            Thread.sleep(delay);
+            rabbitTemplate.convertAndSend(originalQueue, message);
+        } catch (Exception e) {
+            logger.error("Failed to sleep exponential delay time", e);
+        }
     }
 }

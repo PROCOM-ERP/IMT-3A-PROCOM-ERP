@@ -4,24 +4,60 @@
 # Date Created: 2024-02-06
 # Usage: Run this script within the src/security directory.
 
+# +-----------------------------------------------------------------------------+
+# | Setup & Verification                                                        |
+# +-----------------------------------------------------------------------------+
+
 # Ensure OpenSSL is available in the system
 if (-not (Get-Command "openssl" -ErrorAction SilentlyContinue)) {
     Write-Host "OpenSSL is not installed. Please install OpenSSL and try again."
     exit
 }
 
-# Verify running from the correct directory
-$expectedLastEntries = "src\security"
-$currentPath = Get-Location
-$parentPath = Split-Path -Path $currentPath -Parent
-$parentPathLast = Split-Path -Path $parentPath -Leaf
-$currentPathLast = Split-Path -Path $currentPath -Leaf
-$lastTwoEntries = "$parentPathLast\$currentPathLast"
+# +-----------------------------------------------------------------------------+
 
-if ($lastTwoEntries -ne $expectedLastEntries) {
+if (-not (Get-Command "keytool" -ErrorAction SilentlyContinue)) {
+    Write-Host "keytool is not installed. Please install a java JDK such as openjdk-17jre-headless and try again."
+    exit
+}
+
+# +-----------------------------------------------------------------------------+
+
+# Verify running from the correct directory
+$expectedLastEntries = "security"
+$currentPath = Get-Location
+$currentPathLast = Split-Path -Path $currentPath -Leaf
+$lastEntry = "$currentPathLast"
+
+if ($lastEntry -ne $expectedLastEntries) {
     Write-Host "Please run this script from the '${expectedLastEntries}' directory."
     exit
 }
+
+# +-----------------------------------------------------------------------------+
+
+# Initialize CA files and check if they exist
+$caDir = ".\CA"
+
+if (-not (Test-Path "$caDir\procom-erp-ca.crt") -or -not (Test-Path "$caDir\procom-erp-ca.key")) {
+    $caExists="true"
+    $caCrt = "procom-erp-ca.crt"
+    $caKey = "procom-erp-ca.key"
+} else {
+    $caExists="false"
+    $caCrt = "$caDir\procom-erp-ca.crt"
+    $caKey = "$caDir\procom-erp-ca.key"
+}
+
+# +-----------------------------------------------------------------------------+
+
+# Discover service directories and generate certificates
+$backendServices = Get-ChildItem -Path "..\src\backend" -Directory | Where-Object { $_.Name -match "Service$" }
+$frontendServices = Get-ChildItem -Path "..\src\frontend" -Directory | Where-Object { $_.Name -match "Service$" }
+
+# +-----------------------------------------------------------------------------+
+# | Core Functions                                                              |
+# +-----------------------------------------------------------------------------+
 
 # Generate certificates for a service
 function Generate-Certificate {
@@ -29,7 +65,7 @@ function Generate-Certificate {
         [string]$serviceName,
         [string]$serviceType
     )
-    $serviceDir = "..\$serviceType\$($serviceName)Service"
+    $serviceDir = "..\src\$serviceType\$($serviceName)Service"
     $certDir = ".\$serviceName"
 
     # Ensure directories exist
@@ -43,7 +79,7 @@ function Generate-Certificate {
     openssl x509 -req -days 365 -in "$certDir\$serviceName-service.csr" -CA "$caCrt" -CAkey "$caKey" -out "$certDir\$serviceName-service.crt"
     
     # Export to PKCS12 format
-    $securePassword = ConvertTo-SecureString -String "procom-erp-$serviceName-service-secure-keystore" -Force -AsPlainText
+    $securePassword = & powershell.exe -File .\generate_certificate_password.ps1 -serviceName $serviceName
     openssl pkcs12 -export -in "$certDir\$serviceName-service.crt" -inkey "$certDir\$serviceName-service.key" -out "$certDir\$serviceName-service-keystore.p12" -name "$serviceName" -passout pass:$securePassword
 
     if ($serviceName -match "message-broker"){
@@ -61,11 +97,9 @@ function Generate-Certificate {
     Write-Host "Certificates for $serviceName moved to $certDir and the keystore to $serviceDir"
 }
 
-# Initialize CA files and check if they exist
-$caCrt = "procom-erp-ca.crt"
-$caKey = "procom-erp-ca.key"
-$caDir = ".\CA"
-if (-not (Test-Path "$caDir\$caCrt") -or -not (Test-Path "$caDir\$caKey")) {
+# +-----------------------------------------------------------------------------+
+
+function Generate-CA {
     New-Item -ItemType Directory -Path $caDir -Force
     
     # Generate the Root Key and Certificate
@@ -73,16 +107,19 @@ if (-not (Test-Path "$caDir\$caCrt") -or -not (Test-Path "$caDir\$caKey")) {
     openssl req -new -x509 -days 3650 -key "$caDir\$caKey" -out "$caDir\$caCrt" -subj "/C=FR/ST=France/L=Paris/O=Procom-ERP/OU=IT/CN=Procom-ERP"
     
     # Import into trust store (simulated with keytool command in bash)
-    keytool -importcert -noprompt -alias $caCrt -file $caDir\$caCrt -keystore "$caDir\procom-erp-truststore.jks" --store-pass "super-secure-password-for-trust-store"
+    $storePassword = & powershell.exe -File .\generate_certificate_password.ps1 -serviceName "CA"
+    keytool -importcert -noprompt -alias $caCrt -file $caDir\$caCrt -keystore "$caDir\procom-erp-truststore.jks" --store-pass $storePassword
     Write-Host "New CA files generated."
     Move-Item -Force -Path "$caDir\procom-erp-truststore.jks" -Destination "..\system"
 }
-$caCrt = "$caDir\$caCrt"
-$caKey = "$caDir\$caKey"
 
-# Discover service directories and generate certificates
-$backendServices = Get-ChildItem -Path "../backend" -Directory | Where-Object { $_.Name -match "Service$" }
-$frontendServices = Get-ChildItem -Path "../frontend" -Directory | Where-Object { $_.Name -match "Service$" }
+# +-----------------------------------------------------------------------------+
+# | Main Logic                                                                  |
+# +-----------------------------------------------------------------------------+
+
+if ( "$caDir" == "true" ) {
+    Generate-CA
+}
 
 foreach ($service in $backendServices + $frontendServices) {
     $serviceName = $service.Name -replace "Service$"
@@ -92,8 +129,12 @@ foreach ($service in $backendServices + $frontendServices) {
     Generate-Certificate -serviceName $serviceName -serviceType $serviceType
 }
 
+# +-----------------------------------------------------------------------------+
+
 # Final CA management and truststore setup not directly translatable to PowerShell without external tools like Java's keytool or manual steps.
 Copy-Item -Force -Path $caCrt -Destination "..\system\procom-erp-ca.pem"
 # Adapt this section based on your security requirements.
 
 Write-Host "Certificates generation completed."
+
+# +----End of this handy script------------------------------------------------+
