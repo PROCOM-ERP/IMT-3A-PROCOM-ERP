@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import '../css/OrderForm.css'
+import { useNavigate } from 'react-router-dom';
 
 function OrderForm() {
+  const navigate = useNavigate();
+  const userId = localStorage.getItem('id');
   const [orderData, setOrderData] = useState({
     provider: '',
     quote: '',
@@ -62,8 +65,8 @@ function OrderForm() {
   }
 
   const getOrdererInfo = async () => {
-    const idEmployee = localStorage.getItem('id');
-    const apiUrl = "https://localhost:8041/api/order/v1/employees/" + idEmployee;
+
+    const apiUrl = "https://localhost:8041/api/order/v1/employees/" + userId;
     // Make the API request
     await fetch(apiUrl, {
       method: "GET",
@@ -142,7 +145,48 @@ function OrderForm() {
   const handleSubmit = (e) => {
     e.preventDefault();
     // TODO: Handle form submission, e.g., send data to backend
-    console.log(orderData);
+    setOrderData(prevData => ({
+      ...prevData,
+      orderer: { ...prevData.orderer, id: userId.toString() }
+    }));
+
+    // Delete all "" values from orderData 
+    const updatedOrderData = Object.fromEntries(
+      Object.entries(orderData)
+        .filter(([_, value]) => value !== "") // Filter out entries with empty string values
+    );
+    setOrderData(updatedOrderData);
+
+    // Convert property types to make it correspond to JSON format needed for sending
+    orderData.provider = parseInt(orderData.provider); // Convert provider to number
+    orderData.products.forEach(product => {
+      product.unitPrice = parseInt(product.unitPrice); // Convert unitPrice to number
+      product.quantity = parseInt(product.quantity); // Convert quantity to number
+    });
+
+
+    // API URL
+    const apiUrl = "https://localhost:8041/api/order/v1/orders";
+
+    console.log(JSON.stringify(orderData));
+
+    // Make the API request
+    fetch(apiUrl, {
+      method: "POST",
+      credentials: "include",
+      headers: headers,
+      body: JSON.stringify(orderData)
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to add order');
+        }
+        console.log("[LOG] Order added with success");
+        navigate("/orderManagement");
+      })
+      .catch(error => {
+        console.error('Error adding order:', error);
+      });
   };
 
   return (
