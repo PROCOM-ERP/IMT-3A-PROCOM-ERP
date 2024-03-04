@@ -215,7 +215,7 @@ if (-not (Test-Path "$envPath")) {
     exit
 }
 
-if (-not (Test-Path "$systemPath\docker-compose.yml")) {
+if (-not (Test-Path "$dockerPath\docker-compose.yml")) {
     Write-Host "System error: docker-compose.yml file not found"
     exit
 }
