@@ -3,16 +3,17 @@ package com.example.authenticationservice.config;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 
+import lombok.RequiredArgsConstructor;
+
 @Configuration
 @DependsOn({ "securityConfig", "restConfig" })
+@RequiredArgsConstructor
 public class RabbitMQConfig {
 
-    @Autowired
     private ConnectionFactory connectionFactory;
 
     /* Queues */
