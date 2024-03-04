@@ -10,6 +10,17 @@
   margin: auto;
 }
 
+.order-container {
+  /* Text  */
+  font-family: var(--text-family);
+  font-size: var(--text-size);
+  font-weight: var(--text-weight);
+  /* Display page */
+  display: block;
+  width: 80%;
+  margin: auto;
+}
+
 .line-container {
   /* Use flexbox */
   display: flex;

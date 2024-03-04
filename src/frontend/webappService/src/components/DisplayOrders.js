@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Button from './Button';
 import { useNavigate } from 'react-router-dom';
+import "../css/DirectoryTable.css";
 
 function DisplayOrders() {
   const navigate = useNavigate();
@@ -29,7 +30,19 @@ function DisplayOrders() {
       (order.id.toString() && order.id.toString().toLowerCase().includes(lowerCaseSearchTerm)) ||
       (order.createdAt && order.createdAt.toLowerCase().includes(lowerCaseSearchTerm)) ||
       (order.provider && order.provider.toLowerCase().includes(lowerCaseSearchTerm)) ||
-      (order.totalAmount && order.totalAmount.toLowerCase().includes(lowerCaseSearchTerm)) ||
+      (order.totalAmount.toString() && order.totalAmount.toString().toLowerCase().includes(lowerCaseSearchTerm)) ||
+      (order.approver && order.approver.toLowerCase().includes(lowerCaseSearchTerm)) ||
+      (order.status && order.status.toLowerCase().includes(lowerCaseSearchTerm))
+    );
+  });
+
+  let filteredManagerOrders = Object.values(managerOrders).filter(order => {
+    const lowerCaseSearchTerm = searchTerm.toLowerCase();
+    return (
+      (order.id.toString() && order.id.toString().toLowerCase().includes(lowerCaseSearchTerm)) ||
+      (order.createdAt && order.createdAt.toLowerCase().includes(lowerCaseSearchTerm)) ||
+      (order.provider && order.provider.toLowerCase().includes(lowerCaseSearchTerm)) ||
+      (order.totalAmount.toString() && order.totalAmount.toString().toLowerCase().includes(lowerCaseSearchTerm)) ||
       (order.approver && order.approver.toLowerCase().includes(lowerCaseSearchTerm)) ||
       (order.status && order.status.toLowerCase().includes(lowerCaseSearchTerm))
     );
@@ -37,6 +50,11 @@ function DisplayOrders() {
 
   if (sortBy) {
     filteredUserOrders.sort((a, b) => {
+      if (a[sortBy] < b[sortBy]) return -1;
+      if (a[sortBy] > b[sortBy]) return 1;
+      return 0;
+    });
+    filteredManagerOrders.sort((a, b) => {
       if (a[sortBy] < b[sortBy]) return -1;
       if (a[sortBy] > b[sortBy]) return 1;
       return 0;
@@ -96,6 +114,7 @@ function DisplayOrders() {
           </div>
           <Button onClick={handleAddOrder}>Add Order</Button>
         </div>
+        <div className='title2'>Your orders</div>
         <table className='table-container' >
           <thead className='table-head-container'>
             <tr>
@@ -124,6 +143,45 @@ function DisplayOrders() {
 
           </tbody>
         </table>
+        {filteredUserOrders.length === 0 && (
+          <div className="empty-message">No orders found.</div>
+        )}
+      </div>
+      <div className='order-container'>
+        <div className="line-container">
+        </div>
+        <div className='title2'>Orders to validate</div>
+        <table className='table-container' >
+          <thead className='table-head-container'>
+            <tr>
+              <th onClick={() => handleSort('id')} >ID</th>
+              <th onClick={() => handleSort('provider')} >Provider</th>
+              <th onClick={() => handleSort('approver')} >Approver</th>
+              <th onClick={() => handleSort('createdAt')} >Created</th>
+              <th onClick={() => handleSort('status')} >Status</th>
+              <th onClick={() => handleSort('totalAmount')} >Amount</th>
+            </tr>
+          </thead>
+
+          <tbody className='table-body-container'>
+            {filteredManagerOrders.map((order, index) => {
+              return (
+                <tr key={index} onClick={() => handleProfil(order.id)} >
+                  <td>{order.id}</td>
+                  <td> {order.provider} </td>
+                  <td> {order.approver} </td>
+                  <td> {order.createdAt} </td>
+                  <td> {order.status} </td>
+                  <td> {order.totalAmount} </td>
+                </tr>
+              )
+            })}
+
+          </tbody>
+        </table>
+        {filteredManagerOrders.length === 0 && (
+          <div className="empty-message">No orders found.</div>
+        )}
       </div>
     </>
   )
