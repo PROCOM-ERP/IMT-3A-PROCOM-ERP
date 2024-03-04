@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class RabbitMQConfig {
 
-    private ConnectionFactory connectionFactory;
+    private final ConnectionFactory connectionFactory;
 
     /* Queues */
 
