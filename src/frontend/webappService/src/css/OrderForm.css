@@ -1,0 +1,45 @@
+.order-form-container {
+  display: flex;
+  flex-direction: column;
+  /* Stack elements vertically */
+  justify-content: center;
+  /* Center items vertically */
+  align-items: center;
+  /* Center items horizontally */
+  /* height: 100vh; */
+  /* Adjust as needed */
+  width: 70%;
+  margin: auto;
+  background-color: #D7EBFC;
+}
+
+/* Apply styles to the container holding each label and input pair */
+.order-line-container {
+  display: flex;
+  /* Use flexbox to align items */
+  align-items: center;
+  /* Align items vertically */
+  margin-bottom: 1rem;
+  /* Add space between label-input pairs */
+}
+
+/* Apply styles to labels */
+.order-line-container label {
+  width: 120px;
+  /* Adjust label width as needed */
+  margin: 0;
+  padding: 1px 2px;
+  /* Add space between label and input */
+}
+
+/* Apply styles to inputs */
+.order-line-container input {
+  width: 100%;
+  /* Expand input width to fill remaining space */
+}
+
+/* Apply styles to select */
+.order-line-container select {
+  width: 100%;
+  /* Expand input width to fill remaining space */
+}
