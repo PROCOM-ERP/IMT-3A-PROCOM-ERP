@@ -95,16 +95,18 @@ IMT-3A-PROCOM-ERP/                     This repository
 │   └── wait-for-it.sh                 Handy script that waits for the availability of an service to execute a given command
 │
 ├── security/                          Security scripts (./deploy.sh uses all except for clean_security.sh), all are available in a .ps1 for Windows devs
-│    ├── clean_security.sh             Cleans all certificates from the repository
-│    ├── docker_secrets.sh             Generates all the docker secrets necessary for the deployment with normal compose
-│    ├── docker_secrets_files.sh       Generates all docker secrets in swarm mode
-│    ├── security_setup.sh             Generates all needed certificates in the repository
-│    └── ...                           Other scripts, such as the docker secrets scripts, or certicate generations
+│   ├── clean_security.sh              Cleans all certificates from the repository
+│   ├── docker_secrets.sh              Generates all the docker secrets necessary for the deployment with normal compose
+│   ├── docker_secrets_files.sh        Generates all docker secrets in swarm mode
+│   ├── security_setup.sh              Generates all needed certificates in the repository
+│   └── ...                            Other scripts, such as the docker secrets scripts, or certicate generations
 │
 ├── docker/                            Directory for Docker related files
-│    ├── .env                          Environment variables of the projet
-│    ├── docker-compose.yml            Docker containers build script to simulate the project
-│    └── docker-compose-swarm.yml      Docker containers build script to simulate the project Swarm mode
+│   ├── elk /                          Directory for all the Elastic Stack, imported and adapted to our project from deviantony/docker-elk.
+│   │   └── ...
+│   ├── .env                           Environment variables of the projet
+│   ├── docker-compose.yml             Docker containers build script to simulate the project
+│   └── docker-compose-swarm.yml       Docker containers build script to simulate the project Swarm mode
 │
 └── docs/                              All technical and GitHub workflows documentation
     ├── workflows/                     GitHub workflows as sequence diagrams
@@ -131,14 +133,15 @@ any changes in this directory will need a review acceptation from a member of th
 [CONTRIBUTING.md](CONTRIBUTING.md) file explains how to contribute to the project,
 and what are the contributing rules.
 
-## Roadmap
+We follow a [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md), if you want to contribute, you will _have_ to follow it.
 
-The different steps to follow are described in the [BACKLOG.md](BACKLOG.md) file.
-They are assigned by the Product Owner of the project (see [Contributors](#contributors) section).
+## Security
+
+You can verify the versions of this software still maintained to this day, as well as how to report a bug or security issue in the [SECURITY.md](SECURITY.md) section.
 
 ## Suggestions
 
-Any enhancement idea can be suggested in the [Suggestions](BACKLOG.md#suggestions) section of the BACKLOG file.
+Any enhancement idea can be suggested in an [Feature Request Issue](https://github.com/PROCOM-ERP/IMT-3A-PROCOM-ERP/issues/new?assignees=&labels=&projects=&template=feature_request.md&title=), following the Feature Request template.
 
 ## License
 
