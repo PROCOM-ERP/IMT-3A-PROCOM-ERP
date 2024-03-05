@@ -148,6 +148,9 @@ public class LoginProfileService {
         regexUtils.checkStringPattern(idLoginProfile, RegexUtils.REGEX_ID_LOGIN_PROFILE,
                 ERROR_MSG_USER_ID_PATH_VARIABLE);
 
+        // sanitize all request parameters
+        customStringUtils.sanitizeAllStrings(passwordDto);
+
         // check if the LoginProfile, for which the password will be modified,
         // is the same as the authenticated one (or admin)
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -183,6 +186,9 @@ public class LoginProfileService {
         // check if LoginProfile id respect the good pattern
         regexUtils.checkStringPattern(idLoginProfile, RegexUtils.REGEX_ID_LOGIN_PROFILE,
                 ERROR_MSG_USER_ID_PATH_VARIABLE);
+
+        // sanitize all request parameters
+        customStringUtils.sanitizeAllStrings(loginProfileDto);
 
         // check if loginProfile exists
         LoginProfile loginProfile = loginProfileRepository.findById(idLoginProfile)
