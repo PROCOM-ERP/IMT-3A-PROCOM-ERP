@@ -97,7 +97,8 @@ public class ControllerExceptionHandler {
     }
 
     @ExceptionHandler(NoSuchElementException.class) // Http 404
-    public ResponseEntity<HttpStatusErrorDto> handleNoSuchElementExceptions()
+    public ResponseEntity<HttpStatusErrorDto> handleNoSuchElementExceptions(
+            NoSuchElementException e)
     {
         logger.error("Service " + serviceName + " throws an error\n", e);
         return ResponseEntity.notFound().build();
