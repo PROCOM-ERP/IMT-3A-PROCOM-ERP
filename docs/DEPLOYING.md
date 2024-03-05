@@ -41,6 +41,7 @@ Check the [Warning section](#warning) at the end of this guide in case you're ha
 - Execute the script `./security/docker_secrets_files.sh`.
 - Execute the script `./deploy.sh`, and if it's your first execution, add the `--sec` option to the command, as such: `./deploy.sh --sec`. This will generate all security certificates needed to run the app only if it doesn't detect existing ones.
 
+  > [!NOTE]
   > If you want to see available options, execute `./deploy.sh --help`.
 
   > If you want to renew certificates and already have a deployed instance, or simply already have certificates in your services and want to change them, execute `./deploy.sh --clean-sec "CA" --sec`
@@ -56,6 +57,7 @@ Check the [Warning section](#warning) at the end of this guide in case you're ha
 
 This is going to activate :ship: Swarm mode :sailboat: for :whale: Docker, and create a node manager. Then it will deploy the services and load balance between them, restart them if they have errors etc.
 
+> [!NOTE]
 > If you want to see available options, execute `./deploy.sh --help`.
 
 > If you want to renew certificates and already have a deployed instance, or simply already have certificates in your services and want to change them, execute `./deploy.sh --clean-sec "CA" --sec`
@@ -76,13 +78,11 @@ The logs and monitoring site, Elastic (our server-side view of all exchanges mad
 
 Hopefully, things should be running smoothly now. If you want to undeploy the system, execute the `undeploy.sh` script using : `./undeploy.sh` command, this one doesn't have particular options
 
-## :warning: Warning :warning:
+> [!WARNING]
+> Having trouble deploying ? Maybe you're entering the good credentials, but still can't access the application ?
+> In order to make sure services can communicate, after you just deployed the app, when it's your first time accessing the [frontend](https://localhost:3000/), please accept the prompt to proceed with adding an exception for the site, as its certificates have yet to be validated by a known authority (it costs a certain sum of money). Be careful to do the same with the gateway using this [link](https://localhost:8041/api/authentication/v1/hello), so that the gateway can safely communicate information to the frontend.
+> The command to make a file executable (in order to execute a .sh script for example), is `chmod +x file_name.sh`.
 
-Having trouble deploying ? Maybe you're entering the good credentials, but still can't access the application ?
-In order to make sure services can communicate, after you just deployed the app, when it's your first time accessing the [frontend](https://localhost:3000/), please accept the prompt to proceed with adding an exception for the site, as its certificates have yet to be validated by a known authority (it costs a certain sum of money). Be careful to do the same with the gateway using this [link](https://localhost:8041/api/authentication/v1/hello), so that the gateway can safely communicate information to the frontend.
+> If you're having a problem with \r files and you're on Windows, I invite you to execute this command: `sed -i 's/\r$//' .\*.sh && sed -i 's/\r$//' .\system\mvnw`.
 
-The command to make a file executable (in order to execute a .sh script for example), is `chmod +x file_name.sh`.
-
-If you're having a problem with \r files and you're on Windows, I invite you to execute this command: `sed -i 's/\r$//' .\*.sh && sed -i 's/\r$//' .\system\mvnw`.
-
-See [Security Guide](./security/README.md) if you encounter any issues regarding `.jks`, `.p12`, `.crt` or `.pem` files. Often you'll only need to add options `--clean-sec "CA" --sec` to your deployment.
+> See [Security Guide](./security/README.md) if you encounter any issues regarding `.jks`, `.p12`, `.crt` or `.pem` files. Often you'll only need to add options `--clean-sec "CA" --sec` to your deployment.
