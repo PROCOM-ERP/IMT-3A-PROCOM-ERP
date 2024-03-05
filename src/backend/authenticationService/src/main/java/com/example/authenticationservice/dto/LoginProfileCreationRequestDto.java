@@ -1,6 +1,6 @@
 package com.example.authenticationservice.dto;
 
-import com.example.authenticationservice.utils.CustomRegexPattern;
+import com.example.authenticationservice.utils.RegexUtils;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,7 +17,7 @@ public class LoginProfileCreationRequestDto {
 
     @NotBlank(message = "User id cannot be null or blank")
     @Size(min = 3, max = 320, message = "User email cannot have less than 3 characters and no more than 320")
-    @Email(regexp = CustomRegexPattern.REGEX_EMAIL,
+    @Email(regexp = RegexUtils.REGEX_EMAIL,
             message = "User email should start, and end, with alphanumeric characters and contain a '@' symbol")
     private String email;
 

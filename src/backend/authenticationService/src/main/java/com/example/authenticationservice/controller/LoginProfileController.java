@@ -3,12 +3,14 @@ package com.example.authenticationservice.controller;
 import com.example.authenticationservice.dto.*;
 import com.example.authenticationservice.model.Path;
 import com.example.authenticationservice.service.LoginProfileService;
+import com.example.authenticationservice.utils.RegexUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +24,8 @@ import java.net.URI;
 public class LoginProfileController {
 
     private final LoginProfileService loginProfileService;
+
+    private final RegexUtils regexUtils;
 
     @PostMapping
     @Operation(operationId = "createLoginProfile", tags = {"login-profiles"},
@@ -47,9 +51,10 @@ public class LoginProfileController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<LoginProfileIdResponseDto> createLoginProfile(
-            @RequestBody LoginProfileCreationRequestDto loginProfileCreationRequestDto)
-            throws Exception {
+    public ResponseEntity<@Valid LoginProfileIdResponseDto> createLoginProfile(
+            @Valid @RequestBody LoginProfileCreationRequestDto loginProfileCreationRequestDto)
+            throws Exception
+    {
         // try to create a new loginProfile
         LoginProfileIdResponseDto loginProfileIdResponseDto = loginProfileService
                 .createLoginProfile(loginProfileCreationRequestDto);
@@ -83,7 +88,11 @@ public class LoginProfileController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<LoginProfileResponseDto> getLoginProfileById(@PathVariable String idLoginProfile) {
+    public ResponseEntity<@Valid LoginProfileResponseDto> getLoginProfileById(
+            @PathVariable String idLoginProfile)
+    {
+        regexUtils.checkStringPattern(idLoginProfile, RegexUtils.REGEX_ID_LOGIN_PROFILE,
+                "User id should start by a capital letter, followed by exactly 5 digits");
         return ResponseEntity.ok(loginProfileService.getLoginProfileById(idLoginProfile));
     }
 
@@ -107,7 +116,11 @@ public class LoginProfileController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<LoginProfileActivationResponseDto> getLoginProfileActivationById(@PathVariable String idLoginProfile) {
+    public ResponseEntity<@Valid LoginProfileActivationResponseDto> getLoginProfileActivationById(
+            @PathVariable String idLoginProfile)
+    {
+        regexUtils.checkStringPattern(idLoginProfile, RegexUtils.REGEX_ID_LOGIN_PROFILE,
+                "User id should start by a capital letter, followed by exactly 5 digits");
         return ResponseEntity.ok(loginProfileService.getLoginProfileActivationById(idLoginProfile));
     }
 
@@ -139,7 +152,10 @@ public class LoginProfileController {
                     content = {@Content(mediaType = "application/json")} )})
     public ResponseEntity<String> updateLoginProfilePasswordById(
             @PathVariable String idLoginProfile,
-            @RequestBody LoginProfilePasswordUpdateRequestDto passwordDto) {
+            @Valid @RequestBody LoginProfilePasswordUpdateRequestDto passwordDto)
+    {
+        regexUtils.checkStringPattern(idLoginProfile, RegexUtils.REGEX_ID_LOGIN_PROFILE,
+                "User id should start by a capital letter, followed by exactly 5 digits");
         loginProfileService.updateLoginProfilePasswordById(idLoginProfile, passwordDto);
         return ResponseEntity.noContent().build();
     }
@@ -170,8 +186,12 @@ public class LoginProfileController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<String> updateLoginProfileById(@PathVariable String idLoginProfile,
-                                                          @RequestBody LoginProfileUpdateRequestDto loginProfileDto) {
+    public ResponseEntity<String> updateLoginProfileById(
+            @PathVariable String idLoginProfile,
+            @Valid @RequestBody LoginProfileUpdateRequestDto loginProfileDto)
+    {
+        regexUtils.checkStringPattern(idLoginProfile, RegexUtils.REGEX_ID_LOGIN_PROFILE,
+                "User id should start by a capital letter, followed by exactly 5 digits");
         loginProfileService.updateLoginProfileById(idLoginProfile, loginProfileDto);
         return ResponseEntity.noContent().build();
     }
