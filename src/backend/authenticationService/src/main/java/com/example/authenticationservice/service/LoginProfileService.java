@@ -103,7 +103,7 @@ public class LoginProfileService {
         // check if LoginProfile entity exists and retrieve it
         LoginProfile loginProfile = loginProfileRepository.findById(idLoginProfile)
                 .orElseThrow(() ->
-                        new NoSuchElementException("No existing user with id " + idLoginProfile));
+                        new NoSuchElementException("No existing user with id " + idLoginProfile + "."));
 
         // get RoleDto entities from the login profile existing ones
         Set<RoleDto> roles = roleRepository.findAll().stream()
@@ -134,7 +134,7 @@ public class LoginProfileService {
                         .isEnable(loginProfile.getIsEnable())
                         .build())
                 .orElseThrow(() ->
-                        new NoSuchElementException("No existing user with id " + idLoginProfile));
+                        new NoSuchElementException("No existing user with id " + idLoginProfile + "."));
     }
 
     public void updateLoginProfilePasswordById(
@@ -158,7 +158,7 @@ public class LoginProfileService {
         boolean canBypassAccessDeny = authentication.getAuthorities()
                 .contains(new SimpleGrantedAuthority(Permission.CanBypassAccessDeny.name()));
         if (!currentLoginProfileId.equals(idLoginProfile) && !canBypassAccessDeny) {
-            throw new AccessDeniedException("Forbidden to modify another user password");
+            throw new AccessDeniedException("");
         }
 
         // check password validity
@@ -169,7 +169,7 @@ public class LoginProfileService {
 
         // check if only 1 row was modified
         if (row != 1)
-            throw new NoSuchElementException("No existing user with id " + idLoginProfile);
+            throw new NoSuchElementException("No existing user with id " + idLoginProfile + ".");
 
         // send message to inform the network about a login profile jwt expiration
         messageSenderService.sendLoginProfileJwtDisableOldMessage(idLoginProfile);
@@ -193,7 +193,7 @@ public class LoginProfileService {
         // check if loginProfile exists
         LoginProfile loginProfile = loginProfileRepository.findById(idLoginProfile)
                 .orElseThrow(() ->
-                        new NoSuchElementException("No existing user with id " + idLoginProfile));
+                        new NoSuchElementException("No existing user with id " + idLoginProfile + "."));
 
         // update LoginProfile entity roles
         if (loginProfileDto.getRoles() != null) {
@@ -219,7 +219,7 @@ public class LoginProfileService {
             int row = loginProfileRepository.updateJwtGenMinAtById(idLoginProfile);
             // check if only 1 row was modified
             if (row != 1)
-                throw new NoSuchElementException("No existing user with id " + idLoginProfile);
+                throw new NoSuchElementException("No existing user with id " + idLoginProfile + ".");
             messageSenderService.sendLoginProfileJwtDisableOldMessage(idLoginProfile);
         }
     }

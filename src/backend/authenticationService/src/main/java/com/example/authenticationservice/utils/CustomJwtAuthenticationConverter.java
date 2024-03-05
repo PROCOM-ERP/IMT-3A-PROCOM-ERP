@@ -7,6 +7,7 @@ import com.example.authenticationservice.service.PermissionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -47,14 +48,17 @@ public class CustomJwtAuthenticationConverter implements Converter<Jwt, Abstract
         return new JwtAuthenticationToken(jwt, permissionsToAuthorities(permissions));
     }
 
-    private void checkTokenValidity(Jwt jwt) throws InsufficientAuthenticationException {
+    private void checkTokenValidity(Jwt jwt)
+            throws InsufficientAuthenticationException,
+            AccessDeniedException
+    {
         LoginProfile loginProfile = loginProfileRepository.findById(jwt.getSubject())
-                .orElseThrow(() -> new InsufficientAuthenticationException(""));
+                .orElseThrow(() -> new AccessDeniedException(""));
         if (! loginProfile.getIsEnable())
-            throw new InsufficientAuthenticationException("");
+            throw new AccessDeniedException("");
         Instant jwtGenMinAt = loginProfile.getJwtGenMinAt();
         if (jwt.getIssuedAt() == null || jwt.getIssuedAt().isBefore(jwtGenMinAt))
-            throw new InsufficientAuthenticationException("");
+            throw new InsufficientAuthenticationException("Authentication missing or expired.");
     }
 
     private List<SimpleGrantedAuthority> permissionsToAuthorities(Set<String> permissions) {

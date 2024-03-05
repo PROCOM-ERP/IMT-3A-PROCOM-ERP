@@ -58,15 +58,19 @@ public class JwtService {
     }
 
     private List<String> getRolesByAuthSubject(String authSubject)
-            throws InsufficientAuthenticationException, AccessDeniedException {
-
+            throws InsufficientAuthenticationException,
+            AccessDeniedException
+    {
         // if service try to connect to another one
         if (Objects.equals(authSubject, sharedKey))
             return Collections.singletonList(serviceRole);
 
         // check if loginProfile exists
         LoginProfile loginProfile = loginProfileRepository.findById(authSubject)
-                .orElseThrow(() -> new InsufficientAuthenticationException(""));
+                .orElseThrow(() -> new AccessDeniedException(""));
+        if (! loginProfile.getIsEnable())
+            throw new AccessDeniedException("");
+
         // get role names
         List<String> roles =  loginProfile.getRoles().stream()
                 .filter(Role::getIsEnable)
@@ -74,7 +78,7 @@ public class JwtService {
                 .toList();
         //logger.info("Roles in Repository : " + roles);
         if (roles.isEmpty()) {
-            throw new AccessDeniedException("");
+            throw new InsufficientAuthenticationException("");
         }
         return roles;
     }

@@ -27,6 +27,12 @@ public class ControllerExceptionHandler {
             "The server has encountered an unexpected error.";
     public static final String ERROR_DEFAULT_MSG_HTTP_400 =
             "Inputs don't respect a specific format.";
+    public static final String ERROR_DEFAULT_MSG_HTTP_401 =
+            "Authentication missing or expired.";
+    public static final String ERROR_DEFAULT_MSG_HTTP_403 =
+            "Forbidden to access the resource.";
+
+
     @Value("${security.service.name}")
     private static String serviceName;
 
@@ -91,7 +97,7 @@ public class ControllerExceptionHandler {
             AccessDeniedException e)
     {
         HttpStatusErrorDto error = HttpStatusErrorDto.builder()
-                .message(e.getMessage())
+                .message(ERROR_DEFAULT_MSG_HTTP_403)
                 .build();
         logger.error("Service " + serviceName + " throws an error\n", e);
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
