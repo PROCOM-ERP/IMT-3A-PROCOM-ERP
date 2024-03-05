@@ -3,6 +3,9 @@
 **Here is the complete guide on how to deploy your ERP.
 We mainly use scripts to deploy this application, although we are researching other deployment tools.**
 
+Accessing the webpage :[Frontend](#frontend)
+Accessing the system logs: [Logs](#logs)
+
 All `.sh` scripts have a `.ps1` version for Windows. But make sure to run docker commands and shell scripts in either a WSL, or in a UNIX based system.
 (Your IDE's terminal often supports bash)
 
@@ -98,9 +101,13 @@ This is going to activate :ship: Swarm mode :sailboat: for :whale: Docker, and c
 > [!CAUTION]
 > See [Warning section](#warning) for information about browser certificates, because for the first time ou launch our ERP, you will have to accept 2 certificates as exceptions.
 
+## Frontend
+
 The frontend, our client-side view of the ERP, is located [here](https://localhost:3000/).
 
 ![Frontend](./images/front-login.png "Login")
+
+## Logs
 
 The logs and monitoring site, Elastic (our server-side view of all exchanges made in the ERP) is located [here](http://localhost:5601/).
 
