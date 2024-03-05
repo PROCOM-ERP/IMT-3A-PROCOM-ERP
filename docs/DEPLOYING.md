@@ -41,14 +41,14 @@ Check the [Warning section](#warning) at the end of this guide in case you're ha
 - Execute the script `./security/docker_secrets_files.sh`.
 - Execute the script `./deploy.sh`, and if it's your first execution, add the `--sec` option to the command, as such: `./deploy.sh --sec`. This will generate all security certificates needed to run the app only if it doesn't detect existing ones.
 
-  > [!NOTE]
-  > If you want to see available options, execute `./deploy.sh --help`.
+> [!NOTE]
+> If you want to see available options, execute `./deploy.sh --help`.
 
-  > If you want to renew certificates and already have a deployed instance, or simply already have certificates in your services and want to change them, execute `./deploy.sh --clean-sec "CA" --sec`
+> If you want to renew certificates and already have a deployed instance, or simply already have certificates in your services and want to change them, execute `./deploy.sh --clean-sec "CA" --sec`
 
-  > If you would prefer to pull images from a docker registry on :whale: [Docker Hub](https://hub.docker.com) instead of building them locally, you can simply add `--pull "registry_or_username/repository"` as well as a version to pull from `--version "X.X.X | latest"`, such as: `./deploy.sh --pull "gachille/erp" --version 1.0.0`.
+> If you would prefer to pull images from a docker registry on :whale: [Docker Hub](https://hub.docker.com) instead of building them locally, you can simply add `--pull "registry_or_username/repository"` as well as a version to pull from `--version "X.X.X | latest"`, such as: `./deploy.sh --pull "gachille/erp" --version 1.0.0`.
 
-  > If you would like to push you local images to a docker registry on :whale: [Docker Hub](https://hub.docker.com), you can simply add `--push "registry_or_username/repository"`, such as: `./deploy --push "gachille/erp"`. It will automatically tag the images, and push one image with multiple tags, all named after the services, as not to bring chaos to the repository.
+> If you would like to push you local images to a docker registry on :whale: [Docker Hub](https://hub.docker.com), you can simply add `--push "registry_or_username/repository"`, such as: `./deploy --push "gachille/erp"`. It will automatically tag the images, and push one image with multiple tags, all named after the services, as not to bring chaos to the repository.
 
 ## :whale: - :honeybee: **Swarm mode** :
 
