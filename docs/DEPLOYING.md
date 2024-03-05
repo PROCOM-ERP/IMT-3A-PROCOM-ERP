@@ -22,18 +22,18 @@ There are multiple scripts you need to have, that are not followed within this r
 
 Check the [Warning section](#warning) at the end of this guide in case you're having an issue
 
-## :exclamation: Requirements :exclamation:
+> [!IMPORTANT]
 
-1. Insure you have :whale: Docker installed. On Unix systems, run `docker --version`.
-2. Insure you have a :whale: Docker daemon running. On Windows check if :whale: Docker desktop app is running, on Unix systems,run: `sudo systemctl status docker`.
-3. Insure you have :lock: OpenSSL installed. Run: `openssl --version` or `openssl -v`.
-4. Insure you have a :coffee: Java JDK installed (we use keytools to generate some trust stores for the application).
+> 1. Insure you have :whale: Docker installed. On Unix systems, run `docker --version`.
+> 2. Insure you have a :whale: Docker daemon running. On Windows check if :whale: Docker desktop app is running, on Unix systems,run: `sudo systemctl status docker`.
+> 3. Insure you have :lock: OpenSSL installed. Run: `openssl --version` or `openssl -v`.
+> 4. Insure you have a :coffee: Java JDK installed (we use keytools to generate some trust stores for the application).
 
-   > Insure you have :lock: keytool installed. Run: `keytool`. If not, download on your system an openjdk17-jre-healess for example.
+> > Insure you have :lock: keytool installed. Run: `keytool`. If not, download on your system an openjdk17-jre-healess for example.
 
-5. Finally, insure you have expect installed. Run: `expect --version`.
-   > If not, download it using your system's package manager. If using a WSL, sometimes `sudo apt-get install expect` can not find the package, you'll have to `sudo apt update && sudo apt upgrade`.
-6. Insure you have the script `./security/generate_certificate_password.sh`.
+> 5. Finally, insure you have expect installed. Run: `expect --version`.
+>    > If not, download it using your system's package manager. If using a WSL, sometimes `sudo apt-get install expect` can not find the package, you'll have to `sudo apt update && sudo apt upgrade`.
+> 6. Insure you have the script `./security/generate_certificate_password.sh`.
 
 ## :whale: - :musical_score: **Compose mode** :
 
