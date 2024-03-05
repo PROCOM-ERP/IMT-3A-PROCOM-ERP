@@ -3,7 +3,8 @@
 Here is the complete guide on how to deploy your ERP.
 We mainly use scripts to deploy this application, although we are researching other deployment tools.
 
-All `.sh` scripts have a `.ps1` version for Windows.
+All `.sh` scripts have a `.ps1` version for Windows. But make sure to run docker commands and shell scripts in either a WSL, or in a UNIX based system.
+(Your IDE's terminal often supports bash)
 
 ### Deployment modes :
 
