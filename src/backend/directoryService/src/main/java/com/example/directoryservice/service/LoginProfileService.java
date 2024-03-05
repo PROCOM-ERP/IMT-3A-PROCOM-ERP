@@ -24,8 +24,6 @@ public class LoginProfileService {
     private final RestTemplate restTemplate;
     private final CustomHttpRequestBuilder customHttpRequestBuilder;
 
-    private final Logger logger = LoggerFactory.getLogger(LoginProfileService.class);
-
     /* Public Methods */
 
     @Transactional

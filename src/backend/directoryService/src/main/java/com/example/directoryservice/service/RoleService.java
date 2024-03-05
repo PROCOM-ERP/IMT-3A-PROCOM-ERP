@@ -8,8 +8,6 @@ import com.example.directoryservice.model.Role;
 import com.example.directoryservice.repository.RoleRepository;
 import com.example.directoryservice.utils.CustomHttpRequestBuilder;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -40,25 +38,19 @@ public class RoleService {
     private final CustomHttpRequestBuilder customHttpRequestBuilder;
     private final MessageSenderService messageSenderService;
 
-    private final Logger logger = LoggerFactory.getLogger(RoleService.class);
-
     /* Public Methods */
 
     public void createRole(String getRoleByNamePath) {
-        try {
-            // retrieve microservice role
-            RoleActivationResponseDto roleDto = getMicroserviceRole(getRoleByNamePath);
-            // create new Role entity before database insertion
-            Role role = Role.builder()
-                    .name(roleDto.getName())
-                    .isEnable(roleDto.getIsEnable())
-                    .build();
+        // retrieve microservice role
+        RoleActivationResponseDto roleDto = getMicroserviceRole(getRoleByNamePath);
+        // create new Role entity before database insertion
+        Role role = Role.builder()
+                .name(roleDto.getName())
+                .isEnable(roleDto.getIsEnable())
+                .build();
 
-            // insert Role entity
-            roleRepository.save(role);
-        } catch (Exception e) {
-            logger.error("Something went wrong with role creation : " + e.getCause());
-        }
+        // insert Role entity
+        roleRepository.save(role);
     }
 
     public Set<RoleActivationResponseDto> getAllRoles() {
