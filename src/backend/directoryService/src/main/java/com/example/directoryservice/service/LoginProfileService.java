@@ -5,8 +5,6 @@ import com.example.directoryservice.model.LoginProfile;
 import com.example.directoryservice.repository.LoginProfileRepository;
 import com.example.directoryservice.utils.CustomHttpRequestBuilder;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
