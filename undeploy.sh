@@ -12,7 +12,7 @@ if docker info 2>/dev/null | grep -q "Swarm: active"; then
     docker swarm leave --force
     echo -e "\a"
 else
-    $(docker compose -f -p erp down)
+    $(docker compose -p erp down)
     $(docker compose -p elk down)
     echo -e "\a"
 fi
