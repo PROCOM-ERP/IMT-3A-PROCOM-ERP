@@ -8,6 +8,15 @@ import java.util.Arrays;
 @Component
 public class CustomStringUtils {
 
+    public static final String REGEX_ID_LOGIN_PROFILE =
+            "^[A-Z][0-9]{5}$";
+    public static final String REGEX_EMAIL =
+            "^[a-z0-9]([\\-\\.]?[a-z0-9])*@[a-z0-9]([\\-\\.]?[a-z0-9])*$";
+    public static final String REGEX_PASSWORD =
+            "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!.*])(?=\\S+$).{12,}$";
+    public static final String REGEX_ROLE_NAME =
+            "^[a-zA-Z]([\\-\\.]?[a-zA-Z0-9])*$";
+
     public void sanitizeAllStrings(Object obj)
     {
         if (obj == null)
@@ -41,6 +50,20 @@ public class CustomStringUtils {
             throws IllegalArgumentException
     {
         if (input == null || input.isBlank())
+            throw new IllegalArgumentException(message);
+    }
+
+    public void checkStringSize(String input, String message, int min, int max)
+            throws IllegalArgumentException
+    {
+        if (input.length() > max && input.length() < min)
+            throw new IllegalArgumentException(message);
+    }
+
+    public void checkStringPattern(String input, String regex, String message)
+            throws IllegalArgumentException
+    {
+        if (input == null || ! input.matches(regex))
             throw new IllegalArgumentException(message);
     }
 

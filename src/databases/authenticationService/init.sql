@@ -15,7 +15,9 @@ CREATE TABLE roles
     name VARCHAR(32) UNIQUE NOT NULL,
     is_enable BOOLEAN NOT NULL DEFAULT true,
 
-    CONSTRAINT pk_roles PRIMARY KEY (name)
+    CONSTRAINT pk_roles PRIMARY KEY (name),
+    CONSTRAINT check_roles_name
+        CHECK (name ~* '[a-zA-Z]([\-\.]?[a-zA-Z0-9])*')
 );
 
 -- +----------------------------------------------------------------------------------------------+

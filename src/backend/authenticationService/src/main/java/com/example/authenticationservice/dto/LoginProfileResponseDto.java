@@ -18,6 +18,6 @@ public class LoginProfileResponseDto {
     private Boolean isEnable;
 
     @NotNull(message = "User role set cannot be null, but can be empty.")
-    private Set<@NotNull RoleDto> roles;
+    private Set<@NotNull(message = "RoleDto cannot be null") RoleDto> roles;
 
 }

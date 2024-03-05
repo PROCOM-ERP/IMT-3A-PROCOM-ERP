@@ -18,6 +18,6 @@ public class RoleResponseDto {
     private Boolean isEnable;
 
     @NotNull(message = "Role permission set cannot be null, but can be empty.")
-    private Set<@NotNull(message = "Role permission cannot be null.") PermissionDto> permissions;
+    private Set<@NotNull(message = "PermissionDto cannot be null.") PermissionDto> permissions;
 
 }

@@ -29,10 +29,18 @@ import java.util.stream.Collectors;
 public class RoleService {
 
     /* Constants */
-    public static final String ERROR_MSG_ROLE_NAME_PATH_VARIABLE =
-            "Role name (provided as a path variable) cannot be null or empty.";
-    public static final String ERROR_MSG_MICROSERVICE_NAME_REQUEST_PARAM =
-            "Microservice name (provided as a request param) cannot be null or empty.";
+    public static final String ERROR_MSG_ROLE_NAME_BLANK =
+            "Role name cannot be null or empty.";
+    public static final String ERROR_MSG_ROLE_NAME_SIZE =
+            "Role name must contain between 1 and 32 characters.";
+    public static final String ERROR_MSG_ROLE_NAME_PATTERN =
+            "Role name must start with a letter and can only contain letters, numbers, dashes, and dots. " +
+            "Consecutive special characters are not allowed.";
+    public static final String ERROR_MSG_MICROSERVICE_NAME_BLANK =
+            "Microservice name cannot be null or blank.";
+    public static final String ERROR_MSG_MICROSERVICE_NAME_SIZE =
+            "Microservice name must contain between 1 and 32 characters.";
+
     @Value("${security.service.name}")
     private static String currentMicroservice;
 
@@ -199,8 +207,10 @@ public class RoleService {
             throws IllegalArgumentException,
             NoSuchElementException
     {
-        // check if role is not null or blank
-        customStringUtils.checkNullOrBlankString(roleName, ERROR_MSG_ROLE_NAME_PATH_VARIABLE);
+        // check role pattern
+        customStringUtils.checkNullOrBlankString(roleName, ERROR_MSG_ROLE_NAME_BLANK);
+        customStringUtils.checkStringSize(roleName, ERROR_MSG_ROLE_NAME_SIZE, 1, 32);
+        customStringUtils.checkStringPattern(roleName, ERROR_MSG_ROLE_NAME_PATTERN, CustomStringUtils.REGEX_ROLE_NAME);
 
         // sanitize all request parameters
         customStringUtils.sanitizeString(roleName);
@@ -229,9 +239,14 @@ public class RoleService {
             String roleName, String microservice)
             throws IllegalArgumentException
     {
-        // check if microservice and role are not null or blank
-        customStringUtils.checkNullOrBlankString(roleName, ERROR_MSG_ROLE_NAME_PATH_VARIABLE);
-        customStringUtils.checkNullOrBlankString(microservice, ERROR_MSG_MICROSERVICE_NAME_REQUEST_PARAM);
+        // check role pattern
+        customStringUtils.checkNullOrBlankString(roleName, ERROR_MSG_ROLE_NAME_BLANK);
+        customStringUtils.checkStringSize(roleName, ERROR_MSG_ROLE_NAME_SIZE, 1, 32);
+        customStringUtils.checkStringPattern(roleName, ERROR_MSG_ROLE_NAME_PATTERN, CustomStringUtils.REGEX_ROLE_NAME);
+
+        // check microservice pattern
+        customStringUtils.checkNullOrBlankString(microservice, ERROR_MSG_MICROSERVICE_NAME_BLANK);
+        customStringUtils.checkStringSize(microservice, ERROR_MSG_MICROSERVICE_NAME_SIZE, 1, 32);
 
         // sanitize all request parameters
         customStringUtils.sanitizeString(roleName);
@@ -257,8 +272,10 @@ public class RoleService {
             NoSuchElementException,
             DataIntegrityViolationException
     {
-        // check if role is not null or blank
-        customStringUtils.checkNullOrBlankString(roleName, ERROR_MSG_ROLE_NAME_PATH_VARIABLE);
+        // check role pattern
+        customStringUtils.checkNullOrBlankString(roleName, ERROR_MSG_ROLE_NAME_BLANK);
+        customStringUtils.checkStringSize(roleName, ERROR_MSG_ROLE_NAME_SIZE, 1, 32);
+        customStringUtils.checkStringPattern(roleName, ERROR_MSG_ROLE_NAME_PATTERN, CustomStringUtils.REGEX_ROLE_NAME);
 
         // sanitize all request parameters
         customStringUtils.sanitizeString(roleName);

@@ -31,9 +31,8 @@ import java.util.stream.Collectors;
 public class LoginProfileService {
 
     /* Constants */
-    public static final String ERROR_MSG_USER_ID_PATH_VARIABLE =
-            "User id (provided as a path variable) should start by a capital letter, " +
-            "followed by exactly 5 digits.";
+    public static final String ERROR_MSG_USER_ID =
+            "User id should start by a capital letter, followed by exactly 5 digits.";
 
     /* Repository Beans */
     private final LoginProfileRepository loginProfileRepository;
@@ -48,7 +47,6 @@ public class LoginProfileService {
     private final CustomPasswordGenerator customPasswordGenerator;
     private final CustomStringUtils customStringUtils;
     private final PasswordEncoder passwordEncoder;
-    private final RegexUtils regexUtils;
     private final RestTemplate restTemplate;
 
     /* Public Methods */
@@ -97,8 +95,8 @@ public class LoginProfileService {
             NoSuchElementException
     {
         // check if LoginProfile id respect the good pattern
-        regexUtils.checkStringPattern(idLoginProfile, RegexUtils.REGEX_ID_LOGIN_PROFILE,
-                ERROR_MSG_USER_ID_PATH_VARIABLE);
+        customStringUtils.checkStringPattern(idLoginProfile, CustomStringUtils.REGEX_ID_LOGIN_PROFILE,
+                ERROR_MSG_USER_ID);
 
         // check if LoginProfile entity exists and retrieve it
         LoginProfile loginProfile = loginProfileRepository.findById(idLoginProfile)
@@ -125,8 +123,8 @@ public class LoginProfileService {
             NoSuchElementException
     {
         // check if LoginProfile id respect the good pattern
-        regexUtils.checkStringPattern(idLoginProfile, RegexUtils.REGEX_ID_LOGIN_PROFILE,
-                ERROR_MSG_USER_ID_PATH_VARIABLE);
+        customStringUtils.checkStringPattern(idLoginProfile, CustomStringUtils.REGEX_ID_LOGIN_PROFILE,
+                ERROR_MSG_USER_ID);
 
         return loginProfileRepository.findById(idLoginProfile)
                 .map(loginProfile -> LoginProfileActivationResponseDto.builder()
@@ -145,8 +143,8 @@ public class LoginProfileService {
             NoSuchElementException
     {
         // check if LoginProfile id respect the good pattern
-        regexUtils.checkStringPattern(idLoginProfile, RegexUtils.REGEX_ID_LOGIN_PROFILE,
-                ERROR_MSG_USER_ID_PATH_VARIABLE);
+        customStringUtils.checkStringPattern(idLoginProfile, CustomStringUtils.REGEX_ID_LOGIN_PROFILE,
+                ERROR_MSG_USER_ID);
 
         // sanitize all request parameters
         customStringUtils.sanitizeAllStrings(passwordDto);
@@ -184,8 +182,8 @@ public class LoginProfileService {
             NoSuchElementException
     {
         // check if LoginProfile id respect the good pattern
-        regexUtils.checkStringPattern(idLoginProfile, RegexUtils.REGEX_ID_LOGIN_PROFILE,
-                ERROR_MSG_USER_ID_PATH_VARIABLE);
+        customStringUtils.checkStringPattern(idLoginProfile, CustomStringUtils.REGEX_ID_LOGIN_PROFILE,
+                ERROR_MSG_USER_ID);
 
         // sanitize all request parameters
         customStringUtils.sanitizeAllStrings(loginProfileDto);
