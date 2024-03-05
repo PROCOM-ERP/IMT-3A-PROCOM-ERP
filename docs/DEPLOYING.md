@@ -13,7 +13,7 @@ There are two different ways of using our system :
 1. [Compose mode](#compose-mode)
 2. [Swarm mode](#Swarm-mode)
 
-> [!TIP]
+> [!TIP] Compose vs Swarm : Explanation
 > Compose will use docker compose, Swarm will use docker stack deploy. The key difference is that Swarm is a system in which we create and manage nodes. We can then deploy services on individual or multiple nodes, load balance between them, and much more. Swarm will automatically start new containers that will launch again services that just failed. It also has the capability of creating replicas for services, to improve fault tolerance for your system.
 > Here we only created a basic Swarm deploy, to test the capabilities and evaluate what a distributed ERP could find useful in Swarm. We did not have the necessary time to develop that aspect.
 
