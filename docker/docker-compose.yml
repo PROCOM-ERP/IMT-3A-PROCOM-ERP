@@ -357,6 +357,7 @@ services:
       - "springboot-procom-erp-authentication-service"
     networks:
       - vnet-procom-erp
+      - erp
 
 # +-----------------------------------------------------------------------------+
 # | Networks section                                                            |
@@ -365,9 +366,6 @@ services:
 networks:
   vnet-procom-erp:
     driver: bridge
-    ipam:
-      config:
-        - subnet: ${NETWORK_PROCOM_ERP}
 
 # +-----------------------------------------------------------------------------+
 # | Volumes  section                                                            |
