@@ -36,11 +36,14 @@ Check the [Warning section](#warning) below in case you're having an issue
 
 > [!WARNING]
 >
-> - Having trouble deploying ? Maybe you're entering the good credentials, but still can't access the application ?
+> Having trouble deploying ? Maybe you're entering the good credentials, but still can't access the application ?
+>
 > - In order to make sure services can communicate, after you just deployed the app, when it's your first time accessing the [frontend](https://localhost:3000/), please accept the prompt to proceed with adding an exception for the site, as its certificates have yet to be validated by a known authority (it costs a certain sum of money). Be careful to do the same with the gateway using this [link](https://localhost:8041/api/authentication/v1/hello), so that the gateway can safely communicate information to the frontend.
-> - The command to make a file executable (in order to execute a .sh script for example), is `chmod +x file_name.sh`.
-> - If you're having a problem with \r files and you're on Windows, I invite you to execute this command: `sed -i 's/\r$//' .\*.sh && sed -i 's/\r$//' .\system\mvnw`.
-> - See [Security Guide](./security/README.md) if you encounter any issues regarding `.jks`, `.p12`, `.crt` or `.pem` files. Often you'll only need to add options `--clean-sec "CA" --sec` to your deployment.
+>   The command to make a file executable (in order to execute a .sh script for example), is `chmod +x file_name.sh`.
+>
+> If you're having a problem with \r files and you're on Windows, I invite you to execute this command: `sed -i 's/\r$//' .\*.sh && sed -i 's/\r$//' .\system\mvnw`.
+>
+> See [Security Guide](./security/README.md) if you encounter any issues regarding `.jks`, `.p12`, `.crt` or `.pem` files. Often you'll only need to add options `--clean-sec "CA" --sec` to your deployment.
 
 ## :whale: - :musical_score: **Compose mode** :
 
