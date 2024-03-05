@@ -103,12 +103,20 @@ The frontend, our client-side view of the ERP, is located [here](https://localho
 The logs and monitoring site, Elastic (our server-side view of all exchanges made in the ERP) is located [here](http://localhost:5601/).
 
 > [!TIP]
-> To watch the logs in the best Dashboard there is, click on the Burger Menu on the top left, then Discover.
-> ![Log access Step 1 image](./images/accessing-logs-Step1.png "Step1").
-> ![Log access Step 2 image](./images/accessing-logs-Step2.png "Step2").
-> On the top right, click on "Open" to find you ERP-Dashboard, that you can customize even more if you'd like.
-> ![Log access Step 3 image](./images/accessing-logs-Step3.png "Step3").
+> To watch the logs in the best Dashboard there is, click on the Burger Menu on the top left.
+> ![Log access Step 1 image](./images/accessing-logs-Step1.png "Step1")
+>
+> Then Discover.
+> ![Log access Step 2 image](./images/accessing-logs-Step2.png "Step2")
+>
+> On the top right, click on "Open".
+> ![Log access Step 3 image](./images/accessing-logs-Step3.png "Step3")
+>
+> You'll then find the ERP-Dashboard, that you can customize even more if you'd like.
 > ![Log access Step 4 image](./images/accessing-logs-Step4.png "Step4")
+>
+> Here it is all setup
+> ![Log access All Setup image](./images/accessing-logs-AllSetup.png "All setup !")
 
 > A lot more is possible with Elastic stack, such as integrations of agent directly within java code, rabbitMQ server, etc, different metrics...
 
