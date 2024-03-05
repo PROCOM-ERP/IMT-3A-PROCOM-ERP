@@ -15,7 +15,7 @@ import java.util.Set;
 @Builder
 public class LoginProfileCreationRequestDto {
 
-    @NotBlank(message = "User id cannot be null or blank")
+    @NotBlank(message = "User email cannot be null or blank")
     @Size(min = 3, max = 320, message = "User email cannot have less than 3 characters and no more than 320")
     @Email(regexp = RegexUtils.REGEX_EMAIL,
             message = "User email should start, and end, with alphanumeric characters and contain a '@' symbol")

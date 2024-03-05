@@ -51,7 +51,7 @@ public class LoginProfileController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<@Valid LoginProfileIdResponseDto> createLoginProfile(
+    public ResponseEntity<LoginProfileIdResponseDto> createLoginProfile(
             @Valid @RequestBody LoginProfileCreationRequestDto loginProfileCreationRequestDto)
             throws Exception
     {
@@ -88,7 +88,7 @@ public class LoginProfileController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<@Valid LoginProfileResponseDto> getLoginProfileById(
+    public ResponseEntity<LoginProfileResponseDto> getLoginProfileById(
             @PathVariable String idLoginProfile)
     {
         regexUtils.checkStringPattern(idLoginProfile, RegexUtils.REGEX_ID_LOGIN_PROFILE,
@@ -116,7 +116,7 @@ public class LoginProfileController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<@Valid LoginProfileActivationResponseDto> getLoginProfileActivationById(
+    public ResponseEntity<LoginProfileActivationResponseDto> getLoginProfileActivationById(
             @PathVariable String idLoginProfile)
     {
         regexUtils.checkStringPattern(idLoginProfile, RegexUtils.REGEX_ID_LOGIN_PROFILE,

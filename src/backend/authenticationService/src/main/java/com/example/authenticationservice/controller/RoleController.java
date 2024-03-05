@@ -130,7 +130,7 @@ public class RoleController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<@Valid RoleResponseDto> getRoleByName(
+    public ResponseEntity<RoleResponseDto> getRoleByName(
             @PathVariable String role)
     {
         regexUtils.checkNullOrBlankString(role, "Role name cannot null or empty");
@@ -162,7 +162,7 @@ public class RoleController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<@Valid RoleActivationResponseDto> getRoleActivationByRoleAndMicroservice(
+    public ResponseEntity<RoleActivationResponseDto> getRoleActivationByRoleAndMicroservice(
             @PathVariable String role,
             @RequestParam("microservice") String microservice)
     {
