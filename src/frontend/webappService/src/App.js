@@ -16,6 +16,7 @@ import ModifyProfil from "./pages/ModifyProfil.js";
 import AddRole from "./pages/AddRole.js";
 import AddUser from "./pages/AddUser.js";
 import ModifyPassword from "./pages/ModifyPassword.js";
+import AddOrder from "./pages/AddOrder.js";
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
           <Route path="/addRole" exact Component={AddRole} />
           <Route path="/addUser" exact Component={AddUser} />
           <Route path="/updatePassword" exact Component={ModifyPassword} />
+          <Route path="/addOrder" exact Component={AddOrder} />
         </Routes>
       </Router>
     </>
