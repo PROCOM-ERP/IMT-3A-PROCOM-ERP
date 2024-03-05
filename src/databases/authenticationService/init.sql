@@ -17,7 +17,7 @@ CREATE TABLE roles
 
     CONSTRAINT pk_roles PRIMARY KEY (name),
     CONSTRAINT check_roles_name
-        CHECK (name ~* '[a-zA-Z]([\-\.]?[a-zA-Z0-9])*')
+        CHECK (roles.name ~* '^[a-zA-Z]([\-\.]?[a-zA-Z0-9])*$')
 );
 
 -- +----------------------------------------------------------------------------------------------+
@@ -35,7 +35,9 @@ CREATE TABLE role_activations
         FOREIGN KEY (role) REFERENCES roles(name)
             ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT uq_role_activations_role_microservice
-        UNIQUE (role, microservice)
+        UNIQUE (role, microservice),
+    CONSTRAINT check_role_activations_microservice
+        CHECK (role_activations.microservice ~* '^[a-zA-Z]([\-\.]?[a-zA-Z0-9])*$')
 );
 
 -- +----------------------------------------------------------------------------------------------+
@@ -49,7 +51,9 @@ CREATE TABLE role_permissions
         PRIMARY KEY (role, permission),
     CONSTRAINT fk_role_permissions_table_roles
         FOREIGN KEY (role) REFERENCES roles(name)
-            ON UPDATE CASCADE ON DELETE CASCADE
+            ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT check_role_permissions_permission
+        CHECK (role_permissions.permission ~* '^Can[A-Z][a-z]([A-Z]?[a-z])*$')
 );
 
 -- +----------------------------------------------------------------------------------------------+
