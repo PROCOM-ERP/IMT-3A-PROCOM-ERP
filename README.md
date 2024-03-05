@@ -8,12 +8,19 @@ for new small businesses of all types (shops, restaurants, etc).
 Depending on their needs, companies can have a package with only the necessary functionalities,
 while being able to add or remove functionality later almost instantaneously.
 
+Here is a sneak peek :
+
+![Login](./docs/images/front-login.png "Login")
+
+![Order-Home](./docs/images/order-home.png "Order Page")
+
 For the moment, the modules on offer are:
 
 - Authentication service
 - Directory service
+- Order service
 
-Other services, such as an order and inventory service, are in the pipeline.
+Other services, such as an inventory service, are in the pipeline.
 
 **_NB_**: This project is part of the ProCom teaching unit in the 3rd year of the engineering course at IMT Atlantique.
 It is not really intended to be marketed,
