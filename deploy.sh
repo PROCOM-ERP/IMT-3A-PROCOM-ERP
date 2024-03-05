@@ -175,6 +175,26 @@ get_image_versions(){
 # | Core Functions                                                              |
 # +-----------------------------------------------------------------------------+
 
+setup_elk(){
+    if [ "$SWARM" == "true" ]; then
+        docker-compose -f $ELK_COMPOSE_SWARM_FILE -f $ELK_FILEBEAT_COMPOSE_SWARM_FILE -p elk up -d --build setup
+    else
+        docker-compose -f $ELK_COMPOSE_FILE -f $ELK_FILEBEAT_COMPOSE_FILE -p elk up -d --build setup
+    fi
+}
+
+# +-----------------------------------------------------------------------------+
+
+deploy_elk(){
+    if [ "$SWARM" == "true" ]; then
+        docker-compose -f $ELK_COMPOSE_SWARM_FILE -f $ELK_FILEBEAT_COMPOSE_SWARM_FILE -p elk up -d --build
+    else
+        docker-compose -f $ELK_COMPOSE_FILE -f $ELK_FILEBEAT_COMPOSE_FILE -p elk up -d --build
+    fi
+}
+
+# +-----------------------------------------------------------------------------+
+
 build_images() {
     docker-compose -f $COMPOSE_FILE --env-file ${docker_path}/.env build
 }
@@ -232,6 +252,8 @@ deploy(){
 security_path="./security"
 system_path="./system"
 docker_path="./docker"
+elk_path="${docker_path}/elk"
+elk_filebeat_path="${elk_path}/extensions/filebeat"
 
 if ! [ -f "${docker_path}/.env" ]; then
     echo "System error: .env file not found"
@@ -255,7 +277,12 @@ SEC=false
 PUSH=false
 PULL=false
 HOT=false
+LOGS=true
 COMPOSE_FILE="${docker_path}/docker-compose.yml"
+ELK_COMPOSE_FILE="${elk_path}/docker-compose.yml"
+ELK_COMPOSE_SWARM_FILE="${elk_path}/docker-compose.yml"
+ELK_FILEBEAT_COMPOSE_FILE="${elk_filebeat_path}/filebeat-compose-swarm.yml"
+ELK_FILEBEAT_COMPOSE_SWARM_FILE="${elk_filebeat_path}/filebeat-compose-swarm.yml"
 VERSION=latest
 VERSION_SPECIFIED=false
 
@@ -323,19 +350,25 @@ while [[ $# -gt 0 ]]; do
             HOT=true
             shift
             ;;
+        --no-logs)
+            LOGS=false
+            shift
+            ;;
         --help)
-            echo "Usage: ./deploy.sh '--option' \"[value]\""
+            echo "Usage:"
+            echo "        './deploy.sh --option \"value\"'"
             echo " "
             echo "Possible options:"
-            echo "        '--swarm': ------------------->  Deploy using Docker Swarm mode."
-            echo "        '--clean-sec' \"[CA]\": ---------->  Execute the clean security setup script as well, --sec option is required if you use this option. CA is optional"
-            echo "        '--sec'  --------------------->  Execute the security setup script as well."
-            echo "        '--push' \"[repository/image]\": ->  Tag and push Docker images to a repository, then deploy."
-            echo "        '--pull' \"[repository/image]\": ->  Pull Docker images from a repository from which to deploy, --version is required if you use this option"
-            echo "        '--version' \"[version]\": ------->  Specify the version of the images to use for the pull option."
-            echo "        '--hot': --------------------->  Force redeployment even if the stack is already running, for swarm mode."
-            echo "        '--help': -------------------->  Display this help message."
-            echo "        '--doc': --------------------->  Display the deployment documentation."
+            echo "        '--swarm': --------------------->  Deploy using Docker Swarm mode."
+            echo "        '--clean-sec \"CA\"': ------------>  Execute the clean security setup before deploying, --sec option is required if you use this. CA: optional, to also clean CA cert files."
+            echo "        '--sec'  ----------------------->  Execute the security setup script as well."
+            echo "        '--push \"repository/image\"': --->  Tag and push Docker images to a repository, then deploy."
+            echo "        '--pull \"repository/image\"': --->  Pull Docker images from a repository from which to deploy, --version is required if you use this option"
+            echo "        '--version \"version\"': --------->  Specify the version of the images to use for the pull option."
+            echo "        '--hot': ----------------------->  Force redeployment even if the stack is already running, for swarm mode."
+            echo "        '--no-logs': ------------------->  Doesn't deploy monitoring and log aggregating containers (Elastic stack)."
+            echo "        '--help': ---------------------->  Display this help message."
+            echo "        '--doc': ----------------------->  Display the deployment documentation."
             echo " "
             echo "Examples:"
             echo "        './deploy.sh --swarm --clean-sec CA --sec --pull --version 1.0.0 --hot'"
@@ -387,6 +420,7 @@ fi
 # | MAIN LOGIC                                                                  |
 # +-----------------------------------------------------------------------------+
 
+
 # +---Swarm Specific------------------------------------------------------------+
 if [ "$SWARM" == "true" ]; then
 
@@ -419,6 +453,22 @@ else
     # +---Docker Secrets for simple compose-------------------------------------+
     echo "Generating docker secrets"
     ${security_path}/docker_secrets_files.sh
+fi
+
+# +---Log setup-----------------------------------------------------------------+
+
+if [ "$LOGS" == "true" ]; then
+    setup_elk
+
+    echo "Now waiting for ELK setup to finish before starting complete ELK, and then ERP"
+    # Wait for the container to exit
+    docker wait "setup" 2>/dev/null
+
+    # Remove the container
+    docker rm "setup"
+    docker rmi "elk-setup"
+
+    deploy_elk
 fi
 
 # +---System-relative setup-----------------------------------------------------+

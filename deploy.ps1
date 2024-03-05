@@ -156,6 +156,22 @@ function Latest-ImageExists {
 # | Core Functions                                                              |
 # +-----------------------------------------------------------------------------+
 
+function Setup-Elk {
+    docker-compose -f $elkComposeFile up -d --build setup
+}
+
+# +-----------------------------------------------------------------------------+
+
+function Deploy-Elk {
+    if ($swarm) {
+        docker-compose -f $elkComposeFile -f $elkFilebeatComposeFile-p elk up -d --build
+    } else {
+        docker-compose -f $elkComposeSwarmFile -f $elkFilebeatComposeSwarmFile-p elk up -d --build
+    }
+}
+
+# +-----------------------------------------------------------------------------+
+
 function Build-Images {
     docker-compose -f $composeFile build
 }
@@ -197,7 +213,7 @@ function Deploy {
     if ($swarm) {
         docker stack deploy -c $composeFile ERP
     } else {
-        docker-compose -f $composeFile up -d
+        docker-compose -f $composeFile -p erp up -d
     }
 }
 
@@ -208,6 +224,7 @@ function Deploy {
 $securityPath = ".\security"
 $systemPath = ".\system"
 $dockerPath = ".\docker"
+$elkPath = "${dockerPath}\elk"
 $envPath = "$dockerPath\.env"
 
 if (-not (Test-Path "$envPath")) {
@@ -231,8 +248,13 @@ $sec = $false
 $push = $false
 $pull = $false
 $hot = $false
+$logs = $true
 $dockerRegistry = ""
 $composeFile = "$dockerPath\docker-compose.yml"
+$elkComposeFile = "$elkPath\docker-compose.yml"
+$elkComposeSwarmFile = "$elkPath\docker-compose.yml"
+$elkFilebeatComposeFile = "$elkPath\extensions\filebeat\filebeat-compose-swarm.yml"
+$elkFilebeatComposeSwarmFile = "$elkPath\extensions\filebeat\filebeat-compose-swarm.yml"
 $version = "latest"
 $version_specified = $false
 
@@ -279,6 +301,13 @@ for ($i = 0; $i -lt $args.Count; $i++) {
         "--hot" {
             $hot = $true
         }
+        "--no-logs" {
+            $logs = $false
+        }
+        "--docs" {
+            type .\docs\DEPLOYING.md
+            exit 0
+        }
         default {
             Write-Host "Invalid option: $($args[$i])"
             exit 1
@@ -322,8 +351,23 @@ if ($swarm) {
         }
     }
 } else {
-# +---Docker Secrets for simple compose-----------------------------------------+
+    # +---Docker Secrets for simple compose-----------------------------------------+
     $securityPath\docker_secrets_files.ps1 > $null 2>&1
+}
+
+if ($logs) {
+    # +---Setting up the monitoring and logs stack----------------------------------+
+    Setup-Elk
+
+    # Wait for the container to exit
+    docker wait "setup" *>$null
+
+    # Remove the container
+    docker rm "setup" *>$null
+    docker rmi "elk-setup" *>$null
+
+    # +---Deploying the monitoring and logs stack-----------------------------------+
+    Deploy-Elk
 }
 
 # +---System-relative setup-----------------------------------------------------+
