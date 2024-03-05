@@ -49,3 +49,11 @@ body {
   padding: 2rem 0;
   text-align: center;
 }
+
+.text {
+  font-family: var(--text-family);
+  font-size: var(--text-size);
+  font-weight: var(--text-weight);
+  padding: 1rem 0;
+  text-align: center;
+}
