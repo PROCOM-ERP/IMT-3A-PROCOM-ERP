@@ -1,9 +1,9 @@
--- Title :             Database creation for L04EE02-SpringBoot-MicroServices project
--- Version :           1.0
+-- Title :             Database creation for IMT-3A-PROCOM-ERP project
+-- Version :           1.0.0
 -- Creation date :     2023-11-23
--- Update date :       2023-11-23
--- Author :            Thibaut RUZICKA
--- Description :       Database initialisation script for L04EE02-SpringBoot-MicroServices
+-- Update date :       2024-03-05
+-- Author :            BOPS
+-- Description :       Database initialisation script for IMT-3A-PROCOM-ERP project
 --                     Note : Script for PostgreSQL
 
 -- +----------------------------------------------------------------------------------------------+

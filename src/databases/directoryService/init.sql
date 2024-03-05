@@ -1,8 +1,8 @@
 -- Title :             Database creation for IMT-3A-PROCOM-ERP project
--- Version :           1.0
+-- Version :           1.0.0
 -- Creation date :     2023-12-22
--- Update date :       2023-12-22
--- Author :            Thibaut RUZICKA
+-- Update date :       2024-03-05
+-- Author :            BOPS
 -- Description :       Database initialisation script for IMT-3A-PROCOM-ERP project
 --                     Note : Script for PostgreSQL
 
