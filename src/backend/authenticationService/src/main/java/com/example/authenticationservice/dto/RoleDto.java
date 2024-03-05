@@ -13,10 +13,10 @@ import lombok.NoArgsConstructor;
 @Getter
 public class RoleDto {
 
-    @NotBlank(message = "Role name cannot be null or blank")
+    @NotBlank(message = "Role name cannot be null or blank.")
     private String name;
 
-    @NotNull(message = "Role activation status cannot be null")
+    @NotNull(message = "Role activation status cannot be null.")
     private Boolean isEnable;
 
 }

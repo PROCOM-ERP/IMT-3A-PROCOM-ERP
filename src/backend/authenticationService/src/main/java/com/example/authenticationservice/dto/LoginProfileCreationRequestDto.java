@@ -15,13 +15,14 @@ import java.util.Set;
 @Builder
 public class LoginProfileCreationRequestDto {
 
-    @NotBlank(message = "User email cannot be null or blank")
-    @Size(min = 3, max = 320, message = "User email cannot have less than 3 characters and no more than 320")
+    @NotBlank(message = "User email cannot be null or blank.")
+    @Size(min = 3, max = 320, message = "User email cannot have less than 3 characters and no more than 320.")
     @Email(regexp = RegexUtils.REGEX_EMAIL,
-            message = "User email should start, and end, with alphanumeric characters and contain a '@' symbol")
+            message = "User email should start, and end, with alphanumeric characters, " +
+                    "contain a '@' symbol, can contain '-' or dot '.' but not in a row.")
     private String email;
 
-    @NotNull(message = "User role set cannot be null, but can be empty")
-    private Set<@NotBlank(message = "User roles cannot be null or blank") String> roles;
+    @NotNull(message = "User role set cannot be null, but can be empty.")
+    private Set<@NotBlank(message = "User roles cannot be null or blank.") String> roles;
 
 }

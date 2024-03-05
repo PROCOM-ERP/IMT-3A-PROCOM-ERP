@@ -8,7 +8,8 @@ import java.util.Arrays;
 @Component
 public class CustomStringUtils {
 
-    public void sanitizeAllStrings(Object obj) {
+    public void sanitizeAllStrings(Object obj)
+    {
         if (obj == null)
             return;
 
@@ -31,15 +32,25 @@ public class CustomStringUtils {
         });
     }
 
-    public String sanitizeString(String input) {
+    public String sanitizeString(String input)
+    {
         return escapeHtmlChars(nullifyBlankString(input.trim()));
     }
 
-    public String nullifyBlankString(String input) {
+    public void checkNullOrBlankString(String input, String message)
+            throws IllegalArgumentException
+    {
+        if (input == null || input.isBlank())
+            throw new IllegalArgumentException(message);
+    }
+
+    public String nullifyBlankString(String input)
+    {
         return input == null || input.isBlank() ? null : input;
     }
 
-    public String escapeHtmlChars(String input) {
+    public String escapeHtmlChars(String input)
+    {
         if (input == null) {
             return null;
         }

@@ -15,12 +15,12 @@ import lombok.NoArgsConstructor;
 @Builder
 public class LoginProfileActivationResponseDto {
 
-    @NotBlank(message = "User id cannot be null or blank")
+    @NotBlank(message = "User id cannot be null or blank.")
     @Pattern(regexp = RegexUtils.REGEX_ID_LOGIN_PROFILE,
-            message = "User id should start by a capital letter, followed by exactly 5 digits")
+            message = "User id should start by a capital letter, followed by exactly 5 digits.")
     private String id;
 
-    @NotNull(message = "User activation status cannot be null")
+    @NotNull(message = "User activation status cannot be null.")
     private Boolean isEnable;
 
 }

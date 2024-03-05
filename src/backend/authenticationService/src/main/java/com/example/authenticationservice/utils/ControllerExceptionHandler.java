@@ -1,10 +1,10 @@
 package com.example.authenticationservice.utils;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 
 import com.example.authenticationservice.dto.HttpStatusErrorDto;
-import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,26 +49,19 @@ public class ControllerExceptionHandler {
         return ResponseEntity.badRequest().body(error);
     }
 
-    @ExceptionHandler(ValidationException.class) // Http 400
-    public ResponseEntity<HttpStatusErrorDto> handleValidationExceptions(
-            ValidationException e)
-    {
-        HttpStatusErrorDto error = HttpStatusErrorDto.builder()
-                .message(e.getMessage())
-                .build();
-        logger.error("Service " + serviceName + " throws an error\n", e);
-        return ResponseEntity.badRequest().body(error);
-    }
-
     @ExceptionHandler(MethodArgumentNotValidException.class) // Http 400
     public ResponseEntity<HttpStatusErrorDto> handleMethodArgumentNotValidExceptions(
             MethodArgumentNotValidException e)
     {
-        String message = e.getBindingResult().getFieldErrors().stream()
-                .map(fieldError -> fieldError.getField() + ": " + fieldError.getDefaultMessage())
-                .collect(Collectors.joining(", "));
+        // retrieve all incorrect fields
+        Map<String, String> fields = new HashMap<>();
+        e.getBindingResult().getFieldErrors()
+                .forEach(f -> fields.put(f.getField(), f.getDefaultMessage()));
+
+        // build and sent Http Response
         HttpStatusErrorDto error = HttpStatusErrorDto.builder()
-                .message(message)
+                .message(e.getMessage())
+                .fields(fields)
                 .build();
         logger.error("Service " + serviceName + " throws an error\n", e);
         return ResponseEntity.badRequest().body(error);

@@ -15,10 +15,10 @@ import java.util.Set;
 @Builder
 public class RolesMicroservicesResponseDto {
 
-    @NotEmpty(message = "Role set cannot be null or empty")
-    private Set<@NotBlank(message = "Role name cannot be null or blank") String> roles;
+    @NotEmpty(message = "Role set cannot be null or empty.")
+    private Set<@NotBlank(message = "Role name cannot be null or blank.") String> roles;
 
-    @NotEmpty(message = "Microservice set cannot be null or empty")
-    private Set<@NotBlank(message = "Microservice name cannot be null or blank") String> microservices;
+    @NotEmpty(message = "Microservice set cannot be null or empty.")
+    private Set<@NotBlank(message = "Microservice name cannot be null or blank.") String> microservices;
 
 }

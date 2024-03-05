@@ -1,6 +1,5 @@
 package com.example.authenticationservice.utils;
 
-import jakarta.validation.ValidationException;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -13,13 +12,10 @@ public class RegexUtils {
     public static final String REGEX_PASSWORD =
             "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!.*])(?=\\S+$).{12,}$";
 
-    public void checkStringPattern(String input, String regex, String message) {
+    public void checkStringPattern(String input, String regex, String message)
+            throws IllegalArgumentException
+    {
         if (input == null || ! input.matches(regex))
-            throw new ValidationException(message);
-    }
-
-    public void checkNullOrBlankString(String input, String message) {
-        if (input == null || input.isBlank())
-            throw new ValidationException(message);
+            throw new IllegalArgumentException(message);
     }
 }

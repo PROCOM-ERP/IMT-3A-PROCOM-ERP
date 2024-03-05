@@ -14,10 +14,10 @@ import lombok.NoArgsConstructor;
 @Builder
 public class LoginProfilePasswordUpdateRequestDto {
 
-    @NotBlank(message = "User password cannot be null or blank")
+    @NotBlank(message = "User password cannot be null or blank.")
     @Pattern(regexp = RegexUtils.REGEX_PASSWORD,
             message = "User password should have at least 12 characters, including 1 capital letter, " +
-                    "1 lowercase letter, 1 digit, 1 spacial character (@#$%^&+=!.*) and ")
+                    "1 lowercase letter, 1 digit, and 1 special character (@#$%^&+=!.*).")
     private String password;
 
 }

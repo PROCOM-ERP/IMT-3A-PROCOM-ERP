@@ -23,8 +23,11 @@ import java.net.URI;
 @RequiredArgsConstructor
 public class LoginProfileController {
 
-    private final LoginProfileService loginProfileService;
+    public static final String ERROR_MSG_USER_ID_PATH_VARIABLE =
+            "User id (provided as a path variable) should start by a capital letter, " +
+            "followed by exactly 5 digits.";
 
+    private final LoginProfileService loginProfileService;
     private final RegexUtils regexUtils;
 
     @PostMapping
@@ -92,7 +95,8 @@ public class LoginProfileController {
             @PathVariable String idLoginProfile)
     {
         regexUtils.checkStringPattern(idLoginProfile, RegexUtils.REGEX_ID_LOGIN_PROFILE,
-                "User id should start by a capital letter, followed by exactly 5 digits");
+                "User id (provided as a path variable) should start by a capital letter, " +
+                "followed by exactly 5 digits.");
         return ResponseEntity.ok(loginProfileService.getLoginProfileById(idLoginProfile));
     }
 
@@ -120,7 +124,7 @@ public class LoginProfileController {
             @PathVariable String idLoginProfile)
     {
         regexUtils.checkStringPattern(idLoginProfile, RegexUtils.REGEX_ID_LOGIN_PROFILE,
-                "User id should start by a capital letter, followed by exactly 5 digits");
+                ERROR_MSG_USER_ID_PATH_VARIABLE);
         return ResponseEntity.ok(loginProfileService.getLoginProfileActivationById(idLoginProfile));
     }
 
@@ -155,7 +159,7 @@ public class LoginProfileController {
             @Valid @RequestBody LoginProfilePasswordUpdateRequestDto passwordDto)
     {
         regexUtils.checkStringPattern(idLoginProfile, RegexUtils.REGEX_ID_LOGIN_PROFILE,
-                "User id should start by a capital letter, followed by exactly 5 digits");
+                ERROR_MSG_USER_ID_PATH_VARIABLE);
         loginProfileService.updateLoginProfilePasswordById(idLoginProfile, passwordDto);
         return ResponseEntity.noContent().build();
     }
@@ -191,7 +195,7 @@ public class LoginProfileController {
             @Valid @RequestBody LoginProfileUpdateRequestDto loginProfileDto)
     {
         regexUtils.checkStringPattern(idLoginProfile, RegexUtils.REGEX_ID_LOGIN_PROFILE,
-                "User id should start by a capital letter, followed by exactly 5 digits");
+                ERROR_MSG_USER_ID_PATH_VARIABLE);
         loginProfileService.updateLoginProfileById(idLoginProfile, loginProfileDto);
         return ResponseEntity.noContent().build();
     }

@@ -13,10 +13,10 @@ import lombok.NoArgsConstructor;
 @Builder
 public class PermissionDto {
 
-    @NotBlank(message = "Permission name cannot be null or blank")
+    @NotBlank(message = "Permission name cannot be null or blank.")
     private String name;
 
-    @NotNull(message = "Permission activation status cannot be null")
+    @NotNull(message = "Permission activation status cannot be null.")
     private Boolean isEnable;
 
 }

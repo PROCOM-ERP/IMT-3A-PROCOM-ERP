@@ -14,10 +14,10 @@ import java.util.Set;
 @Builder
 public class RoleResponseDto {
 
-    @NotNull(message = "Role activation status cannot be null")
+    @NotNull(message = "Role activation status cannot be null.")
     private Boolean isEnable;
 
-    @NotNull(message = "Role permission set cannot be null, but can be empty")
-    private Set<@NotNull(message = "Role permission cannot be null") PermissionDto> permissions;
+    @NotNull(message = "Role permission set cannot be null, but can be empty.")
+    private Set<@NotNull(message = "Role permission cannot be null.") PermissionDto> permissions;
 
 }

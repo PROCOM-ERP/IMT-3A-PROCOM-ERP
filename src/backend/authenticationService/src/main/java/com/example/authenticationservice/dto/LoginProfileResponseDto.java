@@ -14,10 +14,10 @@ import java.util.Set;
 @Builder
 public class LoginProfileResponseDto {
 
-    @NotNull(message = "User activation status cannot be null")
+    @NotNull(message = "User activation status cannot be null.")
     private Boolean isEnable;
 
-    @NotNull(message = "User role set cannot be null, but can be empty")
+    @NotNull(message = "User role set cannot be null, but can be empty.")
     private Set<@NotNull RoleDto> roles;
 
 }

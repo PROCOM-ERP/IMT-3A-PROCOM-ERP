@@ -13,13 +13,13 @@ import lombok.NoArgsConstructor;
 @Builder
 public class RoleActivationResponseDto {
 
-    @NotBlank(message = "Role name cannot be null or blank")
+    @NotBlank(message = "Role name cannot be null or blank.")
     private String name;
 
-    @NotBlank(message = "Microservice name cannot be null or blank")
+    @NotBlank(message = "Microservice name cannot be null or blank.")
     private String microservice;
 
-    @NotNull(message = "Role activation status cannot be null")
+    @NotNull(message = "Role activation status cannot be null.")
     private Boolean isEnable;
 
 }
