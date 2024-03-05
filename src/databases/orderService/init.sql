@@ -77,7 +77,9 @@ CREATE TABLE employees
         PRIMARY KEY (id),
     CONSTRAINT fk_employees_table_login_profiles
         FOREIGN KEY (login_profile) REFERENCES login_profiles(id)
-            ON UPDATE CASCADE
+            ON UPDATE CASCADE,
+    CONSTRAINT check_employees_email
+        CHECK (employees.email ~* '^[a-z0-9]([\-\.]?[a-z0-9])*@[a-z0-9]([\-\.]?[a-z0-9])*$')
 );
 
 -- +----------------------------------------------------------------------------------------------+

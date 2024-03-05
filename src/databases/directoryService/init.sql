@@ -123,7 +123,9 @@ CREATE TABLE employees
         FOREIGN KEY (org_unit) REFERENCES org_units(id)
             ON UPDATE CASCADE,
     CONSTRAINT uq_employees_email
-        UNIQUE (email)
+        UNIQUE (email),
+    CONSTRAINT check_employees_email
+        CHECK (employees.email ~* '^[a-z0-9]([\-\.]?[a-z0-9])*@[a-z0-9]([\-\.]?[a-z0-9])*$')
 );
 
 -- +----------------------------------------------------------------------------------------------+

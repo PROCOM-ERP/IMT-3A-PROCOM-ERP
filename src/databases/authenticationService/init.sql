@@ -65,7 +65,9 @@ CREATE TABLE login_profiles
 
     CONSTRAINT pk_login_profiles PRIMARY KEY (id),
     CONSTRAINT check_login_profiles_id
-        CHECK (login_profiles.id ~* '[A-Z][0-9]{5}')
+        CHECK (login_profiles.id ~* '^[A-Z][0-9]{5}$'),
+    CONSTRAINT check_login_profiles_email
+        CHECK (login_profiles.email ~* '^[a-z0-9]([\-\.]?[a-z0-9])*@[a-z0-9]([\-\.]?[a-z0-9])*$')
 );
 
 -- +----------------------------------------------------------------------------------------------+
