@@ -357,7 +357,6 @@ services:
       - "springboot-procom-erp-authentication-service"
     networks:
       - vnet-procom-erp
-      - erp
 
 # +-----------------------------------------------------------------------------+
 # | Networks section                                                            |
