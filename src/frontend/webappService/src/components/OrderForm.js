@@ -43,6 +43,16 @@ function OrderForm() {
     'Authorization': `Bearer ${token}`
   };
 
+  function switchEmptyStringToNull(obj) {
+    for (const key in obj) {
+      if (typeof obj[key] === "object") {
+        switchEmptyStringToNull(obj[key]); // Recursively call the function for nested objects
+      } else if (obj[key] === "") {
+        obj[key] = null; // Switch empty string to null
+      }
+    }
+  }
+
   const getProviders = async () => {
     const apiUrl = "https://localhost:8041/api/order/v1/providers";
     // Make the API request
@@ -142,46 +152,97 @@ function OrderForm() {
     }));
   };
 
+  function dataProcessing() {
+    // Check if orderer fields are empty
+    const isOrdererEmpty = Object.values(orderData.orderer).some(value => value === "");
+    // Check if address fields are empty
+    const isAddressEmpty = Object.values(orderData.address).some(value => value === "");
+    if (isAddressEmpty || isOrdererEmpty) {
+      // Check if orderer fields are empty individually
+      const isIdEmpty = orderData.orderer.id === "";
+      const isLastNameEmpty = orderData.orderer.lastName === "";
+      const isFirstNameEmpty = orderData.orderer.firstName === "";
+      const isEmailEmpty = orderData.orderer.email === "";
+      const isPhoneNumberEmpty = orderData.orderer.phoneNumber === "";
+      // Check if address fields are empty individually
+      const isNumberEmpty = orderData.address.number === "";
+      const isStreetEmpty = orderData.address.street === "";
+      const isCityEmpty = orderData.address.city === "";
+      const isStateEmpty = orderData.address.state === "";
+      const isCountryEmpty = orderData.address.country === "";
+      const isZipcodeEmpty = orderData.address.zipcode === "";
+      const isInfoEmpty = orderData.address.info === "";
+      // If orderer fields are empty, replace them with ordererInfo
+      const updatedOrderData = {
+        ...orderData,
+        // Replace orderer fields with ordererInfo if empty
+        orderer: {
+          ...orderData.orderer,
+          // Update fields only if they are empty
+          ...(isIdEmpty && { id: ordererInfo.id }),
+          ...(isLastNameEmpty && { lastName: ordererInfo.lastName }),
+          ...(isFirstNameEmpty && { firstName: ordererInfo.firstName }),
+          ...(isEmailEmpty && { email: ordererInfo.email }),
+          ...(isPhoneNumberEmpty && { phoneNumber: ordererInfo.phoneNumber })
+        },
+        // Replace address fields with ordererInfo.address if empty
+        address: {
+          ...orderData.address,
+          // Update fields only if they are empty
+          ...(isNumberEmpty && { number: ordererInfo.address.number }),
+          ...(isStreetEmpty && { street: ordererInfo.address.street }),
+          ...(isCityEmpty && { city: ordererInfo.address.city }),
+          ...(isStateEmpty && { state: ordererInfo.address.state }),
+          ...(isCountryEmpty && { country: ordererInfo.address.country }),
+          ...(isZipcodeEmpty && { zipcode: ordererInfo.address.zipcode }),
+          ...(isInfoEmpty && { info: ordererInfo.address.info })
+        }
+      };
+      switchEmptyStringToNull(updatedOrderData);
+      // Convert property types to make it correspond to JSON format needed for sending
+      updatedOrderData.provider = parseInt(updatedOrderData.provider); // Convert provider to number
+      updatedOrderData.products.forEach(product => {
+        product.unitPrice = parseInt(product.unitPrice); // Convert unitPrice to number
+        product.quantity = parseInt(product.quantity); // Convert quantity to number
+      });
+      return updatedOrderData;
+    } else {
+      setOrderData(prevData => ({
+        ...prevData,
+        orderer: { ...prevData.orderer, id: userId }
+      }));
+      // Convert property types to make it correspond to JSON format needed for sending
+      orderData.provider = parseInt(orderData.provider); // Convert provider to number
+      orderData.products.forEach(product => {
+        product.unitPrice = parseInt(product.unitPrice); // Convert unitPrice to number
+        product.quantity = parseInt(product.quantity); // Convert quantity to number
+      });
+      switchEmptyStringToNull(orderData);
+      return orderData;
+    }
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    // TODO: Handle form submission, e.g., send data to backend
-    setOrderData(prevData => ({
-      ...prevData,
-      orderer: { ...prevData.orderer, id: userId.toString() }
-    }));
 
-    // Delete all "" values from orderData 
-    const updatedOrderData = Object.fromEntries(
-      Object.entries(orderData)
-        .filter(([_, value]) => value !== "") // Filter out entries with empty string values
-    );
-    setOrderData(updatedOrderData);
-
-    // Convert property types to make it correspond to JSON format needed for sending
-    orderData.provider = parseInt(orderData.provider); // Convert provider to number
-    orderData.products.forEach(product => {
-      product.unitPrice = parseInt(product.unitPrice); // Convert unitPrice to number
-      product.quantity = parseInt(product.quantity); // Convert quantity to number
-    });
-
+    const dataToSend = dataProcessing();
 
     // API URL
     const apiUrl = "https://localhost:8041/api/order/v1/orders";
-
-    console.log(JSON.stringify(orderData));
 
     // Make the API request
     fetch(apiUrl, {
       method: "POST",
       credentials: "include",
       headers: headers,
-      body: JSON.stringify(orderData)
+      body: JSON.stringify(dataToSend)
     })
       .then(response => {
         if (!response.ok) {
           throw new Error('Failed to add order');
         }
         console.log("[LOG] Order added with success");
+        console.log(JSON.stringify(dataToSend));
         navigate("/orderManagement");
       })
       .catch(error => {
