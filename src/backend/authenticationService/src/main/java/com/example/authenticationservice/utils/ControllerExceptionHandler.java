@@ -86,7 +86,7 @@ public class ControllerExceptionHandler {
             InsufficientAuthenticationException e)
     {
         HttpStatusErrorDto error = HttpStatusErrorDto.builder()
-                .message(e.getMessage())
+                .message(ERROR_DEFAULT_MSG_HTTP_401)
                 .build();
         logger.error("Service " + serviceName + " throws an error\n", e);
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
