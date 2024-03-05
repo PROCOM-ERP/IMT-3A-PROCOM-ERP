@@ -13,6 +13,7 @@ There are two different ways of using our system :
 1. [Compose mode](#compose-mode)
 2. [Swarm mode](#Swarm-mode)
 
+> [!TIP]
 > Compose will use docker compose, Swarm will use docker stack deploy. The key difference is that Swarm is a system in which we create and manage nodes. We can then deploy services on individual or multiple nodes, load balance between them, and much more. Swarm will automatically start new containers that will launch again services that just failed. It also has the capability of creating replicas for services, to improve fault tolerance for your system.
 > Here we only created a basic Swarm deploy, to test the capabilities and evaluate what a distributed ERP could find useful in Swarm. We did not have the necessary time to develop that aspect.
 
@@ -20,7 +21,7 @@ There also is the possibility of not launching Logs/Monitoring stack, by running
 
 There are multiple scripts you need to have, that are not followed within this repository because of security reasons, but you can find their template in the `./docs/security/templates` directory.
 
-Check the [Warning section](#warning) at the end of this guide in case you're having an issue
+Check the [Warning section](#warning) below in case you're having an issue
 
 > [!IMPORTANT]
 >
@@ -34,11 +35,12 @@ Check the [Warning section](#warning) at the end of this guide in case you're ha
 > 6. Insure you have the script `./security/generate_certificate_password.sh`.
 
 > [!WARNING]
-> Having trouble deploying ? Maybe you're entering the good credentials, but still can't access the application ?
-> In order to make sure services can communicate, after you just deployed the app, when it's your first time accessing the [frontend](https://localhost:3000/), please accept the prompt to proceed with adding an exception for the site, as its certificates have yet to be validated by a known authority (it costs a certain sum of money). Be careful to do the same with the gateway using this [link](https://localhost:8041/api/authentication/v1/hello), so that the gateway can safely communicate information to the frontend.
-> The command to make a file executable (in order to execute a .sh script for example), is `chmod +x file_name.sh`.
-> If you're having a problem with \r files and you're on Windows, I invite you to execute this command: `sed -i 's/\r$//' .\*.sh && sed -i 's/\r$//' .\system\mvnw`.
-> See [Security Guide](./security/README.md) if you encounter any issues regarding `.jks`, `.p12`, `.crt` or `.pem` files. Often you'll only need to add options `--clean-sec "CA" --sec` to your deployment.
+>
+> - Having trouble deploying ? Maybe you're entering the good credentials, but still can't access the application ?
+> - In order to make sure services can communicate, after you just deployed the app, when it's your first time accessing the [frontend](https://localhost:3000/), please accept the prompt to proceed with adding an exception for the site, as its certificates have yet to be validated by a known authority (it costs a certain sum of money). Be careful to do the same with the gateway using this [link](https://localhost:8041/api/authentication/v1/hello), so that the gateway can safely communicate information to the frontend.
+> - The command to make a file executable (in order to execute a .sh script for example), is `chmod +x file_name.sh`.
+> - If you're having a problem with \r files and you're on Windows, I invite you to execute this command: `sed -i 's/\r$//' .\*.sh && sed -i 's/\r$//' .\system\mvnw`.
+> - See [Security Guide](./security/README.md) if you encounter any issues regarding `.jks`, `.p12`, `.crt` or `.pem` files. Often you'll only need to add options `--clean-sec "CA" --sec` to your deployment.
 
 ## :whale: - :musical_score: **Compose mode** :
 
