@@ -22,8 +22,8 @@ There are multiple scripts you need to have, that are not followed within this r
 
 Check the [Warning section](#warning) at the end of this guide in case you're having an issue
 
-> [!IMPORTANT]
-
+> [!IMPORTANT] >
+>
 > 1. Insure you have :whale: Docker installed. On Unix systems, run `docker --version`.
 > 2. Insure you have a :whale: Docker daemon running. On Windows check if :whale: Docker desktop app is running, on Unix systems,run: `sudo systemctl status docker`.
 > 3. Insure you have :lock: OpenSSL installed. Run: `openssl --version` or `openssl -v`.
