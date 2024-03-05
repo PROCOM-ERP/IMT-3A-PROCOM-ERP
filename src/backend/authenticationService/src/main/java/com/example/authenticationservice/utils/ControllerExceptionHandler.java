@@ -22,15 +22,18 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RequiredArgsConstructor
 public class ControllerExceptionHandler {
 
+    /* Constants */
     public static final String ERROR_DEFAULT_MSG_HTTP_500 =
             "The server has encountered an unexpected error.";
     public static final String ERROR_DEFAULT_MSG_HTTP_400 =
             "Inputs don't respect a specific format.";
-
     @Value("${security.service.name}")
-    private String serviceName;
+    private static String serviceName;
 
+    /* Utils Beans */
     private final Logger logger = LoggerFactory.getLogger(ControllerExceptionHandler.class);
+
+    /* Public Methods */
 
     @ExceptionHandler(Exception.class) // Http 500
     public ResponseEntity<HttpStatusErrorDto> handleAllExceptions(

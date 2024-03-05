@@ -3,7 +3,6 @@ package com.example.authenticationservice.controller;
 import com.example.authenticationservice.dto.*;
 import com.example.authenticationservice.model.Path;
 import com.example.authenticationservice.service.LoginProfileService;
-import com.example.authenticationservice.utils.RegexUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -23,12 +22,8 @@ import java.net.URI;
 @RequiredArgsConstructor
 public class LoginProfileController {
 
-    public static final String ERROR_MSG_USER_ID_PATH_VARIABLE =
-            "User id (provided as a path variable) should start by a capital letter, " +
-            "followed by exactly 5 digits.";
-
+    /* Service Beans */
     private final LoginProfileService loginProfileService;
-    private final RegexUtils regexUtils;
 
     @PostMapping
     @Operation(operationId = "createLoginProfile", tags = {"login-profiles"},
@@ -94,9 +89,6 @@ public class LoginProfileController {
     public ResponseEntity<LoginProfileResponseDto> getLoginProfileById(
             @PathVariable String idLoginProfile)
     {
-        regexUtils.checkStringPattern(idLoginProfile, RegexUtils.REGEX_ID_LOGIN_PROFILE,
-                "User id (provided as a path variable) should start by a capital letter, " +
-                "followed by exactly 5 digits.");
         return ResponseEntity.ok(loginProfileService.getLoginProfileById(idLoginProfile));
     }
 
@@ -123,8 +115,6 @@ public class LoginProfileController {
     public ResponseEntity<LoginProfileActivationResponseDto> getLoginProfileActivationById(
             @PathVariable String idLoginProfile)
     {
-        regexUtils.checkStringPattern(idLoginProfile, RegexUtils.REGEX_ID_LOGIN_PROFILE,
-                ERROR_MSG_USER_ID_PATH_VARIABLE);
         return ResponseEntity.ok(loginProfileService.getLoginProfileActivationById(idLoginProfile));
     }
 
@@ -158,8 +148,6 @@ public class LoginProfileController {
             @PathVariable String idLoginProfile,
             @Valid @RequestBody LoginProfilePasswordUpdateRequestDto passwordDto)
     {
-        regexUtils.checkStringPattern(idLoginProfile, RegexUtils.REGEX_ID_LOGIN_PROFILE,
-                ERROR_MSG_USER_ID_PATH_VARIABLE);
         loginProfileService.updateLoginProfilePasswordById(idLoginProfile, passwordDto);
         return ResponseEntity.noContent().build();
     }
@@ -194,8 +182,6 @@ public class LoginProfileController {
             @PathVariable String idLoginProfile,
             @Valid @RequestBody LoginProfileUpdateRequestDto loginProfileDto)
     {
-        regexUtils.checkStringPattern(idLoginProfile, RegexUtils.REGEX_ID_LOGIN_PROFILE,
-                ERROR_MSG_USER_ID_PATH_VARIABLE);
         loginProfileService.updateLoginProfileById(idLoginProfile, loginProfileDto);
         return ResponseEntity.noContent().build();
     }

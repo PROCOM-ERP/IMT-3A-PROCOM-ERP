@@ -3,8 +3,6 @@ package com.example.authenticationservice.controller;
 import com.example.authenticationservice.dto.*;
 import com.example.authenticationservice.model.Path;
 import com.example.authenticationservice.service.RoleService;
-import com.example.authenticationservice.utils.CustomStringUtils;
-import com.example.authenticationservice.utils.RegexUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -25,8 +23,10 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class RoleController {
 
+    /* Service Beans */
     private final RoleService roleService;
-    private final CustomStringUtils customStringUtils;
+
+    /* Public Methods */
 
     @PostMapping
     @Operation(operationId = "createRole", tags = {"roles"},

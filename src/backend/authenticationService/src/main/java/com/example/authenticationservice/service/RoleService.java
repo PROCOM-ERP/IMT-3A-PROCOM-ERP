@@ -8,10 +8,7 @@ import com.example.authenticationservice.repository.RoleActivationRepository;
 import com.example.authenticationservice.repository.RoleRepository;
 import com.example.authenticationservice.utils.CustomHttpRequestBuilder;
 import com.example.authenticationservice.utils.CustomStringUtils;
-import com.example.authenticationservice.utils.PerformanceTracker;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -31,25 +28,27 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class RoleService {
 
+    /* Constants */
     public static final String ERROR_MSG_ROLE_NAME_PATH_VARIABLE =
             "Role name (provided as a path variable) cannot be null or empty.";
     public static final String ERROR_MSG_MICROSERVICE_NAME_REQUEST_PARAM =
             "Microservice name (provided as a request param) cannot be null or empty.";
-
     @Value("${security.service.name}")
-    private String currentMicroservice;
+    private static String currentMicroservice;
 
-    private final RoleRepository roleRepository;
-    private final RoleActivationRepository roleActivationRepository;
+    /* Repository Beans */
     private final LoginProfileRepository loginProfileRepository;
+    private final RoleActivationRepository roleActivationRepository;
+    private final RoleRepository roleRepository;
 
-    private final PermissionService permissionService;
-    private final RestTemplate restTemplate;
-    private final CustomHttpRequestBuilder customHttpRequestBuilder;
+    /* Service Beans */
     private final MessageSenderService messageSenderService;
-    private final CustomStringUtils customStringUtils;
+    private final PermissionService permissionService;
 
-    private final Logger logger = LoggerFactory.getLogger(RoleService.class);
+    /* Utils Beans */
+    private final CustomHttpRequestBuilder customHttpRequestBuilder;
+    private final CustomStringUtils customStringUtils;
+    private final RestTemplate restTemplate;
 
     /* Public Methods */
 
