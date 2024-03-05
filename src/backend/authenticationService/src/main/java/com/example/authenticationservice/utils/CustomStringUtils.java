@@ -59,7 +59,6 @@ public class CustomStringUtils {
                 .replace("<", "&lt;")
                 .replace(">", "&gt;")
                 .replace("\"", "&quot;")
-                .replace("'", "&#x27;")
-                .replace("/", "&#x2F;");
+                .replace("'", "&#x27;");
     }
 }

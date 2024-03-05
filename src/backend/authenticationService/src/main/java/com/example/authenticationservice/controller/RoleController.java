@@ -25,11 +25,6 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class RoleController {
 
-    public static final String ERROR_MSG_ROLE_NAME_PATH_VARIABLE =
-            "Role name (provided as a path variable) cannot be null or empty.";
-    public static final String ERROR_MSG_MICROSERVICE_NAME_REQUEST_PARAM =
-            "Microservice name (provided as a request param) cannot be null or empty.";
-
     private final RoleService roleService;
     private final CustomStringUtils customStringUtils;
 
@@ -138,7 +133,6 @@ public class RoleController {
     public ResponseEntity<RoleResponseDto> getRoleByName(
             @PathVariable String role)
     {
-        customStringUtils.checkNullOrBlankString(role, ERROR_MSG_ROLE_NAME_PATH_VARIABLE);
         return ResponseEntity.ok(roleService.getRoleByName(role));
     }
 
@@ -171,8 +165,6 @@ public class RoleController {
             @PathVariable String role,
             @RequestParam("microservice") String microservice)
     {
-        customStringUtils.checkNullOrBlankString(role, ERROR_MSG_ROLE_NAME_PATH_VARIABLE);
-        customStringUtils.checkNullOrBlankString(microservice, ERROR_MSG_MICROSERVICE_NAME_REQUEST_PARAM);
         return ResponseEntity.ok(roleService.getRoleActivationByRoleAndMicroservice(role, microservice));
     }
 
@@ -210,7 +202,6 @@ public class RoleController {
             @PathVariable String role,
             @Valid @RequestBody RoleUpdateRequestDto roleDto)
     {
-        customStringUtils.checkNullOrBlankString(role, ERROR_MSG_ROLE_NAME_PATH_VARIABLE);
         roleService.updateRoleByName(role, roleDto);
         return ResponseEntity.noContent().build();
     }

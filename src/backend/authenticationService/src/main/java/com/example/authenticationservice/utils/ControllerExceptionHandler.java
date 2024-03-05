@@ -22,6 +22,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RequiredArgsConstructor
 public class ControllerExceptionHandler {
 
+    public static final String ERROR_DEFAULT_MSG_HTTP_500 =
+            "The server has encountered an unexpected error.";
+    public static final String ERROR_DEFAULT_MSG_HTTP_400 =
+            "Inputs don't respect a specific format.";
+
     @Value("${security.service.name}")
     private String serviceName;
 
@@ -32,7 +37,7 @@ public class ControllerExceptionHandler {
             Exception e)
     {
         HttpStatusErrorDto error = HttpStatusErrorDto.builder()
-                .message(e.getMessage())
+                .message(ERROR_DEFAULT_MSG_HTTP_500)
                 .build();
         logger.error("Service " + serviceName + " throws an error\n", e);
         return ResponseEntity.internalServerError().body(error);
@@ -60,7 +65,7 @@ public class ControllerExceptionHandler {
 
         // build and sent Http Response
         HttpStatusErrorDto error = HttpStatusErrorDto.builder()
-                .message(e.getMessage())
+                .message(ERROR_DEFAULT_MSG_HTTP_400)
                 .fields(fields)
                 .build();
         logger.error("Service " + serviceName + " throws an error\n", e);

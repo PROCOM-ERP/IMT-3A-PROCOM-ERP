@@ -7,6 +7,7 @@ import com.example.authenticationservice.repository.LoginProfileRepository;
 import com.example.authenticationservice.repository.RoleActivationRepository;
 import com.example.authenticationservice.repository.RoleRepository;
 import com.example.authenticationservice.utils.CustomHttpRequestBuilder;
+import com.example.authenticationservice.utils.CustomStringUtils;
 import com.example.authenticationservice.utils.PerformanceTracker;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -30,31 +31,38 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class RoleService {
 
+    public static final String ERROR_MSG_ROLE_NAME_PATH_VARIABLE =
+            "Role name (provided as a path variable) cannot be null or empty.";
+    public static final String ERROR_MSG_MICROSERVICE_NAME_REQUEST_PARAM =
+            "Microservice name (provided as a request param) cannot be null or empty.";
+
     @Value("${security.service.name}")
     private String currentMicroservice;
 
     private final RoleRepository roleRepository;
     private final RoleActivationRepository roleActivationRepository;
     private final LoginProfileRepository loginProfileRepository;
+
     private final PermissionService permissionService;
     private final RestTemplate restTemplate;
     private final CustomHttpRequestBuilder customHttpRequestBuilder;
     private final MessageSenderService messageSenderService;
+    private final CustomStringUtils customStringUtils;
 
-    private final PerformanceTracker performanceTracker;
     private final Logger logger = LoggerFactory.getLogger(RoleService.class);
 
     /* Public Methods */
 
     @Transactional
     public String createRole(RoleCreationRequestDto roleDto)
-            throws IllegalArgumentException, DataIntegrityViolationException {
-        logger.info("Start role creation...");
-        long startTimeNano = performanceTracker.getCurrentTime();
+            throws DataIntegrityViolationException
+    {
+        // sanitize all request parameters
+        customStringUtils.sanitizeAllStrings(roleDto);
 
         // check if role doesn't already exist
         if (roleRepository.existsById(roleDto.getName()))
-            throw new DataIntegrityViolationException("Entity already exists");
+            throw new DataIntegrityViolationException("Role with the provided name already exists.");
 
         // create new Role entity before database insertion
         Role role = Role.builder()
@@ -79,16 +87,13 @@ public class RoleService {
         messageSenderService.sendRolesNewMessage(savedRole.getName());
 
         // return role name
-        long elapsedTimeMillis = performanceTracker.getElapsedTimeMillis(startTimeNano);
-        logger.info("Elapsed time to create new role : " + elapsedTimeMillis + " ms");
         return savedRole.getName();
     }
 
     @Transactional
-    public void saveAllMicroserviceRoles(String getAllRolesPath) {
-        logger.info("Start external roles saving operation...");
-        long startTimeNano = performanceTracker.getCurrentTime();
-
+    public void saveAllMicroserviceRoles(String getAllRolesPath)
+            throws NoSuchElementException
+    {
         // retrieve microservice RoleActivation entities
         Set<RoleActivationResponseDto> roleDtos = getAllMicroserviceRoles(getAllRolesPath);
 
@@ -106,7 +111,8 @@ public class RoleService {
             Role role = existingRoles.stream()
                     .filter(r -> raDto.getName().equals(r.getName()))
                     .findFirst()
-                    .orElseThrow();
+                    .orElseThrow(() ->
+                            new NoSuchElementException("No existing role named " + raDto.getName()));
             RoleActivation ra;
             if (existingRoleActivations.containsKey(key)) {
                 ra = existingRoleActivations.get(key);
@@ -134,23 +140,20 @@ public class RoleService {
 
         // send message to inform the network about all login profiles jwt expiration
         messageSenderService.sendLoginProfilesJwtDisableOldMessage();
-
-        long elapsedTimeMillis = performanceTracker.getElapsedTimeMillis(startTimeNano);
-        logger.info("Elapsed time to save external roles : " + elapsedTimeMillis + " ms");
-
     }
 
     @Transactional
     public void saveMicroserviceRole(String getRoleByNamePath)
-            throws NoSuchElementException, RestClientException {
-        logger.info("Start external role saving operation...");
-        long startTimeNano = performanceTracker.getCurrentTime();
-
+            throws NoSuchElementException,
+            RestClientException
+    {
         // retrieve microservice role
         RoleActivationResponseDto roleDto = getMicroserviceRole(getRoleByNamePath);
 
         // retrieve Role entity from database
-        Role role = roleRepository.findById(roleDto.getName()).orElseThrow();
+        Role role = roleRepository.findById(roleDto.getName())
+                .orElseThrow(() ->
+                        new NoSuchElementException("No existing role named " + roleDto.getName()));
 
         // update RoleActivation entity
         RoleActivation roleActivation = roleActivationRepository
@@ -165,7 +168,9 @@ public class RoleService {
         roleActivationRepository.save(roleActivation);
 
         // update Role entity global isEnable property
-        role = roleRepository.findById(roleDto.getName()).orElseThrow();
+        role = roleRepository.findById(roleDto.getName())
+                .orElseThrow(() ->
+                        new NoSuchElementException("No existing role named " + roleDto.getName()));
         updateRoleIsEnable(role);
 
         // insert Role entity
@@ -176,34 +181,35 @@ public class RoleService {
 
         // send message to inform the network about all login profiles jwt expiration
         messageSenderService.sendLoginProfilesJwtDisableOldMessage();
-
-        long elapsedTimeMillis = performanceTracker.getElapsedTimeMillis(startTimeNano);
-        logger.info("Elapsed time to save external role : " + elapsedTimeMillis + " ms");
     }
 
-    public Set<String> getAllRoleNames() {
+    public Set<String> getAllRoleNames()
+    {
         return roleRepository.findAllRoleNames();
     }
 
-    public RolesMicroservicesResponseDto getAllRolesAndMicroservices() {
-        logger.info("Start retrieving roles and microservices...");
-        long startTimeNano = performanceTracker.getCurrentTime();
-        RolesMicroservicesResponseDto rolesAndMicroservices = RolesMicroservicesResponseDto.builder()
+    public RolesMicroservicesResponseDto getAllRolesAndMicroservices()
+    {
+        return RolesMicroservicesResponseDto.builder()
                 .roles(roleRepository.findAllRoleNames())
                 .microservices(roleActivationRepository.findAllMicroservices())
                 .build();
-        long elapsedTimeMillis = performanceTracker.getElapsedTimeMillis(startTimeNano);
-        logger.info("Elapsed time to retrieve roles and microservices : " + elapsedTimeMillis + " ms");
-        return rolesAndMicroservices;
     }
 
     public RoleResponseDto getRoleByName(String roleName)
-            throws NoSuchElementException {
-        logger.info("Start retrieving one role...");
-        long startTimeNano = performanceTracker.getCurrentTime();
+            throws IllegalArgumentException,
+            NoSuchElementException
+    {
+        // check if role is not null or blank
+        customStringUtils.checkNullOrBlankString(roleName, ERROR_MSG_ROLE_NAME_PATH_VARIABLE);
+
+        // sanitize all request parameters
+        customStringUtils.sanitizeString(roleName);
 
         // check if role exists and retrieve it
-        Role role = roleRepository.findById(roleName).orElseThrow();
+        Role role = roleRepository.findById(roleName)
+                .orElseThrow(() ->
+                        new NoSuchElementException("No existing role named " + roleName));
 
         // set permissions isEnable value
         Set<PermissionDto> permissions = permissionService.getAllPermissions().stream()
@@ -213,29 +219,27 @@ public class RoleService {
                         .build())
                 .collect(Collectors.toSet());
 
-        // build RoleResponseDto entity
-        RoleResponseDto roleDto = RoleResponseDto.builder()
+        // build and return RoleResponseDto entity
+        return RoleResponseDto.builder()
                 .isEnable(isEnableInMicroservice(role))
                 .permissions(permissions)
                 .build();
-
-        // return RoleResponseDto entity
-        long elapsedTimeMillis = performanceTracker.getElapsedTimeMillis(startTimeNano);
-        logger.info("Elapsed time to retrieve one role : " + elapsedTimeMillis + " ms");
-        return roleDto;
-
     }
 
-    public RoleActivationResponseDto getRoleActivationByRoleAndMicroservice(String roleName, String microservice) {
-        logger.info("Start retrieving one role activation...");
-        long startTimeNano = performanceTracker.getCurrentTime();
+    public RoleActivationResponseDto getRoleActivationByRoleAndMicroservice(
+            String roleName, String microservice)
+            throws IllegalArgumentException
+    {
+        // check if microservice and role are not null or blank
+        customStringUtils.checkNullOrBlankString(roleName, ERROR_MSG_ROLE_NAME_PATH_VARIABLE);
+        customStringUtils.checkNullOrBlankString(microservice, ERROR_MSG_MICROSERVICE_NAME_REQUEST_PARAM);
 
-        // check if microservice is not null
-        if (microservice == null)
-            throw new IllegalArgumentException();
+        // sanitize all request parameters
+        customStringUtils.sanitizeString(roleName);
+        customStringUtils.sanitizeString(microservice);
 
-        // retrieve or create (transient) RoleActivationResponseDto entity
-        RoleActivationResponseDto roleDto = roleActivationRepository.findByRoleAndMicroservice(roleName, microservice)
+        // retrieve or create (transient) RoleActivationResponseDto entity and return it
+        return roleActivationRepository.findByRoleAndMicroservice(roleName, microservice)
                 .map(ra -> RoleActivationResponseDto.builder()
                         .name(roleName)
                         .microservice(microservice)
@@ -246,25 +250,28 @@ public class RoleService {
                         .microservice(microservice)
                         .isEnable(false)
                         .build());
-
-        // return RoleActivationResponseDto entity
-        long elapsedTimeMillis = performanceTracker.getElapsedTimeMillis(startTimeNano);
-        logger.info("Elapsed time to retrieve one role activation : " + elapsedTimeMillis + " ms");
-        return roleDto;
     }
 
     @Transactional
     public void updateRoleByName(String roleName, RoleUpdateRequestDto roleDto)
-            throws NoSuchElementException, DataIntegrityViolationException {
-        logger.info("Start updating one role...");
-        long startTimeNano = performanceTracker.getCurrentTime();
+            throws IllegalArgumentException,
+            NoSuchElementException,
+            DataIntegrityViolationException
+    {
+        // check if role is not null or blank
+        customStringUtils.checkNullOrBlankString(roleName, ERROR_MSG_ROLE_NAME_PATH_VARIABLE);
+
+        // sanitize all request parameters
+        customStringUtils.sanitizeString(roleName);
+        customStringUtils.sanitizeAllStrings(roleDto);
 
         // update isEnable property if provided or different of null
         if (roleDto.getIsEnable() != null) {
             RoleActivation ra = roleActivationRepository.findByRoleAndMicroservice(roleName, currentMicroservice)
                     .orElse(RoleActivation.builder()
                             // check if role already exists
-                            .role(roleRepository.findById(roleName).orElseThrow())
+                            .role(roleRepository.findById(roleName).orElseThrow(() ->
+                                    new NoSuchElementException("No existing role named " + roleName)))
                             .microservice(currentMicroservice)
                             .build());
             ra.setIsEnable(roleDto.getIsEnable());
@@ -272,7 +279,9 @@ public class RoleService {
         }
 
         // check if role already exists and retrieve it
-        Role role = roleRepository.findById(roleName).orElseThrow();
+        Role role = roleRepository.findById(roleName)
+                .orElseThrow(() ->
+                        new NoSuchElementException("No existing role named " + roleName));
 
         // update permissions if permissions are provided
         if (roleDto.getPermissions() != null) {
@@ -294,9 +303,6 @@ public class RoleService {
 
         // send message to inform the network about all login profiles jwt expiration
         messageSenderService.sendLoginProfilesJwtDisableOldMessage();
-
-        long elapsedTimeMillis = performanceTracker.getElapsedTimeMillis(startTimeNano);
-        logger.info("Elapsed time to update one role : " + elapsedTimeMillis + " ms");
     }
 
     /* Private Methods */
