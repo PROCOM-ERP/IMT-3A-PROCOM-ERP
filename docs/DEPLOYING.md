@@ -10,14 +10,14 @@ All `.sh` scripts have a `.ps1` version for Windows. But make sure to run docker
 
 There are two different ways of using our system :
 
-1. [Compose mode](#compose-mode)
-2. [Swarm mode](#Swarm-mode)
+1. [Compose mode](##compose-mode)
+2. [Swarm mode](##swarm-mode)
 
 > [!TIP]
 > Compose vs Swarm : Explanation
 >
-> Compose will use docker compose, Swarm will use docker stack deploy. The key difference is that Swarm is a system in which we create and manage nodes. We can then deploy services on individual or multiple nodes, load balance between them, and much more. Swarm will automatically start new containers that will launch again services that just failed. It also has the capability of creating replicas for services, to improve fault tolerance for your system.
-> Here we only created a basic Swarm deploy, to test the capabilities and evaluate what a distributed ERP could find useful in Swarm. We did not have the necessary time to develop that aspect.
+> > Compose will use docker compose, Swarm will use docker stack deploy. The key difference is that Swarm is a system in which we create and manage nodes. We can then deploy services on individual or multiple nodes, load balance between them, and much more. Swarm will automatically start new containers that will launch again services that just failed. It also has the capability of creating replicas for services, to improve fault tolerance for your system.
+> > Here we only created a basic Swarm deploy, to test the capabilities and evaluate what a distributed ERP could find useful in Swarm. We did not have the necessary time to develop that aspect.
 
 There also is the possibility of not launching Logs/Monitoring stack, by running the deploy script with the option `--no-logs`.
 
@@ -50,7 +50,10 @@ Check the [Warning section](#warning) below in case you're having an issue
 
 ## :whale: - :musical_score: **Compose mode** :
 
-- Insure you have the script `./security/docker_secrets_files.sh` :key:.
+> [!IMPORTANT]
+>
+> - Insure you have the script `./security/docker_secrets_files.sh` :key:.
+
 - Execute the script `./security/docker_secrets_files.sh`.
 - Execute the script `./deploy.sh`, and if it's your first execution, add the `--sec` option to the command, as such: `./deploy.sh --sec`. This will generate all security certificates needed to run the app only if it doesn't detect existing ones.
 
@@ -65,7 +68,10 @@ Check the [Warning section](#warning) below in case you're having an issue
 
 ## :whale: - :honeybee: **Swarm mode** :
 
-- Insure you have the script `./security/docker_secrets.sh` :key:.
+> [!IMPORTANT]
+>
+> - Insure you have the script `./security/docker_secrets.sh` :key:.
+
 - Execute the deploy script with the `--swarm` option, as such: `./deploy.sh --swarm`, and if it's your first execution, add the `--sec` option to the command, as such: `./deploy.sh --swarm --sec`. This will generate all security certificates needed to run the app only if it doesn't detect existing ones (see [Security Guide](./security/README.md) if you encounter any issues regarding .jks, .p12, .crt or .pem files).
 
 This is going to activate :ship: Swarm mode :sailboat: for :whale: Docker, and create a node manager. Then it will deploy the services and load balance between them, restart them if they have errors etc.
