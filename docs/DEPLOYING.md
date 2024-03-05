@@ -1,4 +1,4 @@
-# :rocket: Deploying the application
+# :rocket: Deploying the application {#deploy}
 
 Here is the complete guide on how to deploy your ERP.
 We mainly use scripts to deploy this application, although we are researching other deployment tools.
@@ -10,8 +10,8 @@ All `.sh` scripts have a `.ps1` version for Windows. But make sure to run docker
 
 There are two different ways of using our system :
 
-1. [Compose mode](##compose-mode)
-2. [Swarm mode](##swarm-mode)
+1. [Compose mode](#compose-mode)
+2. [Swarm mode](#swarm-mode)
 
 > [!TIP]
 > Compose vs Swarm : Explanation
@@ -22,8 +22,6 @@ There are two different ways of using our system :
 There also is the possibility of not launching Logs/Monitoring stack, by running the deploy script with the option `--no-logs`.
 
 There are multiple scripts you need to have, that are not followed within this repository because of security reasons, but you can find their template in the `./docs/security/templates` directory.
-
-Check the [Warning section](#warning) below in case you're having an issue
 
 > [!IMPORTANT]
 >
@@ -48,14 +46,14 @@ Check the [Warning section](#warning) below in case you're having an issue
 >
 > See [Security Guide](./security/README.md) if you encounter any issues regarding `.jks`, `.p12`, `.crt` or `.pem` files. Often you'll only need to add options `--clean-sec "CA" --sec` to your deployment.
 
-## :whale: - :musical_score: **Compose mode** :
+## :whale: - :musical_score: **Compose mode** : {#compose-mode}
 
 > [!IMPORTANT]
 >
 > - Insure you have the script `./security/docker_secrets_files.sh` :key:.
 
-- Execute the script `./security/docker_secrets_files.sh`.
-- Execute the script `./deploy.sh`, and if it's your first execution, add the `--sec` option to the command, as such: `./deploy.sh --sec`. This will generate all security certificates needed to run the app only if it doesn't detect existing ones.
+Execute the script `./security/docker_secrets_files.sh`.
+Execute the script `./deploy.sh`, and if it's your first execution, add the `--sec` option to the command, as such: `./deploy.sh --sec`. This will generate all security certificates needed to run the app only if it doesn't detect existing ones.
 
 > [!NOTE]
 > If you want to see available options, execute `./deploy.sh --help`.
@@ -66,13 +64,13 @@ Check the [Warning section](#warning) below in case you're having an issue
 > If you would prefer to pull images from a docker registry on :whale: [Docker Hub](https://hub.docker.com) instead of building them locally, you can simply add `--pull "registry_or_username/repository"` as well as a version to pull from `--version "X.X.X | latest"`, such as: `./deploy.sh --pull "gachille/erp" --version 1.0.0`.
 > If you would like to push you local images to a docker registry on :whale: [Docker Hub](https://hub.docker.com), you can simply add `--push "registry_or_username/repository"`, such as: `./deploy --push "gachille/erp"`. It will automatically tag the images, and push one image with multiple tags, all named after the services, as not to bring chaos to the repository.
 
-## :whale: - :honeybee: **Swarm mode** :
+## :whale: - :honeybee: **Swarm mode** : {#swarm-mode}
 
 > [!IMPORTANT]
 >
 > - Insure you have the script `./security/docker_secrets.sh` :key:.
 
-- Execute the deploy script with the `--swarm` option, as such: `./deploy.sh --swarm`, and if it's your first execution, add the `--sec` option to the command, as such: `./deploy.sh --swarm --sec`. This will generate all security certificates needed to run the app only if it doesn't detect existing ones (see [Security Guide](./security/README.md) if you encounter any issues regarding .jks, .p12, .crt or .pem files).
+Execute the deploy script with the `--swarm` option, as such: `./deploy.sh --swarm`, and if it's your first execution, add the `--sec` option to the command, as such: `./deploy.sh --swarm --sec`. This will generate all security certificates needed to run the app only if it doesn't detect existing ones (see [Security Guide](./security/README.md) if you encounter any issues regarding .jks, .p12, .crt or .pem files).
 
 This is going to activate :ship: Swarm mode :sailboat: for :whale: Docker, and create a node manager. Then it will deploy the services and load balance between them, restart them if they have errors etc.
 
