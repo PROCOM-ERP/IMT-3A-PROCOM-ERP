@@ -5,9 +5,28 @@
 # | System-relative Functions                                                   |
 # +-----------------------------------------------------------------------------+
 
+function Clean-Security {
+    param (
+        [bool]$CA = $false
+    )
+
+    if ($CA) {
+        Write-Host "Cleaning certificates along with the CA's"
+        & "${security_path}\clean_security.ps1" "--CA" | Out-Null
+    }
+    else {
+        Write-Host "Cleaning certificates"
+        & "${security_path}\clean_security.ps1" | Out-Null
+    }
+    Write-Host "Certificates all cleaned up"
+}
+
+# +-----------------------------------------------------------------------------+
+
 function Security {
-    # Execute the security_setup.sh script using bash
+        Write-Host "Generating certificates"
     & .\src\security\security_setup.ps1
+        Write-Host "Certificates generated"
 }
 
 # +-----------------------------------------------------------------------------+
@@ -53,9 +72,9 @@ function Copy-SystemFiles {
 
 function Clean-SystemFiles {
     # Define paths to backend, frontend, and database directories
-    $backendPaths = Get-ChildItem -Path "src/backend" -Directory
-    $frontendPaths = Get-ChildItem -Path "src/frontend" -Directory
-    $dbPaths = Get-ChildItem -Path "src/databases" -Directory
+    $backendPaths = Get-ChildItem -Path "src\backend" -Directory
+    $frontendPaths = Get-ChildItem -Path "src\frontend" -Directory
+    $dbPaths = Get-ChildItem -Path "src\databases" -Directory
 
     Write-Output "Cleaning up system files from services"
 
@@ -97,6 +116,16 @@ function Is-StackRunning {
     )
     $stackStatus = docker stack ps --format "{{.Name}}" $stackName 2>$null
     return [string]::IsNullOrWhiteSpace($stackStatus) -eq $false
+}
+
+# +-----------------------------------------------------------------------------+
+
+function Latest-ImageExists {
+    param (
+        [string]$imageName
+    )
+    $latestImage = docker images "${imageName}:latest" | Select-String "$imageName"
+    return $null -ne $latestImage
 }
 
 # +-----------------------------------------------------------------------------+
@@ -144,12 +173,30 @@ function Get-ImageVersions {
 
 # +-----------------------------------------------------------------------------+
 
-function Latest-ImageExists {
-    param (
-        [string]$imageName
-    )
-    $latestImage = docker images "${imageName}:latest" | Select-String "$imageName"
-    return $null -ne $latestImage
+function Remove-ElkSetupContainer {
+    Write-Host "Now waiting for Elasticsearch setup to finish before starting complete ELK, and then ERP"
+    
+    # Wait for the container to exit
+    docker wait "setup" | Out-Null
+    
+    # Remove the container
+    docker rm "setup" | Out-Null
+    docker rmi "elk-setup" | Out-Null
+}
+
+# +-----------------------------------------------------------------------------+
+
+function Import-LogDashboardInKibana {
+    Write-Host -NoNewline "Waiting for Kibana to start"
+    while (-not (Test-Connection localhost -Port 5601 -Quiet)) {
+        Write-Host -NoNewline '.'
+        Start-Sleep -Seconds 2
+    }
+    Write-Host ''
+
+    # Import the NDJSON file into Kibana
+    Start-Sleep -Seconds 5
+    curl -u "$elasticUser:$elasticPassword" -POST 'http://localhost:5601/api/saved_objects/_import?overwrite=true' -H "kbn-xsrf: true" --form file=@docker/elk/export.ndjson | Out-Null
 }
 
 # +-----------------------------------------------------------------------------+
@@ -157,16 +204,23 @@ function Latest-ImageExists {
 # +-----------------------------------------------------------------------------+
 
 function Setup-Elk {
-    docker-compose -f $elkComposeFile up -d --build setup
+    Write-Host "Setting up Elasticsearch"
+    if ($swarm) {
+        docker-compose -f $elkComposeSwarmFile -f $elkFilebeatComposeSwarmFile -p elk up -d --build setup
+    }
+    else {
+        docker-compose -f $elkComposeFile -f $elkFilebeatComposeFile -p elk up -d --build setup
+    }
 }
 
 # +-----------------------------------------------------------------------------+
 
 function Deploy-Elk {
+    Write-Host "Deploying Elastic stack (Filebeat, Logstash, Elasticsearch, Kibana)"
     if ($swarm) {
-        docker-compose -f $elkComposeFile -f $elkFilebeatComposeFile-p elk up -d --build
+        docker-compose -f $elkComposeFile -f $elkFilebeatComposeFile -p elk up -d --build
     } else {
-        docker-compose -f $elkComposeSwarmFile -f $elkFilebeatComposeSwarmFile-p elk up -d --build
+        docker-compose -f $elkComposeSwarmFile -f $elkFilebeatComposeSwarmFile -p elk up -d --build
     }
 }
 
@@ -245,16 +299,24 @@ if (-not (Test-Path "$dockerPath\docker-compose-swarm.yml")) {
 # Handling command line arguments (equivalent to bash positional parameters)
 $swarm = $false
 $sec = $false
+$CA= $false
+$cleanSec = $false
 $push = $false
 $pull = $false
 $hot = $false
 $logs = $true
+
 $dockerRegistry = ""
 $composeFile = "$dockerPath\docker-compose.yml"
 $elkComposeFile = "$elkPath\docker-compose.yml"
-$elkComposeSwarmFile = "$elkPath\docker-compose.yml"
-$elkFilebeatComposeFile = "$elkPath\extensions\filebeat\filebeat-compose-swarm.yml"
+$elkComposeSwarmFile = "$elkPath\docker-compose-swarm.yml"
+$elkFilebeatComposeFile = "$elkPath\extensions\filebeat\filebeat-compose.yml"
 $elkFilebeatComposeSwarmFile = "$elkPath\extensions\filebeat\filebeat-compose-swarm.yml"
+
+
+$elasticUser = "elastic"
+$elasticPassword = (Get-Content "${elkPath}/.env" | Where-Object { $_ -match "^ELASTIC_PASSWORD=" } | ForEach-Object { $_.Split('=')[1] }).Trim().Trim("'")
+
 $version = "latest"
 $version_specified = $false
 
@@ -267,6 +329,16 @@ for ($i = 0; $i -lt $args.Count; $i++) {
         "--swarm" {
             $swarm = $true
             $composeFile = "$dockerPath\docker-compose-swarm.yml"
+        }
+        "--clean-sec" {
+            $cleanSec = $true
+            if ($args.Count -gt 1 -and $args[1] -eq "CA") {
+                $CA = $true
+                $args = $args[2..$args.Count]
+            }
+            else {
+                $args = $args[1..$args.Count]
+            }
         }
         "--sec" {
             $sec = $true
@@ -308,6 +380,30 @@ for ($i = 0; $i -lt $args.Count; $i++) {
             type .\docs\DEPLOYING.md
             exit 0
         }
+        "--help" {
+            Write-Host "Usage:"
+            Write-Host "        '.\deploy.ps1 --option `"value`"'"
+            Write-Host " "
+            Write-Host "Possible options:"
+            Write-Host "        '--swarm': --------------------->  Deploy using Docker Swarm mode."
+            Write-Host "        '--clean-sec `"CA`"': ------------>  Execute the clean security setup before deploying, --sec option is required if you use this. CA: optional, to also clean CA cert files."
+            Write-Host "        '--sec'  ----------------------->  Execute the security setup script as well."
+            Write-Host "        '--push `"repository/image`"': --->  Tag and push Docker images to a repository, then deploy."
+            Write-Host "        '--pull `"repository/image`"': --->  Pull Docker images from a repository from which to deploy, --version is required if you use this option"
+            Write-Host "        '--version `"version`"': --------->  Specify the version of the images to use for the pull option."
+            Write-Host "        '--hot': ----------------------->  Force redeployment even if the stack is already running, for swarm mode."
+            Write-Host "        '--no-logs': ------------------->  Doesn't deploy monitoring and log aggregating containers (Elastic stack)."
+            Write-Host "        '--help': ---------------------->  Display this help message."
+            Write-Host "        '--doc': ----------------------->  Display the deployment documentation."
+            Write-Host " "
+            Write-Host "Examples:"
+            Write-Host "        '.\deploy.ps1 --swarm --clean-sec CA --sec --pull --version 1.0.0 --hot'"
+            Write-Host "        '.\deploy.ps1 --help'"
+            Write-Host "        '.\deploy.ps1 --doc'"
+            Write-Host " "
+            Write-Host "You can use this script without specifying options, it will build and deploy by default with compose from docker-compose.yml"
+            exit 0
+        }
         default {
             Write-Host "Invalid option: $($args[$i])"
             exit 1
@@ -315,9 +411,20 @@ for ($i = 0; $i -lt $args.Count; $i++) {
     }
 }
 
+# +-----------------------------------------------------------------------------+
+
 if ($pull -and -not $version_specified) {
     Write-Host "Error: --pull option requires --version to be specified."
     exit 1
+}
+
+# +-----------------------------------------------------------------------------+
+
+if (-not $sec -and $cleanSec) {
+    Write-Host "Usage:"
+    Write-Host " "
+    Write-Host "When using --clean-sec, please also use --sec option, otherwise you'll face certificate problems."
+    exit
 }
 
 # +-----------------------------------------------------------------------------+
@@ -333,6 +440,7 @@ if ($swarm) {
     if (-not $swarmActive) {
         docker swarm init > $null 2>&1
         Write-Host "Swarm initialized"
+        # +---Docker secrets for Swarm mode-------------------------------------+
         $securityPath\docker_secrets.ps1 > $null 2>&1
     } else {
         Write-Host "Swarm detected"
@@ -351,26 +459,19 @@ if ($swarm) {
         }
     }
 } else {
-    # +---Docker Secrets for simple compose-----------------------------------------+
+   # +---Docker Secrets for simple Compose-------------------------------------+
+    Write-Host "Generating docker secrets"
     $securityPath\docker_secrets_files.ps1 > $null 2>&1
+    Write-Host "Docker secrets generated"
+    Write-Host ""
 }
 
-if ($logs) {
-    # +---Setting up the monitoring and logs stack----------------------------------+
-    Setup-Elk
-
-    # Wait for the container to exit
-    docker wait "setup" *>$null
-
-    # Remove the container
-    docker rm "setup" *>$null
-    docker rmi "elk-setup" *>$null
-
-    # +---Deploying the monitoring and logs stack-----------------------------------+
-    Deploy-Elk
-}
 
 # +---System-relative setup-----------------------------------------------------+
+
+if ($cleanSec) {
+    Clean-Security
+}
 
 if ($sec) {
     Security
@@ -382,6 +483,18 @@ Get-ImageVersions
 
 # +---Deployment----------------------------------------------------------------+
 
+# +---Logs Setup & Deployment---------------------------------------------------+
+if ($logs) {
+    Setup-Elk
+
+    Remove-ElkSetupContainer
+
+    Deploy-Elk
+
+    Import-LogDashboardInKibana
+}
+
+# +---ERP Setup & Deployment----------------------------------------------------+
 if ($push) {
     docker login
     Build-Images
@@ -400,4 +513,20 @@ if ($push) {
 Deploy
 
 Clean-SystemFiles
+@"
+ ______                                    _______  ______   ______  
+(_____ \                                  (_______)(_____ \ (_____ \ 
+ _____) )____  ___    ____  ___   ____     _____    _____) ) _____) )
+|  ____// ___)/ _ \  / ___)/ _ \ |    \   |  ___)  |  __  / |  ____/ 
+| |    | |   | |_| |( (___| |_| || | | |  | |_____ | |  \ \ | |      
+|_|    |_|    \___/  \____)\___/ |_|_|_|  |_______)|_|   |_||_|      
+
+"@
+
+Write-Host "Welcome to Procom ERP, here are the access links:"
+Write-Host " "
+Write-Host "1. Link to the frontend: [http://localhost:3000]"
+Write-Host "2. Link to the gateway hello world to accept its certificate as well: [http://localhost:8041/api/v1/authentication/hello]"
+Write-Host "3. Link to the Elastic stack (Kibana): [http://localhost:5601]"
+Write-Host "4. Link to the Custom Dashboard: [http://http://localhost:5601/app/discover]. Click on 'Open' to find and open the custom ERP-Dashboard"
 # +----End of this handy script------------------------------------------------+

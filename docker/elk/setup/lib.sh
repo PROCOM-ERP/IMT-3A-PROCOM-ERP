@@ -74,7 +74,7 @@ function wait_for_builtin_users {
 	local -i num_users
 
 	# retry for max 30s (30*1s)
-	for _ in $(seq 1 30); do
+	for _ in $(seq 1 1000); do
 		num_users=0
 
 		# read exits with a non-zero code if the last read input doesn't end
