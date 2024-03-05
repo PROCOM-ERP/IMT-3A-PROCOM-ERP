@@ -38,8 +38,9 @@ Check the [Warning section](#warning) below in case you're having an issue
 >
 > Having trouble deploying ? Maybe you're entering the good credentials, but still can't access the application ?
 >
-> - In order to make sure services can communicate, after you just deployed the app, when it's your first time accessing the [frontend](https://localhost:3000/), please accept the prompt to proceed with adding an exception for the site, as its certificates have yet to be validated by a known authority (it costs a certain sum of money). Be careful to do the same with the gateway using this [link](https://localhost:8041/api/authentication/v1/hello), so that the gateway can safely communicate information to the frontend.
->   The command to make a file executable (in order to execute a .sh script for example), is `chmod +x file_name.sh`.
+> > In order to make sure services can communicate, after you just deployed the app, when it's your first time accessing the [frontend](https://localhost:3000/), please accept the prompt to proceed with adding an exception for the site, as its certificates have yet to be validated by a known authority (it costs a certain sum of money). Be careful to do the same with the gateway using this [link](https://localhost:8041/api/authentication/v1/hello), so that the gateway can safely communicate information to the frontend.
+>
+> The command to make a file executable (in order to execute a .sh script for example), is `chmod +x file_name.sh`.
 >
 > If you're having a problem with \r files and you're on Windows, I invite you to execute this command: `sed -i 's/\r$//' .\*.sh && sed -i 's/\r$//' .\system\mvnw`.
 >
@@ -54,9 +55,9 @@ Check the [Warning section](#warning) below in case you're having an issue
 > [!NOTE]
 > If you want to see available options, execute `./deploy.sh --help`.
 
-> If you want to renew certificates and already have a deployed instance, or simply already have certificates in your services and want to change them, execute `./deploy.sh --clean-sec "CA" --sec`
-
 > [!TIP]
+> If you want to renew certificates and already have a deployed instance, or simply already have certificates in your services and want to change them, execute `./deploy.sh --clean-sec "CA" --sec`
+>
 > If you would prefer to pull images from a docker registry on :whale: [Docker Hub](https://hub.docker.com) instead of building them locally, you can simply add `--pull "registry_or_username/repository"` as well as a version to pull from `--version "X.X.X | latest"`, such as: `./deploy.sh --pull "gachille/erp" --version 1.0.0`.
 > If you would like to push you local images to a docker registry on :whale: [Docker Hub](https://hub.docker.com), you can simply add `--push "registry_or_username/repository"`, such as: `./deploy --push "gachille/erp"`. It will automatically tag the images, and push one image with multiple tags, all named after the services, as not to bring chaos to the repository.
 
@@ -70,9 +71,9 @@ This is going to activate :ship: Swarm mode :sailboat: for :whale: Docker, and c
 > [!NOTE]
 > If you want to see available options, execute `./deploy.sh --help`.
 
-> If you want to renew certificates and already have a deployed instance, or simply already have certificates in your services and want to change them, execute `./deploy.sh --clean-sec "CA" --sec`
-
 > [!TIP]
+> If you want to renew certificates and already have a deployed instance, or simply already have certificates in your services and want to change them, execute `./deploy.sh --clean-sec "CA" --sec`
+>
 > If you would prefer to pull images from a docker registry on :whale: [Docker Hub](https://hub.docker.com) instead of building them locally, you can simply add `--pull "registry_or_username/repository"` as well as a version to pull from `--version "X.X.X | latest"`, such as: `./deploy.sh --pull "gachille/erp" --version 1.0.0`.
 > If you would like to push you local images to a docker registry on :whale: [Docker Hub](https://hub.docker.com), you can simply add `--push "registry_or_username/repository"`, such as: `./deploy.sh --push "gachille/erp"`. It will automatically tag the images, and push one image with multiple tags, all named after the services, as not to bring chaos to the repository.
 
