@@ -102,8 +102,18 @@ The frontend, our client-side view of the ERP, is located [here](https://localho
 
 The logs and monitoring site, Elastic (our server-side view of all exchanges made in the ERP) is located [here](http://localhost:5601/).
 
+> [!TIP]
+> To watch the logs in the best Dashboard there is, click on the Burger Menu on the top left, then Discover.
+> ![Log access Step 1 image](./images/accessing-logs-Step1.png "Step1").
+> ![Log access Step 2 image](./images/accessing-logs-Step2.png "Step2").
+> On the top right, click on "Open" to find you ERP-Dashboard, that you can customize even more if you'd like.
+> ![Log access Step 3 image](./images/accessing-logs-Step3.png "Step3").
+> ![Log access Step 4 image](./images/accessing-logs-Step4.png "Step4")
+
+> A lot more is possible with Elastic stack, such as integrations of agent directly within java code, rabbitMQ server, etc, different metrics...
+
 ---
 
 # :recycle: Undeploying the application
 
-Hopefully, things should be running smoothly now. If you want to undeploy the system, execute the `undeploy.sh` script using : `./undeploy.sh` command, this one doesn't have particular options
+Hopefully, things should be running smoothly now. If you want to undeploy the system, execute the `undeploy.sh` script using : `./undepoy.sh` command, this one doesn't have particular options
