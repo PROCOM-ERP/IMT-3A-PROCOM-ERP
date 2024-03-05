@@ -496,9 +496,6 @@ services:
 networks:
   vnet-procom-erp:
     driver: overlay
-    ipam:
-      config:
-        - subnet: ${NETWORK_PROCOM_ERP}
 
 # +-----------------------------------------------------------------------------+
 # | Volumes  section                                                            |

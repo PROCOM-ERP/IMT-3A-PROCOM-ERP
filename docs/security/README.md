@@ -5,7 +5,7 @@ Here is a quick guide focusing on security, encryption, etc., within our modular
 ### Prerequisites
 
 - Ensure that **OpenSSL** is installed on your system for managing SSL certificates. Verify on your machine by trying to run `openssl --version` or `openssl -v`.
-- Ensure that **keytool** (a pre-installed tool by Java) is installed on your system for managing SSL certificates. Verify on your machine by trying to run `keytool --version`. Otherwise, install a JDK, such as openjdk-17-jre-headless.
+- Ensure that **keytool** (a pre-installed tool by Java) is installed on your system for managing SSL certificates. Verify on your machine by trying to run `keytool`. Otherwise, install a JDK, such as openjdk-17-jre-headless.
 - Ensure you have the `generate_certificate_passwords.sh` script (or `generate_certificate_passwords.ps1` on Windows) present in the `./security` directory. It is essential for using the `security_setup.sh` script.
 
 ### Using `security_setup.sh`

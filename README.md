@@ -8,12 +8,19 @@ for new small businesses of all types (shops, restaurants, etc).
 Depending on their needs, companies can have a package with only the necessary functionalities,
 while being able to add or remove functionality later almost instantaneously.
 
+Here is a sneak peek :
+
+![Login](./docs/images/front-login.png "Login")
+
+![Order-Home](./docs/images/order-home.png "Order Page")
+
 For the moment, the modules on offer are:
 
 - Authentication service
 - Directory service
+- Order service
 
-Other services, such as an order and inventory service, are in the pipeline.
+Other services, such as an inventory service, are in the pipeline.
 
 **_NB_**: This project is part of the ProCom teaching unit in the 3rd year of the engineering course at IMT Atlantique.
 It is not really intended to be marketed,
@@ -95,16 +102,18 @@ IMT-3A-PROCOM-ERP/                     This repository
 │   └── wait-for-it.sh                 Handy script that waits for the availability of an service to execute a given command
 │
 ├── security/                          Security scripts (./deploy.sh uses all except for clean_security.sh), all are available in a .ps1 for Windows devs
-│    ├── clean_security.sh             Cleans all certificates from the repository
-│    ├── docker_secrets.sh             Generates all the docker secrets necessary for the deployment with normal compose
-│    ├── docker_secrets_files.sh       Generates all docker secrets in swarm mode
-│    ├── security_setup.sh             Generates all needed certificates in the repository
-│    └── ...                           Other scripts, such as the docker secrets scripts, or certicate generations
+│   ├── clean_security.sh              Cleans all certificates from the repository
+│   ├── docker_secrets.sh              Generates all the docker secrets necessary for the deployment with normal compose
+│   ├── docker_secrets_files.sh        Generates all docker secrets in swarm mode
+│   ├── security_setup.sh              Generates all needed certificates in the repository
+│   └── ...                            Other scripts, such as the docker secrets scripts, or certicate generations
 │
 ├── docker/                            Directory for Docker related files
-│    ├── .env                          Environment variables of the projet
-│    ├── docker-compose.yml            Docker containers build script to simulate the project
-│    └── docker-compose-swarm.yml      Docker containers build script to simulate the project Swarm mode
+│   ├── elk /                          Directory for all the Elastic Stack, imported and adapted to our project from deviantony/docker-elk.
+│   │   └── ...
+│   ├── .env                           Environment variables of the projet
+│   ├── docker-compose.yml             Docker containers build script to simulate the project
+│   └── docker-compose-swarm.yml       Docker containers build script to simulate the project Swarm mode
 │
 └── docs/                              All technical and GitHub workflows documentation
     ├── workflows/                     GitHub workflows as sequence diagrams
@@ -131,14 +140,15 @@ any changes in this directory will need a review acceptation from a member of th
 [CONTRIBUTING.md](CONTRIBUTING.md) file explains how to contribute to the project,
 and what are the contributing rules.
 
-## Roadmap
+We follow a [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md), if you want to contribute, you will _have_ to follow it.
 
-The different steps to follow are described in the [BACKLOG.md](BACKLOG.md) file.
-They are assigned by the Product Owner of the project (see [Contributors](#contributors) section).
+## Security
+
+You can verify the versions of this software still maintained to this day, as well as how to report a bug or security issue in the [SECURITY.md](SECURITY.md) section.
 
 ## Suggestions
 
-Any enhancement idea can be suggested in the [Suggestions](BACKLOG.md#suggestions) section of the BACKLOG file.
+Any enhancement idea can be suggested in an [Feature Request Issue](https://github.com/PROCOM-ERP/IMT-3A-PROCOM-ERP/issues/new?assignees=&labels=&projects=&template=feature_request.md&title=), following the Feature Request template.
 
 ## License
 
@@ -154,6 +164,7 @@ Thanks also to external resources for their open-source samples / documentation:
 - [Baeldung](https://www.baeldung.com): Java Spring Boot tutorials and code samples
 - [Vertabelo](https://vertabelo.com): Data modeling
 - [vishnubob](https://github.com/vishnubob/wait-for-it): wait-for-it.sh script
+- [deviantony](https://github.com/deviantony/docker-elk): the entirety of Elastic Stack preconfigured, very helpufl, we only had to adjust it a little as indicated in the [Docker ELK README](./docker/elk/README.md).
 
 ## Contributors
 

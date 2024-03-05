@@ -365,9 +365,6 @@ services:
 networks:
   vnet-procom-erp:
     driver: bridge
-    ipam:
-      config:
-        - subnet: ${NETWORK_PROCOM_ERP}
 
 # +-----------------------------------------------------------------------------+
 # | Volumes  section                                                            |

@@ -19,13 +19,15 @@ clean_security() {
         echo "Cleaning certificates"
         ${security_path}/clean_security.sh >/dev/null 2>&1;
     fi
+        echo "Certificates all cleaned up"
 }
 
 # +-----------------------------------------------------------------------------+
 
 security() {
     echo "Generating certificates"
-    ${security_path}/security_setup.sh
+    ${security_path}/security_setup.sh >/dev/null
+    echo "Certificates generated"
 }
 
 
@@ -172,7 +174,56 @@ get_image_versions(){
 }
 
 # +-----------------------------------------------------------------------------+
+
+remove_elk_setup_container() {
+    echo "Now waiting for Elasticsearch setup to finish before starting complete ELK, and then ERP"
+    # Wait for the container to exit
+    docker wait "setup" >/dev/null
+
+    # Remove the container
+    docker rm "setup" >/dev/null
+    docker rmi "elk-setup" > /dev/null
+}
+
+# +-----------------------------------------------------------------------------+
+
+import_log_dashboard_in_kibana(){
+    echo -n "Waiting for Kibana to start"
+    while ! curl -s http://localhost:5601/api/status > /dev/null; do
+        echo -n '.'
+        sleep 2
+    done
+    echo ''
+
+    # Import the NDJSON file into Kibana
+    sleep 5
+    curl -u "$ELASTIC_USER:$ELASTIC_PASSWORD" -POST 'http://localhost:5601/api/saved_objects/_import?overwrite=true' -H "kbn-xsrf: true" --form file=@docker/elk/export.ndjson > /dev/null 2>&1
+}
+
+# +-----------------------------------------------------------------------------+
 # | Core Functions                                                              |
+# +-----------------------------------------------------------------------------+
+
+setup_elk(){
+    echo "Setting up Elasticsearch"
+    if [ "$SWARM" == "true" ]; then
+        docker-compose -f $ELK_COMPOSE_SWARM_FILE -f $ELK_FILEBEAT_COMPOSE_SWARM_FILE -p elk up -d --build setup
+    else
+        docker-compose -f $ELK_COMPOSE_FILE -f $ELK_FILEBEAT_COMPOSE_FILE -p elk up -d --build setup
+    fi
+}
+
+# +-----------------------------------------------------------------------------+
+
+deploy_elk(){
+    echo "Deploying Elastic stack (Filebeat, Logstash, Elasticsearch, Kibana)"
+    if [ "$SWARM" == "true" ]; then
+        docker-compose -f $ELK_COMPOSE_SWARM_FILE -f $ELK_FILEBEAT_COMPOSE_SWARM_FILE -p elk up -d --build
+    else
+        docker-compose -f $ELK_COMPOSE_FILE -f $ELK_FILEBEAT_COMPOSE_FILE -p elk up -d --build
+    fi
+}
+
 # +-----------------------------------------------------------------------------+
 
 build_images() {
@@ -232,6 +283,8 @@ deploy(){
 security_path="./security"
 system_path="./system"
 docker_path="./docker"
+elk_path="${docker_path}/elk"
+elk_filebeat_path="${elk_path}/extensions/filebeat"
 
 if ! [ -f "${docker_path}/.env" ]; then
     echo "System error: .env file not found"
@@ -255,9 +308,18 @@ SEC=false
 PUSH=false
 PULL=false
 HOT=false
-COMPOSE_FILE="${docker_path}/docker-compose.yml"
+LOGS=true
 VERSION=latest
 VERSION_SPECIFIED=false
+
+COMPOSE_FILE="${docker_path}/docker-compose.yml"
+ELK_COMPOSE_FILE="${elk_path}/docker-compose.yml"
+ELK_COMPOSE_SWARM_FILE="${elk_path}/docker-compose-swarm.yml"
+ELK_FILEBEAT_COMPOSE_FILE="${elk_filebeat_path}/filebeat-compose.yml"
+ELK_FILEBEAT_COMPOSE_SWARM_FILE="${elk_filebeat_path}/filebeat-compose-swarm.yml"
+
+ELASTIC_USER="elastic"
+ELASTIC_PASSWORD=$(grep "^ELASTIC_PASSWORD=" "${elk_path}/.env" | cut -d '=' -f2  | tr -d '\n' | sed "s/^'//;s/'$//")
 
 # +-----------------------------------------------------------------------------+
 # | Argument Parsing                                                            |
@@ -323,19 +385,25 @@ while [[ $# -gt 0 ]]; do
             HOT=true
             shift
             ;;
+        --no-logs)
+            LOGS=false
+            shift
+            ;;
         --help)
-            echo "Usage: ./deploy.sh '--option' \"[value]\""
+            echo "Usage:"
+            echo "        './deploy.sh --option \"value\"'"
             echo " "
             echo "Possible options:"
-            echo "        '--swarm': ------------------->  Deploy using Docker Swarm mode."
-            echo "        '--clean-sec' \"[CA]\": ---------->  Execute the clean security setup script as well, --sec option is required if you use this option. CA is optional"
-            echo "        '--sec'  --------------------->  Execute the security setup script as well."
-            echo "        '--push' \"[repository/image]\": ->  Tag and push Docker images to a repository, then deploy."
-            echo "        '--pull' \"[repository/image]\": ->  Pull Docker images from a repository from which to deploy, --version is required if you use this option"
-            echo "        '--version' \"[version]\": ------->  Specify the version of the images to use for the pull option."
-            echo "        '--hot': --------------------->  Force redeployment even if the stack is already running, for swarm mode."
-            echo "        '--help': -------------------->  Display this help message."
-            echo "        '--doc': --------------------->  Display the deployment documentation."
+            echo "        '--swarm': --------------------->  Deploy using Docker Swarm mode."
+            echo "        '--clean-sec \"CA\"': ------------>  Execute the clean security setup before deploying, --sec option is required if you use this. CA: optional, to also clean CA cert files."
+            echo "        '--sec'  ----------------------->  Execute the security setup script as well."
+            echo "        '--push \"repository/image\"': --->  Tag and push Docker images to a repository, then deploy."
+            echo "        '--pull \"repository/image\"': --->  Pull Docker images from a repository from which to deploy, --version is required if you use this option"
+            echo "        '--version \"version\"': --------->  Specify the version of the images to use for the pull option."
+            echo "        '--hot': ----------------------->  Force redeployment even if the stack is already running, for swarm mode."
+            echo "        '--no-logs': ------------------->  Doesn't deploy monitoring and log aggregating containers (Elastic stack)."
+            echo "        '--help': ---------------------->  Display this help message."
+            echo "        '--doc': ----------------------->  Display the deployment documentation."
             echo " "
             echo "Examples:"
             echo "        './deploy.sh --swarm --clean-sec CA --sec --pull --version 1.0.0 --hot'"
@@ -387,6 +455,7 @@ fi
 # | MAIN LOGIC                                                                  |
 # +-----------------------------------------------------------------------------+
 
+
 # +---Swarm Specific------------------------------------------------------------+
 if [ "$SWARM" == "true" ]; then
 
@@ -418,7 +487,9 @@ if [ "$SWARM" == "true" ]; then
 else
     # +---Docker Secrets for simple compose-------------------------------------+
     echo "Generating docker secrets"
-    ${security_path}/docker_secrets_files.sh
+    ${security_path}/docker_secrets_files.sh >/dev/null 2>&1
+    echo "Docker secrets generated"
+    echo " "
 fi
 
 # +---System-relative setup-----------------------------------------------------+
@@ -436,7 +507,23 @@ copy_system_files
 
 get_image_versions
 
-# +---Deployment----------------------------------------------------------------+
+
+# +---Deployment-----------------------------------------------------------------+
+
+
+# +---Log Setup & Deployment-----------------------------------------------------+
+
+if [ "$LOGS" == "true" ]; then
+    setup_elk
+
+    remove_elk_setup_container
+
+    deploy_elk
+
+    import_log_dashboard_in_kibana
+fi
+
+# +---ERP Setup & Deployment-----------------------------------------------------+
 
 if [ "$PUSH" == "true" ]; then
     docker login
@@ -455,8 +542,26 @@ if [ "$PUSH" == "false" ] && [ "$PULL" == "false"  ]; then
     build_images
 fi
 
+echo "Deploying ERP"
 deploy
 clean_system_files
+
+cat << "EOF"
+ ______                                    _______  ______   ______  
+(_____ \                                  (_______)(_____ \ (_____ \ 
+ _____) )____  ___    ____  ___   ____     _____    _____) ) _____) )
+|  ____// ___)/ _ \  / ___)/ _ \ |    \   |  ___)  |  __  / |  ____/ 
+| |    | |   | |_| |( (___| |_| || | | |  | |_____ | |  \ \ | |      
+|_|    |_|    \___/  \____)\___/ |_|_|_|  |_______)|_|   |_||_|      
+
+EOF
+
+echo "Welcome to Procom ERP, here are the access links:"
+echo " "
+echo "1. Link to the frontend: [http://localhost:3000]"
+echo "2. Link to the gateway hello world to accept its certificate as well: [http://localhost:8041/api/v1/authentication/hello]"
+echo "3. Link to the Elastic stack (Kibana): [http://localhost:5601]"
+echo "4. Link to the Custom Dashboard: [http://http://localhost:5601/app/discover]. Click on \"Open\" to find and open the custom ERP-Dashboard"
 
 echo -e "\a"
 
