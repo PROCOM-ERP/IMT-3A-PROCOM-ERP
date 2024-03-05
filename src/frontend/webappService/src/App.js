@@ -17,6 +17,7 @@ import AddRole from "./pages/AddRole.js";
 import AddUser from "./pages/AddUser.js";
 import ModifyPassword from "./pages/ModifyPassword.js";
 import AddOrder from "./pages/AddOrder.js";
+import Error404 from "./pages/Error404.js";
 
 function App() {
   return (
@@ -39,6 +40,7 @@ function App() {
           <Route path="/addUser" exact Component={AddUser} />
           <Route path="/updatePassword" exact Component={ModifyPassword} />
           <Route path="/addOrder" exact Component={AddOrder} />
+          <Route path="*" exact Component={Error404} />
         </Routes>
       </Router>
     </>

@@ -7,7 +7,7 @@ function Error404() {
     <>
       <Navbar />
       <div className='title'>Error 404: page not found</div>
-      <div className='text'> <Link to="/" >Go back to home page</Link> </div>
+      <div className='text'> <Link to="/home" >Go back to home page</Link> </div>
     </>
   )
 }
