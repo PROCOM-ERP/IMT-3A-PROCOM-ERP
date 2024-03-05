@@ -1,4 +1,4 @@
-# :rocket: Deploying the application {#deploy}
+# :rocket: Deploying the application
 
 Here is the complete guide on how to deploy your ERP.
 We mainly use scripts to deploy this application, although we are researching other deployment tools.
@@ -6,7 +6,7 @@ We mainly use scripts to deploy this application, although we are researching ot
 All `.sh` scripts have a `.ps1` version for Windows. But make sure to run docker commands and shell scripts in either a WSL, or in a UNIX based system.
 (Your IDE's terminal often supports bash)
 
-### Deployment modes :
+### Deployment modes
 
 There are two different ways of using our system :
 
@@ -46,7 +46,7 @@ There are multiple scripts you need to have, that are not followed within this r
 >
 > See [Security Guide](./security/README.md) if you encounter any issues regarding `.jks`, `.p12`, `.crt` or `.pem` files. Often you'll only need to add options `--clean-sec "CA" --sec` to your deployment.
 
-## :whale: - :musical_score: **Compose mode** : {#compose-mode}
+## **Compose mode**
 
 > [!IMPORTANT]
 >
@@ -64,7 +64,7 @@ Execute the script `./deploy.sh`, and if it's your first execution, add the `--s
 > If you would prefer to pull images from a docker registry on :whale: [Docker Hub](https://hub.docker.com) instead of building them locally, you can simply add `--pull "registry_or_username/repository"` as well as a version to pull from `--version "X.X.X | latest"`, such as: `./deploy.sh --pull "gachille/erp" --version 1.0.0`.
 > If you would like to push you local images to a docker registry on :whale: [Docker Hub](https://hub.docker.com), you can simply add `--push "registry_or_username/repository"`, such as: `./deploy --push "gachille/erp"`. It will automatically tag the images, and push one image with multiple tags, all named after the services, as not to bring chaos to the repository.
 
-## :whale: - :honeybee: **Swarm mode** : {#swarm-mode}
+## **Swarm mode**
 
 > [!IMPORTANT]
 >
