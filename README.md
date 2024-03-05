@@ -164,6 +164,7 @@ Thanks also to external resources for their open-source samples / documentation:
 - [Baeldung](https://www.baeldung.com): Java Spring Boot tutorials and code samples
 - [Vertabelo](https://vertabelo.com): Data modeling
 - [vishnubob](https://github.com/vishnubob/wait-for-it): wait-for-it.sh script
+- [deviantony](https://github.com/deviantony/docker-elk): the entirety of Elastic Stack preconfigured, very helpufl, we only had to adjust it a little as indicated in the [Docker ELK README](./docker/elk/README.md).
 
 ## Contributors
 
