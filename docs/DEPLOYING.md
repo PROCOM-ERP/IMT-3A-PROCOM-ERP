@@ -1,12 +1,12 @@
 # :rocket: Deploying the application
 
-Here is the complete guide on how to deploy your ERP.
-We mainly use scripts to deploy this application, although we are researching other deployment tools.
+**Here is the complete guide on how to deploy your ERP.
+We mainly use scripts to deploy this application, although we are researching other deployment tools.**
 
 All `.sh` scripts have a `.ps1` version for Windows. But make sure to run docker commands and shell scripts in either a WSL, or in a UNIX based system.
 (Your IDE's terminal often supports bash)
 
-### Deployment modes
+## Deployment modes
 
 There are two different ways of using our system :
 
@@ -23,6 +23,8 @@ There also is the possibility of not launching Logs/Monitoring stack, by running
 
 There are multiple scripts you need to have, that are not followed within this repository because of security reasons, but you can find their template in the `./docs/security/templates` directory.
 
+## Requirements
+
 > [!IMPORTANT]
 >
 > 1. Insure you have :whale: Docker installed. On Unix systems, run `docker --version`.
@@ -33,6 +35,8 @@ There are multiple scripts you need to have, that are not followed within this r
 > 5. Finally, insure you have expect installed. Run: `expect --version`.
 >    > If not, download it using your system's package manager. If using a WSL, sometimes `sudo apt-get install expect` can not find the package, you'll have to `sudo apt update && sudo apt upgrade`.
 > 6. Insure you have the script `./security/generate_certificate_password.sh`.
+
+## Warning
 
 > [!WARNING]
 >
@@ -45,6 +49,8 @@ There are multiple scripts you need to have, that are not followed within this r
 > If you're having a problem with \r files and you're on Windows, I invite you to execute this command: `sed -i 's/\r$//' .\*.sh && sed -i 's/\r$//' .\system\mvnw`.
 >
 > See [Security Guide](./security/README.md) if you encounter any issues regarding `.jks`, `.p12`, `.crt` or `.pem` files. Often you'll only need to add options `--clean-sec "CA" --sec` to your deployment.
+
+---
 
 # **Compose mode**
 
@@ -63,8 +69,6 @@ Execute the script `./deploy.sh`, and if it's your first execution, add the `--s
 >
 > If you would prefer to pull images from a docker registry on :whale: [Docker Hub](https://hub.docker.com) instead of building them locally, you can simply add `--pull "registry_or_username/repository"` as well as a version to pull from `--version "X.X.X | latest"`, such as: `./deploy.sh --pull "gachille/erp" --version 1.0.0`.
 > If you would like to push you local images to a docker registry on :whale: [Docker Hub](https://hub.docker.com), you can simply add `--push "registry_or_username/repository"`, such as: `./deploy --push "gachille/erp"`. It will automatically tag the images, and push one image with multiple tags, all named after the services, as not to bring chaos to the repository.
-
----
 
 ---
 
@@ -87,6 +91,8 @@ This is going to activate :ship: Swarm mode :sailboat: for :whale: Docker, and c
 > If you would prefer to pull images from a docker registry on :whale: [Docker Hub](https://hub.docker.com) instead of building them locally, you can simply add `--pull "registry_or_username/repository"` as well as a version to pull from `--version "X.X.X | latest"`, such as: `./deploy.sh --pull "gachille/erp" --version 1.0.0`.
 > If you would like to push you local images to a docker registry on :whale: [Docker Hub](https://hub.docker.com), you can simply add `--push "registry_or_username/repository"`, such as: `./deploy.sh --push "gachille/erp"`. It will automatically tag the images, and push one image with multiple tags, all named after the services, as not to bring chaos to the repository.
 
+---
+
 # :tada: Accessing the application :tada:
 
 > [!CAUTION]
@@ -95,6 +101,8 @@ This is going to activate :ship: Swarm mode :sailboat: for :whale: Docker, and c
 The frontend, our client-side view of the ERP, is located [here](https://localhost:3000/).
 
 The logs and monitoring site, Elastic (our server-side view of all exchanges made in the ERP) is located [here](http://localhost:5601/).
+
+---
 
 # :recycle: Undeploying the application
 
