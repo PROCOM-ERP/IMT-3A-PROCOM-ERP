@@ -1,5 +1,8 @@
 package com.example.authenticationservice.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,7 +16,10 @@ import java.util.Set;
 @Builder
 public class RolesMicroservicesResponseDto {
 
-    private Set<String> roles;
-    private Set<String> microservices;
+    @NotEmpty(message = "Role set cannot be null or empty")
+    private Set<@NotBlank(message = "Role name cannot be null or blank") String> roles;
+
+    @NotEmpty(message = "Microservice set cannot be null or empty")
+    private Set<@NotBlank(message = "Microservice name cannot be null or blank") String> microservices;
 
 }
