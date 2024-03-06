@@ -122,14 +122,15 @@ public class OrderService {
         }
 
         // retrieve all ProgressStatus entities and check which ones are already completed
-        Set<ProgressStatusResponseDto> allProgressStatus = progressStatusRepository.findAll().stream()
+        List<ProgressStatusResponseDto> allProgressStatus = progressStatusRepository.findAll().stream()
                 .map(ps -> progressStatusModelToResponseDto(ps, order.getProgressStatus().getId()))
-                .collect(Collectors.toSet());
+                .sorted(Comparator.comparingInt(ProgressStatusResponseDto::getId))
+                .toList();
 
         // convert all OrderProduct entities into OrderProductResponseDto entities
-        Set<OrderProductResponseDto> products = order.getOrderProducts().stream()
+        List<OrderProductResponseDto> products = order.getOrderProducts().stream()
                 .map(this::orderProductModelToResponseDto)
-                .collect(Collectors.toSet());
+                .toList();
 
         // build and return OrderResponseDto entity
         return modelToResponseDto(order, products, allProgressStatus);
@@ -190,8 +191,8 @@ public class OrderService {
     }
 
     private OrderResponseDto modelToResponseDto(Order order,
-                                                Set<OrderProductResponseDto> products,
-                                                Set<ProgressStatusResponseDto> progressStatus)
+                                                List<OrderProductResponseDto> products,
+                                                List<ProgressStatusResponseDto> progressStatus)
     {
         return OrderResponseDto.builder()
                 .id(order.getId())
@@ -209,6 +210,7 @@ public class OrderService {
                                                                        Integer currentIdProgressStatus)
     {
         return ProgressStatusResponseDto.builder()
+                .id(progressStatus.getId())
                 .name(progressStatus.getName())
                 .completed(progressStatus.getId() <= currentIdProgressStatus)
                 .build();

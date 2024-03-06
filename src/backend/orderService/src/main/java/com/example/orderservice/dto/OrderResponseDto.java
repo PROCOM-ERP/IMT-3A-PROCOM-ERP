@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.Set;
+import java.util.List;
 
 @Builder
 @NoArgsConstructor
@@ -21,7 +21,7 @@ public class OrderResponseDto {
     private BigDecimal totalAmount;
     private String orderer;
     private String approver;
-    private Set<ProgressStatusResponseDto> progress;
-    private Set<OrderProductResponseDto> products;
+    private List<ProgressStatusResponseDto> progress;
+    private List<OrderProductResponseDto> products;
 
 }

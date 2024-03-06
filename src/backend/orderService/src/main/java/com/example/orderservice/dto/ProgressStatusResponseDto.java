@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @Getter
 public class ProgressStatusResponseDto {
 
+    private Integer id;
     private String name;
     private Boolean completed;
 

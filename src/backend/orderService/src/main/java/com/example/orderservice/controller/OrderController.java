@@ -102,6 +102,8 @@ public class OrderController {
             @ApiResponse(responseCode = "401", description =
                     "Roles in Jwt token are insufficient to authorize the access to this URL",
                     content = {@Content(mediaType = "application/json")} ),
+            @ApiResponse(responseCode = "403", description =
+                    "Forbidden to get order because authenticated user is not the orderer neither the approver"),
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
