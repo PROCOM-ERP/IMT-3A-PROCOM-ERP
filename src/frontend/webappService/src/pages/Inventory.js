@@ -1,11 +1,13 @@
 import React from 'react'
 import Navbar from '../components/Navbar'
+import CheckUserConnection from '../components/CheckUserConnection'
 
 function Inventory() {
   return (
     <>
-    <Navbar/>
-    <h1>Inventory</h1>
+      <CheckUserConnection />
+      <Navbar />
+      <div className='title'>Inventory</div>
     </>
   )
 }

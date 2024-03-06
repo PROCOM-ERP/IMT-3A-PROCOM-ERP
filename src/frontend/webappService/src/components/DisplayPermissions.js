@@ -51,7 +51,11 @@ function DisplayPermissions() {
       headers: headers,
     })
       .then((response) => {
-        if (!response.ok) throw new Error(response.status);
+        if (!response.ok) {
+          if (response.status === 401) { navigate("/error401"); }
+          else if (response.status === 403) { navigate("/error403"); }
+          else { throw new Error(response.status + " " + response.statusText); }
+        }
         const res = response.json();
         return res;
       })
@@ -101,7 +105,11 @@ function DisplayPermissions() {
       headers: headers,
     })
       .then((response) => {
-        if (!response.ok) throw new Error(response.status);
+        if (!response.ok) {
+          if (response.status === 401) { navigate("/error401"); }
+          else if (response.status === 403) { navigate("/error403"); }
+          else { throw new Error(response.status + " " + response.statusText); }
+        }
         const res = response.json();
         return res;
       })
@@ -146,7 +154,9 @@ function DisplayPermissions() {
     })
       .then(response => {
         if (!response.ok) {
-          throw new Error('Failed to save changes');
+          if (response.status === 401) { navigate("/error401"); }
+          else if (response.status === 403) { navigate("/error403"); }
+          else { throw new Error(response.status + " " + response.statusText); }
         }
         setShowPopup(true); // Show popup when update is successful
         setPopupContent({
@@ -156,7 +166,7 @@ function DisplayPermissions() {
         console.log("[LOG] Permissions updated with success");
       })
       .catch(error => {
-        console.error('Error saving changes for permissions:', error);
+        console.error('Error saving changes for permissions: ', error);
       });
   };
 
