@@ -1,6 +1,7 @@
 package com.example.orderservice.controller;
 
 import com.example.orderservice.dto.OrderCreationRequestDto;
+import com.example.orderservice.dto.OrderResponseDto;
 import com.example.orderservice.dto.OrdersByIdLoginProfileResponseDto;
 import com.example.orderservice.model.Path;
 import com.example.orderservice.service.OrderService;
@@ -11,8 +12,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -25,8 +24,6 @@ import java.net.URI;
 public class OrderController {
 
     private final OrderService orderService;
-
-    private final Logger logger = LoggerFactory.getLogger(OrderController.class);
 
     @PostMapping
     @Operation(operationId = "createOrder", tags = {"orders"},
@@ -53,20 +50,15 @@ public class OrderController {
             throws Exception
     {
         // try to create a new entity
-        try {
-            Integer idOrder = orderService.createOrder(orderDto);
-            // generate URI location to inform the client how to get information on the new entity
-            URI location = ServletUriComponentsBuilder
-                    .fromCurrentRequest()
-                    .path(Path.ORDER_ID)
-                    .buildAndExpand(idOrder)
-                    .toUri();
-            // send the response with 201 Http status
-            return ResponseEntity.created(location).build();
-        } catch (Exception e) {
-            logger.error("Something wrong occured", e);
-            return ResponseEntity.internalServerError().body(e.getMessage());
-        }
+        Integer idOrder = orderService.createOrder(orderDto);
+        // generate URI location to inform the client how to get information on the new entity
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path(Path.ORDER_ID)
+                .buildAndExpand(idOrder)
+                .toUri();
+        // send the response with 201 Http status
+        return ResponseEntity.created(location).build();
     }
 
     @GetMapping
@@ -88,15 +80,17 @@ public class OrderController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<?> getAllOrdersByIdLoginProfile(
+    public ResponseEntity<OrdersByIdLoginProfileResponseDto> getAllOrdersByIdLoginProfile(
             @RequestParam("idLoginProfile") String idLoginProfile)
     {
-        try {
-            return ResponseEntity.ok(orderService.getAllOrdersByIdLoginProfile(idLoginProfile));
-        } catch (Exception e) {
-            logger.error("Something wrong occured", e);
-            return ResponseEntity.internalServerError().body(e.getMessage());
-        }
+        return ResponseEntity.ok(orderService.getAllOrdersByIdLoginProfile(idLoginProfile));
+    }
+
+    @GetMapping(Path.ORDER_ID)
+    public ResponseEntity<OrderResponseDto> getOrderById(
+            @PathVariable Integer order)
+    {
+        return ResponseEntity.ok(orderService.getOrderById(order));
     }
 
 }
