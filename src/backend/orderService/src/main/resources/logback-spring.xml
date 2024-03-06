@@ -7,7 +7,7 @@
                     <pattern>
                         {
                             "application": {
-                                "name": "%mdc{service}",
+                                "name": "Order",
                                 "type": "Java Spring"
                             }
                         }

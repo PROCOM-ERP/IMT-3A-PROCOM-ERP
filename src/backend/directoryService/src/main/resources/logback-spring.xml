@@ -7,7 +7,7 @@
                     <pattern>
                         {
                             "application": {
-                                "name": "%mdc{service}",
+                                "name": "Directory",
                                 "type": "Java Spring"
                             }
                         }

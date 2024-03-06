@@ -82,7 +82,7 @@ CREATE TABLE organisations
         FOREIGN KEY (address) REFERENCES addresses(id)
             ON UPDATE CASCADE ON DELETE SET DEFAULT,
     CONSTRAINT check_organisations_name
-        CHECK (organisations.name ~* '^[a-zA-Z]([&_\-\.]?[a-zA-Z0-9])*$')
+        CHECK (organisations.name ~* '^[a-zA-Z]([&_\-\.\s]?[a-zA-Z0-9])*$')
 );
 
 -- +----------------------------------------------------------------------------------------------+
@@ -109,7 +109,7 @@ CREATE TABLE org_units
     CONSTRAINT uq_org_units_name_organisation
         UNIQUE (name, organisation),
     CONSTRAINT check_organisations_name
-        CHECK (org_unit.name ~* '^[a-zA-Z]([&_\-\.]?[a-zA-Z0-9])*$')
+        CHECK (org_units.name ~* '^[a-zA-Z]([&_\-\.\s]?[a-zA-Z0-9])*$')
 );
 
 -- +----------------------------------------------------------------------------------------------+

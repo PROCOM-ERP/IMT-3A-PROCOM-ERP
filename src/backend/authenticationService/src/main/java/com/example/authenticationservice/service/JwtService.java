@@ -38,7 +38,7 @@ public class JwtService {
     private final JwtEncoder jwtEncoder;
     private final LoginProfileRepository loginProfileRepository;
 
-    @LogExecutionTime(description = "Generate new user Jwt token.",
+    @LogExecutionTime(description = "Generate new Jwt token for a user (or a microservice).",
             tag = CustomLogger.TAG_USERS)
     public String generateJwtToken(String authSubject)
             throws InsufficientAuthenticationException, AccessDeniedException {

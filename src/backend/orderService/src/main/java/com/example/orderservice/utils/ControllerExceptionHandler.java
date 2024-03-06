@@ -34,7 +34,7 @@ public class ControllerExceptionHandler {
 
 
     @Value("${security.service.name}")
-    private static String serviceName;
+    private String serviceName;
 
     /* Utils Beans */
     private final Logger logger = LoggerFactory.getLogger(ControllerExceptionHandler.class);

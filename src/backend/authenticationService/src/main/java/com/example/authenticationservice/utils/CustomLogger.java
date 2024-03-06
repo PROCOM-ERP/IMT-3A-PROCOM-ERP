@@ -3,7 +3,6 @@ package com.example.authenticationservice.utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
@@ -19,9 +18,6 @@ public class CustomLogger {
 
     public static final String TAG_USERS = "Users";
     public static final String TAG_ROLES = "Roles";
-
-    @Value("${security.service.name}")
-    private static String service;
 
     /* Utils Beans */
     private final Logger logger = LoggerFactory.getLogger(CustomLogger.class);
@@ -64,7 +60,6 @@ public class CustomLogger {
 
     public void error(Exception e, String tag, HttpStatus httpStatus)
     {
-        MDC.put("service", service);
         MDC.put("tag", tag);
         MDC.put("httpStatus", httpStatus.toString());
         MDC.put("stacktrace", Arrays.toString(e.getStackTrace()));
@@ -80,7 +75,6 @@ public class CustomLogger {
     /* Private Methods */
     private void info(String message, String tag)
     {
-        MDC.put("service", service);
         MDC.put("tag", tag);
         logger.info(message);
         MDC.clear();
