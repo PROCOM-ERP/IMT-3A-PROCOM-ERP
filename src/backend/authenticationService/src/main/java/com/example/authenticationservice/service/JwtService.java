@@ -1,10 +1,8 @@
 package com.example.authenticationservice.service;
 
-import com.example.authenticationservice.annotation.LogExecutionTime;
 import com.example.authenticationservice.model.LoginProfile;
 import com.example.authenticationservice.model.Role;
 import com.example.authenticationservice.repository.LoginProfileRepository;
-import com.example.authenticationservice.utils.CustomLogger;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.DependsOn;
@@ -69,8 +67,6 @@ public class JwtService {
         return getRolesByIdLoginProfile(authSubject);
     }
 
-    @LogExecutionTime(description = "Generate new Jwt token for a user.",
-            tag = CustomLogger.TAG_USERS)
     public List<String> getRolesByIdLoginProfile(String authSubject)
             throws InsufficientAuthenticationException,
             AccessDeniedException
