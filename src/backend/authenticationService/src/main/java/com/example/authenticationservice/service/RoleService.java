@@ -1,5 +1,6 @@
 package com.example.authenticationservice.service;
 
+import com.example.authenticationservice.annotation.LogExecutionTime;
 import com.example.authenticationservice.dto.*;
 import com.example.authenticationservice.model.Role;
 import com.example.authenticationservice.model.RoleActivation;
@@ -7,6 +8,7 @@ import com.example.authenticationservice.repository.LoginProfileRepository;
 import com.example.authenticationservice.repository.RoleActivationRepository;
 import com.example.authenticationservice.repository.RoleRepository;
 import com.example.authenticationservice.utils.CustomHttpRequestBuilder;
+import com.example.authenticationservice.utils.CustomLogger;
 import com.example.authenticationservice.utils.CustomStringUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -61,6 +63,8 @@ public class RoleService {
     /* Public Methods */
 
     @Transactional
+    @LogExecutionTime(description = "Create a new role.",
+            tag = CustomLogger.TAG_ROLES)
     public String createRole(RoleCreationRequestDto roleDto)
             throws DataIntegrityViolationException
     {
@@ -98,6 +102,8 @@ public class RoleService {
     }
 
     @Transactional
+    @LogExecutionTime(description = "Save all roles from a microservice.",
+            tag = CustomLogger.TAG_ROLES)
     public void saveAllMicroserviceRoles(String getAllRolesPath)
             throws NoSuchElementException
     {
@@ -150,6 +156,8 @@ public class RoleService {
     }
 
     @Transactional
+    @LogExecutionTime(description = "Save a role from a microservice.",
+            tag = CustomLogger.TAG_ROLES)
     public void saveMicroserviceRole(String getRoleByNamePath)
             throws NoSuchElementException,
             RestClientException
@@ -190,11 +198,15 @@ public class RoleService {
         messageSenderService.sendLoginProfilesJwtDisableOldMessage();
     }
 
+    @LogExecutionTime(description = "Retrieve all role names.",
+            tag = CustomLogger.TAG_ROLES)
     public Set<String> getAllRoleNames()
     {
         return roleRepository.findAllRoleNames();
     }
 
+    @LogExecutionTime(description = "Retrieve all role and microservice names.",
+            tag = CustomLogger.TAG_ROLES)
     public RolesMicroservicesResponseDto getAllRolesAndMicroservices()
     {
         return RolesMicroservicesResponseDto.builder()
@@ -203,6 +215,8 @@ public class RoleService {
                 .build();
     }
 
+    @LogExecutionTime(description = "Retrieve a role.",
+            tag = CustomLogger.TAG_ROLES)
     public RoleResponseDto getRoleByName(String roleName)
             throws IllegalArgumentException,
             NoSuchElementException
@@ -235,6 +249,8 @@ public class RoleService {
                 .build();
     }
 
+    @LogExecutionTime(description = "Retrieve a role activation status for a specific microservice.",
+            tag = CustomLogger.TAG_ROLES)
     public RoleActivationResponseDto getRoleActivationByRoleAndMicroservice(
             String roleName, String microservice)
             throws IllegalArgumentException
@@ -267,6 +283,8 @@ public class RoleService {
     }
 
     @Transactional
+    @LogExecutionTime(description = "Update a role activation status and / or permissions in this service.",
+            tag = CustomLogger.TAG_ROLES)
     public void updateRoleByName(String roleName, RoleUpdateRequestDto roleDto)
             throws IllegalArgumentException,
             NoSuchElementException,

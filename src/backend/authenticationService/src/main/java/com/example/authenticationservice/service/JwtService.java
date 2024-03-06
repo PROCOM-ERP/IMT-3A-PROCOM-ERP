@@ -1,8 +1,10 @@
 package com.example.authenticationservice.service;
 
+import com.example.authenticationservice.annotation.LogExecutionTime;
 import com.example.authenticationservice.model.LoginProfile;
 import com.example.authenticationservice.model.Role;
 import com.example.authenticationservice.repository.LoginProfileRepository;
+import com.example.authenticationservice.utils.CustomLogger;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.DependsOn;
@@ -36,8 +38,8 @@ public class JwtService {
     private final JwtEncoder jwtEncoder;
     private final LoginProfileRepository loginProfileRepository;
 
-    //private final Logger logger = LoggerFactory.getLogger(JwtService.class);
-
+    @LogExecutionTime(description = "Generate new user Jwt token.",
+            tag = CustomLogger.TAG_USERS)
     public String generateJwtToken(String authSubject)
             throws InsufficientAuthenticationException, AccessDeniedException {
 

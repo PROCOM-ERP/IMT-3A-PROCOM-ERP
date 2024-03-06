@@ -1,5 +1,6 @@
 package com.example.authenticationservice.service;
 
+import com.example.authenticationservice.annotation.LogExecutionTime;
 import com.example.authenticationservice.dto.*;
 import com.example.authenticationservice.model.LoginProfile;
 import com.example.authenticationservice.model.Permission;
@@ -52,6 +53,8 @@ public class LoginProfileService {
     /* Public Methods */
 
     @Transactional
+    @LogExecutionTime(description = "Create new user login profile.",
+            tag = CustomLogger.TAG_USERS)
     public LoginProfileIdResponseDto createLoginProfile(
             LoginProfileCreationRequestDto loginProfileCreationRequestDto)
             throws Exception
@@ -90,6 +93,8 @@ public class LoginProfileService {
         return LoginProfileIdResponseDto.builder().id(idLoginProfile).build();
     }
 
+    @LogExecutionTime(description = "Retrieve a user profile roles and activation status.",
+            tag = CustomLogger.TAG_USERS)
     public LoginProfileResponseDto getLoginProfileById(String idLoginProfile)
             throws IllegalArgumentException,
             NoSuchElementException
@@ -118,6 +123,8 @@ public class LoginProfileService {
                 .build();
     }
 
+    @LogExecutionTime(description = "Retrieve a user profile activation status.",
+            tag = CustomLogger.TAG_USERS)
     public LoginProfileActivationResponseDto getLoginProfileActivationById(String idLoginProfile)
             throws IllegalArgumentException,
             NoSuchElementException
@@ -135,6 +142,8 @@ public class LoginProfileService {
                         new NoSuchElementException("No existing user with id " + idLoginProfile + "."));
     }
 
+    @LogExecutionTime(description = "Update a user profile password.",
+            tag = CustomLogger.TAG_USERS)
     public void updateLoginProfilePasswordById(
             String idLoginProfile,
             LoginProfilePasswordUpdateRequestDto passwordDto)
@@ -175,6 +184,8 @@ public class LoginProfileService {
     }
 
     @Transactional
+    @LogExecutionTime(description = "Update a user profile roles and / or activation status.",
+            tag = CustomLogger.TAG_USERS)
     public void updateLoginProfileById(
             String idLoginProfile,
             LoginProfileUpdateRequestDto loginProfileDto)
@@ -222,6 +233,8 @@ public class LoginProfileService {
         }
     }
 
+    @LogExecutionTime(description = "Update a user profile email address.",
+            tag = CustomLogger.TAG_USERS)
     public void updateLoginProfileEmail(String getEmployeeEmailById)
             throws RestClientException {
 

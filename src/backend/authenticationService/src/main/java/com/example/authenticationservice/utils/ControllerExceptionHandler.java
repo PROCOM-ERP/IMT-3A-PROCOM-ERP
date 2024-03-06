@@ -4,11 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+import com.example.authenticationservice.annotation.LogError;
 import com.example.authenticationservice.dto.HttpStatusErrorDto;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,38 +30,32 @@ public class ControllerExceptionHandler {
     public static final String ERROR_DEFAULT_MSG_HTTP_403 =
             "Forbidden to access the resource.";
 
-
-    @Value("${security.service.name}")
-    private static String serviceName;
-
-    /* Utils Beans */
-    private final Logger logger = LoggerFactory.getLogger(ControllerExceptionHandler.class);
-
     /* Public Methods */
 
     @ExceptionHandler(Exception.class) // Http 500
+    @LogError(httpStatus = HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<HttpStatusErrorDto> handleAllExceptions(
             Exception e)
     {
         HttpStatusErrorDto error = HttpStatusErrorDto.builder()
                 .message(ERROR_DEFAULT_MSG_HTTP_500)
                 .build();
-        logger.error("Service " + serviceName + " throws an error\n", e);
         return ResponseEntity.internalServerError().body(error);
     }
 
     @ExceptionHandler(IllegalArgumentException.class) // Http 400
+    @LogError(httpStatus = HttpStatus.BAD_REQUEST)
     public ResponseEntity<HttpStatusErrorDto> handleIllegalArgumentExceptions(
             IllegalArgumentException e)
     {
         HttpStatusErrorDto error = HttpStatusErrorDto.builder()
                 .message(e.getMessage())
                 .build();
-        logger.error("Service " + serviceName + " throws an error\n", e);
         return ResponseEntity.badRequest().body(error);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class) // Http 400
+    @LogError(httpStatus = HttpStatus.BAD_REQUEST)
     public ResponseEntity<HttpStatusErrorDto> handleMethodArgumentNotValidExceptions(
             MethodArgumentNotValidException e)
     {
@@ -77,48 +69,47 @@ public class ControllerExceptionHandler {
                 .message(ERROR_DEFAULT_MSG_HTTP_400)
                 .fields(fields)
                 .build();
-        logger.error("Service " + serviceName + " throws an error\n", e);
         return ResponseEntity.badRequest().body(error);
     }
 
     @ExceptionHandler(InsufficientAuthenticationException.class) // Http 401
+    @LogError(httpStatus = HttpStatus.UNAUTHORIZED)
     public ResponseEntity<HttpStatusErrorDto> handleInsufficientAuthenticationExceptions(
             InsufficientAuthenticationException e)
     {
         HttpStatusErrorDto error = HttpStatusErrorDto.builder()
                 .message(ERROR_DEFAULT_MSG_HTTP_401)
                 .build();
-        logger.error("Service " + serviceName + " throws an error\n", e);
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
     }
 
     @ExceptionHandler(AccessDeniedException.class) // Http 403
+    @LogError(httpStatus = HttpStatus.FORBIDDEN)
     public ResponseEntity<HttpStatusErrorDto> handleAccessDeniedExceptions(
             AccessDeniedException e)
     {
         HttpStatusErrorDto error = HttpStatusErrorDto.builder()
                 .message(ERROR_DEFAULT_MSG_HTTP_403)
                 .build();
-        logger.error("Service " + serviceName + " throws an error\n", e);
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
     }
 
     @ExceptionHandler(NoSuchElementException.class) // Http 404
+    @LogError(httpStatus = HttpStatus.NOT_FOUND)
     public ResponseEntity<HttpStatusErrorDto> handleNoSuchElementExceptions(
             NoSuchElementException e)
     {
-        logger.error("Service " + serviceName + " throws an error\n", e);
         return ResponseEntity.notFound().build();
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class) // Http 422
+    @LogError(httpStatus = HttpStatus.UNPROCESSABLE_ENTITY)
     public ResponseEntity<HttpStatusErrorDto> handleDataIntegrityViolationExceptions(
             DataIntegrityViolationException e)
     {
         HttpStatusErrorDto error = HttpStatusErrorDto.builder()
                 .message(e.getMessage())
                 .build();
-        logger.error("Service " + serviceName + " throws an error\n", e);
         return ResponseEntity.unprocessableEntity().body(error);
     }
 }
