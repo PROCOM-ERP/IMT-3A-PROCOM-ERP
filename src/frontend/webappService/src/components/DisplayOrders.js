@@ -20,8 +20,9 @@ function DisplayOrders() {
     setSortBy(key);
   };
 
-  const handleProfil = (id) => {
+  const handleOrder = (id) => {
     // isAdmin ? navigate("/manageUser/" + id) : navigate("/user/" + id);
+    navigate("/order/" + id);
   };
 
   let filteredUserOrders = Object.values(userOrders).filter(order => {
@@ -136,7 +137,7 @@ function DisplayOrders() {
           <tbody className='table-body-container'>
             {filteredUserOrders.map((order, index) => {
               return (
-                <tr key={index} onClick={() => handleProfil(order.id)} >
+                <tr key={index} onClick={() => handleOrder(order.id)} >
                   <td>{order.id}</td>
                   <td> {order.provider} </td>
                   <td> {order.approver} </td>
@@ -172,7 +173,7 @@ function DisplayOrders() {
           <tbody className='table-body-container'>
             {filteredManagerOrders.map((order, index) => {
               return (
-                <tr key={index} onClick={() => handleProfil(order.id)} >
+                <tr key={index} onClick={() => handleOrder(order.id)} >
                   <td>{order.id}</td>
                   <td> {order.provider} </td>
                   <td> {order.approver} </td>

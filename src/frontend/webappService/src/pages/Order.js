@@ -9,7 +9,6 @@ function Order() {
   return (
     <>
       <Navbar />
-      <div className='title'>Order</div>
       <DisplayOrder orderId={orderId} />
     </>
   )
