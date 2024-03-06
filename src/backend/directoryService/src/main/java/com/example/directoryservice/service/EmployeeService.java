@@ -32,8 +32,6 @@ public class EmployeeService {
 
     private final MessageSenderService messageSenderService;
 
-    //private final Logger logger = LoggerFactory.getLogger(EmployeeService.class);
-
     /* Public Methods */
 
     @Transactional

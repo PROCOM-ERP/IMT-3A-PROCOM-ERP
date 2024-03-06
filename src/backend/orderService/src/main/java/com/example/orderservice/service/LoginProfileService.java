@@ -1,9 +1,11 @@
 package com.example.orderservice.service;
 
+import com.example.orderservice.annotation.LogExecutionTime;
 import com.example.orderservice.dto.LoginProfileActivationResponseDto;
 import com.example.orderservice.model.LoginProfile;
 import com.example.orderservice.repository.LoginProfileRepository;
 import com.example.orderservice.utils.CustomHttpRequestBuilder;
+import com.example.orderservice.utils.CustomLogger;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -25,6 +27,8 @@ public class LoginProfileService {
     /* Public Methods */
 
     @Transactional
+    @LogExecutionTime(description = "Create new user login profile.",
+            tag = CustomLogger.TAG_USERS)
     public void createLoginProfile(String idLoginProfile)
     {
         // build and save LoginProfile entity if it doesn't already exist
@@ -35,6 +39,8 @@ public class LoginProfileService {
     }
 
     @Transactional
+    @LogExecutionTime(description = "Update a user login profile activation status.",
+            tag = CustomLogger.TAG_USERS)
     public void updateLoginProfileActivationById(String getLoginProfileActivationById)
         throws RestClientException
     {
@@ -55,6 +61,8 @@ public class LoginProfileService {
     }
 
     @Transactional
+    @LogExecutionTime(description = "Expire a user login profile Jwt tokens.",
+            tag = CustomLogger.TAG_USERS)
     public void updateLoginProfileJwtGenMinAtById(String idLoginProfile)
     {
         // reset LoginProfile entity jwt min generation instant
@@ -62,6 +70,8 @@ public class LoginProfileService {
     }
 
     @Transactional
+    @LogExecutionTime(description = "Expire all user login profile Jwt tokens.",
+            tag = CustomLogger.TAG_USERS)
     public void updateAllLoginProfileJwtGenMin()
     {
         // reset all LoginProfile entities jwt min generation instant

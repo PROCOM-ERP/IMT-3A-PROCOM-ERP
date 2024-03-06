@@ -26,8 +26,6 @@ public class AddressService {
 
     private final AddressRepository addressRepository;
 
-    // private final Logger logger = LoggerFactory.getLogger(AddressService.class);
-
     /* Public Methods */
 
     @Transactional

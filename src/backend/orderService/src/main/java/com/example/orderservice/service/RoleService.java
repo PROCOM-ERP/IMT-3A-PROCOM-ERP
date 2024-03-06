@@ -1,5 +1,6 @@
 package com.example.orderservice.service;
 
+import com.example.orderservice.annotation.LogExecutionTime;
 import com.example.orderservice.dto.PermissionDto;
 import com.example.orderservice.dto.RoleActivationResponseDto;
 import com.example.orderservice.dto.RoleResponseDto;
@@ -7,6 +8,7 @@ import com.example.orderservice.dto.RoleUpdateRequestDto;
 import com.example.orderservice.model.Role;
 import com.example.orderservice.repository.RoleRepository;
 import com.example.orderservice.utils.CustomHttpRequestBuilder;
+import com.example.orderservice.utils.CustomLogger;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -40,6 +42,8 @@ public class RoleService {
 
     /* Public Methods */
 
+    @LogExecutionTime(description = "Create a new role.",
+            tag = CustomLogger.TAG_ROLES)
     public void createRole(String getRoleByNamePath) {
         // retrieve microservice role
         RoleActivationResponseDto roleDto = getMicroserviceRole(getRoleByNamePath);
@@ -53,6 +57,8 @@ public class RoleService {
         roleRepository.save(role);
     }
 
+    @LogExecutionTime(description = "Retrieve all role names.",
+            tag = CustomLogger.TAG_ROLES)
     public Set<RoleActivationResponseDto> getAllRoles() {
         // retrieve all roles
         return roleRepository.findAll().stream()
@@ -60,6 +66,8 @@ public class RoleService {
                 .collect(Collectors.toSet());
     }
 
+    @LogExecutionTime(description = "Retrieve a role.",
+            tag = CustomLogger.TAG_ROLES)
     public RoleResponseDto getRoleByName(String roleName)
             throws NoSuchElementException {
         // check if role exists and retrieve it
@@ -80,6 +88,8 @@ public class RoleService {
                 .build();
     }
 
+    @LogExecutionTime(description = "Retrieve a role activation status.",
+            tag = CustomLogger.TAG_ROLES)
     public RoleActivationResponseDto getRoleActivationByName(String roleName)
             throws NoSuchElementException {
         // retrieve one Role Activation entity
@@ -89,6 +99,8 @@ public class RoleService {
     }
 
     @Transactional
+    @LogExecutionTime(description = "Update a role activation status and / or permissions in this service.",
+            tag = CustomLogger.TAG_ROLES)
     public void updateRoleByName(String roleName, RoleUpdateRequestDto roleDto)
             throws NoSuchElementException, DataIntegrityViolationException {
         // check if role already exists and retrieve it

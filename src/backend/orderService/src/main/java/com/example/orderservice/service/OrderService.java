@@ -1,9 +1,11 @@
 package com.example.orderservice.service;
 
 
+import com.example.orderservice.annotation.LogExecutionTime;
 import com.example.orderservice.dto.*;
 import com.example.orderservice.model.*;
 import com.example.orderservice.repository.*;
+import com.example.orderservice.utils.CustomLogger;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +31,8 @@ public class OrderService {
 
     /* Public Methods */
     @Transactional
+    @LogExecutionTime(description = "Create new order.",
+            tag = CustomLogger.TAG_ORDERS)
     public Integer createOrder(OrderCreationRequestDto orderDto)
             throws Exception
     {
@@ -64,6 +68,8 @@ public class OrderService {
 
     }
 
+    @LogExecutionTime(description = "Retrieve all orders that a user has placed or needs to approve.",
+            tag = CustomLogger.TAG_ORDERS)
     public OrdersByIdLoginProfileResponseDto getAllOrdersByIdLoginProfile(String idLoginProfile) {
 
         // retrieve all Employee entities id for the LoginProfile's id provided

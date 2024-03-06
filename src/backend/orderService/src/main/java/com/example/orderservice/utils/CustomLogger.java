@@ -18,6 +18,8 @@ public class CustomLogger {
 
     public static final String TAG_USERS = "Users";
     public static final String TAG_ROLES = "Roles";
+    public static final String TAG_ADDRESSES = "Addresses";
+    public static final String TAG_ORDERS = "Orders";
 
     /* Utils Beans */
     private final Logger logger = LoggerFactory.getLogger(CustomLogger.class);
