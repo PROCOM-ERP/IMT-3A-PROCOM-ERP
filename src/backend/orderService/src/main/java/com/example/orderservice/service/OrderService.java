@@ -100,6 +100,8 @@ public class OrderService {
                 .build();
     }
 
+    @LogExecutionTime(description = "Retrieve one order (access granted if authenticated user is the orderer or the approver).",
+            tag = CustomLogger.TAG_ORDERS)
     public OrderResponseDto getOrderById(Integer idOrder)
             throws NoSuchElementException
     {

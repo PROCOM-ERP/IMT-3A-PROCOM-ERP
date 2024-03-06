@@ -38,8 +38,6 @@ public class JwtService {
     private final JwtEncoder jwtEncoder;
     private final LoginProfileRepository loginProfileRepository;
 
-    @LogExecutionTime(description = "Generate new Jwt token for a user (or a microservice).",
-            tag = CustomLogger.TAG_USERS)
     public String generateJwtToken(String authSubject)
             throws InsufficientAuthenticationException, AccessDeniedException {
 
@@ -59,7 +57,7 @@ public class JwtService {
         return this.jwtEncoder.encode(jwtEncoderParameters).getTokenValue();
     }
 
-    private List<String> getRolesByAuthSubject(String authSubject)
+    public List<String> getRolesByAuthSubject(String authSubject)
             throws InsufficientAuthenticationException,
             AccessDeniedException
     {
@@ -67,6 +65,15 @@ public class JwtService {
         if (Objects.equals(authSubject, sharedKey))
             return Collections.singletonList(serviceRole);
 
+        return getRolesByIdLoginProfile(authSubject);
+    }
+
+    @LogExecutionTime(description = "Generate new Jwt token for a user.",
+            tag = CustomLogger.TAG_USERS)
+    public List<String> getRolesByIdLoginProfile(String authSubject)
+            throws InsufficientAuthenticationException,
+            AccessDeniedException
+    {
         // check if loginProfile exists
         LoginProfile loginProfile = loginProfileRepository.findById(authSubject)
                 .orElseThrow(() -> new AccessDeniedException(""));
