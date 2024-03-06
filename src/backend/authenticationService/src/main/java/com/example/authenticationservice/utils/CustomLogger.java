@@ -15,6 +15,7 @@ public class CustomLogger {
     public static final String METHOD_TYPE_SERVICE = "ServiceMethod";
     public static final String METHOD_TYPE_MESSAGE_SEND = "MessageSendingMethod";
     public static final String METHOD_TYPE_MESSAGE_RECEPTION = "MessageReceptionMethod";
+    public static final String METHOD_TYPE_ERROR = "ErrorHandlingMethod";
 
     public static final String TAG_USERS = "Users";
     public static final String TAG_ROLES = "Roles";
@@ -58,18 +59,20 @@ public class CustomLogger {
         info(message, tag);
     }
 
-    public void error(Exception e, String tag, HttpStatus httpStatus)
+    public void error(Exception e, String tag, String methodName, HttpStatus httpStatus)
     {
         MDC.put("tag", tag);
+        MDC.put("methodName", methodName);
+        MDC.put("methodType", METHOD_TYPE_ERROR);
         MDC.put("httpStatus", httpStatus.toString());
         MDC.put("stacktrace", Arrays.toString(e.getStackTrace()));
         logger.error(e.getMessage());
         MDC.clear();
     }
 
-    public void error(Exception e, String tag)
+    public void error(Exception e, String tag, String methodName)
     {
-        error(e, tag, HttpStatus.INTERNAL_SERVER_ERROR);
+        error(e, tag, methodName, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /* Private Methods */
