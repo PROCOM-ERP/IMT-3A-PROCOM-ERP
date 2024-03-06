@@ -42,7 +42,9 @@ function RoleForm() {
     })
       .then(response => {
         if (!response.ok) {
-          throw new Error('Failed to add role');
+          if (response.status === 401) { navigate("/error401"); }
+          else if (response.status === 403) { navigate("/error403"); }
+          else { throw new Error(response.status + " " + response.statusText); }
         }
         console.log("[LOG] Role added with success");
         // Navigate to the admin permissions page after successfully adding the role
