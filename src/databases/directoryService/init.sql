@@ -1,8 +1,8 @@
 -- Title :             Database creation for IMT-3A-PROCOM-ERP project
--- Version :           1.0
+-- Version :           1.0.0
 -- Creation date :     2023-12-22
--- Update date :       2023-12-22
--- Author :            Thibaut RUZICKA
+-- Update date :       2024-03-05
+-- Author :            BOPS
 -- Description :       Database initialisation script for IMT-3A-PROCOM-ERP project
 --                     Note : Script for PostgreSQL
 
@@ -15,7 +15,9 @@ CREATE TABLE roles
     name VARCHAR(32) UNIQUE NOT NULL,
     is_enable BOOLEAN NOT NULL DEFAULT true,
 
-    CONSTRAINT pk_roles PRIMARY KEY (name)
+    CONSTRAINT pk_roles PRIMARY KEY (name),
+    CONSTRAINT check_roles_name
+        CHECK (roles.name ~* '^[a-zA-Z]([\-\.]?[a-zA-Z0-9])*$')
 );
 
 -- +----------------------------------------------------------------------------------------------+
@@ -29,7 +31,9 @@ CREATE TABLE role_permissions
         PRIMARY KEY (role, permission),
     CONSTRAINT fk_role_permissions_table_roles
         FOREIGN KEY (role) REFERENCES roles(name)
-            ON UPDATE CASCADE ON DELETE CASCADE
+            ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT check_role_permissions_permission
+        CHECK (role_permissions.permission ~* '^Can[A-Z][a-z]([A-Z]?[a-z])*$')
 );
 
 -- +----------------------------------------------------------------------------------------------+
@@ -58,7 +62,9 @@ CREATE TABLE addresses
     zipcode VARCHAR(20) NOT NULL,
     info TEXT,
 
-    CONSTRAINT pk_addresses PRIMARY KEY (id)
+    CONSTRAINT pk_addresses PRIMARY KEY (id),
+    CONSTRAINT check_addresses_id
+        CHECK (addresses.id ~* '^[0-9a-f]+$')
 );
 
 
@@ -74,7 +80,9 @@ CREATE TABLE organisations
         PRIMARY KEY (id),
     CONSTRAINT fk_organisations_table_addresses
         FOREIGN KEY (address) REFERENCES addresses(id)
-            ON UPDATE CASCADE ON DELETE SET DEFAULT
+            ON UPDATE CASCADE ON DELETE SET DEFAULT,
+    CONSTRAINT check_organisations_name
+        CHECK (organisations.name ~* '^[a-zA-Z]([&_\-\.\s]?[a-zA-Z0-9])*$')
 );
 
 -- +----------------------------------------------------------------------------------------------+
@@ -99,7 +107,9 @@ CREATE TABLE org_units
         FOREIGN KEY (address) REFERENCES addresses(id)
             ON UPDATE CASCADE ON DELETE SET DEFAULT,
     CONSTRAINT uq_org_units_name_organisation
-        UNIQUE (name, organisation)
+        UNIQUE (name, organisation),
+    CONSTRAINT check_organisations_name
+        CHECK (org_units.name ~* '^[a-zA-Z]([&_\-\.\s]?[a-zA-Z0-9])*$')
 );
 
 -- +----------------------------------------------------------------------------------------------+
@@ -123,7 +133,11 @@ CREATE TABLE employees
         FOREIGN KEY (org_unit) REFERENCES org_units(id)
             ON UPDATE CASCADE,
     CONSTRAINT uq_employees_email
-        UNIQUE (email)
+        UNIQUE (email),
+    CONSTRAINT check_employees_email
+        CHECK (employees.email ~* '^[a-z0-9]([\-\.]?[a-z0-9])*@[a-z0-9]([\-\.]?[a-z0-9])*$'),
+    CONSTRAINT check_employees_phone_number
+        CHECK (employees.phone_number ~* '^\+?[0-9]{1,3}?[-\s]?([0-9]{1,4}[-\s]?)*[0-9]{1,4}$')
 );
 
 -- +----------------------------------------------------------------------------------------------+

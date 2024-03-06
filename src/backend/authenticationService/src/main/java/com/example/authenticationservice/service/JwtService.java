@@ -1,8 +1,10 @@
 package com.example.authenticationservice.service;
 
+import com.example.authenticationservice.annotation.LogExecutionTime;
 import com.example.authenticationservice.model.LoginProfile;
 import com.example.authenticationservice.model.Role;
 import com.example.authenticationservice.repository.LoginProfileRepository;
+import com.example.authenticationservice.utils.CustomLogger;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.DependsOn;
@@ -36,8 +38,8 @@ public class JwtService {
     private final JwtEncoder jwtEncoder;
     private final LoginProfileRepository loginProfileRepository;
 
-    //private final Logger logger = LoggerFactory.getLogger(JwtService.class);
-
+    @LogExecutionTime(description = "Generate new Jwt token for a user (or a microservice).",
+            tag = CustomLogger.TAG_USERS)
     public String generateJwtToken(String authSubject)
             throws InsufficientAuthenticationException, AccessDeniedException {
 
@@ -58,15 +60,19 @@ public class JwtService {
     }
 
     private List<String> getRolesByAuthSubject(String authSubject)
-            throws InsufficientAuthenticationException, AccessDeniedException {
-
+            throws InsufficientAuthenticationException,
+            AccessDeniedException
+    {
         // if service try to connect to another one
         if (Objects.equals(authSubject, sharedKey))
             return Collections.singletonList(serviceRole);
 
         // check if loginProfile exists
         LoginProfile loginProfile = loginProfileRepository.findById(authSubject)
-                .orElseThrow(() -> new InsufficientAuthenticationException(""));
+                .orElseThrow(() -> new AccessDeniedException(""));
+        if (! loginProfile.getIsEnable())
+            throw new AccessDeniedException("");
+
         // get role names
         List<String> roles =  loginProfile.getRoles().stream()
                 .filter(Role::getIsEnable)
@@ -74,7 +80,7 @@ public class JwtService {
                 .toList();
         //logger.info("Roles in Repository : " + roles);
         if (roles.isEmpty()) {
-            throw new AccessDeniedException("");
+            throw new InsufficientAuthenticationException("");
         }
         return roles;
     }

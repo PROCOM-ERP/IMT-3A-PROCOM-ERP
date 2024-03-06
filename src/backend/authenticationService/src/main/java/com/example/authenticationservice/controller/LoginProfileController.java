@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,7 @@ import java.net.URI;
 @RequiredArgsConstructor
 public class LoginProfileController {
 
+    /* Service Beans */
     private final LoginProfileService loginProfileService;
 
     @PostMapping
@@ -48,8 +50,9 @@ public class LoginProfileController {
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
     public ResponseEntity<LoginProfileIdResponseDto> createLoginProfile(
-            @RequestBody LoginProfileCreationRequestDto loginProfileCreationRequestDto)
-            throws Exception {
+            @Valid @RequestBody LoginProfileCreationRequestDto loginProfileCreationRequestDto)
+            throws Exception
+    {
         // try to create a new loginProfile
         LoginProfileIdResponseDto loginProfileIdResponseDto = loginProfileService
                 .createLoginProfile(loginProfileCreationRequestDto);
@@ -83,7 +86,9 @@ public class LoginProfileController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<LoginProfileResponseDto> getLoginProfileById(@PathVariable String idLoginProfile) {
+    public ResponseEntity<LoginProfileResponseDto> getLoginProfileById(
+            @PathVariable String idLoginProfile)
+    {
         return ResponseEntity.ok(loginProfileService.getLoginProfileById(idLoginProfile));
     }
 
@@ -107,7 +112,9 @@ public class LoginProfileController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<LoginProfileActivationResponseDto> getLoginProfileActivationById(@PathVariable String idLoginProfile) {
+    public ResponseEntity<LoginProfileActivationResponseDto> getLoginProfileActivationById(
+            @PathVariable String idLoginProfile)
+    {
         return ResponseEntity.ok(loginProfileService.getLoginProfileActivationById(idLoginProfile));
     }
 
@@ -139,7 +146,8 @@ public class LoginProfileController {
                     content = {@Content(mediaType = "application/json")} )})
     public ResponseEntity<String> updateLoginProfilePasswordById(
             @PathVariable String idLoginProfile,
-            @RequestBody LoginProfilePasswordUpdateRequestDto passwordDto) {
+            @Valid @RequestBody LoginProfilePasswordUpdateRequestDto passwordDto)
+    {
         loginProfileService.updateLoginProfilePasswordById(idLoginProfile, passwordDto);
         return ResponseEntity.noContent().build();
     }
@@ -170,8 +178,10 @@ public class LoginProfileController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<String> updateLoginProfileById(@PathVariable String idLoginProfile,
-                                                          @RequestBody LoginProfileUpdateRequestDto loginProfileDto) {
+    public ResponseEntity<String> updateLoginProfileById(
+            @PathVariable String idLoginProfile,
+            @Valid @RequestBody LoginProfileUpdateRequestDto loginProfileDto)
+    {
         loginProfileService.updateLoginProfileById(idLoginProfile, loginProfileDto);
         return ResponseEntity.noContent().build();
     }

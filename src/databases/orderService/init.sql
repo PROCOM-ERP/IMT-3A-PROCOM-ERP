@@ -1,7 +1,7 @@
 -- Title :             Database creation for IMT-3A-PROCOM-ERP project
--- Version :           1.0
+-- Version :           1.0.0
 -- Creation date :     2024-02-21
--- Update date :       2024-02-21
+-- Update date :       2024-03-05
 -- Author :            BOPS
 -- Description :       Database initialisation script for IMT-3A-PROCOM-ERP project
 --                     Note : Script for PostgreSQL
@@ -15,7 +15,9 @@ CREATE TABLE roles
     name VARCHAR(32) UNIQUE NOT NULL,
     is_enable BOOLEAN NOT NULL DEFAULT true,
 
-    CONSTRAINT pk_roles PRIMARY KEY (name)
+    CONSTRAINT pk_roles PRIMARY KEY (name),
+    CONSTRAINT check_roles_name
+        CHECK (roles.name ~* '^[a-zA-Z]([\-\.]?[a-zA-Z0-9])*$')
 );
 
 -- +----------------------------------------------------------------------------------------------+
@@ -29,7 +31,9 @@ CREATE TABLE role_permissions
         PRIMARY KEY (role, permission),
     CONSTRAINT fk_role_permissions_table_roles
         FOREIGN KEY (role) REFERENCES roles(name)
-            ON UPDATE CASCADE ON DELETE CASCADE
+            ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT check_role_permissions_permission
+        CHECK (role_permissions.permission ~* '^Can[A-Z][a-z]([A-Z]?[a-z])*$')
 );
 
 -- +----------------------------------------------------------------------------------------------+
@@ -58,7 +62,9 @@ CREATE TABLE addresses
     zipcode VARCHAR(20) NOT NULL,
     info TEXT,
 
-    CONSTRAINT pk_addresses PRIMARY KEY (id)
+    CONSTRAINT pk_addresses PRIMARY KEY (id),
+    CONSTRAINT check_addresses_id
+        CHECK (addresses.id ~* '^[0-9a-f]+$')
 );
 
 -- +----------------------------------------------------------------------------------------------+
@@ -77,7 +83,11 @@ CREATE TABLE employees
         PRIMARY KEY (id),
     CONSTRAINT fk_employees_table_login_profiles
         FOREIGN KEY (login_profile) REFERENCES login_profiles(id)
-            ON UPDATE CASCADE
+            ON UPDATE CASCADE,
+    CONSTRAINT check_employees_email
+        CHECK (employees.email ~* '^[a-z0-9]([\-\.]?[a-z0-9])*@[a-z0-9]([\-\.]?[a-z0-9])*$'),
+    CONSTRAINT check_employees_phone_number
+        CHECK (employees.phone_number ~* '^\+?[0-9]{1,3}?[-\s]?([0-9]{1,4}[-\s]?)*[0-9]{1,4}$')
 );
 
 -- +----------------------------------------------------------------------------------------------+
@@ -88,7 +98,10 @@ CREATE TABLE providers
     name VARCHAR(64) UNIQUE NOT NULL,
 
     CONSTRAINT pk_providers PRIMARY KEY (id),
-    CONSTRAINT uq_providers_name UNIQUE (name)
+    CONSTRAINT uq_providers_name UNIQUE (name),
+    CONSTRAINT check_providers_name
+        CHECK (providers.name ~* '^[a-zA-Z]([&_\-\.\s]?[a-zA-Z0-9])*$')
+
 );
 
 -- +----------------------------------------------------------------------------------------------+
@@ -130,7 +143,9 @@ CREATE TABLE orders
     CONSTRAINT fk_orders_table_employees_orderer
         FOREIGN KEY (orderer) REFERENCES employees(id),
     CONSTRAINT fk_orders_table_employes_approver
-        FOREIGN KEY (approver) REFERENCES employees(id)
+        FOREIGN KEY (approver) REFERENCES employees(id),
+    CONSTRAINT check_orders_quote
+        CHECK (orders.quote ~* '^[a-zA-Z0-9]([_\-\s]?[a-zA-Z0-9])*$')
 );
 
 -- +----------------------------------------------------------------------------------------------+
@@ -147,7 +162,9 @@ CREATE TABLE order_products
     CONSTRAINT fk_order_products_table_orders
         FOREIGN KEY ("order") REFERENCES orders(id)
             ON UPDATE CASCADE ON DELETE CASCADE,
-    CONSTRAINT uq_order_products_reference_order UNIQUE (reference, "order")
+    CONSTRAINT uq_order_products_reference_order UNIQUE (reference, "order"),
+    CONSTRAINT check_orders_quote
+        CHECK (order_products.reference ~* '^[a-zA-Z0-9]([_\-\s]?[a-zA-Z0-9])*$')
 );
 
 -- +----------------------------------------------------------------------------------------------+

@@ -1,5 +1,9 @@
 package com.example.authenticationservice.dto;
 
+import com.example.authenticationservice.utils.CustomStringUtils;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,7 +15,12 @@ import lombok.NoArgsConstructor;
 @Builder
 public class LoginProfileActivationResponseDto {
 
+    @NotBlank(message = "User id cannot be null or blank.")
+    @Pattern(regexp = CustomStringUtils.REGEX_ID_LOGIN_PROFILE,
+            message = "User id should start by a capital letter, followed by exactly 5 digits.")
     private String id;
+
+    @NotNull(message = "User activation status cannot be null.")
     private Boolean isEnable;
 
 }

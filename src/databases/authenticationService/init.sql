@@ -1,9 +1,9 @@
--- Title :             Database creation for L04EE02-SpringBoot-MicroServices project
--- Version :           1.0
+-- Title :             Database creation for IMT-3A-PROCOM-ERP project
+-- Version :           1.0.0
 -- Creation date :     2023-11-23
--- Update date :       2023-11-23
--- Author :            Thibaut RUZICKA
--- Description :       Database initialisation script for L04EE02-SpringBoot-MicroServices
+-- Update date :       2024-03-05
+-- Author :            BOPS
+-- Description :       Database initialisation script for IMT-3A-PROCOM-ERP project
 --                     Note : Script for PostgreSQL
 
 -- +----------------------------------------------------------------------------------------------+
@@ -15,7 +15,9 @@ CREATE TABLE roles
     name VARCHAR(32) UNIQUE NOT NULL,
     is_enable BOOLEAN NOT NULL DEFAULT true,
 
-    CONSTRAINT pk_roles PRIMARY KEY (name)
+    CONSTRAINT pk_roles PRIMARY KEY (name),
+    CONSTRAINT check_roles_name
+        CHECK (roles.name ~* '^[a-zA-Z]([\-\.]?[a-zA-Z0-9])*$')
 );
 
 -- +----------------------------------------------------------------------------------------------+
@@ -33,7 +35,9 @@ CREATE TABLE role_activations
         FOREIGN KEY (role) REFERENCES roles(name)
             ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT uq_role_activations_role_microservice
-        UNIQUE (role, microservice)
+        UNIQUE (role, microservice),
+    CONSTRAINT check_role_activations_microservice
+        CHECK (role_activations.microservice ~* '^[a-zA-Z]([\-\.]?[a-zA-Z0-9])*$')
 );
 
 -- +----------------------------------------------------------------------------------------------+
@@ -47,7 +51,9 @@ CREATE TABLE role_permissions
         PRIMARY KEY (role, permission),
     CONSTRAINT fk_role_permissions_table_roles
         FOREIGN KEY (role) REFERENCES roles(name)
-            ON UPDATE CASCADE ON DELETE CASCADE
+            ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT check_role_permissions_permission
+        CHECK (role_permissions.permission ~* '^Can[A-Z][a-z]([A-Z]?[a-z])*$')
 );
 
 -- +----------------------------------------------------------------------------------------------+
@@ -65,7 +71,9 @@ CREATE TABLE login_profiles
 
     CONSTRAINT pk_login_profiles PRIMARY KEY (id),
     CONSTRAINT check_login_profiles_id
-        CHECK (login_profiles.id ~* '[A-Z][0-9]{5}')
+        CHECK (login_profiles.id ~* '^[A-Z][0-9]{5}$'),
+    CONSTRAINT check_login_profiles_email
+        CHECK (login_profiles.email ~* '^[a-z0-9]([\-\.]?[a-z0-9])*@[a-z0-9]([\-\.]?[a-z0-9])*$')
 );
 
 -- +----------------------------------------------------------------------------------------------+

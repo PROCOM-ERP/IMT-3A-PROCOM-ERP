@@ -13,6 +13,9 @@
     <artifactId>directoryService</artifactId>
     <packaging>jar</packaging>
 
+    <properties>
+        <logstash.version>7.0.1</logstash.version>
+    </properties>
 
     <dependencies>
         <!-- Spring Boot Starters -->
@@ -35,6 +38,10 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
         
         <!-- Specific Dependencies -->
@@ -60,6 +67,11 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>net.logstash.logback</groupId>
+            <artifactId>logstash-logback-encoder</artifactId>
+            <version>${logstash.version}</version>
         </dependency>
         
         <!-- Testing Dependencies -->

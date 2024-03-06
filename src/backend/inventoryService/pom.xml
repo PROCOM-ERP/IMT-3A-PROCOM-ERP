@@ -13,6 +13,10 @@
     <artifactId>inventoryService</artifactId>
     <packaging>jar</packaging>
 
+    <properties>
+        <logstash.version>7.0.1</logstash.version>
+    </properties>
+
     <dependencies>
         <!-- Spring Boot Starters  -->
         <dependency>
@@ -39,7 +43,12 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
-            </dependency>
+        </dependency>
+        <dependency>
+            <groupId>net.logstash.logback</groupId>
+            <artifactId>logstash-logback-encoder</artifactId>
+            <version>${logstash.version}</version>
+        </dependency>
 
         <!-- Testing Dependencies -->
         <dependency>

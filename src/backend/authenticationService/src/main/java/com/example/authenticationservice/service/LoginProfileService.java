@@ -1,21 +1,15 @@
 package com.example.authenticationservice.service;
 
+import com.example.authenticationservice.annotation.LogExecutionTime;
 import com.example.authenticationservice.dto.*;
 import com.example.authenticationservice.model.LoginProfile;
 import com.example.authenticationservice.model.Permission;
 import com.example.authenticationservice.model.Role;
 import com.example.authenticationservice.repository.LoginProfileRepository;
 import com.example.authenticationservice.repository.RoleRepository;
-import com.example.authenticationservice.utils.CustomHttpRequestBuilder;
-import com.example.authenticationservice.utils.CustomPasswordGenerator;
-import com.example.authenticationservice.utils.PerformanceTracker;
+import com.example.authenticationservice.utils.*;
 import lombok.RequiredArgsConstructor;
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -37,27 +31,37 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class LoginProfileService {
 
+    /* Constants */
+    public static final String ERROR_MSG_USER_ID =
+            "User id should start by a capital letter, followed by exactly 5 digits.";
+
+    /* Repository Beans */
     private final LoginProfileRepository loginProfileRepository;
     private final RoleRepository roleRepository;
-    private final CustomPasswordGenerator customPasswordGenerator;
-    private final PasswordEncoder passwordEncoder;
-    private final CustomHttpRequestBuilder customHttpRequestBuilder;
-    private final RestTemplate restTemplate;
+
+    /* Service Beans */
     private final MailService mailService;
     private final MessageSenderService messageSenderService;
 
-    private final PerformanceTracker performanceTracker;
-    private final Logger logger = LoggerFactory.getLogger(LoginProfileService.class);
+    /* Utils Beans */
+    private final CustomHttpRequestBuilder customHttpRequestBuilder;
+    private final CustomLogger logger;
+    private final CustomPasswordGenerator customPasswordGenerator;
+    private final CustomStringUtils customStringUtils;
+    private final PasswordEncoder passwordEncoder;
+    private final RestTemplate restTemplate;
 
     /* Public Methods */
 
     @Transactional
+    @LogExecutionTime(description = "Create new user login profile.",
+            tag = CustomLogger.TAG_USERS)
     public LoginProfileIdResponseDto createLoginProfile(
             LoginProfileCreationRequestDto loginProfileCreationRequestDto)
             throws Exception
     {
-        logger.info("Start login profile creation...");
-        long startTimeNano = performanceTracker.getCurrentTime();
+        // sanitize all request parameters
+        customStringUtils.sanitizeAllStrings(loginProfileCreationRequestDto);
 
         // generate random password
         String password = customPasswordGenerator.generateRandomPassword();
@@ -81,22 +85,30 @@ public class LoginProfileService {
         loginProfileRepository.save(loginProfile);
 
         // send mail to the new user
-        mailService.sendNewLoginProfileMail(idLoginProfile, password);
+        // mailService.sendNewLoginProfileMail(idLoginProfile, password);
+        logger.infoLoginProfile("Created user username and password.", CustomLogger.TAG_USERS, idLoginProfile, password);
 
         // send message to inform the network about login profile creation
         messageSenderService.sendLoginProfilesNewMessage(idLoginProfile);
 
         // return generated idLoginProfile
-        long elapsedTimeMillis = performanceTracker.getElapsedTimeMillis(startTimeNano);
-        logger.info("Elapsed time to create new login profile : " + elapsedTimeMillis + " ms");
         return LoginProfileIdResponseDto.builder().id(idLoginProfile).build();
     }
 
+    @LogExecutionTime(description = "Retrieve a user profile roles and activation status.",
+            tag = CustomLogger.TAG_USERS)
     public LoginProfileResponseDto getLoginProfileById(String idLoginProfile)
-            throws NoSuchElementException {
+            throws IllegalArgumentException,
+            NoSuchElementException
+    {
+        // check if LoginProfile id respect the good pattern
+        customStringUtils.checkStringPattern(idLoginProfile, CustomStringUtils.REGEX_ID_LOGIN_PROFILE,
+                ERROR_MSG_USER_ID);
 
         // check if LoginProfile entity exists and retrieve it
-        LoginProfile loginProfile = loginProfileRepository.findById(idLoginProfile).orElseThrow();
+        LoginProfile loginProfile = loginProfileRepository.findById(idLoginProfile)
+                .orElseThrow(() ->
+                        new NoSuchElementException("No existing user with id " + idLoginProfile + "."));
 
         // get RoleDto entities from the login profile existing ones
         Set<RoleDto> roles = roleRepository.findAll().stream()
@@ -106,30 +118,48 @@ public class LoginProfileService {
                         .build())
                 .collect(Collectors.toSet());
 
-        // build LoginProfileDto entity
-        LoginProfileResponseDto loginProfileDto = LoginProfileResponseDto.builder()
+        // build and return LoginProfileResponseDto entity
+        return LoginProfileResponseDto.builder()
                 .isEnable(loginProfile.getIsEnable())
                 .roles(roles)
                 .build();
-
-        // return LoginProfileResponseDto entity
-        return loginProfileDto;
     }
 
+    @LogExecutionTime(description = "Retrieve a user profile activation status.",
+            tag = CustomLogger.TAG_USERS)
     public LoginProfileActivationResponseDto getLoginProfileActivationById(String idLoginProfile)
-            throws NoSuchElementException {
+            throws IllegalArgumentException,
+            NoSuchElementException
+    {
+        // check if LoginProfile id respect the good pattern
+        customStringUtils.checkStringPattern(idLoginProfile, CustomStringUtils.REGEX_ID_LOGIN_PROFILE,
+                ERROR_MSG_USER_ID);
+
         return loginProfileRepository.findById(idLoginProfile)
                 .map(loginProfile -> LoginProfileActivationResponseDto.builder()
                         .id(loginProfile.getId())
                         .isEnable(loginProfile.getIsEnable())
                         .build())
-                .orElseThrow();
+                .orElseThrow(() ->
+                        new NoSuchElementException("No existing user with id " + idLoginProfile + "."));
     }
 
-    public void updateLoginProfilePasswordById(String idLoginProfile,
-                                               LoginProfilePasswordUpdateRequestDto passwordDto)
-            throws AccessDeniedException, NoSuchElementException
+    @LogExecutionTime(description = "Update a user profile password.",
+            tag = CustomLogger.TAG_USERS)
+    public void updateLoginProfilePasswordById(
+            String idLoginProfile,
+            LoginProfilePasswordUpdateRequestDto passwordDto)
+            throws IllegalArgumentException,
+            AccessDeniedException,
+            NoSuchElementException
     {
+        // check if LoginProfile id respect the good pattern
+        customStringUtils.checkStringPattern(idLoginProfile, CustomStringUtils.REGEX_ID_LOGIN_PROFILE,
+                ERROR_MSG_USER_ID);
+
+        // sanitize all request parameters
+        customStringUtils.sanitizeAllStrings(passwordDto);
+
         // check if the LoginProfile, for which the password will be modified,
         // is the same as the authenticated one (or admin)
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -142,15 +172,13 @@ public class LoginProfileService {
 
         // check password validity
         String password = passwordDto.getPassword();
-        customPasswordGenerator.checkPasswordValidity(password);
 
         // try to update the password
         int row = loginProfileRepository.updatePasswordById(idLoginProfile, passwordEncoder.encode(password));
 
         // check if only 1 row was modified
-        if (row != 1) {
-            throw new NoSuchElementException();
-        }
+        if (row != 1)
+            throw new NoSuchElementException("No existing user with id " + idLoginProfile + ".");
 
         // send message to inform the network about a login profile jwt expiration
         messageSenderService.sendLoginProfileJwtDisableOldMessage(idLoginProfile);
@@ -158,13 +186,25 @@ public class LoginProfileService {
     }
 
     @Transactional
-    public void updateLoginProfileById(String idLoginProfile,
-                                       LoginProfileUpdateRequestDto loginProfileDto)
-    throws NoSuchElementException, DataIntegrityViolationException
+    @LogExecutionTime(description = "Update a user profile roles and / or activation status.",
+            tag = CustomLogger.TAG_USERS)
+    public void updateLoginProfileById(
+            String idLoginProfile,
+            LoginProfileUpdateRequestDto loginProfileDto)
+            throws IllegalArgumentException,
+            NoSuchElementException
     {
+        // check if LoginProfile id respect the good pattern
+        customStringUtils.checkStringPattern(idLoginProfile, CustomStringUtils.REGEX_ID_LOGIN_PROFILE,
+                ERROR_MSG_USER_ID);
+
+        // sanitize all request parameters
+        customStringUtils.sanitizeAllStrings(loginProfileDto);
 
         // check if loginProfile exists
-        LoginProfile loginProfile = loginProfileRepository.findById(idLoginProfile).orElseThrow();
+        LoginProfile loginProfile = loginProfileRepository.findById(idLoginProfile)
+                .orElseThrow(() ->
+                        new NoSuchElementException("No existing user with id " + idLoginProfile + "."));
 
         // update LoginProfile entity roles
         if (loginProfileDto.getRoles() != null) {
@@ -189,13 +229,14 @@ public class LoginProfileService {
         if (loginProfileDto.getRoles() != null) {
             int row = loginProfileRepository.updateJwtGenMinAtById(idLoginProfile);
             // check if only 1 row was modified
-            if (row != 1) {
-                throw new NoSuchElementException();
-            }
+            if (row != 1)
+                throw new NoSuchElementException("No existing user with id " + idLoginProfile + ".");
             messageSenderService.sendLoginProfileJwtDisableOldMessage(idLoginProfile);
         }
     }
 
+    @LogExecutionTime(description = "Update a user profile email address.",
+            tag = CustomLogger.TAG_USERS)
     public void updateLoginProfileEmail(String getEmployeeEmailById)
             throws RestClientException {
 

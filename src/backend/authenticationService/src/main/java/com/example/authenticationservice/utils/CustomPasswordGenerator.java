@@ -1,6 +1,5 @@
 package com.example.authenticationservice.utils;
 
-import lombok.Getter;
 import org.springframework.stereotype.Component;
 
 import java.security.SecureRandom;
@@ -14,8 +13,6 @@ public class CustomPasswordGenerator {
     private final String SPECIAL_CHARACTERS = "@#$%^&+=!*";
     private final String ALL_ALLOWED_CHARACTERS = LOWER + UPPER + DIGITS + SPECIAL_CHARACTERS;
     private final int LENGTH = 12;
-    private final String regexPassword =
-            "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!.*])(?=\\S+$).{12,}$";
     private static final SecureRandom random = new SecureRandom();
 
     public String generateRandomPassword() {
@@ -43,11 +40,4 @@ public class CustomPasswordGenerator {
 
         return new String(passwordArray);
     }
-
-    public void checkPasswordValidity(String password)
-            throws IllegalArgumentException {
-        if (!password.matches(regexPassword))
-            throw new IllegalArgumentException();
-    }
-
 }
