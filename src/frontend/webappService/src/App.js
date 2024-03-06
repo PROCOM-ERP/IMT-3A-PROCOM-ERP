@@ -17,9 +17,11 @@ import AddRole from "./pages/AddRole.js";
 import AddUser from "./pages/AddUser.js";
 import ModifyPassword from "./pages/ModifyPassword.js";
 import AddOrder from "./pages/AddOrder.js";
+import Order from "./pages/Order.js";
 import Error404 from "./pages/Error404.js";
 import Error401 from "./pages/Error401.js";
 import Error403 from "./pages/Error403.js";
+
 
 function App() {
   return (
@@ -42,6 +44,7 @@ function App() {
           <Route path="/addUser" exact Component={AddUser} />
           <Route path="/updatePassword" exact Component={ModifyPassword} />
           <Route path="/addOrder" exact Component={AddOrder} />
+          <Route path="/order/:orderId" exact Component={Order} />
           <Route path="/error401" exact Component={Error401} />
           <Route path="/error403" exact Component={Error403} />
           <Route path="*" exact Component={Error404} />
