@@ -13,6 +13,8 @@ public enum Endpoint {
     GET_V1_PROVIDERS(HttpMethod.GET, Path.V1_PROVIDERS, Permission.CanReadProvider),
 
     GET_V1_ORDERS(HttpMethod.GET, Path.V1_ORDERS, Permission.CanReadOrder),
+    GET_V1_ORDERS_ID(HttpMethod.GET, Path.V1_ORDERS_ANYONE, Permission.CanReadOrder),
+    PATCH_V1_ORDERS_ANYTHING(HttpMethod.PATCH, Path.V1_ORDERS_ANYTHING, Permission.CanModifyOrder),
     POST_V1_ORDERS(HttpMethod.POST, Path.V1_ORDERS, Permission.CanCreateOrder),
 
     GET_V1_ROLES(HttpMethod.GET, Path.V1_ROLES, Permission.CanReadRole),

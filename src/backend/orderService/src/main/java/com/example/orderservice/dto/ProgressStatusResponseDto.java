@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public class StatusResponseDto {
+public class ProgressStatusResponseDto {
 
     private String name;
-    private Boolean done;
+    private Boolean completed;
 
 }

@@ -21,7 +21,7 @@ public class OrderResponseDto {
     private BigDecimal totalAmount;
     private String orderer;
     private String approver;
-    private Set<StatusResponseDto> status;
+    private Set<ProgressStatusResponseDto> progress;
     private Set<OrderProductResponseDto> products;
 
 }

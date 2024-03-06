@@ -7,6 +7,7 @@ import com.example.orderservice.model.Path;
 import com.example.orderservice.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -87,10 +88,27 @@ public class OrderController {
     }
 
     @GetMapping(Path.ORDER_ID)
+    @Operation(operationId = "getOrderById", tags = {"orders"},
+            summary = "Retrieve one order", description =
+            "Retrieve one order, by providing its id in the path.",
+            parameters = {
+                    @Parameter(name = "idOrder", description =
+                            "The order id", in = ParameterIn.PATH)})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description =
+                    "Order retrieved correctly",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = OrderResponseDto.class))} ),
+            @ApiResponse(responseCode = "401", description =
+                    "Roles in Jwt token are insufficient to authorize the access to this URL",
+                    content = {@Content(mediaType = "application/json")} ),
+            @ApiResponse(responseCode = "500", description =
+                    "Uncontrolled error appeared",
+                    content = {@Content(mediaType = "application/json")} )})
     public ResponseEntity<OrderResponseDto> getOrderById(
-            @PathVariable Integer order)
+            @PathVariable Integer idOrder)
     {
-        return ResponseEntity.ok(orderService.getOrderById(order));
+        return ResponseEntity.ok(orderService.getOrderById(idOrder));
     }
 
 }
