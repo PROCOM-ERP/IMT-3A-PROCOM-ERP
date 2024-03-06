@@ -1,4 +1,4 @@
-package com.example.authenticationservice.annotation;
+package com.example.directoryservice.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
