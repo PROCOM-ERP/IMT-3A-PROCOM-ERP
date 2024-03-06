@@ -23,6 +23,6 @@ public class CustomUserDetailsService implements UserDetailsService {
         Optional<LoginProfile> loginProfile = loginProfileRepository.findById(username);
         return loginProfile.map(
                 e -> new User(username, e.getPassword(), Collections.emptyList()))
-                .orElseGet(() -> new User(username, "", Collections.emptyList()));
+                .orElseThrow(() -> new UsernameNotFoundException(""));
     }
 }

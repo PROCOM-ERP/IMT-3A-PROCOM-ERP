@@ -39,8 +39,9 @@ public class JwtService {
     private final LoginProfileRepository loginProfileRepository;
 
     public String generateJwtToken(String authSubject)
-            throws InsufficientAuthenticationException, AccessDeniedException {
-
+            throws InsufficientAuthenticationException,
+            AccessDeniedException
+    {
         // get roles for auth subject
         List<String> roles = getRolesByAuthSubject(authSubject);
 
