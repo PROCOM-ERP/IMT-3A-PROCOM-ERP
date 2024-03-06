@@ -37,7 +37,11 @@ function ProfilForm({ title, userId }) {
       headers: headers,
     })
       .then((response) => {
-        if (!response.ok) throw new Error(response.status);
+        if (!response.ok) {
+          if (response.status === 401) { navigate("/error401"); }
+          else if (response.status === 403) { navigate("/error403"); }
+          else { throw new Error(response.status + " " + response.statusText); }
+        }
         const res = response.json();
         return res;
       })
@@ -71,7 +75,9 @@ function ProfilForm({ title, userId }) {
         },
       );
       if (!response.ok) {
-        throw new Error("Failed to fetch organization units");
+        if (response.status === 401) { navigate("/error401"); }
+        else if (response.status === 403) { navigate("/error403"); }
+        else { throw new Error(response.status + " " + response.statusText); }
       }
       const data = await response.json();
       setOrganizations(data);
@@ -117,7 +123,11 @@ function ProfilForm({ title, userId }) {
       body: JSON.stringify(mappedUserData), // Convert user object to JSON string
     })
       .then((response) => {
-        if (!response.ok) throw new Error(response.status);
+        if (!response.ok) {
+          if (response.status === 401) { navigate("/error401"); }
+          else if (response.status === 403) { navigate("/error403"); }
+          else { throw new Error(response.status + " " + response.statusText); }
+        }
         console.log("[LOG] Profile updated successfully");
         alert("Profile updated successfully"); // Show success message
       })
