@@ -35,6 +35,12 @@ filebeat.inputs:
   - type: container
     paths:
       - "/var/log/containers/*/*.log"
+    json.keys_under_root: true
+    json.add_error_key: true
+    json.message_key: message
+    multiline.pattern: "^{"
+    multiline.negate: true
+    multiline.match: after
 
 processors:
   - add_cloud_metadata: ~
@@ -42,13 +48,17 @@ processors:
 monitoring:
   enabled: true
   elasticsearch:
+    hosts: ["http://elasticsearch:9200"]
     username: beats_system
     password: ${BEATS_SYSTEM_PASSWORD}
 
-output.elasticsearch:
-  hosts: [http://elasticsearch:9200]
-  username: filebeat_internal
-  password: ${FILEBEAT_INTERNAL_PASSWORD}
+  # output.elasticsearch:
+  #   hosts: [http://elasticsearch:9200]
+  #   username: filebeat_internal
+  #   password: ${FILEBEAT_INTERNAL_PASSWORD}
+
+output.logstash:
+  hosts: ["logstash:5044"]
 
 ## HTTP endpoint for health checking
 ## https://www.elastic.co/guide/en/beats/filebeat/current/http-endpoint.html
