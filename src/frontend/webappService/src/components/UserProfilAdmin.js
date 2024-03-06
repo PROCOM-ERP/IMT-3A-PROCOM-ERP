@@ -2,8 +2,10 @@ import React, { useState, useEffect } from "react";
 import Button from "../components/Button.js";
 import "../css/App.css";
 import "../css/UserProfil.css";
+import { useNavigate } from "react-router-dom";
 
 function UserProfilAdmin({ title, userId }) {
+  const navigate = useNavigate();
   const [userRoles, setUserRoles] = useState({});
   const [userInfo, setUserInfo] = useState({});
   const [modifiedUserRoles, setModifiedUserRoles] = useState({});
