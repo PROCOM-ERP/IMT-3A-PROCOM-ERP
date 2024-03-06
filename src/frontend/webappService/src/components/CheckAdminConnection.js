@@ -43,7 +43,17 @@ function CheckAdminConnection() {
     if (!userConnected) {
       navigate("/");
     } else {
-      if (checkIsAdmin()) navigate("/home");
+      // Check if user is an admin
+      checkIsAdmin()
+        .then(result => {
+          if (!result) {
+            navigate("/home");
+          }
+        })
+        .catch(error => {
+          console.error("Error:", error);
+          navigate("/home");
+        });
     }
   }, [navigate]);
 
