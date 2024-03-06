@@ -37,8 +37,6 @@ public class JwtService {
 
     private final JwtEncoder jwtEncoder;
 
-    //private final Logger logger = LoggerFactory.getLogger(JwtService.class);
-
     public String generateJwtToken(String authSubject)
             throws InsufficientAuthenticationException, AccessDeniedException {
 

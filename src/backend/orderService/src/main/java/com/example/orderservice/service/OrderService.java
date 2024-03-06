@@ -7,14 +7,16 @@ import com.example.orderservice.model.*;
 import com.example.orderservice.repository.*;
 import com.example.orderservice.utils.CustomLogger;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Date;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -53,9 +55,9 @@ public class OrderService {
                 .setScale(2, RoundingMode.HALF_UP);
 
         // create and save Order entity
-        // TODO: change null approver by the retrieving one from other microservice
+        // TODO: change approver by the retrieving one from other microservice
         Order order = orderRepository.save(creationRequestDtoToModel(orderDto, totalAmount,
-                provider, address, orderer, defaultProgressStatus, null));
+                provider, address, orderer, defaultProgressStatus, orderer));
 
         // create and save OrderProduct entities
         orderProductRepository.saveAll(
@@ -91,14 +93,49 @@ public class OrderService {
                                 .map(this::modelToOrderByApproverResponseDto)
                                 .collect(Collectors.toSet())));
 
-        // build OrdersByIdLoginProfileResponseDto entity
-        OrdersByIdLoginProfileResponseDto ordersDto = OrdersByIdLoginProfileResponseDto.builder()
+        // build and returnOrdersByIdLoginProfileResponseDto entity
+        return OrdersByIdLoginProfileResponseDto.builder()
                 .ordersByOrderer(ordersByOrderer)
                 .ordersByApprover(ordersByApprover)
                 .build();
+    }
 
-        // return OrdersByIdLoginProfileResponseDto entity
-        return ordersDto;
+    @LogExecutionTime(description = "Retrieve one order (access granted if authenticated user is the orderer or the approver).",
+            tag = CustomLogger.TAG_ORDERS)
+    public OrderResponseDto getOrderById(Integer idOrder)
+            throws NoSuchElementException
+    {
+        // retrieve Order entity
+        Order order = orderRepository.findById(idOrder)
+                .orElseThrow(() -> new NoSuchElementException("No existing order with id " + idOrder + "."));
+
+        // check if the LoginProfile of the authenticated user is the orderer,
+        // or the approver of the order (or admin)
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentLoginProfileId = authentication.getName();
+        boolean canBypassAccessDeny = authentication.getAuthorities()
+                .contains(new SimpleGrantedAuthority(Permission.CanBypassAccessDeny.name()));
+        if (! (currentLoginProfileId.equals(order.getOrderer().getLoginProfile().getId()) ||
+            canBypassAccessDeny ||
+                (order.getApprover() != null &&
+            currentLoginProfileId.equals(order.getApprover().getLoginProfile().getId()))))
+        {
+            throw new AccessDeniedException("");
+        }
+
+        // retrieve all ProgressStatus entities and check which ones are already completed
+        List<ProgressStatusResponseDto> allProgressStatus = progressStatusRepository.findAll().stream()
+                .map(ps -> progressStatusModelToResponseDto(ps, order.getProgressStatus().getId()))
+                .sorted(Comparator.comparingInt(ProgressStatusResponseDto::getId))
+                .toList();
+
+        // convert all OrderProduct entities into OrderProductResponseDto entities
+        List<OrderProductResponseDto> products = order.getOrderProducts().stream()
+                .map(this::orderProductModelToResponseDto)
+                .toList();
+
+        // build and return OrderResponseDto entity
+        return modelToResponseDto(order, products, allProgressStatus);
     }
 
     /* Private Methods */
@@ -152,6 +189,41 @@ public class OrderService {
                 .totalAmount(order.getTotalAmount())
                 .orderer(order.getOrderer().getFirstName() + " " + order.getOrderer().getLastName())
                 .status(order.getProgressStatus().getName())
+                .build();
+    }
+
+    private OrderResponseDto modelToResponseDto(Order order,
+                                                List<OrderProductResponseDto> products,
+                                                List<ProgressStatusResponseDto> progressStatus)
+    {
+        return OrderResponseDto.builder()
+                .id(order.getId())
+                .createdAt(Date.from(order.getCreatedAt()))
+                .provider(order.getProvider().getName())
+                .totalAmount(order.getTotalAmount())
+                .orderer(order.getOrderer().getLoginProfile().getId())
+                .approver(order.getApprover() != null ?  order.getApprover().getLoginProfile().getId() : null)
+                .progress(progressStatus)
+                .products(products)
+                .build();
+    }
+
+    private ProgressStatusResponseDto progressStatusModelToResponseDto(ProgressStatus progressStatus,
+                                                                       Integer currentIdProgressStatus)
+    {
+        return ProgressStatusResponseDto.builder()
+                .id(progressStatus.getId())
+                .name(progressStatus.getName())
+                .completed(progressStatus.getId() <= currentIdProgressStatus)
+                .build();
+    }
+
+    private OrderProductResponseDto orderProductModelToResponseDto(OrderProduct orderProduct)
+    {
+        return OrderProductResponseDto.builder()
+                .reference(orderProduct.getReference())
+                .unitPrice(orderProduct.getUnitPrice())
+                .quantity(orderProduct.getQuantity())
                 .build();
     }
 

@@ -50,6 +50,7 @@ public class CustomLoggingAspect {
     {
         // build method information
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
+        String methodName = methodSignature.getName();
         LogError methodAnnotation = methodSignature.getMethod()
                 .getAnnotation(LogError.class);
         HttpStatus httpStatus = methodAnnotation.httpStatus();
@@ -59,7 +60,7 @@ public class CustomLoggingAspect {
         Object[] args = joinPoint.getArgs();
         for (Object arg : args) { // retrieve Exception param
             if (arg instanceof Exception e) {
-                logger.error(e, tag, httpStatus);
+                logger.error(e, tag, methodName, httpStatus);
                 break;
             }
         }

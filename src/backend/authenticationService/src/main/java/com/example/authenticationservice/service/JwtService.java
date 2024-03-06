@@ -1,10 +1,8 @@
 package com.example.authenticationservice.service;
 
-import com.example.authenticationservice.annotation.LogExecutionTime;
 import com.example.authenticationservice.model.LoginProfile;
 import com.example.authenticationservice.model.Role;
 import com.example.authenticationservice.repository.LoginProfileRepository;
-import com.example.authenticationservice.utils.CustomLogger;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.DependsOn;
@@ -38,11 +36,10 @@ public class JwtService {
     private final JwtEncoder jwtEncoder;
     private final LoginProfileRepository loginProfileRepository;
 
-    @LogExecutionTime(description = "Generate new Jwt token for a user (or a microservice).",
-            tag = CustomLogger.TAG_USERS)
     public String generateJwtToken(String authSubject)
-            throws InsufficientAuthenticationException, AccessDeniedException {
-
+            throws InsufficientAuthenticationException,
+            AccessDeniedException
+    {
         // get roles for auth subject
         List<String> roles = getRolesByAuthSubject(authSubject);
 
@@ -59,7 +56,7 @@ public class JwtService {
         return this.jwtEncoder.encode(jwtEncoderParameters).getTokenValue();
     }
 
-    private List<String> getRolesByAuthSubject(String authSubject)
+    public List<String> getRolesByAuthSubject(String authSubject)
             throws InsufficientAuthenticationException,
             AccessDeniedException
     {
@@ -67,6 +64,13 @@ public class JwtService {
         if (Objects.equals(authSubject, sharedKey))
             return Collections.singletonList(serviceRole);
 
+        return getRolesByIdLoginProfile(authSubject);
+    }
+
+    public List<String> getRolesByIdLoginProfile(String authSubject)
+            throws InsufficientAuthenticationException,
+            AccessDeniedException
+    {
         // check if loginProfile exists
         LoginProfile loginProfile = loginProfileRepository.findById(authSubject)
                 .orElseThrow(() -> new AccessDeniedException(""));

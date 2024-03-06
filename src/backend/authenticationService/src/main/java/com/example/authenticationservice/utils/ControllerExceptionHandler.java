@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -26,7 +27,7 @@ public class ControllerExceptionHandler {
     public static final String ERROR_DEFAULT_MSG_HTTP_400 =
             "Inputs don't respect a specific format.";
     public static final String ERROR_DEFAULT_MSG_HTTP_401 =
-            "Authentication missing or expired.";
+            "Authentication missing, invalid or expired.";
     public static final String ERROR_DEFAULT_MSG_HTTP_403 =
             "Forbidden to access the resource.";
 
@@ -70,6 +71,17 @@ public class ControllerExceptionHandler {
                 .fields(fields)
                 .build();
         return ResponseEntity.badRequest().body(error);
+    }
+
+    @ExceptionHandler(UsernameNotFoundException.class) // Http 401
+    @LogError(httpStatus = HttpStatus.UNAUTHORIZED)
+    public ResponseEntity<HttpStatusErrorDto> handleUsernameNotFoundExceptions(
+            UsernameNotFoundException e)
+    {
+        HttpStatusErrorDto error = HttpStatusErrorDto.builder()
+                .message(ERROR_DEFAULT_MSG_HTTP_401)
+                .build();
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
     }
 
     @ExceptionHandler(InsufficientAuthenticationException.class) // Http 401

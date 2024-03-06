@@ -6,6 +6,7 @@ public enum Permission {
 
     CanCreateOrder,
 
+    CanModifyOrder,
     CanModifyRole,
 
     CanReadEmployee,

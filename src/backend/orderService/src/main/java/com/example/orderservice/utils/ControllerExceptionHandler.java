@@ -26,7 +26,7 @@ public class ControllerExceptionHandler {
     public static final String ERROR_DEFAULT_MSG_HTTP_400 =
             "Inputs don't respect a specific format.";
     public static final String ERROR_DEFAULT_MSG_HTTP_401 =
-            "Authentication missing or expired.";
+            "Authentication missing, invalid or expired.";
     public static final String ERROR_DEFAULT_MSG_HTTP_403 =
             "Forbidden to access the resource.";
 
