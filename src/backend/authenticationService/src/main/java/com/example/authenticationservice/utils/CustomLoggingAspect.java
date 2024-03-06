@@ -2,12 +2,14 @@ package com.example.authenticationservice.utils;
 
 import com.example.authenticationservice.annotation.LogError;
 import com.example.authenticationservice.annotation.LogExecutionTime;
+import com.example.authenticationservice.annotation.LogMessageSent;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
@@ -43,6 +45,21 @@ public class CustomLoggingAspect {
 
         // return the value returned by the processed method
         return proceed;
+    }
+
+    @After("@annotation(com.example.authenticationservice.annotation.LogMessageSent)")
+    public void logMessageSent(@NonNull JoinPoint joinPoint)
+    {
+        // build and log method information
+        MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
+        String methodName = methodSignature.getName();
+        LogMessageSent methodAnnotation = methodSignature.getMethod()
+                .getAnnotation(LogMessageSent.class);
+        String methodDescription = methodAnnotation.description();
+        String routingPattern = methodAnnotation.routingPattern();
+        String deliveryMethod = methodAnnotation.deliveryMethod();
+        String tag = methodAnnotation.tag();
+        logger.infoMessageSendingMethod(methodDescription, tag, methodName, routingPattern, deliveryMethod);
     }
 
     @After("@annotation(com.example.authenticationservice.annotation.LogError)")
