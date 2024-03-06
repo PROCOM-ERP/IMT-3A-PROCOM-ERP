@@ -279,7 +279,7 @@ $securityPath = ".\security"
 $systemPath = ".\system"
 $dockerPath = ".\docker"
 $elkPath = "${dockerPath}\elk"
-$envPath = "$dockerPath\.env"
+$envPath = "${dockerPath}\.env"
 
 if (-not (Test-Path "$envPath")) {
     Write-Host "System error: .env file not found"
@@ -294,6 +294,27 @@ if (-not (Test-Path "$dockerPath\docker-compose.yml")) {
 if (-not (Test-Path "$dockerPath\docker-compose-swarm.yml")) {
     Write-Host "System error: docker-compose-swarm.yml file not found"
     exit
+}
+
+# List of files to verify and copy
+$filesToCopy = @(
+    "entrypoint.sh",
+    "wait-for-it.sh",
+    "procom-erp-truststore.jks",
+    "procom-erp-ca.pem",
+    "mvnw",
+    ".mvn", # Assuming you want to include the .mvn directory as well
+    "db_entrypoint.sh"
+)
+
+# Loop through the files and verify existence
+foreach ($file in $filesToCopy) {
+    $sourcePath = Join-Path -Path $systemPath -ChildPath $file
+
+    if (-Not (Test-Path -Path $sourcePath)) {
+        Write-Host "Required file $file not found in $systemPath."
+        exit 1
+    }
 }
 
 # Handling command line arguments (equivalent to bash positional parameters)
@@ -525,8 +546,8 @@ Clean-SystemFiles
 
 Write-Host "Welcome to Procom ERP, here are the access links:"
 Write-Host " "
-Write-Host "1. Link to the frontend: [http://localhost:3000]"
-Write-Host "2. Link to the gateway hello world to accept its certificate as well: [http://localhost:8041/api/v1/authentication/hello]"
+Write-Host "1. Link to the frontend: [https://localhost:3000]"
+Write-Host "2. Link to the gateway hello world to accept its certificate as well: [https://localhost:8041/api/v1/authentication/hello]"
 Write-Host "3. Link to the Elastic stack (Kibana): [http://localhost:5601]"
-Write-Host "4. Link to the Custom Dashboard: [http://http://localhost:5601/app/discover]. Click on 'Open' to find and open the custom ERP-Dashboard"
+Write-Host "4. Link to the Custom Dashboard: [http://localhost:5601/app/discover]. Click on 'Open' to find and open the custom ERP-Dashboard"
 # +----End of this handy script------------------------------------------------+

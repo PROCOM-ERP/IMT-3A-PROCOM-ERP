@@ -39,6 +39,7 @@ copy_system_files() {
     declare -a frontend_paths=("src/frontend/*")
 
     echo "Copying system files to services"
+    
     # Copy system files to backend services
     for backend_path in "${backend_paths[@]}"; do
         # Find and iterate over directories in the backend
@@ -287,17 +288,45 @@ elk_path="${docker_path}/elk"
 elk_filebeat_path="${elk_path}/extensions/filebeat"
 
 if ! [ -f "${docker_path}/.env" ]; then
-    echo "System error: .env file not found"
+    echo "System error: .env file not found in ${docker_path}"
     exit 1
 fi
 
 if ! [ -f "${docker_path}/docker-compose.yml" ]; then
-    echo "System error: docker-compose.yml file not found"
+    echo "System error: docker-compose.yml file not found in ${docker_path}"
     exit 1
 fi
 
 if ! [ -f "${docker_path}/docker-compose-swarm.yml" ]; then
-    echo "System error: docker-compose-swarm.yml file not found"
+    echo "System error: docker-compose-swarm.yml file not found in ${docker_path}"
+    exit 1
+fi
+
+# List of files to copy
+files_to_copy=(
+    "entrypoint.sh"
+    "wait-for-it.sh"
+    "procom-erp-truststore.jks"
+    "procom-erp-ca.pem"
+    "mvnw"
+    "db_entrypoint.sh"
+)
+
+# Loop through files and verify existence
+for file in "${files_to_copy[@]}"; do
+    if [ ! -f "${system_path}/${file}" ]; then
+        echo "System error: ${file} file not found in ${system_path}."
+        if [ "${file}" == "procom-erp-truststore.jks" ] || [ "${file}" == "procom-erp-ca.pem" ]; then
+            echo " "
+            echo "It's a CA security file, you should probably deploy again using security options."
+            echo "Try to run: ./deploy.sh --clean-sec \"CA\" --sec (you can also add other options if needed)"
+        fi
+        exit 1
+    fi
+done
+
+if ! [ -d "${system_path}/.mvn" ]; then
+    echo "System error: .mnv/ directory not found in ${system_path}"
     exit 1
 fi
 
@@ -558,10 +587,10 @@ EOF
 
 echo "Welcome to Procom ERP, here are the access links:"
 echo " "
-echo "1. Link to the frontend: [http://localhost:3000]"
-echo "2. Link to the gateway hello world to accept its certificate as well: [http://localhost:8041/api/v1/authentication/hello]"
+echo "1. Link to the frontend: [https://localhost:3000]"
+echo "2. Link to the gateway hello world to accept its certificate as well: [https://localhost:8041/api/v1/authentication/hello]"
 echo "3. Link to the Elastic stack (Kibana): [http://localhost:5601]"
-echo "4. Link to the Custom Dashboard: [http://http://localhost:5601/app/discover]. Click on \"Open\" to find and open the custom ERP-Dashboard"
+echo "4. Link to the Custom Dashboard: [http://localhost:5601/app/discover]. Click on \"Open\" to find and open the custom ERP-Dashboard"
 
 echo -e "\a"
 
