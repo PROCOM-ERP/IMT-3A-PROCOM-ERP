@@ -1,8 +1,10 @@
 package com.example.orderservice.service;
 
+import com.example.orderservice.annotation.LogExecutionTime;
 import com.example.orderservice.dto.AddressCreationRequestDto;
 import com.example.orderservice.model.Address;
 import com.example.orderservice.repository.AddressRepository;
+import com.example.orderservice.utils.CustomLogger;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +21,8 @@ public class AddressService {
     private final AddressRepository addressRepository;
 
     /* Public Methods */
+    @LogExecutionTime(description = "Create new address.",
+            tag = CustomLogger.TAG_ADDRESSES)
     public Address createAddress(AddressCreationRequestDto addressDto)
             throws Exception
     {

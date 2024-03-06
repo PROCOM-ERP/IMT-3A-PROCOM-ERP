@@ -1,5 +1,6 @@
 package com.example.orderservice.service;
 
+import com.example.orderservice.annotation.LogExecutionTime;
 import com.example.orderservice.dto.AddressResponseDto;
 import com.example.orderservice.dto.EmployeeCreationRequestDto;
 import com.example.orderservice.dto.EmployeeResponseDto;
@@ -8,6 +9,7 @@ import com.example.orderservice.model.Employee;
 import com.example.orderservice.model.LoginProfile;
 import com.example.orderservice.repository.EmployeeRepository;
 import com.example.orderservice.repository.LoginProfileRepository;
+import com.example.orderservice.utils.CustomLogger;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
@@ -25,6 +27,8 @@ public class EmployeeService {
     private final LoginProfileRepository loginProfileRepository;
 
     /* Public Methods */
+    @LogExecutionTime(description = "Create new user information profile.",
+            tag = CustomLogger.TAG_USERS)
     public Employee createEmployee(EmployeeCreationRequestDto employeeDto)
     {
         // sanitize fields before Employee entity creation
@@ -44,6 +48,8 @@ public class EmployeeService {
                 .orElse(employeeRepository.save(creationRequestDtoToModel(employeeDto, loginProfile)));
     }
 
+    @LogExecutionTime(description = "Retrieve a user information profile with location.",
+            tag = CustomLogger.TAG_USERS)
     public EmployeeResponseDto getEmployeeAndAddressById(String idEmployee) throws
             NoSuchElementException {
         List<Object[]> results = employeeRepository.findEmployeeAndLastOrderAddressByIdLoginProfile(

@@ -1,9 +1,11 @@
 package com.example.directoryservice.service;
 
+import com.example.directoryservice.annotation.LogExecutionTime;
 import com.example.directoryservice.dto.AddressCreationRequestDto;
 import com.example.directoryservice.dto.AddressResponseDto;
 import com.example.directoryservice.model.Address;
 import com.example.directoryservice.repository.AddressRepository;
+import com.example.directoryservice.utils.CustomLogger;
 import lombok.RequiredArgsConstructor;
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
@@ -24,11 +26,11 @@ public class AddressService {
 
     private final AddressRepository addressRepository;
 
-    // private final Logger logger = LoggerFactory.getLogger(AddressService.class);
-
     /* Public Methods */
 
     @Transactional
+    @LogExecutionTime(description = "Create new address.",
+            tag = CustomLogger.TAG_ADDRESSES)
     public void createAddress(AddressCreationRequestDto addressDto)
             throws Exception
     {
@@ -48,6 +50,8 @@ public class AddressService {
         addressRepository.save(creationRequestDtoToModel(idAddress, addressDto));
     }
 
+    @LogExecutionTime(description = "Retrieve all addresses.",
+            tag = CustomLogger.TAG_ADDRESSES)
     public Set<AddressResponseDto> getAllAddresses() {
         return addressRepository.findAll().stream()
                 .map(this::modelToResponseDto)

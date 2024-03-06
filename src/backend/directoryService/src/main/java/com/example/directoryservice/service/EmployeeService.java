@@ -1,10 +1,12 @@
 package com.example.directoryservice.service;
 
+import com.example.directoryservice.annotation.LogExecutionTime;
 import com.example.directoryservice.dto.*;
 import com.example.directoryservice.model.Employee;
 import com.example.directoryservice.model.Permission;
 import com.example.directoryservice.repository.EmployeeRepository;
 import com.example.directoryservice.repository.OrgUnitRepository;
+import com.example.directoryservice.utils.CustomLogger;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -29,10 +32,11 @@ public class EmployeeService {
 
     private final MessageSenderService messageSenderService;
 
-    //private final Logger logger = LoggerFactory.getLogger(EmployeeService.class);
-
     /* Public Methods */
 
+    @Transactional
+    @LogExecutionTime(description = "Create new user information profile.",
+            tag = CustomLogger.TAG_USERS)
     public String createEmployee(EmployeeCreationRequestDto employeeDto)
             throws DataIntegrityViolationException {
         // create new entity
@@ -56,18 +60,24 @@ public class EmployeeService {
         return idEmployee;
     }
 
+    @LogExecutionTime(description = "Retrieve all user information profiles.",
+            tag = CustomLogger.TAG_USERS)
     public Set<EmployeeResponseDto> getAllEmployees() {
         return employeeRepository.findAll().stream()
                 .map(this::modelToResponseDto)
                 .collect(Collectors.toSet());
     }
 
+    @LogExecutionTime(description = "Retrieve a user information profile.",
+            tag = CustomLogger.TAG_USERS)
     public EmployeeResponseDto getEmployeeById(String idEmployee) {
         return employeeRepository.findById(idEmployee)
                 .map(this::modelToResponseDto)
                 .orElseThrow();
     }
 
+    @LogExecutionTime(description = "Retrieve a user email.",
+            tag = CustomLogger.TAG_USERS)
     public EmployeeEmailResponseDto getEmployeeEmailById(String idEmployee) {
         return employeeRepository.findById(idEmployee)
                 .map(e -> EmployeeEmailResponseDto.builder()
@@ -77,6 +87,8 @@ public class EmployeeService {
                 .orElseThrow();
     }
 
+    @LogExecutionTime(description = "Update a user information.",
+            tag = CustomLogger.TAG_USERS)
     public void updateEmployeeById(String idEmployee, EmployeeUpdateRequestDto employeeDto)
             throws NoSuchElementException, DataIntegrityViolationException {
 

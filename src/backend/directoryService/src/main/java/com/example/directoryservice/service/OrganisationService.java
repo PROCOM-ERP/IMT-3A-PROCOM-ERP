@@ -1,9 +1,11 @@
 package com.example.directoryservice.service;
 
+import com.example.directoryservice.annotation.LogExecutionTime;
 import com.example.directoryservice.dto.OrgUnitResponseDto;
 import com.example.directoryservice.dto.OrganisationResponseDto;
 import com.example.directoryservice.model.Organisation;
 import com.example.directoryservice.repository.OrganisationRepository;
+import com.example.directoryservice.utils.CustomLogger;
 import lombok.RequiredArgsConstructor;
 // import org.slf4j.Logger;
 // import org.slf4j.LoggerFactory;
@@ -18,8 +20,8 @@ public class OrganisationService {
 
     private final OrganisationRepository organisationRepository;
 
-    //private final Logger logger = LoggerFactory.getLogger(OrganisationService.class);
-
+    @LogExecutionTime(description = "Retrieve all organisations.",
+            tag = CustomLogger.TAG_ORGANISATIONS)
     public Set<OrganisationResponseDto> getAllOrganisations() {
         return organisationRepository.findAll().stream()
                 .map(this::modelToResponseDto)

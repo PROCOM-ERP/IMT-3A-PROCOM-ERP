@@ -95,7 +95,7 @@ public class LoginProfileService {
         return LoginProfileIdResponseDto.builder().id(idLoginProfile).build();
     }
 
-    @LogExecutionTime(description = "Retrieve a user profile roles and activation status.",
+    @LogExecutionTime(description = "Retrieve a user login profile roles and activation status.",
             tag = CustomLogger.TAG_USERS)
     public LoginProfileResponseDto getLoginProfileById(String idLoginProfile)
             throws IllegalArgumentException,
@@ -125,7 +125,7 @@ public class LoginProfileService {
                 .build();
     }
 
-    @LogExecutionTime(description = "Retrieve a user profile activation status.",
+    @LogExecutionTime(description = "Retrieve a user login profile activation status.",
             tag = CustomLogger.TAG_USERS)
     public LoginProfileActivationResponseDto getLoginProfileActivationById(String idLoginProfile)
             throws IllegalArgumentException,
@@ -144,7 +144,7 @@ public class LoginProfileService {
                         new NoSuchElementException("No existing user with id " + idLoginProfile + "."));
     }
 
-    @LogExecutionTime(description = "Update a user profile password.",
+    @LogExecutionTime(description = "Update a user login profile password.",
             tag = CustomLogger.TAG_USERS)
     public void updateLoginProfilePasswordById(
             String idLoginProfile,
@@ -186,7 +186,7 @@ public class LoginProfileService {
     }
 
     @Transactional
-    @LogExecutionTime(description = "Update a user profile roles and / or activation status.",
+    @LogExecutionTime(description = "Update a user login profile roles and / or activation status.",
             tag = CustomLogger.TAG_USERS)
     public void updateLoginProfileById(
             String idLoginProfile,
@@ -235,7 +235,7 @@ public class LoginProfileService {
         }
     }
 
-    @LogExecutionTime(description = "Update a user profile email address.",
+    @LogExecutionTime(description = "Update a user email address.",
             tag = CustomLogger.TAG_USERS)
     public void updateLoginProfileEmail(String getEmployeeEmailById)
             throws RestClientException {

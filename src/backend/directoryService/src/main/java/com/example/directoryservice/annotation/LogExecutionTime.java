@@ -1,4 +1,4 @@
-package com.example.authenticationservice.annotation;
+package com.example.directoryservice.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,8 +7,9 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface LogMessageReceived {
+public @interface LogExecutionTime {
 
+    String description();
     String tag() default "";
 
 }
