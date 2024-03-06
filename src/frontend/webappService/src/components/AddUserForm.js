@@ -41,7 +41,9 @@ function AddUserForm({ title }) {
         },
       });
       if (!response.ok) {
-        throw new Error(response.status);
+        if (response.status === 401) { navigate("/error401"); }
+        else if (response.status === 403) { navigate("/error403"); }
+        else { throw new Error(response.status + " " + response.statusText); }
       }
       const data = await response.json();
       setRoles(data);
@@ -61,7 +63,9 @@ function AddUserForm({ title }) {
         },
       });
       if (!response.ok) {
-        throw new Error(response.status);
+        if (response.status === 401) { navigate("/error401"); }
+        else if (response.status === 403) { navigate("/error403"); }
+        else { throw new Error(response.status + " " + response.statusText); }
       }
       const data = await response.json();
       setOrganizations(data);
@@ -103,7 +107,9 @@ function AddUserForm({ title }) {
       );
 
       if (!response.ok) {
-        throw new Error("Failed to submit user email for login-profile");
+        if (response.status === 401) { navigate("/error401"); }
+        else if (response.status === 403) { navigate("/error403"); }
+        else { throw new Error(response.status + " " + response.statusText); }
       }
       const data = await response.json();
       setUserInfo((prevUserInfo) => ({
@@ -133,7 +139,9 @@ function AddUserForm({ title }) {
         );
 
         if (!secondResponse.ok) {
-          throw new Error("Failed to submit user information for creation");
+          if (response.status === 401) { navigate("/error401"); }
+          else if (response.status === 403) { navigate("/error403"); }
+          else { throw new Error(response.status + " " + response.statusText); }
         }
 
         // Handle success response for the second request
