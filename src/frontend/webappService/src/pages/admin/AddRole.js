@@ -1,7 +1,7 @@
 import React from 'react'; // Importing React library
-import RoleForm from '../../components/RoleForm'; // Importing RoleForm component
 import Navbar from '../../components/Navbar'; // Importing Navbar component
 import CheckAdminConnection from '../../components/CheckAdminConnection'; // Importing CheckAdminConnection component
+import RoleForm from '../../components/admin/RoleForm'; // Importing RoleForm component
 
 function AddRole() {
   return (
