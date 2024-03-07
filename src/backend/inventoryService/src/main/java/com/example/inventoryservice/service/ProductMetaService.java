@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class ProductMetaService {
-    final private ProductMetaRepository productMetaRepository;
 
     static ProductMetaDto productMetaToDto(ProductMeta productMeta){
         return ProductMetaDto.builder()

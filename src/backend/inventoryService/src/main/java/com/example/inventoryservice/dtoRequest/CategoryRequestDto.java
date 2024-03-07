@@ -13,21 +13,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ProductMetaRequestDto {
+public class CategoryRequestDto {
     @NotBlank
     @NotNull
-    @Size(max=255)
+    @Size(max=127)
     @Pattern(regexp = "^[^';\"\\\\]*$")
-    private String key;
-    @NotBlank
-    @NotNull
-    @Pattern(regexp = "^[^';\"\\\\]*$")
-    private String value;
-    @NotBlank
-    @NotNull
-    @Size(max=15)
-    @Pattern(regexp = "^[^';\"\\\\]*$")
-    private String type;
+    private String title;
     @Pattern(regexp = "^[^';\"\\\\]*$")
     private String description;
 }

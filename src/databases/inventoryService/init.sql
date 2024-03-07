@@ -13,20 +13,20 @@
 -- Creation of 'inventories'
 CREATE TABLE addresses (
     id_address SERIAL NOT NULL,
-    number VARCHAR(31),
-    street VARCHAR (255),
-    city VARCHAR (63) ,
-    state VARCHAR (63),
-    country VARCHAR (63),
-    postal_code VARCHAR(15),
+    number VARCHAR(31) NOT NULL,
+    street VARCHAR (255) NOT NULL,
+    city VARCHAR (63) NOT NULL,
+    state VARCHAR (63) NOT NULL,
+    country VARCHAR (63) NOT NULL,
+    postal_code VARCHAR(15) NOT NULL,
     info TEXT,
 
     CONSTRAINT pk_addresses PRIMARY KEY (id_address)
 );
 
 CREATE TABLE products (
-    id_product SERIAL NOT NULL ,
-    title VARCHAR(128) NOT NULL,
+    id_product SERIAL NOT NULL,
+    title VARCHAR(127) NOT NULL,
     description TEXT,
 
     CONSTRAINT pk_products PRIMARY KEY (id_product)
@@ -34,7 +34,7 @@ CREATE TABLE products (
 
 CREATE TABLE categories (
     id_category SERIAL NOT NULL,
-    title VARCHAR(128) NOT NULL,
+    title VARCHAR(127) NOT NULL,
     description TEXT,
 
     CONSTRAINT pk_categories PRIMARY KEY (id_category)
@@ -43,7 +43,7 @@ CREATE TABLE categories (
 CREATE TABLE product_meta (
     id_product_meta SERIAL NOT NULL,
     key VARCHAR(255) NOT NULL,
-    type VARCHAR(16) NOT NULL,
+    type VARCHAR(15) NOT NULL,
     value TEXT NOT NULL,
     description TEXT,
     id_product INT NOT NULL,
@@ -63,7 +63,9 @@ CREATE TABLE items (
     CONSTRAINT fk_items_table_products
         FOREIGN KEY (id_product) REFERENCES products(id_product),
     CONSTRAINT fk_items_table_addresses
-        FOREIGN KEY (id_address) REFERENCES addresses(id_address)
+        FOREIGN KEY (id_address) REFERENCES addresses(id_address),
+    CONSTRAINT positive_item_quantity
+        CHECK (quantity >= 0 OR quantity is NULL)
 );
 
 CREATE TABLE transactions (
@@ -106,10 +108,11 @@ VALUES (1, 1),
 
 
 INSERT INTO addresses (number, street, city, state, country, postal_code, info)
-VALUES ('15', 'entrepot de Malta Shopper', 'Malte', 'Valleta', 'Malte', '66666', 'je n''y reviendrai plus jamais !');
+VALUES ('15', 'entrepot de Malta Shopper', 'Malte', 'Valleta', 'Malte', '66666', 'je n''y reviendrai plus jamais !'),
+       ('100', 'Rue Louis veuillot', 'Brest', 'Bretage', 'France', '27000', '@ du challet');
 
 INSERT INTO items (quantity, id_address, id_product)
-VALUES (10, 1, 1),
+VALUES (12, 1, 1),
        (10, 1, 2);
 
 INSERT INTO transactions(quantity, timestamp, employee, id_item)

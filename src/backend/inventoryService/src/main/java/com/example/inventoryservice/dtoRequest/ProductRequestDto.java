@@ -1,15 +1,10 @@
 package com.example.inventoryservice.dtoRequest;
 
-import com.example.inventoryservice.dto.AddressDto;
-import com.example.inventoryservice.dto.CategoryDto;
-import com.example.inventoryservice.dto.ItemDto;
-import com.example.inventoryservice.dto.ProductMetaDto;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
 import java.util.List;
 
 @Getter
@@ -17,10 +12,18 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class ProductRequestDto {
+    @NotBlank
+    @NotNull
+    @Size(max=127)
+    @Pattern(regexp = "^[^';\"\\\\]*$")
     private String title;
+    @Pattern(regexp = "^[^';\"\\\\]*$")
     private String description;
     private List<Integer> categories;   // This contains the id of each category.
     private List<ProductMetaRequestDto> productMeta;
+    @Min(0)
+    @NotNull
     private Integer numberOfItem;       // Defines the initial quantity of this product.
+    @Min(0)
     private Integer address;    // Should be empty if numberOfItem == 0;
 }

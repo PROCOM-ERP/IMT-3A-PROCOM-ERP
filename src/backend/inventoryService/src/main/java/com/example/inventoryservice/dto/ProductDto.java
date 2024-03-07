@@ -18,4 +18,5 @@ public class ProductDto {
     private List<ItemDto> items;
     private List<CategoryDto> categories;
     private List<ProductMetaDto> productMeta;
+    private Integer quantity;
 }
