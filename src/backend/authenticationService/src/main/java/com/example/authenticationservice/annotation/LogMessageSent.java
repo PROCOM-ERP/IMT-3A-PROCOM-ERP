@@ -11,5 +11,7 @@ public @interface LogMessageSent {
 
     String description();
     String tag() default "";
+    String routingPattern();
+    String deliveryMethod();
 
 }

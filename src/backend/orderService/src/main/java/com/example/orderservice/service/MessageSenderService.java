@@ -1,12 +1,12 @@
 package com.example.orderservice.service;
 
+import com.example.orderservice.annotation.LogMessageSent;
 import com.example.orderservice.model.Path;
 import com.example.orderservice.utils.CustomHttpRequestBuilder;
+import com.example.orderservice.utils.CustomLogger;
 import com.example.orderservice.utils.MessageUtils;
 
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.AmqpMessageReturnedException;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Message;
@@ -14,6 +14,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.amqp.core.MessageDeliveryMode;
 import org.springframework.amqp.core.MessagePostProcessor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
 
@@ -25,14 +26,21 @@ public class MessageSenderService implements CommandLineRunner {
     private final RabbitTemplate rabbitTemplate;
     private final DirectExchange rolesDirectExchange;
     private final MessageUtils messageUtils;
+    private final CustomLogger logger;
+
+    @Value("${security.service.name}")
+    private String sender; // message sender is the service itself
 
     private static final int MAX_RETRIES = 10; // Example max retries
 
-    private final Logger logger = LoggerFactory.getLogger(MessageSenderService.class);
-
     @Override
+    @LogMessageSent(tag = CustomLogger.TAG_ROLES,
+            routingPattern = "roles.init",
+            deliveryMethod = "Unicast",
+            description = "Message sent to inform the authentication service that a service roles have to be retrieved.")
     public void run(String... args) {
-        logger.info("Sending message about service initialisation to retrieve its roles...");
+        String description = "Message received to retrieve " + sender + " service roles.";
+        String routingPattern = "roles.init";
         String resource = Path.ROLES;
         String path = customHttpRequestBuilder.buildPath(Path.V1, resource);
 
@@ -41,6 +49,10 @@ public class MessageSenderService implements CommandLineRunner {
         // We will have more information if the message is sent back
 
         MessagePostProcessor messagePostProcessor = message -> {
+            message.getMessageProperties().setHeader("sender", sender);
+            message.getMessageProperties().setHeader("routingPattern", routingPattern);
+            message.getMessageProperties().setHeader("description", description);
+            message.getMessageProperties().setHeader("systemTimeMillis", System.currentTimeMillis());
             message.getMessageProperties().setDeliveryMode(MessageDeliveryMode.PERSISTENT);
             return message;
         };
@@ -50,53 +62,65 @@ public class MessageSenderService implements CommandLineRunner {
         MessageConverter messageConverter = mandatoryTemplate.getMessageConverter();
         Message message = messageConverter.toMessage(path, null);
 
-        sendWithRetry(rolesDirectExchange.getName(), "roles.init", message, messagePostProcessor, 0);
+        sendWithRetry(rolesDirectExchange.getName(), routingPattern, message, messagePostProcessor, 0);
     }
 
+    @LogMessageSent(tag = CustomLogger.TAG_ROLES,
+            routingPattern = "role.activation",
+            deliveryMethod = "Unicast",
+            description = "Message sent to inform the authentication service " +
+                    "that a service role activation status has changed.")
     public void sendRoleActivationMessage(String roleName) {
-        logger.info("Sending message to inform about a change on role activation status...");
+        String description = "Message received to set " + sender + " service role " +  roleName + " activation status.";
+        String routingPattern = "role.activation";
         String resource = String.format("%s/%s%s", Path.ROLES, roleName, Path.ACTIVATION);
         String path = customHttpRequestBuilder.buildPath(Path.V1, resource);
-        rabbitTemplate.convertAndSend(rolesDirectExchange.getName(), "role.activation", path);
-        logger.info("Message sent");
+        rabbitTemplate.convertAndSend(rolesDirectExchange.getName(), routingPattern, path,
+                getMessageCustomHeaders(description, routingPattern));
     }
 
-    public void sendWithRetry(String exchange, String routingKey, Message data, MessagePostProcessor postProcessor,
-            int retryCount) {
+    public void sendWithRetry(String exchange, String routingKey, Message data,
+                              MessagePostProcessor postProcessor, int retryCount)
+    {
         rabbitTemplate.setMandatory(true);
-
         try {
-            Object response = rabbitTemplate.convertSendAndReceive(exchange, routingKey, data);
-            if (response != null) {
-                logger.info("Reply received for message sent to routing key: " + routingKey);
-            } else {
-                // it's normal not to receive a message, auth service's response need to be
-                // configured
-                logger.info(
-                        "No reply received for message sent to routing key: " + routingKey + ", but message was sent.");
-            }
+            rabbitTemplate.convertSendAndReceive(exchange, routingKey, data, postProcessor);
+            // it's normal not to receive a message, authentication service's response needs to be configured
         } catch (AmqpMessageReturnedException e) {
-            logger.error("Message returned with reply code: " + e.getReplyCode() +
+            String methodName = "sendWithRetry";
+            String deliveryMethod = "Unicast";
+            String errorMessage = "Message returned with reply code: " + e.getReplyCode() +
                     ", reply text: " + e.getReplyText() +
                     ", exchange: " + e.getExchange() +
-                    ", routingKey: " + e.getRoutingKey());
+                    ", routingKey: " + e.getRoutingKey();
             if (retryCount < MAX_RETRIES) {
                 long delay = messageUtils.calculateExponentialBackoff(retryCount);
                 try {
-                    logger.info("Waiting for " + delay + "ms before retrying...");
-                    Thread.sleep(delay); // Consider using scheduled tasks for non-blocking delay
-                    logger.info("Retrying message send to it's original queue: " + routingKey);
                     retryCount++;
+                    errorMessage += ". Try to send it again with delay (" + delay + "ms).";
+                    logger.error(errorMessage, methodName, routingKey, deliveryMethod, retryCount, delay);
+                    Thread.sleep(delay); // Consider using scheduled tasks for non-blocking delay
                     sendWithRetry(exchange, routingKey, e.getReturnedMessage(), postProcessor, retryCount);
                 } catch (InterruptedException iException) {
                     Thread.currentThread().interrupt();
-                    logger.error("Retry delay interrupted", iException);
-                } catch (Exception exception) {
-                    logger.error("Error during message resend", exception);
+                } catch (Exception ignored) {
                 }
             } else {
-                logger.error("Max retries reached. Giving up on sending message.");
+                errorMessage += ". Max retries reached. Giving up on sending message.";
+                logger.error(errorMessage, methodName, routingKey, deliveryMethod, retryCount);
             }
         }
+    }
+
+    /* Private Methods */
+    private MessagePostProcessor getMessageCustomHeaders(String description, String routingPattern)
+    {
+        return message -> {
+            message.getMessageProperties().setHeader("sender", sender);
+            message.getMessageProperties().setHeader("routingPattern", routingPattern);
+            message.getMessageProperties().setHeader("description", description);
+            message.getMessageProperties().setHeader("systemTimeMillis", System.currentTimeMillis());
+            return message;
+        };
     }
 }

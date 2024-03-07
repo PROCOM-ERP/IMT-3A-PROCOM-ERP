@@ -19,6 +19,7 @@ public class CustomLogger {
 
     public static final String TAG_USERS = "Users";
     public static final String TAG_ROLES = "Roles";
+    public static final String TAG_MESSAGE = "MessageIssues";
 
     /* Utils Beans */
     private final Logger logger = LoggerFactory.getLogger(CustomLogger.class);
@@ -28,28 +29,24 @@ public class CustomLogger {
     public void infoServiceMethod(String message, String tag,
                                   String methodName, long methodExecutionTime)
     {
-        info(message, tag, methodName, METHOD_TYPE_SERVICE, methodExecutionTime);
+        MDC.put("methodExecutionTime", String.valueOf(methodExecutionTime));
+        info(message, tag, methodName, METHOD_TYPE_SERVICE);
     }
 
     public void infoMessageSendingMethod(String message, String tag,
-                                         String methodName, long methodExecutionTime,
-                                         long amqpMessageReceptionTime,
-                                         String routingPattern, String deliveryMethod)
+                                         String methodName, String routingPattern, String deliveryMethod)
     {
-        info(message, tag, methodName, METHOD_TYPE_MESSAGE_SEND, methodExecutionTime,
-                amqpMessageReceptionTime, routingPattern, deliveryMethod);
+        info(message, tag, methodName, METHOD_TYPE_MESSAGE_SEND, routingPattern, deliveryMethod);
     }
 
     public void infoMessageReceptionMethod(String message, String tag,
-                                           String methodName, long methodExecutionTime,
-                                           long amqpMessageReceptionTime,
-                                           String routingPattern, String deliveryMethod,
-                                           String sender, String queue)
+                                           String methodName, String routingPattern, String deliveryMethod,
+                                           String sender, String queue, long amqpMessageReceptionTime)
     {
+        MDC.put("amqpMessageReceptionTime", String.valueOf(amqpMessageReceptionTime));
         MDC.put("sender", sender);
         MDC.put("queue", queue);
-        info(message, tag, methodName, METHOD_TYPE_MESSAGE_RECEPTION, methodExecutionTime,
-                amqpMessageReceptionTime, routingPattern, deliveryMethod);
+        info(message, tag, methodName, METHOD_TYPE_MESSAGE_RECEPTION, routingPattern, deliveryMethod);
     }
 
     public void infoLoginProfile(String message, String tag, String username, String password)
@@ -61,18 +58,34 @@ public class CustomLogger {
 
     public void error(Exception e, String tag, String methodName, HttpStatus httpStatus)
     {
+        MDC.put("httpStatus", httpStatus.toString());
+        MDC.put("stacktrace", Arrays.toString(e.getStackTrace()));
+        error(e.getMessage(), tag, methodName);
+    }
+
+    public void error(String message, String methodName,
+                      String routingPattern, String deliveryMethod, int retries, long delay)
+    {
+        MDC.put("amqpMessageSendDelay", String.valueOf(delay));
+        error(message, methodName, routingPattern, deliveryMethod, retries);
+    }
+
+    public void error(String message, String methodName,
+                      String routingPattern, String deliveryMethod, int retries)
+    {
+        MDC.put("routingPattern", routingPattern);
+        MDC.put("deliveryMethod", deliveryMethod);
+        MDC.put("amqpMessageSendRetries", String.valueOf(retries));
+        error(message, TAG_MESSAGE, methodName);
+    }
+
+    public void error(String message, String tag, String methodName)
+    {
         MDC.put("tag", tag);
         MDC.put("methodName", methodName);
         MDC.put("methodType", METHOD_TYPE_ERROR);
-        MDC.put("httpStatus", httpStatus.toString());
-        MDC.put("stacktrace", Arrays.toString(e.getStackTrace()));
-        logger.error(e.getMessage());
+        logger.error(message);
         MDC.clear();
-    }
-
-    public void error(Exception e, String tag, String methodName)
-    {
-        error(e, tag, methodName, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /* Private Methods */
@@ -83,24 +96,20 @@ public class CustomLogger {
         MDC.clear();
     }
 
-    private void info(String message, String tag,
-                      String methodName, String methodType,
-                      long methodExecutionTime)
+    public void info(String message, String tag,
+                      String methodName, String methodType)
     {
         MDC.put("methodName", methodName);
         MDC.put("methodType", methodType);
-        MDC.put("methodExecutionTime", String.valueOf(methodExecutionTime));
         info(message, tag);
     }
 
     private void info(String message, String tag,
                       String methodName, String methodType,
-                      long methodExecutionTime, long amqpMessageReceptionTime,
                       String routingPattern, String deliveryMethod)
     {
-        MDC.put("amqpMessageReceptionTime", String.valueOf(amqpMessageReceptionTime));
         MDC.put("routingPattern", routingPattern);
         MDC.put("deliveryMethod", deliveryMethod);
-        info(message, tag, methodName, methodType, methodExecutionTime);
+        info(message, tag, methodName, methodType);
     }
 }

@@ -12,6 +12,7 @@ spring:
   main:
     log-startup-info: off
     banner-mode: off
+    lazy-initialization: false
   profiles:
     active: dev
   datasource:

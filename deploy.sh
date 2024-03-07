@@ -588,7 +588,7 @@ EOF
 echo "Welcome to Procom ERP, here are the access links:"
 echo " "
 echo "1. Link to the frontend: [https://localhost:3000]"
-echo "2. Link to the gateway hello world to accept its certificate as well: [https://localhost:8041/api/v1/authentication/hello]"
+echo "2. Link to the gateway hello world to accept its certificate as well: [https://localhost:8041/api/authentication/v1/hello]"
 echo "3. Link to the Elastic stack (Kibana): [http://localhost:5601]"
 echo "4. Link to the Custom Dashboard: [http://localhost:5601/app/discover]. Click on \"Open\" to find and open the custom ERP-Dashboard"
 
