@@ -58,18 +58,34 @@ public class CustomLogger {
 
     public void error(Exception e, String tag, String methodName, HttpStatus httpStatus)
     {
+        MDC.put("httpStatus", httpStatus.toString());
+        MDC.put("stacktrace", Arrays.toString(e.getStackTrace()));
+        error(e.getMessage(), tag, methodName);
+    }
+
+    public void error(String message, String methodName,
+                      String routingPattern, String deliveryMethod, int retries, long delay)
+    {
+        MDC.put("amqpMessageSendDelay", String.valueOf(delay));
+        error(message, methodName, routingPattern, deliveryMethod, retries);
+    }
+
+    public void error(String message, String methodName,
+                      String routingPattern, String deliveryMethod, int retries)
+    {
+        MDC.put("routingPattern", routingPattern);
+        MDC.put("deliveryMethod", deliveryMethod);
+        MDC.put("amqpMessageSendRetries", String.valueOf(retries));
+        error(message, TAG_MESSAGE, methodName);
+    }
+
+    public void error(String message, String tag, String methodName)
+    {
         MDC.put("tag", tag);
         MDC.put("methodName", methodName);
         MDC.put("methodType", METHOD_TYPE_ERROR);
-        MDC.put("httpStatus", httpStatus.toString());
-        MDC.put("stacktrace", Arrays.toString(e.getStackTrace()));
-        logger.error(e.getMessage());
+        logger.error(message);
         MDC.clear();
-    }
-
-    public void error(Exception e, String tag, String methodName)
-    {
-        error(e, tag, methodName, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /* Private Methods */
@@ -80,7 +96,7 @@ public class CustomLogger {
         MDC.clear();
     }
 
-    private void info(String message, String tag,
+    public void info(String message, String tag,
                       String methodName, String methodType)
     {
         MDC.put("methodName", methodName);

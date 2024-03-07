@@ -87,6 +87,7 @@ public class MessageSenderService implements CommandLineRunner {
             // it's normal not to receive a message, authentication service's response needs to be configured
         } catch (AmqpMessageReturnedException e) {
             String methodName = "sendWithRetry";
+            String deliveryMethod = "Unicast";
             String errorMessage = "Message returned with reply code: " + e.getReplyCode() +
                     ", reply text: " + e.getReplyText() +
                     ", exchange: " + e.getExchange() +
@@ -96,7 +97,7 @@ public class MessageSenderService implements CommandLineRunner {
                 try {
                     retryCount++;
                     errorMessage += ". Try to send it again with delay (" + delay + "ms).";
-                    logger.error(errorMessage, methodName, routingKey, "Direct", retryCount, delay);
+                    logger.error(errorMessage, methodName, routingKey, deliveryMethod, retryCount, delay);
                     Thread.sleep(delay); // Consider using scheduled tasks for non-blocking delay
                     sendWithRetry(exchange, routingKey, e.getReturnedMessage(), postProcessor, retryCount);
                 } catch (InterruptedException iException) {
@@ -105,7 +106,7 @@ public class MessageSenderService implements CommandLineRunner {
                 }
             } else {
                 errorMessage += ". Max retries reached. Giving up on sending message.";
-                logger.error(errorMessage, methodName, routingKey, "Direct", retryCount);
+                logger.error(errorMessage, methodName, routingKey, deliveryMethod, retryCount);
             }
         }
     }

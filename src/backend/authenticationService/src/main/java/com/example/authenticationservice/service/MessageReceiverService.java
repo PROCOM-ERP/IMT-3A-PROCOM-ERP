@@ -1,11 +1,11 @@
 package com.example.authenticationservice.service;
 
+import com.example.authenticationservice.annotation.LogMessageReceived;
+import com.example.authenticationservice.utils.CustomLogger;
 import lombok.RequiredArgsConstructor;
 
 import java.io.IOException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.support.AmqpHeaders;
@@ -24,74 +24,82 @@ public class MessageReceiverService {
     private final LoginProfileService loginProfileService;
     private final MessageSenderService messageSenderService;
     private final MessageUtils messageUtils;
-
-    private final Logger logger = LoggerFactory.getLogger(MessageReceiverService.class);
+    private final CustomLogger logger;
 
     private static final int MAX_RETRIES = 6;
 
     /* Public Methods */
     @RabbitListener(queues = "roles-init-queue", containerFactory = "autoAckListenerContainerFactory")
-    public void receiveRolesInitMessage(Message originalMessage) {
-        String getAllRolesPath = new String(originalMessage.getBody());
-        Integer retryCount = (Integer) originalMessage.getMessageProperties().getHeaders().get("x-retry-count");
-
-        logger.info("Message received on startup of a service to init its roles: " + getAllRolesPath);
+    @LogMessageReceived(tag = CustomLogger.TAG_ROLES,
+            deliveryMethod = "Unicast", queue = "roles-init-queue")
+    public void receiveRolesInitMessage(Message message) {
+        String getAllRolesPath = new String(message.getBody());
+        Integer retryCount = (Integer) message.getMessageProperties().getHeaders().get("x-retry-count");
+        String methodName = "receiveRolesInitMessage";
         try {
             if ("/api/directory/v1/roles".equals(getAllRolesPath) && retryCount == null) {
                 try {
-                    // logger.info(
-                    // "Begginning sleep, for demonstration purpose, you have 20 seconds to pause
-                    // Springboot Directory container");
+                    String infoMessage = "Beginning sleep, for demonstration purpose, " +
+                            "you have 20 seconds to pause Springboot Directory container.";
+                    // logger.info(infoMessage, CustomLogger.TAG_ROLES, methodName,
+                    // CustomLogger.METHOD_TYPE_MESSAGE_RECEPTION);
                     // Thread.sleep(20000);
-                } catch (Exception e) {
-                    logger.error("Failed to sleep for the demonstration", e);
+                } catch (Exception ignored) {
                 }
             }
             // try to save all microservice roles
             roleService.saveAllMicroserviceRoles(getAllRolesPath);
-            logger.info("Roles successfully initialised");
         } catch (RestClientException e) {
-            logger.error("Roles initialisation failed", e);
-            messageSenderService.sendToDeadLetterQueueFrom(originalMessage, "roles-init-queue");
+            logger.error("Roles initialisation failed",
+                    CustomLogger.TAG_ROLES, methodName);
+            messageSenderService.sendToDeadLetterQueueFrom(message, "roles-init-queue");
         }
 
     }
 
     @RabbitListener(queues = "role-activation-queue", containerFactory = "autoAckListenerContainerFactory")
-    public void receiveRoleActivationMessage(String getRoleByNamePath) {
-        logger.info("Message received to set a role activation status: " + getRoleByNamePath);
+    @LogMessageReceived(tag = CustomLogger.TAG_ROLES,
+            deliveryMethod = "Unicast", queue = "role-activation-queue")
+    public void receiveRoleActivationMessage(Message message) {
+        String getRoleByNamePath = new String(message.getBody());
         try {
             // try to save microservice role
             roleService.saveMicroserviceRole(getRoleByNamePath);
-            logger.info("Role activation status successfully set");
-        } catch (RestClientException ignored) {
-            logger.error("Role activation status set failed");
+        } catch (Exception ignored) {
+            String methodName = "receiveRoleActivationMessage";
+            logger.error("Role activation status set failed",
+                    CustomLogger.TAG_ROLES, methodName);
         }
     }
 
     @RabbitListener(queues = "employee-email-queue", containerFactory = "autoAckListenerContainerFactory")
-    public void receiveEmployeeEmailMessage(String message, @Header("amqp_receivedRoutingKey") String routingKey) {
-        switch (routingKey) {
-            case "employee.email.update":
-                receiveEmployeeEmailUpdate(message);
-                break;
-        }
+    @LogMessageReceived(tag = CustomLogger.TAG_USERS,
+            deliveryMethod = "Multicast", queue = "employee-email-queue")
+    public void receiveEmployeeEmailMessage(Message message, @Header("amqp_receivedRoutingKey") String routingKey) {
+        String body = new String(message.getBody());
+        if (routingKey.equals("employee.email.update"))
+            receiveEmployeeEmailUpdate(body);
     }
 
     @RabbitListener(queues = "dead-letter-queue", containerFactory = "manualAckListenerContainerFactory")
+    @LogMessageReceived(tag = CustomLogger.TAG_MESSAGE,
+            deliveryMethod = "Unicast", queue = "dead-letter-queue")
     public void receiveDeadLetterMessage(Message failedMessage,
             @Header(AmqpHeaders.DELIVERY_TAG) long deliveryTag,
             Channel channel) {
 
         String originalQueue = failedMessage.getMessageProperties().getHeader("x-original-queue");
-        Integer retryCount = (Integer) failedMessage.getMessageProperties().getHeader("x-retry-count");
+        Integer retryCount = failedMessage.getMessageProperties().getHeader("x-retry-count");
 
         if (retryCount == null) {
             retryCount = 0;
         }
 
-        logger.info("Received a message in DLQ, with original queue: " + originalQueue + ", and already retried: "
-                + retryCount + " times.");
+        String methodName = "receiveDeadLetterMessage";
+        String routingPattern = "roles.init";
+        String deliveryMethod = "Unicast";
+        String errorMessage = "Message received in the dead-letter-queue (original queue: " + originalQueue + "). " +
+                        "Service already retries " +  retryCount + " times.";
 
         // Increment retry count for the next attempt
         retryCount++;
@@ -100,26 +108,32 @@ public class MessageReceiverService {
         // Optionally, you can decide on a maximum retry count here
         if (retryCount <= MAX_RETRIES) {
             long delay = messageUtils.calculateExponentialBackoff(retryCount);
-
-            logger.info("Exponential backoff duration to sleep is now: " + delay);
-
+            errorMessage +=
+                    " Calculated exponential backoff delay before sending the message again will be " + delay + "ms.";
+            logger.error(errorMessage, methodName, routingPattern, deliveryMethod, retryCount, delay);
             messageSenderService.resendMessageWithDelay(failedMessage, originalQueue, delay);
             try {
                 channel.basicAck(deliveryTag, false);
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (IOException ignored) {
             }
         } else {
-            logger.error(
-                    "Attained maximum number of retries, we are not sending the message anymore, it will therefore live forever in the DLQ");
+            errorMessage += " Maximum number of retries reached, message will not be send anymore. " +
+                    "It will therefore live forever in the dead letter queue";
+            logger.error(errorMessage, methodName, routingPattern, deliveryMethod, retryCount);
         }
     }
 
     /* Private Methods */
-    private void receiveEmployeeEmailUpdate(String getEmployeeEmailById) {
-        logger.info("Message received to update a login-profile email: " + getEmployeeEmailById);
-        loginProfileService.updateLoginProfileEmail(getEmployeeEmailById);
-        logger.info("Email successfully updated");
+    private void receiveEmployeeEmailUpdate(String getEmployeeEmailById)
+    {
+        try {
+            // try to update employee email
+            loginProfileService.updateLoginProfileEmail(getEmployeeEmailById);
+        } catch (Exception ignored) {
+            String methodName = "receiveEmployeeEmailUpdate";
+            logger.error("User email update failed",
+                    CustomLogger.TAG_USERS, methodName);
+        }
     }
 
 }

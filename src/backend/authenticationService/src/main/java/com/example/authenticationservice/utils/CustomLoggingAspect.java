@@ -117,7 +117,7 @@ public class CustomLoggingAspect {
         String sender = message.getMessageProperties().getHeader("sender");
 
         // calculate reception time
-        Long sendingTimestamp = message.getMessageProperties().getHeader("sendingTimestamp");
+        Long sendingTimestamp = message.getMessageProperties().getHeader("systemTimeMillis");
         long receptionTime = System.currentTimeMillis() - sendingTimestamp;
 
         // log received message information
