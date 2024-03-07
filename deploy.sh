@@ -202,6 +202,33 @@ import_log_dashboard_in_kibana(){
 }
 
 # +-----------------------------------------------------------------------------+
+
+check_system_files(){
+    # List of files to copy
+    files_to_copy=(
+        "entrypoint.sh"
+        "wait-for-it.sh"
+        "procom-erp-truststore.jks"
+        "procom-erp-ca.pem"
+        "mvnw"
+        "db_entrypoint.sh"
+    )
+
+    # Loop through files and verify existence
+    for file in "${files_to_copy[@]}"; do
+        if [ ! -f "${system_path}/${file}" ]; then
+            echo "System error: ${file} file not found in ${system_path}."
+            if [ "${file}" == "procom-erp-truststore.jks" ] || [ "${file}" == "procom-erp-ca.pem" ]; then
+                echo " "
+                echo "It's a CA security file, you should probably deploy again using security options."
+                echo "Try to run: ./deploy.sh --clean-sec \"CA\" --sec (you can also add other options if needed)"
+            fi
+            exit 1
+        fi
+    done
+}
+
+# +-----------------------------------------------------------------------------+
 # | Core Functions                                                              |
 # +-----------------------------------------------------------------------------+
 
@@ -302,28 +329,6 @@ if ! [ -f "${docker_path}/docker-compose-swarm.yml" ]; then
     exit 1
 fi
 
-# List of files to copy
-files_to_copy=(
-    "entrypoint.sh"
-    "wait-for-it.sh"
-    "procom-erp-truststore.jks"
-    "procom-erp-ca.pem"
-    "mvnw"
-    "db_entrypoint.sh"
-)
-
-# Loop through files and verify existence
-for file in "${files_to_copy[@]}"; do
-    if [ ! -f "${system_path}/${file}" ]; then
-        echo "System error: ${file} file not found in ${system_path}."
-        if [ "${file}" == "procom-erp-truststore.jks" ] || [ "${file}" == "procom-erp-ca.pem" ]; then
-            echo " "
-            echo "It's a CA security file, you should probably deploy again using security options."
-            echo "Try to run: ./deploy.sh --clean-sec \"CA\" --sec (you can also add other options if needed)"
-        fi
-        exit 1
-    fi
-done
 
 if ! [ -d "${system_path}/.mvn" ]; then
     echo "System error: .mnv/ directory not found in ${system_path}"
@@ -530,6 +535,8 @@ fi
 if [ "$SEC" == "true" ]; then
     security
 fi
+
+check_system_files 
 
 copy_system_files
 

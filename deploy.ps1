@@ -200,6 +200,31 @@ function Import-LogDashboardInKibana {
 }
 
 # +-----------------------------------------------------------------------------+
+
+function CheckSystemFiles {
+    # List of files to verify and copy
+    $filesToCopy = @(
+        "entrypoint.sh",
+        "wait-for-it.sh",
+        "procom-erp-truststore.jks",
+        "procom-erp-ca.pem",
+        "mvnw",
+        ".mvn", # Assuming you want to include the .mvn directory as well
+        "db_entrypoint.sh"
+    )
+
+    # Loop through the files and verify existence
+    foreach ($file in $filesToCopy) {
+        $sourcePath = Join-Path -Path $systemPath -ChildPath $file
+
+        if (-Not (Test-Path -Path $sourcePath)) {
+            Write-Host "Required file $file not found in $systemPath."
+            exit 1
+        }
+    }
+}
+
+# +-----------------------------------------------------------------------------+
 # | Core Functions                                                              |
 # +-----------------------------------------------------------------------------+
 
@@ -296,26 +321,6 @@ if (-not (Test-Path "$dockerPath\docker-compose-swarm.yml")) {
     exit
 }
 
-# List of files to verify and copy
-$filesToCopy = @(
-    "entrypoint.sh",
-    "wait-for-it.sh",
-    "procom-erp-truststore.jks",
-    "procom-erp-ca.pem",
-    "mvnw",
-    ".mvn", # Assuming you want to include the .mvn directory as well
-    "db_entrypoint.sh"
-)
-
-# Loop through the files and verify existence
-foreach ($file in $filesToCopy) {
-    $sourcePath = Join-Path -Path $systemPath -ChildPath $file
-
-    if (-Not (Test-Path -Path $sourcePath)) {
-        Write-Host "Required file $file not found in $systemPath."
-        exit 1
-    }
-}
 
 # Handling command line arguments (equivalent to bash positional parameters)
 $swarm = $false
@@ -497,6 +502,8 @@ if ($cleanSec) {
 if ($sec) {
     Security
 }
+
+CheckSystemFiles
 
 Copy-SystemFiles
 
