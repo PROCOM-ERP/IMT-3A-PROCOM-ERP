@@ -198,7 +198,25 @@ import_log_dashboard_in_kibana(){
 
     # Import the NDJSON file into Kibana
     sleep 5
-    curl -u "$ELASTIC_USER:$ELASTIC_PASSWORD" -POST 'http://localhost:5601/api/saved_objects/_import?overwrite=true' -H "kbn-xsrf: true" --form file=@docker/elk/export.ndjson > /dev/null 2>&1
+
+    import="Successful"
+    max_attempts=10
+    attempt=0
+
+    while [ $attempt -lt $max_attempts ]; do
+        if curl -u "$ELASTIC_USER:$ELASTIC_PASSWORD" -X POST 'http://localhost:5601/api/saved_objects/_import?overwrite=true' -H "kbn-xsrf: true" --form file=@docker/elk/export.ndjson > /dev/null 2>&1; then
+            echo "Import successful."
+            break
+        else
+            attempt=$((attempt+1))
+            sleep 1
+        fi
+    done
+
+    if [ $attempt -eq $max_attempts ]; then
+        echo "Import failed after $max_attempts attempts. Please check and retry manually, or import the export file as indicated in the end of the ouptut of this handy script."
+        import="Failed"
+    fi
 }
 
 # +-----------------------------------------------------------------------------+
@@ -597,7 +615,19 @@ echo " "
 echo "1. Link to the frontend: [https://localhost:3000]"
 echo "2. Link to the gateway hello world to accept its certificate as well: [https://localhost:8041/api/authentication/v1/hello]"
 echo "3. Link to the Elastic stack (Kibana): [http://localhost:5601]"
-echo "4. Link to the Custom Dashboard: [http://localhost:5601/app/discover]. Click on \"Open\" to find and open the custom ERP-Dashboard"
+
+if [ "$import" == "Successful" ]; then
+    echo "4. Link to the Custom Dashboard: [http://localhost:5601/app/discover]. Click on \"Open\" to find and open the custom ERP-Dashboard"
+fi
+
+if [ "$import" == "Failed" ]; then
+    echo ""
+    echo "The Import of the custom dashboard failed, please try to do it manually within Elastic:"
+    echo " - In Elastic, in Discover [http://localhost:5601/app/discover], click on \"Open\"."
+    echo " - Click on \"Manage Searches\"."
+    echo " - Click on \"Import\"."
+    echo " - Import the ERP-Dashboard by selecting the export.ndjson file located here : \"./docker/elk/export.ndjson\"."
+fi
 
 echo -e "\a"
 

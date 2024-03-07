@@ -196,7 +196,25 @@ function Import-LogDashboardInKibana {
 
     # Import the NDJSON file into Kibana
     Start-Sleep -Seconds 5
-    curl -u "$elasticUser:$elasticPassword" -POST 'http://localhost:5601/api/saved_objects/_import?overwrite=true' -H "kbn-xsrf: true" --form file=@docker/elk/export.ndjson | Out-Null
+
+    $import = "Successful"
+    $max_attempts = 10
+    $attempt = 0
+
+    while ($attempt -lt $max_attempts) {
+        if ((Invoke-WebRequest -Uri "http://localhost:5601/api/saved_objects/_import?overwrite=true" -Method POST -Headers @{ "kbn-xsrf" = "true" } -Credential $ELASTIC_USER -Body @{ file = [System.IO.File]::ReadAllBytes("docker/elk/export.ndjson") }) -eq "Success") {
+            Write-Host "Import successful."
+            break
+        } else {
+            $attempt++
+            Start-Sleep -Seconds 1
+        }
+    }
+
+    if ($attempt -eq $max_attempts) {
+        Write-Host "Import failed after $max_attempts attempts. Please check and retry manually."
+        $import = "Failed"
+    }
 }
 
 # +-----------------------------------------------------------------------------+
@@ -556,5 +574,17 @@ Write-Host " "
 Write-Host "1. Link to the frontend: [https://localhost:3000]"
 Write-Host "2. Link to the gateway hello world to accept its certificate as well: [https://localhost:8041/api/v1/authentication/hello]"
 Write-Host "3. Link to the Elastic stack (Kibana): [http://localhost:5601]"
+
+if ($import -eq "Successful") {
 Write-Host "4. Link to the Custom Dashboard: [http://localhost:5601/app/discover]. Click on 'Open' to find and open the custom ERP-Dashboard"
+}
+
+if ($import -eq "Failed") {
+    Write-Host ""
+    Write-Host "The Import of the custom dashboard failed, please try to do it manually within Elastic:"
+    Write-Host " - In Elastic, in Discover [http://localhost:5601/app/discover], click on \"Open\"."
+    Write-Host " - Click on \"Manage Searches\"."
+    Write-Host " - Click on \"Import\"."
+    Write-Host " - Import the ERP-Dashboard by selecting the export.ndjson file located here : \"./docker/elk/export.ndjson\"."
+}
 # +----End of this handy script------------------------------------------------+
