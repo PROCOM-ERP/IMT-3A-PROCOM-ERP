@@ -1,5 +1,5 @@
-import React from 'react'; // Import React library
-import { useParams } from 'react-router-dom'; // Import useParams hook from react-router-dom
+import React, { useEffect } from 'react'; // Import React library
+import { useNavigate, useParams } from 'react-router-dom'; // Import useParams hook from react-router-dom
 import CheckAdminConnection from '../../components/CheckAdminConnection'; // Import CheckAdminConnection component
 import Navbar from '../../components/Navbar'; // Import Navbar component
 import UserProfilAdmin from '../../components/admin/UserProfilAdmin'; // Import UserProfilAdmin component

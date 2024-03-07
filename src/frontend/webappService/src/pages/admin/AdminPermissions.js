@@ -1,6 +1,6 @@
 import React from 'react'; // Import React library
 import Navbar from '../../components/Navbar'; // Import Navbar component
-import DisplayPermissions from '../../components/DisplayPermissions'; // Import DisplayPermissions component
+import DisplayPermissions from '../../components/admin/DisplayPermissions'; // Import DisplayPermissions component
 import CheckAdminConnection from '../../components/CheckAdminConnection'; // Import CheckAdminConnection component
 
 function AdminPermissions() {
