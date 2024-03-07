@@ -1,7 +1,7 @@
 import React from "react";
-import Navbar from "../components/Navbar";
-import AddUserForm from "../components/AddUserForm";
-import CheckAdminConnection from "../components/CheckAdminConnection";
+import Navbar from "../../components/Navbar";
+import AddUserForm from "../../components/AddUserForm";
+import CheckAdminConnection from "../../components/CheckAdminConnection";
 
 function AddUser() {
   return (

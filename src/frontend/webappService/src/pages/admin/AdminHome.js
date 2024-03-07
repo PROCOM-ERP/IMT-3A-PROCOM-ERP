@@ -1,6 +1,6 @@
 import React from 'react'
-import Navbar from '../components/Navbar'
-import CheckAdminConnection from '../components/CheckAdminConnection'
+import Navbar from '../../components/Navbar'
+import CheckAdminConnection from '../../components/CheckAdminConnection'
 
 function AdminHome() {
 

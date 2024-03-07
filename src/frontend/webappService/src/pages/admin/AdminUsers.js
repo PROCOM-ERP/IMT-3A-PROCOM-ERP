@@ -1,7 +1,7 @@
 import React from 'react'
-import Navbar from '../components/Navbar'
-import DirectoryTable from '../components/DirectoryTable'
-import CheckAdminConnection from '../components/CheckAdminConnection'
+import Navbar from '../../components/Navbar'
+import DirectoryTable from '../../components/DirectoryTable'
+import CheckAdminConnection from '../../components/CheckAdminConnection'
 
 function AdminUsers() {
   // TODO: colors management for admin and links

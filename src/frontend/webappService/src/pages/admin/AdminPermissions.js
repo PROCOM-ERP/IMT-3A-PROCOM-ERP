@@ -1,7 +1,7 @@
 import React from 'react';
-import Navbar from '../components/Navbar';
-import DisplayPermissions from '../components/DisplayPermissions';
-import CheckAdminConnection from '../components/CheckAdminConnection'
+import Navbar from '../../components/Navbar';
+import DisplayPermissions from '../../components/DisplayPermissions';
+import CheckAdminConnection from '../../components/CheckAdminConnection'
 
 
 function AdminPermissions() {

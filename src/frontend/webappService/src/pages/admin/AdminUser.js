@@ -1,8 +1,8 @@
 import React from 'react'
-import Navbar from '../components/Navbar'
-import UserProfilAdmin from '../components/UserProfilAdmin'
+import Navbar from '../../components/Navbar'
+import UserProfilAdmin from '../../components/UserProfilAdmin'
 import { useParams } from 'react-router-dom';
-import CheckAdminConnection from '../components/CheckAdminConnection';
+import CheckAdminConnection from '../../components/CheckAdminConnection';
 
 function AdminUser() {
   const props = useParams();
