@@ -40,7 +40,9 @@
                             },
                             "metrics": {
                                 "method.execution.time": {"ms": "%mdc{methodExecutionTime}"},
-                                "amqp.message.reception.time": {"ms": "%mdc{amqpMessageReceptionTime}"}
+                                "amqp.reception.time": {"ms": "%mdc{amqpMessageReceptionTime}"},
+                                "amqp.sending.retries": {"ms": "%mdc{amqpMessageSendRetries}"},
+                                "amqp.sending.delay": {"ms": "%mdc{amqpMessageSendDelay}"}
                             },
                             "error": {
                                 "http.status": "%mdc{httpStatus}",
