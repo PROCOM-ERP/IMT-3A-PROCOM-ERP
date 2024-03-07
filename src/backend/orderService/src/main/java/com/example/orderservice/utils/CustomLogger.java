@@ -42,9 +42,8 @@ public class CustomLogger {
     }
 
     public void infoMessageReceptionMethod(String message, String tag,
-                                           String methodName, long amqpMessageReceptionTime,
-                                           String routingPattern, String deliveryMethod,
-                                           String sender, String queue)
+                                           String methodName, String routingPattern, String deliveryMethod,
+                                           String sender, String queue, long amqpMessageReceptionTime)
     {
         MDC.put("amqpMessageReceptionTime", String.valueOf(amqpMessageReceptionTime));
         MDC.put("sender", sender);

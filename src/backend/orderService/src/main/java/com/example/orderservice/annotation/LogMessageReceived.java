@@ -10,5 +10,7 @@ import java.lang.annotation.Target;
 public @interface LogMessageReceived {
 
     String tag() default "";
+    String deliveryMethod();
+    String queue();
 
 }
