@@ -9,6 +9,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
@@ -46,7 +47,7 @@ public class CustomLoggingAspect {
         return proceed;
     }
 
-    @After("@annotation(com.example.directoryservice.annotation.LogMessageSent)")
+    @Before("@annotation(com.example.directoryservice.annotation.LogMessageSent)")
     public void logMessageSent(@NonNull JoinPoint joinPoint)
     {
         // build and log method information
