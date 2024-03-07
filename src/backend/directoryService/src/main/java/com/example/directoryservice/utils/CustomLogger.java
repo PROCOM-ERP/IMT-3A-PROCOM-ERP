@@ -59,20 +59,20 @@ public class CustomLogger {
         error(e.getMessage(), tag, methodName);
     }
 
-    public void error(String message, String tag, String methodName,
+    public void error(String message, String methodName,
                       String routingPattern, String deliveryMethod, int retries, long delay)
     {
         MDC.put("amqpMessageSendDelay", String.valueOf(delay));
-        error(message, tag, methodName, routingPattern, deliveryMethod, retries);
+        error(message, methodName, routingPattern, deliveryMethod, retries);
     }
 
-    public void error(String message, String tag, String methodName,
+    public void error(String message, String methodName,
                       String routingPattern, String deliveryMethod, int retries)
     {
         MDC.put("routingPattern", routingPattern);
         MDC.put("deliveryMethod", deliveryMethod);
         MDC.put("amqpMessageSendRetries", String.valueOf(retries));
-        error(message, tag, methodName);
+        error(message, TAG_MESSAGE, methodName);
     }
 
     public void error(String message, String tag, String methodName)
@@ -83,8 +83,6 @@ public class CustomLogger {
         logger.error(message);
         MDC.clear();
     }
-
-
 
     /* Private Methods */
     private void info(String message, String tag)

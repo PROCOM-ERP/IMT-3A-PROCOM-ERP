@@ -96,8 +96,7 @@ public class MessageSenderService implements CommandLineRunner {
                 try {
                     retryCount++;
                     errorMessage += ". Try to send it again with delay (" + delay + "ms).";
-                    logger.error(errorMessage, CustomLogger.TAG_MESSAGE, methodName,
-                            routingKey, "Direct", retryCount, delay);
+                    logger.error(errorMessage, methodName, routingKey, "Direct", retryCount, delay);
                     Thread.sleep(delay); // Consider using scheduled tasks for non-blocking delay
                     sendWithRetry(exchange, routingKey, e.getReturnedMessage(), postProcessor, retryCount);
                 } catch (InterruptedException iException) {
@@ -106,8 +105,7 @@ public class MessageSenderService implements CommandLineRunner {
                 }
             } else {
                 errorMessage += ". Max retries reached. Giving up on sending message.";
-                logger.error(errorMessage, CustomLogger.TAG_MESSAGE, methodName,
-                        routingKey, "Direct", retryCount);
+                logger.error(errorMessage, methodName, routingKey, "Direct", retryCount);
             }
         }
     }
