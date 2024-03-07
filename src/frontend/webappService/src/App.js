@@ -16,10 +16,10 @@ import ModifyPassword from "./pages/ModifyPassword.js";
 
 import AdminHome from "./pages/admin/AdminHome.js";
 import AdminDirectory from "./pages/admin/AdminDirectory.js";
-import AdminUser from "./pages/AdminUser.js";
-import AddUser from "./pages/AddUser.js";
-import AdminPermissions from "./pages/AdminPermissions.js";
-import AddRole from "./pages/AddRole.js";
+import AdminUserProfil from "./pages/admin/AdminUserProfil.js";
+import AddUser from "./pages/admin/AddUser.js";
+import AdminPermissions from "./pages/admin/AdminPermissions.js";
+import AddRole from "./pages/admin/AddRole.js";
 
 import Error404 from "./pages/Error404.js";
 import Error401 from "./pages/Error401.js";
@@ -46,7 +46,7 @@ function App() {
 
           <Route path="/admin" exact Component={AdminHome} />
           <Route path="/adminDirectory" exact Component={AdminDirectory} />
-          <Route path="/manageUser/:userId" exact Component={AdminUser} />
+          <Route path="/adminUserProfil/:userId" exact Component={AdminUserProfil} />
           <Route path="/addUser" exact Component={AddUser} />
           <Route path="/adminPermissions" exact Component={AdminPermissions} />
           <Route path="/addRole" exact Component={AddRole} />

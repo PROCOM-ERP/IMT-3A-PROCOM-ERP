@@ -1,19 +1,17 @@
 import React from 'react'; // Import React library
 import { useParams } from 'react-router-dom'; // Import useParams hook from react-router-dom
-import Navbar from '../../components/Navbar'; // Import Navbar component
-import UserProfilAdmin from '../../components/UserProfilAdmin'; // Import UserProfilAdmin component
 import CheckAdminConnection from '../../components/CheckAdminConnection'; // Import CheckAdminConnection component
+import Navbar from '../../components/Navbar'; // Import Navbar component
+import UserProfilAdmin from '../../components/admin/UserProfilAdmin'; // Import UserProfilAdmin component
 
-function AdminUser() {
+function AdminUserProfil() {
 
   const { userId } = useParams(); // Get the userId parameter from the URL using useParams hook
   const navigate = useNavigate(); // Hook to navigate programmatically
 
   // useEffect hook to check if userId format is correct
   useEffect(() => {
-    // Regular expression to check if userId starts with 'A' followed by exactly 5 digits
-    const isValidUserId = /^A\d{5}$/.test(userId);
-
+    const isValidUserId = /^A\d{5}$/.test(userId); // Regular expression to check if userId starts with 'A' followed by exactly 5 digits
     // Redirect to error 403 page if userId format is not valid
     if (!isValidUserId) {
       navigate("/error403");
@@ -32,4 +30,4 @@ function AdminUser() {
     </>
   );
 }
-export default AdminUser;
+export default AdminUserProfil;
