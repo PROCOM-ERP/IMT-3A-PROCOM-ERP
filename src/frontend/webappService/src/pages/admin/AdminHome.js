@@ -6,9 +6,9 @@ function AdminHome() {
   // Render the AdminHome component
   return (
     <>
-      {/* Render the CheckAdminConnection component -> check jwt exists and if user is admin*/}
+      {/* Render the CheckAdminConnection component to check jwt exists and if user is admin */}
       <CheckAdminConnection />
-      {/* Render the Navbar component with the prop navUser='admin' -> manage navbar content and color */}
+      {/* Render the Navbar component with the prop navUser='admin' to manage navbar content and color */}
       <Navbar navUser='admin' />
     </>
   );
