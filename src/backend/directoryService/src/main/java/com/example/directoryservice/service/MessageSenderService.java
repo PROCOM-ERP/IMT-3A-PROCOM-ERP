@@ -99,7 +99,7 @@ public class MessageSenderService implements CommandLineRunner {
     {
         rabbitTemplate.setMandatory(true);
         try {
-            rabbitTemplate.convertSendAndReceive(exchange, routingKey, data);
+            rabbitTemplate.convertSendAndReceive(exchange, routingKey, data, postProcessor);
             // it's normal not to receive a message, authentication service's response needs to be configured
         } catch (AmqpMessageReturnedException e) {
             String methodName = "sendWithRetry";
