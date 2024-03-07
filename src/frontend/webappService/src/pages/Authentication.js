@@ -2,7 +2,7 @@ import '../css/App.css';
 import React from 'react';
 import AuthForm from '../components/AuthForm.js';
 
-function Authentification() {
+function Authentication() {
   return (
     <>
       <AuthForm />
@@ -10,4 +10,4 @@ function Authentification() {
   )
 }
 
-export default Authentification;
+export default Authentication;

@@ -1,13 +1,13 @@
 import '../css/Navbar.css'
-import React from 'react'
+import React, { useState } from 'react'
 
 
 function Navbar({ navUser = "user" }) { // navUSer can be user or admin
     const companyName = "ERP FIP";
-    let isAdmin = false;
-    if (navUser === "admin") isAdmin = true;
+    const [isAdmin, setIsAdmin] = useState(false);
+    if (navUser === "admin") setIsAdmin(true);
 
-    const getNavTitle = () => {
+    const getNavTab = () => {
         if (isAdmin) {
             return (
                 <>
@@ -52,7 +52,7 @@ function Navbar({ navUser = "user" }) { // navUSer can be user or admin
                 <a href="/" className="brand-name">{companyName}</a>
                 <div className={`navigation-menu ${navUser}`}>
                     <ul>
-                        {getNavTitle()}
+                        {getNavTab()}
                     </ul>
                 </div>
             </nav>

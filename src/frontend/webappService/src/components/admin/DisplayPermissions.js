@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import Button from './Button';
-import Popup from './Popup';
+import Button from '../Button';
+import Popup from '../Popup';
 import { useNavigate } from 'react-router-dom';
-import '../css/DisplayPermissions.css';
+import '../../css/DisplayPermissions.css';
 
 
 function DisplayPermissions() {

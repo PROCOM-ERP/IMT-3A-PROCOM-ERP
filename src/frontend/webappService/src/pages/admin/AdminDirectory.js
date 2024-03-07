@@ -3,7 +3,7 @@ import Navbar from '../../components/Navbar'
 import DirectoryTable from '../../components/DirectoryTable'
 import CheckAdminConnection from '../../components/CheckAdminConnection'
 
-function AdminUsers() {
+function AdminDirectory() {
   // TODO: colors management for admin and links
   return (
     <>
@@ -15,4 +15,4 @@ function AdminUsers() {
   )
 }
 
-export default AdminUsers
+export default AdminDirectory
