@@ -7,9 +7,11 @@ import com.example.authenticationservice.utils.CustomLogger;
 import org.springframework.amqp.core.FanoutExchange;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageBuilder;
+import org.springframework.amqp.core.MessagePostProcessor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -21,6 +23,9 @@ public class MessageSenderService {
     private final FanoutExchange rolesFanoutExchange;
     @Qualifier("loginProfilesSecExchange")
     private final FanoutExchange loginProfilesSecExchange;
+
+    @Value("${security.service.name}")
+    private String sender; // message sender is the service itself
 
     @Autowired
     public MessageSenderService(CustomHttpRequestBuilder customHttpRequestBuilder, RabbitTemplate rabbitTemplate,
@@ -36,9 +41,12 @@ public class MessageSenderService {
             deliveryMethod = "Broadcast",
             description = "Message sent to inform the network about role creation.")
     public void sendRolesNewMessage(String roleName) {
+        String description = "Message received to create the role " + roleName + ".";
+        String routingPattern = "roles.new";
         String resource = String.format("%s/%s%s", Path.ROLES, roleName, Path.ACTIVATION);
         String path = customHttpRequestBuilder.buildPath(Path.V1, resource);
-        rabbitTemplate.convertAndSend(rolesFanoutExchange.getName(), "roles.new", path);
+        rabbitTemplate.convertAndSend(rolesFanoutExchange.getName(), routingPattern, path,
+                getMessageCustomHeaders(description, routingPattern));
     }
 
     @LogMessageSent(tag = CustomLogger.TAG_USERS,
@@ -46,7 +54,10 @@ public class MessageSenderService {
             deliveryMethod = "Broadcast",
             description = "Message sent to inform the network about user login profile creation.")
     public void sendLoginProfilesNewMessage(String idLoginProfile) {
-        rabbitTemplate.convertAndSend(loginProfilesSecExchange.getName(), "login-profiles.new", idLoginProfile);
+        String description = "Message received to create the user " + idLoginProfile + " login profile.";
+        String routingPattern = "login-profiles.new";
+        rabbitTemplate.convertAndSend(loginProfilesSecExchange.getName(), routingPattern, idLoginProfile,
+                getMessageCustomHeaders(description, routingPattern));
     }
 
     @LogMessageSent(tag = CustomLogger.TAG_USERS,
@@ -54,7 +65,10 @@ public class MessageSenderService {
             deliveryMethod = "Broadcast",
             description = "Message sent to inform the network that all users' tokens must expire.")
     public void sendLoginProfilesJwtDisableOldMessage() {
-        rabbitTemplate.convertAndSend(loginProfilesSecExchange.getName(), "login-profiles.jwt.disable.old", "");
+        String description = "Message received to expire all users tokens.";
+        String routingPattern = "login-profiles.jwt.disable.old";
+        rabbitTemplate.convertAndSend(loginProfilesSecExchange.getName(), routingPattern, "",
+                getMessageCustomHeaders(description, routingPattern));
     }
 
     @LogMessageSent(tag = CustomLogger.TAG_USERS,
@@ -62,8 +76,10 @@ public class MessageSenderService {
             deliveryMethod = "Broadcast",
             description = "Message sent to inform the network that a user token must expire.")
     public void sendLoginProfileJwtDisableOldMessage(String idLoginProfile) {
-        rabbitTemplate.convertAndSend(loginProfilesSecExchange.getName(), "login-profile.jwt.disable.old",
-                idLoginProfile);
+        String description = "Message received to expire a user token.";
+        String routingPattern = "login-profile.jwt.disable.old";
+        rabbitTemplate.convertAndSend(loginProfilesSecExchange.getName(), routingPattern, idLoginProfile,
+                getMessageCustomHeaders(description, routingPattern));
     }
 
     @LogMessageSent(tag = CustomLogger.TAG_MESSAGE,
@@ -86,9 +102,12 @@ public class MessageSenderService {
             deliveryMethod = "Broadcast",
             description = "Message sent to inform the network that a user activation status must be set.")
     public void sendLoginProfileActivation(String idLoginProfile) {
+        String description = "Message received to set a user login profile activation status.";
+        String routingPattern = "login-profile.activation";
         String resource = String.format("%s/%s%s", Path.LOGIN_PROFILES, idLoginProfile, Path.ACTIVATION);
         String path = customHttpRequestBuilder.buildPath(Path.V1, resource);
-        rabbitTemplate.convertAndSend(loginProfilesSecExchange.getName(), "login-profile.activation", path);
+        rabbitTemplate.convertAndSend(loginProfilesSecExchange.getName(), routingPattern, path,
+                getMessageCustomHeaders(description, routingPattern));
     }
 
     @LogMessageSent(tag = CustomLogger.TAG_ROLES,
@@ -102,5 +121,17 @@ public class MessageSenderService {
             rabbitTemplate.convertAndSend(originalQueue, message);
         } catch (Exception ignored) {
         }
+    }
+
+    /* Private Methods */
+    private MessagePostProcessor getMessageCustomHeaders(String description, String routingPattern)
+    {
+        return message -> {
+            message.getMessageProperties().setHeader("sender", sender);
+            message.getMessageProperties().setHeader("routingPattern", routingPattern);
+            message.getMessageProperties().setHeader("description", description);
+            message.getMessageProperties().setHeader("systemTimeMillis", System.currentTimeMillis());
+            return message;
+        };
     }
 }
