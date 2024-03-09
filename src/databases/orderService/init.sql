@@ -166,6 +166,7 @@ VALUES ('admin'),
 INSERT INTO role_permissions (role, permission)
 VALUES ('admin', 'CanBypassAccessDeny'),
        ('admin', 'CanCreateOrder'),
+       ('admin', 'CanModifyOrder'),
        ('admin', 'CanModifyRole'),
        ('admin', 'CanReadEmployee'),
        ('admin', 'CanReadOrder'),
@@ -173,6 +174,7 @@ VALUES ('admin', 'CanBypassAccessDeny'),
        ('admin', 'CanReadRole'),
 
        ('user', 'CanCreateOrder'),
+       ('user', 'CanModifyOrder'),
        ('user', 'CanReadEmployee'),
        ('user', 'CanReadOrder'),
        ('user', 'CanReadProvider');
