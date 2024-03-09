@@ -10,6 +10,47 @@
 -- | Create table                                                                                 |
 -- +----------------------------------------------------------------------------------------------+
 
+CREATE TABLE roles
+(
+    name VARCHAR(32) UNIQUE NOT NULL,
+    is_enable BOOLEAN NOT NULL DEFAULT true,
+
+    CONSTRAINT pk_roles PRIMARY KEY (name),
+    CONSTRAINT check_roles_name
+        CHECK (roles.name ~* '^[a-zA-Z]([\-\.]?[a-zA-Z0-9])*$')
+);
+
+-- +----------------------------------------------------------------------------------------------+
+
+CREATE TABLE role_permissions
+(
+    role VARCHAR(32) NOT NULL,
+    permission VARCHAR(64) NOT NULL,
+
+    CONSTRAINT pk_role_permissions
+        PRIMARY KEY (role, permission),
+    CONSTRAINT fk_role_permissions_table_roles
+        FOREIGN KEY (role) REFERENCES roles(name)
+            ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT check_role_permissions_permission
+        CHECK (role_permissions.permission ~* '^Can[A-Z][a-z]([A-Z]?[a-z])*$')
+);
+
+-- +----------------------------------------------------------------------------------------------+
+
+CREATE TABLE login_profiles
+(
+    id CHAR(6) UNIQUE NOT NULL,
+    is_enable BOOLEAN NOT NULL DEFAULT true,
+    jwt_gen_min_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
+
+    CONSTRAINT pk_login_profiles PRIMARY KEY (id),
+    CONSTRAINT check_login_profiles_id
+        CHECK (login_profiles.id ~* '[A-Z][0-9]{5}')
+);
+
+-- +----------------------------------------------------------------------------------------------+
+
 -- Creation of 'inventories'
 CREATE TABLE addresses (
     id_address SERIAL NOT NULL,
@@ -91,6 +132,29 @@ CREATE TABLE joint_category_product (
     CONSTRAINT fk_joint_category_product_table_products
         FOREIGN KEY (id_product) REFERENCES products(id_product)
 );
+
+-- +----------------------------------------------------------------------------------------------+
+-- | Insert into                                                                                  |
+-- +----------------------------------------------------------------------------------------------+
+
+INSERT INTO roles (name)
+VALUES ('admin'),
+       ('user');
+
+-- +----------------------------------------------------------------------------------------------+
+
+INSERT INTO role_permissions (role, permission)
+VALUES ('admin', 'CanBypassAccessDeny'),
+       ('admin', 'CanModifyRole'),
+       ('admin', 'CanReadRole');
+
+-- +----------------------------------------------------------------------------------------------+
+
+INSERT INTO login_profiles (id)
+VALUES ('A00001'),
+       ('A00002');
+
+-- +----------------------------------------------------------------------------------------------+
 
 INSERT INTO categories (title, description)
 VALUES ('test_category', 'test_description');
