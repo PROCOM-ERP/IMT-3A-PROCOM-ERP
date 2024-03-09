@@ -39,6 +39,11 @@ public class RabbitMQConfig {
     }
 
     @Bean
+    public DirectExchange employeesDirectExchange() {
+        return new DirectExchange("employees-direct-exchange");
+    }
+
+    @Bean
     public TopicExchange employeesExchange() {
         return new TopicExchange("employees-exchange");
     }

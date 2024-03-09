@@ -57,7 +57,7 @@ public class OrderService {
         // create and save Order entity
         // TODO: change approver by the retrieving one from other microservice
         Order order = orderRepository.save(creationRequestDtoToModel(orderDto, totalAmount,
-                provider, address, orderer, orderer));
+                provider, address, orderer));
 
         // create and save OrderProduct entities
         orderProductRepository.saveAll(
@@ -180,8 +180,7 @@ public class OrderService {
 
     /* Private Methods */
     private Order creationRequestDtoToModel(OrderCreationRequestDto orderDto, BigDecimal totalAmount,
-                                            Provider provider, Address address,
-                                            Employee orderer, Employee approver)
+                                            Provider provider, Address address, Employee orderer)
     {
         return Order.builder()
                 .quote(orderDto.getQuote())
@@ -190,7 +189,6 @@ public class OrderService {
                 .address(address)
                 .orderer(orderer)
                 .progressStatus(ProgressStatus.Created.getId())
-                .approver(approver)
                 .build();
     }
 
