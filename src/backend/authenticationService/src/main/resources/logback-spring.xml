@@ -7,7 +7,7 @@
                     <pattern>
                         {
                             "application": {
-                                "name": "Authentication",
+                                "name": "authentication",
                                 "type": "Java Spring"
                             }
                         }
@@ -44,9 +44,9 @@
                             },
                             "metrics": {
                                 "method.execution.time": {"ms": "%mdc{methodExecutionTime}"},
-                                "amqp.reception.time": {"ms": "%mdc{amqpMessageReceptionTime}"},
-                                "amqp.sending.retries": {"ms": "%mdc{amqpMessageSendRetries}"},
-                                "amqp.sending.delay": {"ms": "%mdc{amqpMessageSendDelay}"}
+                                "amqp.reception.time": {"ms": "%mdc{amqpReceptionTime}"},
+                                "amqp.sending.retries": "%mdc{amqpSendingRetries}",
+                                "amqp.sending.delay": {"ms": "%mdc{amqpSendingDelay}"}
                             },
                             "error": {
                                 "http.status": "%mdc{httpStatus}",
