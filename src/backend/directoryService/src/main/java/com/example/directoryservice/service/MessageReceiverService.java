@@ -14,6 +14,7 @@ public class MessageReceiverService {
 
     private final RoleService roleService;
     private final LoginProfileService loginProfileService;
+    private final MessageSenderService messageSenderService;
     private final CustomLogger logger;
 
     /* Public Methods */
@@ -54,6 +55,15 @@ public class MessageReceiverService {
                 receiveLoginProfileJwtDisableOldMessage(body);
                 break;
         }
+    }
+
+    @RabbitListener(queues = "employee-info-get-queue")
+    @LogMessageReceived(tag = CustomLogger.TAG_USERS,
+            deliveryMethod = "Unicast", queue = "employee-info-get-queue")
+    public void receiveEmployeeInfoGet(Message message)
+    {
+        String idEmployee = new String(message.getBody());
+        messageSenderService.sendEmployeeInfoOrder(idEmployee);
     }
 
     /* Private Methods */

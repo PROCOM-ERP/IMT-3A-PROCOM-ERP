@@ -21,6 +21,11 @@ public class RabbitMQConfig {
         return new Queue("login-profiles-sec-queue-order");
     }
 
+    @Bean
+    public Queue employeeInfoOrderQueue() {
+        return new Queue("employee-info-order-queue");
+    }
+
     /* Exchanges */
 
     @Bean
@@ -65,6 +70,15 @@ public class RabbitMQConfig {
         return BindingBuilder.bind(loginProfilesSecQueueOrder)
                 .to(loginProfilesSecExchange)
                 .with("*")
+                .noargs();
+    }
+
+    @Bean
+    public Binding employeeInfoGetBinding(Queue employeeInfoOrderQueue,
+                                          Exchange employeesDirectExchange) {
+        return BindingBuilder.bind(employeeInfoOrderQueue)
+                .to(employeesDirectExchange)
+                .with("employee.info.order")
                 .noargs();
     }
 }

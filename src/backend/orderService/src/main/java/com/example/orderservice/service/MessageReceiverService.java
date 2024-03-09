@@ -56,6 +56,23 @@ public class MessageReceiverService {
         }
     }
 
+    @RabbitListener(queues = "employee-info-order-queue")
+    @LogMessageReceived(tag = CustomLogger.TAG_USERS,
+            deliveryMethod = "Unicast", queue = "employee-info-order-queue")
+    public void receiveEmployeeInfoGet(Message message)
+    {
+        String getEmployeeByIdPath = new String(message.getBody());
+        try {
+            // try to update the Order approver
+            // TODO: add method to update the Order approver
+            return;
+        } catch (Exception ignored) {
+            String methodName = "receiveEmployeeInfoGet";
+            logger.error("Order approver set failed.",
+                    CustomLogger.TAG_USERS, methodName);
+        }
+    }
+
     /* Private Methods */
     private void receiveLoginProfilesNewMessage(String idLoginProfile)
     {
