@@ -85,7 +85,7 @@ public class LoginProfileService {
         loginProfileRepository.save(loginProfile);
 
         // send mail to the new user
-        // mailService.sendNewLoginProfileMail(idLoginProfile, password);
+        mailService.sendNewLoginProfileMail(idLoginProfile, password);
         logger.infoLoginProfile("Created user username and password.", CustomLogger.TAG_USERS, idLoginProfile, password);
 
         // send message to inform the network about login profile creation
