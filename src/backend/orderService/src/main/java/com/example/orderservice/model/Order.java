@@ -44,10 +44,10 @@ public class Order {
     @Column(name = "quote", nullable = false, length = 64)
     private String quote;
 
+    @Builder.Default
     @NotNull
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "progress_status",nullable = false)
-    private ProgressStatus progressStatus;
+    @Column(name = "progress_status",nullable = false)
+    private Integer progressStatus = 1;
 
     @NotNull
     @ManyToOne(fetch = FetchType.EAGER, optional = false)

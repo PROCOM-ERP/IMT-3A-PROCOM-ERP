@@ -106,17 +106,6 @@ CREATE TABLE providers
 
 -- +----------------------------------------------------------------------------------------------+
 
-CREATE TABLE progress_status
-(
-    id SERIAL UNIQUE NOT NULL,
-    name VARCHAR(64) UNIQUE NOT NULL,
-
-    CONSTRAINT pk_progress_status PRIMARY KEY (id),
-    CONSTRAINT uq_progress_status UNIQUE (name)
-);
-
--- +----------------------------------------------------------------------------------------------+
-
 CREATE TABLE orders
 (
     id SERIAL UNIQUE NOT NULL,
@@ -131,9 +120,6 @@ CREATE TABLE orders
     approver INT,
 
     CONSTRAINT pk_orders PRIMARY KEY (id),
-    CONSTRAINT fk_orders_table_progress_status
-        FOREIGN KEY (progress_status) REFERENCES progress_status(id)
-            ON UPDATE CASCADE,
     CONSTRAINT fk_orders_table_address
         FOREIGN KEY (address) REFERENCES addresses(id)
             ON UPDATE CASCADE,
@@ -216,15 +202,6 @@ VALUES ('A00001', 'Bonnot', 'Jean', 'jean.bonnot@gmail.com', '+123456789'),
 INSERT INTO providers (name)
 VALUES ('Wool Factory'),
        ('Cotton retailer');
-
--- +----------------------------------------------------------------------------------------------+
-
-INSERT INTO progress_status (name)
-VALUES ('Created'),
-       ('Waiting for approval'),
-       ('Approved'),
-       ('Waiting for delivery'),
-       ('Received');
 
 -- +----------------------------------------------------------------------------------------------+
 

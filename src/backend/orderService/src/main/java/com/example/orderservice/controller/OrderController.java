@@ -2,6 +2,7 @@ package com.example.orderservice.controller;
 
 import com.example.orderservice.dto.OrderCreationRequestDto;
 import com.example.orderservice.dto.OrderResponseDto;
+import com.example.orderservice.dto.OrderUpdateProgressStatusDto;
 import com.example.orderservice.dto.OrdersByIdLoginProfileResponseDto;
 import com.example.orderservice.model.Path;
 import com.example.orderservice.service.OrderService;
@@ -111,6 +112,14 @@ public class OrderController {
             @PathVariable Integer idOrder)
     {
         return ResponseEntity.ok(orderService.getOrderById(idOrder));
+    }
+
+    @PatchMapping(Path.ORDER_ID_PROGRESS)
+    public ResponseEntity<String> updateOrderProgressStatusById(
+            @PathVariable Integer idOrder,
+            @RequestBody OrderUpdateProgressStatusDto progressStatusDto)
+    {
+        return ResponseEntity.noContent().build();
     }
 
 }

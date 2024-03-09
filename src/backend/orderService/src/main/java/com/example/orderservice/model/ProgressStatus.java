@@ -1,29 +1,17 @@
 package com.example.orderservice.model;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-@Builder
 @AllArgsConstructor
-@NoArgsConstructor
 @Getter
-@Setter
-@Entity
-@Table(name = "progress_status", schema = "public", indexes = {
-        @Index(name = "uq_progress_status", columnList = "name", unique = true)
-})
-public class ProgressStatus {
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "progress_status_id_gen")
-    @SequenceGenerator(name = "progress_status_id_gen", sequenceName = "progress_status_id_seq", allocationSize = 1)
-    @Column(name = "id", nullable = false)
-    private Integer id;
+public enum ProgressStatus {
 
-    @Size(max = 64)
-    @NotNull
-    @Column(name = "name", nullable = false, length = 64)
-    private String name;
+    Created(1),
+    WaitingForApproval(2),
+    Approved(3),
+    WaitingForDelivery(4),
+    Received(5);
 
+    private final Integer id;
 }
