@@ -111,14 +111,16 @@ public class OrderService {
 
         // check if the LoginProfile of the authenticated user is the orderer,
         // or the approver of the order (or admin)
+        String idOrderer = order.getOrderer().getLoginProfile().getId();
+        String idApprover = order.getApprover().getLoginProfile().getId();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentLoginProfileId = authentication.getName();
         boolean canBypassAccessDeny = authentication.getAuthorities()
                 .contains(new SimpleGrantedAuthority(Permission.CanBypassAccessDeny.name()));
-        if (! (currentLoginProfileId.equals(order.getOrderer().getLoginProfile().getId()) ||
-                canBypassAccessDeny ||
-                (order.getApprover() != null &&
-                        currentLoginProfileId.equals(order.getApprover().getLoginProfile().getId()))))
+        if (! (canBypassAccessDeny ||
+                currentLoginProfileId.equals(idOrderer) ||
+                order.getApprover() != null &&
+                currentLoginProfileId.equals(idApprover)))
         {
             throw new AccessDeniedException("");
         }
@@ -138,7 +140,43 @@ public class OrderService {
         return modelToResponseDto(order, products, allProgressStatus);
     }
 
-    @LogExecutionTime(description = "Update an order progress status.")
+    @LogExecutionTime(description = "Update an order progress status.",
+        tag = CustomLogger.TAG_ORDERS)
+    public void updateOrderProgressStatusById(Integer idOrder, OrderUpdateProgressStatusDto orderDto)
+            throws IllegalArgumentException,
+            NoSuchElementException
+    {
+        // retrieve Order entity
+        Order order = orderRepository.findById(idOrder)
+                .orElseThrow(() -> new NoSuchElementException("No existing order with id " + idOrder + "."));
+
+        // checks that the new ProgressStatus is the next as that of the current order
+        Integer idNextProgressStatus = orderDto.getIdProgressStatus();
+        if (order.getProgressStatus() != idNextProgressStatus - 1)
+            throw new IllegalArgumentException(
+                    "Provided progress status id is not the next logical one for the order " + idOrder + ".");
+
+        // check if the LoginProfile of the authenticated user is the orderer,
+        // or the approver of the order (or admin), and can change the Order ProgressStatus
+        String idOrderer = order.getOrderer().getLoginProfile().getId();
+        String idApprover = order.getApprover().getLoginProfile().getId();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentLoginProfileId = authentication.getName();
+        boolean canBypassAccessDeny = authentication.getAuthorities()
+                .contains(new SimpleGrantedAuthority(Permission.CanBypassAccessDeny.name()));
+        if (! (canBypassAccessDeny ||
+                order.getApprover() != null &&
+                currentLoginProfileId.equals(idApprover) ||
+                currentLoginProfileId.equals(idOrderer) &&
+                !(idNextProgressStatus.equals(ProgressStatus.Approved.getId()))))
+        {
+            throw new AccessDeniedException("");
+        }
+
+        // update Order ProgressStatus
+        order.setProgressStatus(idNextProgressStatus);
+        orderRepository.save(order);
+    }
 
     /* Private Methods */
     private Order creationRequestDtoToModel(OrderCreationRequestDto orderDto, BigDecimal totalAmount,
@@ -179,7 +217,7 @@ public class OrderService {
                 .approver(order.getApprover() != null ?
                         order.getApprover().getFirstName() + " " + order.getApprover().getLastName() :
                         null)
-                .status(progressStatusService.getAllProgressStatus().get(order.getProgressStatus()).name())
+                .status(progressStatusService.getProgressStatusById(order.getProgressStatus()).name())
                 .build();
     }
 
@@ -190,7 +228,7 @@ public class OrderService {
                 .provider(order.getProvider().getName())
                 .totalAmount(order.getTotalAmount())
                 .orderer(order.getOrderer().getFirstName() + " " + order.getOrderer().getLastName())
-                .status(progressStatusService.getAllProgressStatus().get(order.getProgressStatus()).name())
+                .status(progressStatusService.getProgressStatusById(order.getProgressStatus()).name())
                 .build();
     }
 

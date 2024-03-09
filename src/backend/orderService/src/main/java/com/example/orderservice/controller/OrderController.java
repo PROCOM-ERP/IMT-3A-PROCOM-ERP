@@ -115,10 +115,36 @@ public class OrderController {
     }
 
     @PatchMapping(Path.ORDER_ID_PROGRESS)
+    @Operation(operationId = "updateOrderProgressStatusById", tags = {"orders"},
+            summary = "Update the progress status of an order", description =
+            "Update the progress status of an order. Only the order approver (or admin) can approve an order",
+            parameters = {
+                    @Parameter(name = "idOrder", description =
+                            "The order id", in = ParameterIn.PATH)})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description =
+                    "Order progress status updated correctly",
+                    content = {@Content(mediaType = "application/json")} ),
+            @ApiResponse(responseCode = "400", description =
+                    "The request body is badly structured or formatted",
+                    content = {@Content(mediaType = "application/json") }),
+            @ApiResponse(responseCode = "401", description =
+                    "Roles in Jwt token are insufficient to authorize the access to this URL",
+                    content = {@Content(mediaType = "application/json")} ),
+            @ApiResponse(responseCode = "403", description =
+                    "Forbidden to update the order progress status"),
+            @ApiResponse(responseCode = "422", description =
+                    "Attribute values don't respect integrity constraints.<br>" +
+                    "IdProgressStatus : an integer from 1 to 5.",
+                    content = {@Content(mediaType = "application/json")} ),
+            @ApiResponse(responseCode = "500", description =
+                    "Uncontrolled error appeared",
+                    content = {@Content(mediaType = "application/json")} )})
     public ResponseEntity<String> updateOrderProgressStatusById(
             @PathVariable Integer idOrder,
-            @RequestBody OrderUpdateProgressStatusDto progressStatusDto)
+            @RequestBody OrderUpdateProgressStatusDto orderDto)
     {
+        orderService.updateOrderProgressStatusById(idOrder, orderDto);
         return ResponseEntity.noContent().build();
     }
 

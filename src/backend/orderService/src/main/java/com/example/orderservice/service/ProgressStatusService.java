@@ -14,6 +14,13 @@ public class ProgressStatusService {
 
     private final List<ProgressStatus> allProgressStatus = Arrays.stream(ProgressStatus.values()).toList();
 
+    public ProgressStatus getProgressStatusById(Integer id)
+            throws DataIntegrityViolationException
+    {
+        isValidProgressStatus(id);
+        return allProgressStatus.get(id);
+    }
+
     public void isValidProgressStatus(Integer progressStatus)
             throws DataIntegrityViolationException
     {

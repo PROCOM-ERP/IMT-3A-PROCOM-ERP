@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 @Getter
 public class OrderUpdateProgressStatusDto {
 
-    private Integer id;
+    private Integer idProgressStatus;
 }
