@@ -43,6 +43,7 @@ springdoc:
 
 security:
   service:
+    name: ${BACKEND_INVENTORY_SERVICE_NAME}
     sharedKey: ${SECURITY_SERVICES_SHARED_KEY}
     role: microservices
   jwt:
