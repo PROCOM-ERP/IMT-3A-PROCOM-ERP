@@ -18,7 +18,6 @@ public class EmployeeCreationRequestDto {
     private String firstName;
     @NotBlank
     private String email;
-    @NotBlank
     private String phoneNumber;
 
 }

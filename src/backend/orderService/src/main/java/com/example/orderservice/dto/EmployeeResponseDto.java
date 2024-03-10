@@ -20,7 +20,6 @@ public class EmployeeResponseDto {
     private String firstName;
     @NotNull
     private String email;
-    @NotNull
     private String phoneNumber;
     @NotNull
     private AddressResponseDto address;

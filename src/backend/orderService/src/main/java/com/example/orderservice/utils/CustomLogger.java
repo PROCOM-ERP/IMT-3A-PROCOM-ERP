@@ -58,6 +58,11 @@ public class CustomLogger {
         error(e.getMessage(), tag, methodName);
     }
 
+    public void error(Exception e, String tag, String methodName)
+    {
+        error(e, tag, methodName, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
     public void error(String message, String methodName,
                       String routingPattern, String deliveryMethod, int retries, long delay)
     {

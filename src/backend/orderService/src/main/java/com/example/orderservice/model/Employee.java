@@ -41,10 +41,10 @@ public class Employee {
     @Column(name = "email", nullable = false, length = 320)
     private String email;
 
+    @Builder.Default
     @Size(max = 24)
-    @NotNull
     @Column(name = "phone_number", nullable = false, length = 24)
-    private String phoneNumber;
+    private String phoneNumber = null;
 
     @Builder.Default
     @NotNull

@@ -182,6 +182,7 @@ public class OrderService {
         orderRepository.save(order);
     }
 
+    @Transactional
     @LogExecutionTime(description = "Update an order approver.",
             tag = CustomLogger.TAG_ORDERS)
     public void updateOrderApproverByOrdererId(EmployeeDirectoryResponseDto employeeDto)
@@ -191,11 +192,10 @@ public class OrderService {
         Employee approver = employeeService.createEmployee(employeeDto.getOrgUnit().getManager());
 
         // retrieve last Orderer information id
-        Employee orderer = employeeRepository.findLastEmployeeById(employeeDto.getId())
-                .orElseThrow(() -> new NoSuchElementException("No existing user with id " + employeeDto.getId() + "."));
+        Set<Integer> idsOrderer = employeeRepository.findAllIdsByIdLoginProfile(employeeDto.getId());
 
         // update all unapproved orderer orders approver
-        int rows = orderRepository.updateAllByOrdererAndProgressStatusLessThan(orderer.getId(),
+        int rows = orderRepository.updateAllByOrdererAndProgressStatusLessThan(idsOrderer,
                 approver.getId(), ProgressStatus.Approved.getId());
 
         if (rows < 1)

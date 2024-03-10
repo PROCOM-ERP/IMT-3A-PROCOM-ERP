@@ -98,9 +98,6 @@ CREATE TABLE org_units
 
     CONSTRAINT pk_org_units
         PRIMARY KEY (id),
-    CONSTRAINT fk_org_units_table_employees
-        FOREIGN KEY (manager) REFERENCES employees(id)
-            ON UPDATE CASCADE ON DELETE SET DEFAULT,
     CONSTRAINT fk_org_units_table_org_units
         FOREIGN KEY (org_unit) REFERENCES org_units(id)
             ON UPDATE CASCADE ON DELETE SET DEFAULT,
@@ -143,6 +140,11 @@ CREATE TABLE employees
     CONSTRAINT check_employees_phone_number
         CHECK (employees.phone_number ~* '^\+?[0-9]{1,3}?[-\s]?([0-9]{1,4}[-\s]?)*[0-9]{1,4}$')
 );
+
+-- +----------------------------------------------------------------------------------------------+
+
+ALTER TABLE org_units ADD CONSTRAINT fk_org_units_table_employees
+    FOREIGN KEY (manager) REFERENCES employees(id) ON UPDATE CASCADE ON DELETE SET DEFAULT;
 
 -- +----------------------------------------------------------------------------------------------+
 -- | Insert into                                                                                  |
@@ -205,4 +207,4 @@ VALUES ('A00001', 'Bonnot', 'Jean', 'jean.bonnot@gmail.com', 1),
 
 -- +----------------------------------------------------------------------------------------------+
 
-UPDATE org_units SET manager = 1 WHERE id >= 1;
+UPDATE org_units SET manager = 'A00001' WHERE id >= 1;

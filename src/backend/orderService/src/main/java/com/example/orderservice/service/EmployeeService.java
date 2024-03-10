@@ -20,6 +20,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
@@ -37,6 +38,7 @@ public class EmployeeService {
     private final RestTemplate restTemplate;
 
     /* Public Methods */
+    @Transactional
     @LogExecutionTime(description = "Create new user information profile.",
             tag = CustomLogger.TAG_USERS)
     public Employee createEmployee(EmployeeCreationRequestDto employeeDto)
@@ -54,7 +56,7 @@ public class EmployeeService {
                 .stream().filter(e -> e.getLastName().equals(employeeDto.getLastName()) &&
                 e.getFirstName().equals(employeeDto.getFirstName()) &&
                 e.getEmail().equals(employeeDto.getEmail()) &&
-                e.getPhoneNumber().equals(employeeDto.getPhoneNumber()))
+                (e.getPhoneNumber() == null || e.getPhoneNumber().equals(employeeDto.getPhoneNumber())))
                 .max(Comparator.comparing(Employee::getCreatedAt))
                 .orElse(employeeRepository.save(creationRequestDtoToModel(employeeDto, loginProfile)));
     }
@@ -104,7 +106,7 @@ public class EmployeeService {
         employeeDto.setLastName(employeeDto.getLastName().trim());
         employeeDto.setFirstName(employeeDto.getFirstName().trim());
         employeeDto.setEmail(employeeDto.getEmail().trim());
-        employeeDto.setPhoneNumber(employeeDto.getPhoneNumber().trim());
+        employeeDto.setPhoneNumber(employeeDto.getPhoneNumber() == null ? null : employeeDto.getPhoneNumber().trim());
     }
 
     private Employee creationRequestDtoToModel(EmployeeCreationRequestDto employeeDto, LoginProfile loginProfile)

@@ -71,10 +71,10 @@ public class MessageReceiverService {
                     employeeService.getEmployeeFromMicroserviceById(getEmployeeByIdPath);
             // try to update the Order approver
             orderService.updateOrderApproverByOrdererId(employeeDto);
-        } catch (Exception ignored) {
+        } catch (Exception e) {
             String methodName = "receiveEmployeeInfoGet";
-            logger.error("Order approver set failed.",
-                    CustomLogger.TAG_ORDERS, methodName);
+            //logger.error("Order approver set failed.", CustomLogger.TAG_ORDERS, methodName);
+            logger.error(e, CustomLogger.TAG_ORDERS, methodName);
         }
     }
 
