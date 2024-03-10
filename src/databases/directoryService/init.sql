@@ -91,12 +91,16 @@ CREATE TABLE org_units
 (
     id SERIAL UNIQUE NOT NULL,
     name VARCHAR(255) NOT NULL,
+    manager CHAR(6) DEFAULT NULL,
     org_unit INT DEFAULT NULL,
     organisation INT NOT NULL,
     address VARCHAR(64) DEFAULT NULL,
 
     CONSTRAINT pk_org_units
         PRIMARY KEY (id),
+    CONSTRAINT fk_org_units_table_employees
+        FOREIGN KEY (manager) REFERENCES employees(id)
+            ON UPDATE CASCADE ON DELETE SET DEFAULT,
     CONSTRAINT fk_org_units_table_org_units
         FOREIGN KEY (org_unit) REFERENCES org_units(id)
             ON UPDATE CASCADE ON DELETE SET DEFAULT,
@@ -199,3 +203,6 @@ INSERT INTO employees (id, last_name, first_name, email, org_unit)
 VALUES ('A00001', 'Bonnot', 'Jean', 'jean.bonnot@gmail.com', 1),
        ('A00002', 'De La Compta', 'Séverine', 'severine.de-la-compta@gmail.com', 2);
 
+-- +----------------------------------------------------------------------------------------------+
+
+UPDATE org_units SET manager = 1 WHERE id >= 1;

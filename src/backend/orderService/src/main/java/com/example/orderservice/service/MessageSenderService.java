@@ -98,7 +98,7 @@ public class MessageSenderService implements CommandLineRunner {
                 getMessageCustomHeaders(description, routingPattern));
     }
 
-    @LogMessageSent(tag = CustomLogger.TAG_USERS,
+    @LogMessageSent(tag = CustomLogger.TAG_ORDERS,
             routingPattern = "employee.info.get",
             deliveryMethod = "Unicast",
             description = "Message sent to inform the service responsible of user information " +

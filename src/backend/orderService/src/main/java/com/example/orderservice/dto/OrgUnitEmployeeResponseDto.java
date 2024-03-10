@@ -1,4 +1,4 @@
-package com.example.directoryservice.dto;
+package com.example.orderservice.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,6 +14,6 @@ public class OrgUnitEmployeeResponseDto {
     private Integer id;
     private String name;
     private AddressResponseDto address;
-    private ManagerResponseDto manager;
+    private EmployeeCreationRequestDto manager;
 
 }

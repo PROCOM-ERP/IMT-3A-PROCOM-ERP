@@ -5,15 +5,16 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Getter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class OrgUnitEmployeeResponseDto {
+@Getter
+public class ManagerResponseDto {
 
-    private Integer id;
-    private String name;
-    private AddressResponseDto address;
-    private ManagerResponseDto manager;
+    private String id;
+    private String lastName;
+    private String firstName;
+    private String email;
+    private String phoneNumber;
 
 }

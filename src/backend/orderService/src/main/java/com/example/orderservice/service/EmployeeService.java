@@ -3,17 +3,25 @@ package com.example.orderservice.service;
 import com.example.orderservice.annotation.LogExecutionTime;
 import com.example.orderservice.dto.AddressResponseDto;
 import com.example.orderservice.dto.EmployeeCreationRequestDto;
+import com.example.orderservice.dto.EmployeeDirectoryResponseDto;
 import com.example.orderservice.dto.EmployeeResponseDto;
 import com.example.orderservice.model.Address;
 import com.example.orderservice.model.Employee;
 import com.example.orderservice.model.LoginProfile;
 import com.example.orderservice.repository.EmployeeRepository;
 import com.example.orderservice.repository.LoginProfileRepository;
+import com.example.orderservice.utils.CustomHttpRequestBuilder;
 import com.example.orderservice.utils.CustomLogger;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Comparator;
 import java.util.List;
@@ -25,11 +33,14 @@ public class EmployeeService {
 
     private final EmployeeRepository employeeRepository;
     private final LoginProfileRepository loginProfileRepository;
+    private final CustomHttpRequestBuilder customHttpRequestBuilder;
+    private final RestTemplate restTemplate;
 
     /* Public Methods */
     @LogExecutionTime(description = "Create new user information profile.",
             tag = CustomLogger.TAG_USERS)
     public Employee createEmployee(EmployeeCreationRequestDto employeeDto)
+            throws DataIntegrityViolationException
     {
         // sanitize fields before Employee entity creation
         sanitizeEmployeeCreationRequestDto(employeeDto);
@@ -62,6 +73,27 @@ public class EmployeeService {
         } else {
             throw new NoSuchElementException("No employee and address information found in orders for this ID");
         }
+    }
+
+    @LogExecutionTime(description = "Retrieve a user information with its manager.",
+            tag = CustomLogger.TAG_ORDERS)
+    public EmployeeDirectoryResponseDto getEmployeeFromMicroserviceById(String getEmployeeByIdPath)
+    {
+        // build request
+        String url = customHttpRequestBuilder.buildUrl(getEmployeeByIdPath);
+        HttpEntity<String> entity = customHttpRequestBuilder.buildHttpEntity();
+
+        // send request
+        ResponseEntity<EmployeeDirectoryResponseDto> response = restTemplate.exchange(url, HttpMethod.GET,
+                entity,
+                new ParameterizedTypeReference<>() {}); // response with custom type
+
+        // check if body is existing and consistent
+        if (! (response.getStatusCode().is2xxSuccessful() && response.hasBody() && response.getBody() != null))
+            throw new RestClientException("");
+
+        // return expected LoginProfile activation
+        return response.getBody();
     }
 
     /* Private Methods */

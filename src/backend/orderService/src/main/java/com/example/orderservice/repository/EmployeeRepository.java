@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.lang.NonNull;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 public interface EmployeeRepository extends JpaRepository<Employee, Integer>, JpaSpecificationExecutor<Employee> {
@@ -25,6 +26,14 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer>, Jp
             "WHERE e.loginProfile.id = :idLoginProfile " +
             "ORDER BY e.createdAt DESC")
     Set<Employee> findAllEmployeesById(@NonNull @Param("idLoginProfile") String idLoginProfile);
+
+    @Query(value =
+            "SELECT e " +
+            "FROM Employee e " +
+            "WHERE e.loginProfile.id = :idLoginProfile " +
+            "ORDER BY e.createdAt DESC " +
+            "LIMIT 1")
+    Optional<Employee> findLastEmployeeById(@NonNull @Param("idLoginProfile") String idLoginProfile);
 
     @Query("SELECT e, a " +
             "FROM Employee e " +

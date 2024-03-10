@@ -7,6 +7,7 @@ import com.example.orderservice.model.*;
 import com.example.orderservice.repository.*;
 import com.example.orderservice.utils.CustomLogger;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -30,6 +31,7 @@ public class OrderService {
 
     private final AddressService addressService;
     private final EmployeeService employeeService;
+    private final MessageSenderService messageSenderService;
     private final ProgressStatusService progressStatusService;
 
     /* Public Methods */
@@ -55,9 +57,11 @@ public class OrderService {
                 .setScale(2, RoundingMode.HALF_UP);
 
         // create and save Order entity
-        // TODO: change approver by the retrieving one from other microservice
         Order order = orderRepository.save(creationRequestDtoToModel(orderDto, totalAmount,
                 provider, address, orderer));
+
+        // send a message to update order approver
+        messageSenderService.sendEmployeeInfoGet(orderer.getLoginProfile().getId());
 
         // create and save OrderProduct entities
         orderProductRepository.saveAll(
@@ -176,6 +180,26 @@ public class OrderService {
         // update Order ProgressStatus
         order.setProgressStatus(idNextProgressStatus);
         orderRepository.save(order);
+    }
+
+    @LogExecutionTime(description = "Update an order approver.",
+            tag = CustomLogger.TAG_ORDERS)
+    public void updateOrderApproverByOrdererId(EmployeeDirectoryResponseDto employeeDto)
+            throws NoSuchElementException, DataIntegrityViolationException
+    {
+        // save manager information as Employee entity
+        Employee approver = employeeService.createEmployee(employeeDto.getOrgUnit().getManager());
+
+        // retrieve last Orderer information id
+        Employee orderer = employeeRepository.findLastEmployeeById(employeeDto.getId())
+                .orElseThrow(() -> new NoSuchElementException("No existing user with id " + employeeDto.getId() + "."));
+
+        // update all unapproved orderer orders approver
+        int rows = orderRepository.updateAllByOrdererAndProgressStatusLessThan(orderer.getId(),
+                approver.getId(), ProgressStatus.Approved.getId());
+
+        if (rows < 1)
+            throw new NoSuchElementException("No existing orders for user with id " + employeeDto.getId() + ".");
     }
 
     /* Private Methods */

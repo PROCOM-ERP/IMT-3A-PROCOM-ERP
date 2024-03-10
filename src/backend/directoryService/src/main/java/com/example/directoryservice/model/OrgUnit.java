@@ -33,6 +33,13 @@ public class OrgUnit {
     private String name;
 
     @Builder.Default
+    @JsonIgnoreProperties(value = {"orgUnit"})
+    @ManyToOne(fetch = FetchType.EAGER)
+    @OnDelete(action = OnDeleteAction.SET_DEFAULT)
+    @JoinColumn(name = "manager")
+    private Employee manager = null;
+
+    @Builder.Default
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.SET_DEFAULT)
     @JoinColumn(name = "org_unit")

@@ -22,6 +22,7 @@ public class CustomLogger {
     public static final String TAG_MESSAGE = "MessageIssues";
     public static final String TAG_ADDRESSES = "Addresses";
     public static final String TAG_ORGANISATIONS = "Organisations";
+    public static final String TAG_ORDERS = "Orders";
 
     /* Utils Beans */
     private final Logger logger = LoggerFactory.getLogger(CustomLogger.class);

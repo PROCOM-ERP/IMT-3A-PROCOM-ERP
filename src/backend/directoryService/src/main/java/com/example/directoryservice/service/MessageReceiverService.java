@@ -58,7 +58,7 @@ public class MessageReceiverService {
     }
 
     @RabbitListener(queues = "employee-info-get-queue")
-    @LogMessageReceived(tag = CustomLogger.TAG_USERS,
+    @LogMessageReceived(tag = CustomLogger.TAG_ORDERS,
             deliveryMethod = "Unicast", queue = "employee-info-get-queue")
     public void receiveEmployeeInfoGet(Message message)
     {
@@ -79,7 +79,7 @@ public class MessageReceiverService {
         } catch (Exception ignored) {
             String methodName = "receiveLoginProfileActivationMessage";
             logger.error("Login profile activation update failed",
-                    CustomLogger.TAG_USERS, methodName);
+                    CustomLogger.TAG_ORDERS, methodName);
         }
     }
 
