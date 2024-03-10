@@ -2,17 +2,15 @@ package com.example.authenticationservice.dto;
 
 import com.example.authenticationservice.utils.CustomStringUtils;
 import jakarta.validation.constraints.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Set;
 
-@Getter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@Getter
+@Setter
 public class LoginProfileCreationRequestDto {
 
     @NotBlank(message = "User email cannot be null or blank.")

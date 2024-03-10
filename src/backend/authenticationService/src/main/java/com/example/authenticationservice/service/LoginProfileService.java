@@ -57,11 +57,14 @@ public class LoginProfileService {
     @LogExecutionTime(description = "Create new user login profile.",
             tag = CustomLogger.TAG_USERS)
     public LoginProfileIdResponseDto createLoginProfile(
-            LoginProfileCreationRequestDto loginProfileCreationRequestDto)
+            LoginProfileCreationRequestDto loginProfileDto)
             throws Exception
     {
         // sanitize all request parameters
-        customStringUtils.sanitizeAllStrings(loginProfileCreationRequestDto);
+        loginProfileDto.setEmail(customStringUtils.sanitizeString(loginProfileDto.getEmail()));
+        loginProfileDto.setRoles(loginProfileDto.getRoles().stream()
+                .map(customStringUtils::sanitizeString)
+                .collect(Collectors.toSet()));
 
         // generate random password
         String password = customPasswordGenerator.generateRandomPassword();
@@ -72,9 +75,9 @@ public class LoginProfileService {
         LoginProfile loginProfile = LoginProfile.builder()
                 .id(idLoginProfile)
                 .idLoginProfileGen(nextIdLoginProfile)
-                .email(loginProfileCreationRequestDto.getEmail())
+                .email(loginProfileDto.getEmail())
                 .password(passwordEncoder.encode(password))
-                .roles(loginProfileCreationRequestDto.getRoles().stream()
+                .roles(loginProfileDto.getRoles().stream()
                         .map(roleName -> Role.builder()
                                 .name(roleName)
                                 .build())
@@ -158,7 +161,7 @@ public class LoginProfileService {
                 ERROR_MSG_USER_ID);
 
         // sanitize all request parameters
-        customStringUtils.sanitizeAllStrings(passwordDto);
+        passwordDto.setPassword(customStringUtils.sanitizeString(passwordDto.getPassword()));
 
         // check if the LoginProfile, for which the password will be modified,
         // is the same as the authenticated one (or admin)
@@ -199,7 +202,9 @@ public class LoginProfileService {
                 ERROR_MSG_USER_ID);
 
         // sanitize all request parameters
-        customStringUtils.sanitizeAllStrings(loginProfileDto);
+        loginProfileDto.setRoles(loginProfileDto.getRoles().stream()
+                .map(customStringUtils::sanitizeString)
+                .collect(Collectors.toSet()));
 
         // check if loginProfile exists
         LoginProfile loginProfile = loginProfileRepository.findById(idLoginProfile)

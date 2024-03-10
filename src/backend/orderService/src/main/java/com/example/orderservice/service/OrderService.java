@@ -188,6 +188,7 @@ public class OrderService {
                 .provider(provider)
                 .address(address)
                 .orderer(orderer)
+                .approver(orderer)
                 .progressStatus(ProgressStatus.Created.getId())
                 .build();
     }

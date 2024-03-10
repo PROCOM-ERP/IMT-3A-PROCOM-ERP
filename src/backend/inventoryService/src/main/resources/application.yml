@@ -27,11 +27,21 @@ spring:
     servlet:
       load-on-startup: 1
   rabbitmq:
-    host: ${BACKEND_MESSAGE_BROKER_SERVICE_IP_INT}
+    host: ${BACKEND_MESSAGE_BROKER_SERVICE_HOSTNAME}
     port: ${BACKEND_MESSAGE_BROKER_SERVICE_PORT_INT}
     username: ${BACKEND_MESSAGE_BROKER_SERVICE_USERNAME}
     password: ${BACKEND_MESSAGE_BROKER_SERVICE_PASSWORD}
     virtual-host: /
+    publisher-confirms: true # Enables publisher confirms
+    publisher-returns: true # Enables publisher returns
+    ssl:
+      enabled: true
+      key-store: file:${BACKEND_INVENTORY_SERVICE_HTTPS_KEY_STORE}
+      key-store-password: ${BACKEND_INVENTORY_SERVICE_HTTPS_KEY_STORE_PASSWORD}
+      key-store-type: PKCS12
+      trust-store: file:${SECURITY_TRUST_STORE_PATH}
+      trust-store-password: ${SECURITY_TRUST_STORE_PASSWORD}
+      trust-store-type: JKS
 
 springdoc:
   api-docs:
