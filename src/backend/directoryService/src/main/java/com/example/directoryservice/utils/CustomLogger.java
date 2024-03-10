@@ -22,6 +22,7 @@ public class CustomLogger {
     public static final String TAG_MESSAGE = "MessageIssues";
     public static final String TAG_ADDRESSES = "Addresses";
     public static final String TAG_ORGANISATIONS = "Organisations";
+    public static final String TAG_ORDERS = "Orders";
 
     /* Utils Beans */
     private final Logger logger = LoggerFactory.getLogger(CustomLogger.class);
@@ -45,7 +46,7 @@ public class CustomLogger {
                                            String methodName, String routingPattern, String deliveryMethod,
                                            String sender, String queue, long amqpMessageReceptionTime)
     {
-        MDC.put("amqpMessageReceptionTime", String.valueOf(amqpMessageReceptionTime));
+        MDC.put("amqpReceptionTime", String.valueOf(amqpMessageReceptionTime));
         MDC.put("sender", sender);
         MDC.put("queue", queue);
         info(message, tag, methodName, METHOD_TYPE_MESSAGE_RECEPTION, routingPattern, deliveryMethod);
@@ -54,14 +55,14 @@ public class CustomLogger {
     public void error(Exception e, String tag, String methodName, HttpStatus httpStatus)
     {
         MDC.put("httpStatus", httpStatus.toString());
-        MDC.put("stacktrace", Arrays.toString(e.getStackTrace()));
+        MDC.put("stackTrace", Arrays.toString(e.getStackTrace()));
         error(e.getMessage(), tag, methodName);
     }
 
     public void error(String message, String methodName,
                       String routingPattern, String deliveryMethod, int retries, long delay)
     {
-        MDC.put("amqpMessageSendDelay", String.valueOf(delay));
+        MDC.put("amqpSendingDelay", String.valueOf(delay));
         error(message, methodName, routingPattern, deliveryMethod, retries);
     }
 
@@ -70,7 +71,7 @@ public class CustomLogger {
     {
         MDC.put("routingPattern", routingPattern);
         MDC.put("deliveryMethod", deliveryMethod);
-        MDC.put("amqpMessageSendRetries", String.valueOf(retries));
+        MDC.put("amqpSendingRetries", String.valueOf(retries));
         error(message, TAG_MESSAGE, methodName);
     }
 

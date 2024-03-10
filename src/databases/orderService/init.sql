@@ -76,7 +76,7 @@ CREATE TABLE employees
     last_name VARCHAR(255) NOT NULL,
     first_name VARCHAR(255) NOT NULL,
     email VARCHAR(320) NOT NULL,
-    phone_number VARCHAR(24) NOT NULL,
+    phone_number VARCHAR(24) DEFAULT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
 
     CONSTRAINT pk_employees
@@ -106,17 +106,6 @@ CREATE TABLE providers
 
 -- +----------------------------------------------------------------------------------------------+
 
-CREATE TABLE progress_status
-(
-    id SERIAL UNIQUE NOT NULL,
-    name VARCHAR(64) UNIQUE NOT NULL,
-
-    CONSTRAINT pk_progress_status PRIMARY KEY (id),
-    CONSTRAINT uq_progress_status UNIQUE (name)
-);
-
--- +----------------------------------------------------------------------------------------------+
-
 CREATE TABLE orders
 (
     id SERIAL UNIQUE NOT NULL,
@@ -131,9 +120,6 @@ CREATE TABLE orders
     approver INT,
 
     CONSTRAINT pk_orders PRIMARY KEY (id),
-    CONSTRAINT fk_orders_table_progress_status
-        FOREIGN KEY (progress_status) REFERENCES progress_status(id)
-            ON UPDATE CASCADE,
     CONSTRAINT fk_orders_table_address
         FOREIGN KEY (address) REFERENCES addresses(id)
             ON UPDATE CASCADE,
@@ -180,6 +166,7 @@ VALUES ('admin'),
 INSERT INTO role_permissions (role, permission)
 VALUES ('admin', 'CanBypassAccessDeny'),
        ('admin', 'CanCreateOrder'),
+       ('admin', 'CanModifyOrder'),
        ('admin', 'CanModifyRole'),
        ('admin', 'CanReadEmployee'),
        ('admin', 'CanReadOrder'),
@@ -187,6 +174,7 @@ VALUES ('admin', 'CanBypassAccessDeny'),
        ('admin', 'CanReadRole'),
 
        ('user', 'CanCreateOrder'),
+       ('user', 'CanModifyOrder'),
        ('user', 'CanReadEmployee'),
        ('user', 'CanReadOrder'),
        ('user', 'CanReadProvider');
@@ -219,19 +207,10 @@ VALUES ('Wool Factory'),
 
 -- +----------------------------------------------------------------------------------------------+
 
-INSERT INTO progress_status (name)
-VALUES ('Created'),
-       ('Waiting for approval'),
-       ('Approved'),
-       ('Waiting for delivery'),
-       ('Received');
-
--- +----------------------------------------------------------------------------------------------+
-
-INSERT INTO orders (total_amount, quote, provider, orderer, approver, address)
-VALUES (900.00, 'CRE0000000001', 2, 2, 1,
+INSERT INTO orders (total_amount, quote, provider, orderer, address)
+VALUES (900.00, 'CRE0000000001', 2, 2,
         '681370aec431f01f00f0949eecdd5afb640f6f9a195d14d5d229e722bc1ceb92'),
-       (1650.00, 'WFAEAD547FB00892387', 1, 1, 1,
+       (1650.00, 'WFAEAD547FB00892387', 1, 1,
         '72e08cc844ccc2cde34dc2372166fe808f667d4dadbc4dd114386e4d9f88c574');
 
 -- +----------------------------------------------------------------------------------------------+

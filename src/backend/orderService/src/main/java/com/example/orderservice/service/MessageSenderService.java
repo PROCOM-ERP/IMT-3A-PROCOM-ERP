@@ -6,7 +6,6 @@ import com.example.orderservice.utils.CustomHttpRequestBuilder;
 import com.example.orderservice.utils.CustomLogger;
 import com.example.orderservice.utils.MessageUtils;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.core.AmqpMessageReturnedException;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Message;
@@ -14,17 +13,21 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.amqp.core.MessageDeliveryMode;
 import org.springframework.amqp.core.MessagePostProcessor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
 
 @Service
-@RequiredArgsConstructor
 public class MessageSenderService implements CommandLineRunner {
 
     private final CustomHttpRequestBuilder customHttpRequestBuilder;
     private final RabbitTemplate rabbitTemplate;
+    @Qualifier("rolesDirectExchange")
     private final DirectExchange rolesDirectExchange;
+    @Qualifier("employeesDirectExchange")
+    private final DirectExchange employeesDirectExchange;
     private final MessageUtils messageUtils;
     private final CustomLogger logger;
 
@@ -32,6 +35,22 @@ public class MessageSenderService implements CommandLineRunner {
     private String sender; // message sender is the service itself
 
     private static final int MAX_RETRIES = 10; // Example max retries
+
+    @Autowired
+    public MessageSenderService(CustomHttpRequestBuilder customHttpRequestBuilder,
+                                RabbitTemplate rabbitTemplate,
+                                DirectExchange rolesDirectExchange,
+                                DirectExchange employeesDirectExchange,
+                                MessageUtils messageUtils,
+                                CustomLogger logger)
+    {
+        this.customHttpRequestBuilder = customHttpRequestBuilder;
+        this.rabbitTemplate = rabbitTemplate;
+        this.rolesDirectExchange = rolesDirectExchange;
+        this.employeesDirectExchange = employeesDirectExchange;
+        this.messageUtils = messageUtils;
+        this.logger = logger;
+    }
 
     @Override
     @LogMessageSent(tag = CustomLogger.TAG_ROLES,
@@ -76,6 +95,18 @@ public class MessageSenderService implements CommandLineRunner {
         String resource = String.format("%s/%s%s", Path.ROLES, roleName, Path.ACTIVATION);
         String path = customHttpRequestBuilder.buildPath(Path.V1, resource);
         rabbitTemplate.convertAndSend(rolesDirectExchange.getName(), routingPattern, path,
+                getMessageCustomHeaders(description, routingPattern));
+    }
+
+    @LogMessageSent(tag = CustomLogger.TAG_ORDERS,
+            routingPattern = "employee.info.get",
+            deliveryMethod = "Unicast",
+            description = "Message sent to inform the service responsible of user information " +
+                    "that order service need information for a user.")
+    public void sendEmployeeInfoGet(String idEmployee) {
+        String description = "Message received to inform that a service needs the user " + idEmployee + " information.";
+        String routingPattern = "employee.info.get";
+        rabbitTemplate.convertAndSend(employeesDirectExchange.getName(), routingPattern, idEmployee,
                 getMessageCustomHeaders(description, routingPattern));
     }
 

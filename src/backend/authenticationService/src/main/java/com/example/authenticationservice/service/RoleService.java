@@ -69,7 +69,10 @@ public class RoleService {
             throws DataIntegrityViolationException
     {
         // sanitize all request parameters
-        customStringUtils.sanitizeAllStrings(roleDto);
+        roleDto.setName(customStringUtils.sanitizeString(roleDto.getName()));
+        roleDto.setMicroservices(roleDto.getMicroservices().stream()
+                .map(customStringUtils::sanitizeString)
+                .collect(Collectors.toSet()));
 
         // check if role doesn't already exist
         if (roleRepository.existsById(roleDto.getName()))
@@ -227,12 +230,12 @@ public class RoleService {
         customStringUtils.checkStringPattern(roleName, ERROR_MSG_ROLE_NAME_PATTERN, CustomStringUtils.REGEX_ROLE_NAME);
 
         // sanitize all request parameters
-        customStringUtils.sanitizeString(roleName);
+        String roleNameSanitized = customStringUtils.sanitizeString(roleName);
 
         // check if role exists and retrieve it
-        Role role = roleRepository.findById(roleName)
+        Role role = roleRepository.findById(roleNameSanitized)
                 .orElseThrow(() ->
-                        new NoSuchElementException("No existing role named " + roleName));
+                        new NoSuchElementException("No existing role named " + roleNameSanitized));
 
         // set permissions isEnable value
         Set<PermissionDto> permissions = permissionService.getAllPermissions().stream()
@@ -265,19 +268,19 @@ public class RoleService {
         customStringUtils.checkStringSize(microservice, ERROR_MSG_MICROSERVICE_NAME_SIZE, 1, 32);
 
         // sanitize all request parameters
-        customStringUtils.sanitizeString(roleName);
-        customStringUtils.sanitizeString(microservice);
+        String roleNameSanitized = customStringUtils.sanitizeString(roleName);
+        String microserviceSanitized = customStringUtils.sanitizeString(microservice);
 
         // retrieve or create (transient) RoleActivationResponseDto entity and return it
-        return roleActivationRepository.findByRoleAndMicroservice(roleName, microservice)
+        return roleActivationRepository.findByRoleAndMicroservice(roleNameSanitized, microserviceSanitized)
                 .map(ra -> RoleActivationResponseDto.builder()
-                        .name(roleName)
-                        .microservice(microservice)
+                        .name(roleNameSanitized)
+                        .microservice(microserviceSanitized)
                         .isEnable(ra.getIsEnable())
                         .build())
                 .orElse(RoleActivationResponseDto.builder()
-                        .name(roleName)
-                        .microservice(microservice)
+                        .name(roleNameSanitized)
+                        .microservice(microserviceSanitized)
                         .isEnable(false)
                         .build());
     }
@@ -296,16 +299,18 @@ public class RoleService {
         customStringUtils.checkStringPattern(roleName, ERROR_MSG_ROLE_NAME_PATTERN, CustomStringUtils.REGEX_ROLE_NAME);
 
         // sanitize all request parameters
-        customStringUtils.sanitizeString(roleName);
-        customStringUtils.sanitizeAllStrings(roleDto);
+        String roleNameSanitized = customStringUtils.sanitizeString(roleName);
+        roleDto.setPermissions(roleDto.getPermissions().stream()
+                .map(customStringUtils::sanitizeString)
+                .collect(Collectors.toSet()));
 
         // update isEnable property if provided or different of null
         if (roleDto.getIsEnable() != null) {
-            RoleActivation ra = roleActivationRepository.findByRoleAndMicroservice(roleName, currentMicroservice)
+            RoleActivation ra = roleActivationRepository.findByRoleAndMicroservice(roleNameSanitized, currentMicroservice)
                     .orElse(RoleActivation.builder()
                             // check if role already exists
-                            .role(roleRepository.findById(roleName).orElseThrow(() ->
-                                    new NoSuchElementException("No existing role named " + roleName)))
+                            .role(roleRepository.findById(roleNameSanitized).orElseThrow(() ->
+                                    new NoSuchElementException("No existing role named " + roleNameSanitized)))
                             .microservice(currentMicroservice)
                             .build());
             ra.setIsEnable(roleDto.getIsEnable());
@@ -313,9 +318,9 @@ public class RoleService {
         }
 
         // check if role already exists and retrieve it
-        Role role = roleRepository.findById(roleName)
+        Role role = roleRepository.findById(roleNameSanitized)
                 .orElseThrow(() ->
-                        new NoSuchElementException("No existing role named " + roleName));
+                        new NoSuchElementException("No existing role named " + roleNameSanitized));
 
         // update permissions if permissions are provided
         if (roleDto.getPermissions() != null) {

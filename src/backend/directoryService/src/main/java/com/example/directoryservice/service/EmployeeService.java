@@ -8,8 +8,6 @@ import com.example.directoryservice.repository.EmployeeRepository;
 import com.example.directoryservice.repository.OrgUnitRepository;
 import com.example.directoryservice.utils.CustomLogger;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
@@ -138,11 +136,23 @@ public class EmployeeService {
                         .id(employee.getOrgUnit().getId())
                         .name(employee.getOrgUnit().getName())
                         .address(addressService.modelToResponseDto(employee.getOrgUnit().getAddress()))
+                        .manager(modelToManagerResponseDto(employee.getOrgUnit().getManager()))
                         .build())
                 .organisation(OrganisationEmployeeResponseDto.builder()
                         .id(employee.getOrgUnit().getOrganisation().getId())
                         .name(employee.getOrgUnit().getOrganisation().getName())
                         .build())
+                .build();
+    }
+
+    private ManagerResponseDto modelToManagerResponseDto(Employee employee)
+    {
+        return ManagerResponseDto.builder()
+                .id(employee.getId())
+                .lastName(employee.getLastName())
+                .firstName(employee.getFirstName())
+                .email(employee.getEmail())
+                .phoneNumber(employee.getPhoneNumber())
                 .build();
     }
 

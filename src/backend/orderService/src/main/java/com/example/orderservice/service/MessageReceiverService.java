@@ -1,6 +1,7 @@
 package com.example.orderservice.service;
 
 import com.example.orderservice.annotation.LogMessageReceived;
+import com.example.orderservice.dto.EmployeeDirectoryResponseDto;
 import com.example.orderservice.utils.CustomLogger;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.core.Message;
@@ -14,6 +15,8 @@ public class MessageReceiverService {
 
     private final RoleService roleService;
     private final LoginProfileService loginProfileService;
+    private final EmployeeService employeeService;
+    private final OrderService orderService;
     private final CustomLogger logger;
 
     /* Public Methods */
@@ -53,6 +56,25 @@ public class MessageReceiverService {
             case "login-profile.jwt.disable.old":
                 receiveLoginProfileJwtDisableOldMessage(body);
                 break;
+        }
+    }
+
+    @RabbitListener(queues = "employee-info-order-queue")
+    @LogMessageReceived(tag = CustomLogger.TAG_ORDERS,
+            deliveryMethod = "Unicast", queue = "employee-info-order-queue")
+    public void receiveEmployeeInfoGet(Message message)
+    {
+        String getEmployeeByIdPath = new String(message.getBody());
+        try {
+            // try to retrieve user information and manager
+            EmployeeDirectoryResponseDto employeeDto =
+                    employeeService.getEmployeeFromMicroserviceById(getEmployeeByIdPath);
+            // try to update the Order approver
+            orderService.updateOrderApproverByOrdererId(employeeDto);
+        } catch (Exception e) {
+            String methodName = "receiveEmployeeInfoGet";
+            //logger.error("Order approver set failed.", CustomLogger.TAG_ORDERS, methodName);
+            logger.error(e, CustomLogger.TAG_ORDERS, methodName);
         }
     }
 

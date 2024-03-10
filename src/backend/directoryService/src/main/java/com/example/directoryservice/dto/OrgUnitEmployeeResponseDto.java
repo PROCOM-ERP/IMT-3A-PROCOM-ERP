@@ -14,5 +14,6 @@ public class OrgUnitEmployeeResponseDto {
     private Integer id;
     private String name;
     private AddressResponseDto address;
+    private ManagerResponseDto manager;
 
 }

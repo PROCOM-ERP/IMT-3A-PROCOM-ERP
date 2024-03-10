@@ -6,7 +6,6 @@ import com.example.directoryservice.utils.CustomHttpRequestBuilder;
 import com.example.directoryservice.utils.CustomLogger;
 import com.example.directoryservice.utils.MessageUtils;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.core.AmqpMessageReturnedException;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Message;
@@ -15,20 +14,42 @@ import org.springframework.amqp.core.MessageDeliveryMode;
 import org.springframework.amqp.core.MessagePostProcessor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.MessageConverter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
 
 @Service
-@RequiredArgsConstructor
 public class MessageSenderService implements CommandLineRunner {
 
     private final CustomHttpRequestBuilder customHttpRequestBuilder;
     private final RabbitTemplate rabbitTemplate;
+    @Qualifier("rolesDirectExchange")
     private final DirectExchange rolesDirectExchange;
+    @Qualifier("employeesDirectExchange")
+    private final DirectExchange employeesDirectExchange;
     private final TopicExchange employeesExchange;
     private final MessageUtils messageUtils;
     private final CustomLogger logger;
+
+    @Autowired
+    public MessageSenderService(CustomHttpRequestBuilder customHttpRequestBuilder,
+                                RabbitTemplate rabbitTemplate,
+                                DirectExchange rolesDirectExchange,
+                                DirectExchange employeesDirectExchange,
+                                TopicExchange employeesExchange,
+                                MessageUtils messageUtils,
+                                CustomLogger logger)
+    {
+        this.customHttpRequestBuilder = customHttpRequestBuilder;
+        this.rabbitTemplate = rabbitTemplate;
+        this.rolesDirectExchange = rolesDirectExchange;
+        this.employeesDirectExchange = employeesDirectExchange;
+        this.employeesExchange = employeesExchange;
+        this.messageUtils = messageUtils;
+        this.logger = logger;
+    }
 
     @Value("${security.service.name}")
     private String sender; // message sender is the service itself
@@ -91,6 +112,20 @@ public class MessageSenderService implements CommandLineRunner {
         String resource = String.format("%s/%s%s", Path.EMPLOYEES, idEmployee, Path.EMAIL);
         String path = customHttpRequestBuilder.buildPath(Path.V1, resource);
         rabbitTemplate.convertAndSend(employeesExchange.getName(), routingPattern, path,
+                getMessageCustomHeaders(description, routingPattern));
+    }
+
+    @LogMessageSent(tag = CustomLogger.TAG_ORDERS,
+            routingPattern = "employee.info.order",
+            deliveryMethod = "Unicast",
+            description = "Message sent to inform the order service that user information are available in this service.")
+    public void sendEmployeeInfoOrder(String idEmployee) {
+        String description = "Message received to inform that user " + idEmployee +
+                " information are available in a service.";
+        String routingPattern = "employee.info.order";
+        String resource = String.format("%s/%s", Path.EMPLOYEES, idEmployee);
+        String path = customHttpRequestBuilder.buildPath(Path.V1, resource);
+        rabbitTemplate.convertAndSend(employeesDirectExchange.getName(), routingPattern, path,
                 getMessageCustomHeaders(description, routingPattern));
     }
 

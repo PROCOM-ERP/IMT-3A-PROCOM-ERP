@@ -91,6 +91,7 @@ CREATE TABLE org_units
 (
     id SERIAL UNIQUE NOT NULL,
     name VARCHAR(255) NOT NULL,
+    manager CHAR(6) DEFAULT NULL,
     org_unit INT DEFAULT NULL,
     organisation INT NOT NULL,
     address VARCHAR(64) DEFAULT NULL,
@@ -139,6 +140,11 @@ CREATE TABLE employees
     CONSTRAINT check_employees_phone_number
         CHECK (employees.phone_number ~* '^\+?[0-9]{1,3}?[-\s]?([0-9]{1,4}[-\s]?)*[0-9]{1,4}$')
 );
+
+-- +----------------------------------------------------------------------------------------------+
+
+ALTER TABLE org_units ADD CONSTRAINT fk_org_units_table_employees
+    FOREIGN KEY (manager) REFERENCES employees(id) ON UPDATE CASCADE ON DELETE SET DEFAULT;
 
 -- +----------------------------------------------------------------------------------------------+
 -- | Insert into                                                                                  |
@@ -199,3 +205,6 @@ INSERT INTO employees (id, last_name, first_name, email, org_unit)
 VALUES ('A00001', 'Bonnot', 'Jean', 'jean.bonnot@gmail.com', 1),
        ('A00002', 'De La Compta', 'Séverine', 'severine.de-la-compta@gmail.com', 2);
 
+-- +----------------------------------------------------------------------------------------------+
+
+UPDATE org_units SET manager = 'A00001' WHERE id >= 1;

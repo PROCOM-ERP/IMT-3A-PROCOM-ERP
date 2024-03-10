@@ -49,14 +49,10 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "Role information retrieved correctly",
+          "404": {
+            "description": "Role not found",
             "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RoleResponseDto"
-                }
-              }
+              "application/json": {}
             }
           },
           "401": {
@@ -65,16 +61,20 @@
               "application/json": {}
             }
           },
-          "404": {
-            "description": "Role not found",
-            "content": {
-              "application/json": {}
-            }
-          },
           "500": {
             "description": "Uncontrolled error appeared",
             "content": {
               "application/json": {}
+            }
+          },
+          "200": {
+            "description": "Role information retrieved correctly",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoleResponseDto"
+                }
+              }
             }
           }
         }
@@ -114,8 +114,8 @@
               "application/json": {}
             }
           },
-          "400": {
-            "description": "The request body is badly structured or formatted",
+          "404": {
+            "description": "Role not found",
             "content": {
               "application/json": {}
             }
@@ -126,8 +126,8 @@
               "application/json": {}
             }
           },
-          "404": {
-            "description": "Role not found",
+          "204": {
+            "description": "Role permissions and / or activation status updated correctly",
             "content": {
               "application/json": {}
             }
@@ -138,8 +138,8 @@
               "application/json": {}
             }
           },
-          "204": {
-            "description": "Role permissions and / or activation status updated correctly",
+          "400": {
+            "description": "The request body is badly structured or formatted",
             "content": {
               "application/json": {}
             }
@@ -215,8 +215,72 @@
               "application/json": {}
             }
           },
+          "401": {
+            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "500": {
+            "description": "Uncontrolled error appeared",
+            "content": {
+              "application/json": {}
+            }
+          },
           "400": {
             "description": "The request body is badly structured or formatted",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "422": {
+            "description": "Attribute values don't respect integrity constraints.",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/order/v1/orders/{idOrder}/progress": {
+      "patch": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "Update the progress status of an order",
+        "description": "Update the progress status of an order. Only the order approver (or admin) can approve an order",
+        "operationId": "updateOrderProgressStatusById",
+        "parameters": [
+          {
+            "name": "idOrder",
+            "in": "path",
+            "description": "The order id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrderUpdateProgressStatusDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "422": {
+            "description": "Attribute values don't respect integrity constraints.<br>IdProgressStatus : an integer from 1 to 5.",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "204": {
+            "description": "Order progress status updated correctly",
             "content": {
               "application/json": {}
             }
@@ -227,14 +291,24 @@
               "application/json": {}
             }
           },
-          "422": {
-            "description": "Attribute values don't respect integrity constraints.",
+          "403": {
+            "description": "Forbidden to update the order progress status",
             "content": {
-              "application/json": {}
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
             }
           },
           "500": {
             "description": "Uncontrolled error appeared",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "400": {
+            "description": "The request body is badly structured or formatted",
             "content": {
               "application/json": {}
             }
@@ -251,12 +325,6 @@
         "description": "Retrieve all roles.<br>Only available for admins.",
         "operationId": "getAllRoles",
         "responses": {
-          "401": {
-            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
-            "content": {
-              "application/json": {}
-            }
-          },
           "200": {
             "description": "Roles information retrieved correctly",
             "content": {
@@ -265,6 +333,12 @@
                   "$ref": "#/components/schemas/RoleActivationResponseDto"
                 }
               }
+            }
+          },
+          "401": {
+            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
+            "content": {
+              "application/json": {}
             }
           },
           "500": {
@@ -306,12 +380,6 @@
               }
             }
           },
-          "404": {
-            "description": "Role activation status not found for role provided",
-            "content": {
-              "application/json": {}
-            }
-          },
           "401": {
             "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
             "content": {
@@ -320,6 +388,12 @@
           },
           "500": {
             "description": "Uncontrolled error appeared",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "404": {
+            "description": "Role activation status not found for role provided",
             "content": {
               "application/json": {}
             }
@@ -382,16 +456,6 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "Order retrieved correctly",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/OrderResponseDto"
-                }
-              }
-            }
-          },
           "403": {
             "description": "Forbidden to get order because authenticated user is not the orderer neither the approver",
             "content": {
@@ -406,6 +470,16 @@
             "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
             "content": {
               "application/json": {}
+            }
+          },
+          "200": {
+            "description": "Order retrieved correctly",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderResponseDto"
+                }
+              }
             }
           },
           "500": {
@@ -426,14 +500,14 @@
         "description": "GET Hello World ! from Order Service",
         "operationId": "getHello",
         "responses": {
-          "500": {
-            "description": "Uncontrolled error appeared",
+          "200": {
+            "description": "Hello World message retrieved correctly",
             "content": {
               "application/json": {}
             }
           },
-          "200": {
-            "description": "Hello World message retrieved correctly",
+          "500": {
+            "description": "Uncontrolled error appeared",
             "content": {
               "application/json": {}
             }
@@ -620,6 +694,15 @@
             "type": "number"
           },
           "quantity": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "OrderUpdateProgressStatusDto": {
+        "type": "object",
+        "properties": {
+          "idProgressStatus": {
             "type": "integer",
             "format": "int32"
           }

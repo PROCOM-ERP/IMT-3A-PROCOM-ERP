@@ -3,15 +3,13 @@ package com.example.authenticationservice.dto;
 import com.example.authenticationservice.utils.CustomStringUtils;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Getter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@Getter
+@Setter
 public class LoginProfilePasswordUpdateRequestDto {
 
     @NotBlank(message = "User password cannot be null or blank.")

@@ -7,6 +7,7 @@ import com.example.orderservice.model.*;
 import com.example.orderservice.repository.*;
 import com.example.orderservice.utils.CustomLogger;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -26,10 +27,12 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final EmployeeRepository employeeRepository;
     private final OrderProductRepository orderProductRepository;
-    private final ProgressStatusRepository progressStatusRepository;
     private final ProviderRepository providerRepository;
-    private final EmployeeService employeeService;
+
     private final AddressService addressService;
+    private final EmployeeService employeeService;
+    private final MessageSenderService messageSenderService;
+    private final ProgressStatusService progressStatusService;
 
     /* Public Methods */
     @Transactional
@@ -44,8 +47,7 @@ public class OrderService {
         // retrieve Employee entity if it already exists, else create and save it
         Employee orderer = employeeService.createEmployee(orderDto.getOrderer());
 
-        // retrieve all other field entities
-        ProgressStatus defaultProgressStatus = progressStatusRepository.findById(1).orElseThrow();
+        // retrieve the Provider entity
         Provider provider = providerRepository.findById(orderDto.getProvider()).orElseThrow();
 
         // calculate the Order entity total amount
@@ -55,9 +57,11 @@ public class OrderService {
                 .setScale(2, RoundingMode.HALF_UP);
 
         // create and save Order entity
-        // TODO: change approver by the retrieving one from other microservice
         Order order = orderRepository.save(creationRequestDtoToModel(orderDto, totalAmount,
-                provider, address, orderer, defaultProgressStatus, orderer));
+                provider, address, orderer));
+
+        // send a message to update order approver
+        messageSenderService.sendEmployeeInfoGet(orderer.getLoginProfile().getId());
 
         // create and save OrderProduct entities
         orderProductRepository.saveAll(
@@ -100,7 +104,7 @@ public class OrderService {
                 .build();
     }
 
-    @LogExecutionTime(description = "Retrieve one order (access granted if authenticated user is the orderer or the approver).",
+    @LogExecutionTime(description = "Retrieve one order.",
             tag = CustomLogger.TAG_ORDERS)
     public OrderResponseDto getOrderById(Integer idOrder)
             throws NoSuchElementException
@@ -111,21 +115,23 @@ public class OrderService {
 
         // check if the LoginProfile of the authenticated user is the orderer,
         // or the approver of the order (or admin)
+        String idOrderer = order.getOrderer().getLoginProfile().getId();
+        String idApprover = order.getApprover().getLoginProfile().getId();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentLoginProfileId = authentication.getName();
         boolean canBypassAccessDeny = authentication.getAuthorities()
                 .contains(new SimpleGrantedAuthority(Permission.CanBypassAccessDeny.name()));
-        if (! (currentLoginProfileId.equals(order.getOrderer().getLoginProfile().getId()) ||
-            canBypassAccessDeny ||
-                (order.getApprover() != null &&
-            currentLoginProfileId.equals(order.getApprover().getLoginProfile().getId()))))
+        if (! (canBypassAccessDeny ||
+                currentLoginProfileId.equals(idOrderer) ||
+                order.getApprover() != null &&
+                currentLoginProfileId.equals(idApprover)))
         {
             throw new AccessDeniedException("");
         }
 
         // retrieve all ProgressStatus entities and check which ones are already completed
-        List<ProgressStatusResponseDto> allProgressStatus = progressStatusRepository.findAll().stream()
-                .map(ps -> progressStatusModelToResponseDto(ps, order.getProgressStatus().getId()))
+        List<ProgressStatusResponseDto> allProgressStatus = progressStatusService.getAllProgressStatus().stream()
+                .map(ps -> progressStatusModelToResponseDto(ps, order.getProgressStatus()))
                 .sorted(Comparator.comparingInt(ProgressStatusResponseDto::getId))
                 .toList();
 
@@ -138,10 +144,67 @@ public class OrderService {
         return modelToResponseDto(order, products, allProgressStatus);
     }
 
+    @LogExecutionTime(description = "Update an order progress status.",
+        tag = CustomLogger.TAG_ORDERS)
+    public void updateOrderProgressStatusById(Integer idOrder, OrderUpdateProgressStatusDto orderDto)
+            throws IllegalArgumentException,
+            NoSuchElementException
+    {
+        // retrieve Order entity
+        Order order = orderRepository.findById(idOrder)
+                .orElseThrow(() -> new NoSuchElementException("No existing order with id " + idOrder + "."));
+
+        // checks that the new ProgressStatus is the next as that of the current order
+        Integer idNextProgressStatus = orderDto.getIdProgressStatus();
+        if (order.getProgressStatus() != idNextProgressStatus - 1)
+            throw new IllegalArgumentException(
+                    "Provided progress status id is not the next logical one for the order " + idOrder + ".");
+
+        // check if the LoginProfile of the authenticated user is the orderer,
+        // or the approver of the order (or admin), and can change the Order ProgressStatus
+        String idOrderer = order.getOrderer().getLoginProfile().getId();
+        String idApprover = order.getApprover().getLoginProfile().getId();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentLoginProfileId = authentication.getName();
+        boolean canBypassAccessDeny = authentication.getAuthorities()
+                .contains(new SimpleGrantedAuthority(Permission.CanBypassAccessDeny.name()));
+        if (! (canBypassAccessDeny ||
+                order.getApprover() != null &&
+                currentLoginProfileId.equals(idApprover) ||
+                currentLoginProfileId.equals(idOrderer) &&
+                !(idNextProgressStatus.equals(ProgressStatus.Approved.getId()))))
+        {
+            throw new AccessDeniedException("");
+        }
+
+        // update Order ProgressStatus
+        order.setProgressStatus(idNextProgressStatus);
+        orderRepository.save(order);
+    }
+
+    @Transactional
+    @LogExecutionTime(description = "Update an order approver.",
+            tag = CustomLogger.TAG_ORDERS)
+    public void updateOrderApproverByOrdererId(EmployeeDirectoryResponseDto employeeDto)
+            throws NoSuchElementException, DataIntegrityViolationException
+    {
+        // save manager information as Employee entity
+        Employee approver = employeeService.createEmployee(employeeDto.getOrgUnit().getManager());
+
+        // retrieve last Orderer information id
+        Set<Integer> idsOrderer = employeeRepository.findAllIdsByIdLoginProfile(employeeDto.getId());
+
+        // update all unapproved orderer orders approver
+        int rows = orderRepository.updateAllByOrdererAndProgressStatusLessThan(idsOrderer,
+                approver.getId(), ProgressStatus.Approved.getId());
+
+        if (rows < 1)
+            throw new NoSuchElementException("No existing orders for user with id " + employeeDto.getId() + ".");
+    }
+
     /* Private Methods */
     private Order creationRequestDtoToModel(OrderCreationRequestDto orderDto, BigDecimal totalAmount,
-                                            Provider provider, Address address, Employee orderer,
-                                            ProgressStatus progressStatus, Employee approver)
+                                            Provider provider, Address address, Employee orderer)
     {
         return Order.builder()
                 .quote(orderDto.getQuote())
@@ -149,8 +212,8 @@ public class OrderService {
                 .provider(provider)
                 .address(address)
                 .orderer(orderer)
-                .progressStatus(progressStatus)
-                .approver(approver)
+                .approver(orderer)
+                .progressStatus(ProgressStatus.Created.getId())
                 .build();
     }
 
@@ -177,7 +240,7 @@ public class OrderService {
                 .approver(order.getApprover() != null ?
                         order.getApprover().getFirstName() + " " + order.getApprover().getLastName() :
                         null)
-                .status(order.getProgressStatus().getName())
+                .status(progressStatusService.getProgressStatusById(order.getProgressStatus()).name())
                 .build();
     }
 
@@ -188,7 +251,7 @@ public class OrderService {
                 .provider(order.getProvider().getName())
                 .totalAmount(order.getTotalAmount())
                 .orderer(order.getOrderer().getFirstName() + " " + order.getOrderer().getLastName())
-                .status(order.getProgressStatus().getName())
+                .status(progressStatusService.getProgressStatusById(order.getProgressStatus()).name())
                 .build();
     }
 
@@ -213,7 +276,7 @@ public class OrderService {
     {
         return ProgressStatusResponseDto.builder()
                 .id(progressStatus.getId())
-                .name(progressStatus.getName())
+                .name(progressStatus.name())
                 .completed(progressStatus.getId() <= currentIdProgressStatus)
                 .build();
     }
