@@ -14,8 +14,8 @@ import org.springframework.context.annotation.Profile;
                 title = "InventoryService",
                 version = "0.1.0",
                 description =
-                        "Service that offers the possibility of managing products data in the company." +
-                                "This service expose the data of the products, categories and address." +
+                        "Service that offers the possibility of managing products data in the company.<br>" +
+                                "This service expose the data of the products, categories and address.<br>" +
                                 "The user can also add, modify, update and remove data."),
         tags = {
                 @Tag(name = "hello"),

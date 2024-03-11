@@ -1,9 +1,11 @@
 package com.example.directoryservice.service;
 
+import com.example.directoryservice.annotation.LogExecutionTime;
 import com.example.directoryservice.dto.AddressCreationRequestDto;
 import com.example.directoryservice.dto.AddressResponseDto;
 import com.example.directoryservice.model.Address;
 import com.example.directoryservice.repository.AddressRepository;
+import com.example.directoryservice.utils.CustomLogger;
 import lombok.RequiredArgsConstructor;
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
@@ -24,15 +26,44 @@ public class AddressService {
 
     private final AddressRepository addressRepository;
 
-    // private final Logger logger = LoggerFactory.getLogger(AddressService.class);
-
     /* Public Methods */
 
     @Transactional
-    public void createAddress(AddressCreationRequestDto addressDto) throws Exception {
-        // create new entity
-        Address address = Address.builder()
-                .id(generateHashedIdAddressFromFields(addressDto))
+    @LogExecutionTime(description = "Create new address.",
+            tag = CustomLogger.TAG_ADDRESSES)
+    public void createAddress(AddressCreationRequestDto addressDto)
+            throws Exception
+    {
+        // check fields before sanitization
+        if (addressDto.getState() != null && addressDto.getState().isBlank())
+            throw new IllegalArgumentException("Address state field cannot be blank if provided");
+        if (addressDto.getInfo() != null && addressDto.getInfo().isBlank())
+            throw new IllegalArgumentException("Address info field cannot be blank if provided");
+
+        // sanitize fields before Address entity creation
+        sanitizeAddressCreationRequestDto(addressDto);
+
+        // create Address entity hashed id
+        String idAddress = generateHashedIdAddressFromFields(addressDto);
+
+        // create new Address entity and save it
+        addressRepository.save(creationRequestDtoToModel(idAddress, addressDto));
+    }
+
+    @LogExecutionTime(description = "Retrieve all addresses.",
+            tag = CustomLogger.TAG_ADDRESSES)
+    public Set<AddressResponseDto> getAllAddresses() {
+        return addressRepository.findAll().stream()
+                .map(this::modelToResponseDto)
+                .collect(Collectors.toSet());
+    }
+
+    /* Private Methods */
+    private Address creationRequestDtoToModel(String idAddress, AddressCreationRequestDto addressDto)
+    {
+        // create Address entity
+        return Address.builder()
+                .id(idAddress)
                 .number(addressDto.getNumber())
                 .street(addressDto.getStreet())
                 .city(addressDto.getCity())
@@ -41,30 +72,35 @@ public class AddressService {
                 .zipcode(addressDto.getZipcode())
                 .info(addressDto.getInfo())
                 .build();
-
-        // try to save entity
-        addressRepository.save(address);
     }
 
-    public Set<AddressResponseDto> getAllAddresses() {
-        return addressRepository.findAll().stream()
-                .map(this::modelToResponseDto)
-                .collect(Collectors.toSet());
+    private void sanitizeAddressCreationRequestDto(AddressCreationRequestDto addressDto)
+    {
+        // sanitize fields before Address entity creation
+        addressDto.setStreet(addressDto.getStreet().trim());
+        addressDto.setCity(addressDto.getCity().trim());
+        if (addressDto.getState() != null)
+            addressDto.setState(addressDto.getState().trim());
+        addressDto.setCountry(addressDto.getCountry().trim());
+        addressDto.setZipcode(addressDto.getZipcode().trim());
+        if (addressDto.getInfo() != null)
+            addressDto.setInfo(addressDto.getInfo().trim());
     }
 
-    /* Private Methods */
 
-    private String generateHashedIdAddressFromFields(AddressCreationRequestDto addressDto)
-            throws Exception {
-        // join all fields before hashing operation
+    private String generateHashedIdAddressFromFields(
+            AddressCreationRequestDto addressDto)
+            throws Exception
+    {
+        // join all fields (except state cause included in zipcode field) before hashing operation
         StringJoiner joiner = new StringJoiner("|");
-        if (addressDto.getNumber() != null) joiner.add(addressDto.getNumber().toString());
-        if (addressDto.getStreet() != null) joiner.add(addressDto.getStreet());
-        if (addressDto.getCity() != null) joiner.add(addressDto.getCity());
-        if (addressDto.getState() != null) joiner.add(addressDto.getState());
-        if (addressDto.getCountry() != null) joiner.add(addressDto.getCountry());
-        if (addressDto.getZipcode() != null) joiner.add(addressDto.getZipcode());
-        if (addressDto.getInfo() != null) joiner.add(addressDto.getInfo());
+        joiner.add(addressDto.getNumber().toString());
+        joiner.add(addressDto.getStreet().toLowerCase());
+        joiner.add(addressDto.getCity().toLowerCase());
+        joiner.add(addressDto.getCountry().toLowerCase());
+        joiner.add(addressDto.getZipcode().toLowerCase());
+        if (addressDto.getInfo() != null)
+            joiner.add(addressDto.getInfo().toLowerCase());
 
         // hash char sequence and convert it into hexadecimal format
         try {

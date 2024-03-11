@@ -1,0 +1,63 @@
+<configuration>
+
+    <appender name="jsonConsoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <pattern>
+                    <pattern>
+                        {
+                            "application": {
+                                "name": "directory",
+                                "type": "Java Spring"
+                            }
+                        }
+                    </pattern>
+                    <omitEmptyFields>true</omitEmptyFields>
+                </pattern>
+                <timestamp>
+                    <fieldName>@timestamp</fieldName>
+                </timestamp>
+                <logLevel>
+                    <fieldName>log.level</fieldName>
+                </logLevel>
+                <message/>
+                <loggerName>
+                    <fieldName>logger.name</fieldName>
+                </loggerName>
+                <pattern>
+                    <pattern>
+                        {
+                            "tag": "%mdc{tag}",
+                            "method": {
+                                "name": "%mdc{methodName}",
+                                "type": "%mdc{methodType}"
+                            },
+                            "amqp": {
+                                "routing.pattern": "%mdc{routingPattern}",
+                                "delivery.method": "%mdc{deliveryMethod}",
+                                "sender": "%mdc{sender}",
+                                "queue": "%mdc{queue}"
+                            },
+                            "metrics": {
+                                "method.execution.time": {"ms": "%mdc{methodExecutionTime}"},
+                                "amqp.reception.time": {"ms": "%mdc{amqpReceptionTime}"},
+                                "amqp.sending.retries": "%mdc{amqpSendingRetries}",
+                                "amqp.sending.delay": {"ms": "%mdc{amqpSendingDelay}"}
+                            },
+                            "error": {
+                                "http.status": "%mdc{httpStatus}",
+                                "stacktrace": "%mdc{stackTrace}"
+                            }
+                        }
+                    </pattern>
+                    <omitEmptyFields>true</omitEmptyFields>
+                </pattern>
+            </providers>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="jsonConsoleAppender"/>
+    </root>
+
+</configuration>

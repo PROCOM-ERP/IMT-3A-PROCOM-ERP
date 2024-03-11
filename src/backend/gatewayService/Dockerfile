@@ -55,7 +55,6 @@ RUN useradd -r -u 10001 -g erp erp
 
 COPY --chown=erp --from=builder ./builder/target ./app
 COPY --chown=erp ./gateway-service-keystore.p12 ./app/certs/gateway-service-keystore.p12
-COPY --chown=erp ./gateway-service-keystore.p12 ./app/certs/gateway-service-keystore.p12
 COPY --chown=erp ./procom-erp-truststore.jks ./config/procom-erp-truststore.jks
 COPY --chown=erp ./wait-for-it.sh ./config/wait-for-it.sh
 COPY --chown=erp ./entrypoint.sh ./config/entrypoint.sh

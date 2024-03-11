@@ -1,8 +1,9 @@
 /* CSS for UserProfil component */
 .user-form-container {
-  background-color: var(--login-bg);
+  background-color: var(--usr-bg);
   display: flex;
-  flex-direction: column; /* Change to column direction */
+  flex-direction: column;
+  /* Change to column direction */
   align-items: center;
   width: 50%;
   margin: 5rem auto auto auto;
@@ -16,16 +17,20 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  align-items: center; /* Center items horizontally */
-  max-width: 600px; /* Set maximum width */
+  align-items: center;
+  /* Center items horizontally */
+  max-width: 600px;
+  /* Set maximum width */
 }
 
 .information {
   display: flex;
-  flex-wrap: wrap; /* Allow keys and values to wrap */
+  flex-wrap: wrap;
+  /* Allow keys and values to wrap */
   justify-content: center;
   margin-bottom: 10px;
-  align-items: center; /* Center items horizontally */
+  align-items: center;
+  /* Center items horizontally */
   width: 100%;
 }
 
@@ -34,15 +39,18 @@
 }
 
 .value-container {
-  text-align: left; /* Align values to the left */
-  margin-left: 60px; /* Add right margin for spacing */
+  text-align: left;
+  /* Align values to the left */
+  margin-left: 60px;
+  /* Add right margin for spacing */
 }
 
 .button-container {
-  width: 100%; /* Ensure button container takes full width */
+  width: 100%;
+  /* Ensure button container takes full width */
   display: flex;
   margin-top: 1rem;
   margin-bottom: 20px;
-  justify-content: center; /* Center the button horizontally */
+  justify-content: center;
+  /* Center the button horizontally */
 }
-

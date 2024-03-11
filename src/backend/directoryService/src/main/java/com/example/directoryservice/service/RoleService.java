@@ -1,5 +1,6 @@
 package com.example.directoryservice.service;
 
+import com.example.directoryservice.annotation.LogExecutionTime;
 import com.example.directoryservice.dto.PermissionDto;
 import com.example.directoryservice.dto.RoleActivationResponseDto;
 import com.example.directoryservice.dto.RoleResponseDto;
@@ -7,10 +8,8 @@ import com.example.directoryservice.dto.RoleUpdateRequestDto;
 import com.example.directoryservice.model.Role;
 import com.example.directoryservice.repository.RoleRepository;
 import com.example.directoryservice.utils.CustomHttpRequestBuilder;
-import com.example.directoryservice.utils.PerformanceTracker;
+import com.example.directoryservice.utils.CustomLogger;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -41,54 +40,37 @@ public class RoleService {
     private final CustomHttpRequestBuilder customHttpRequestBuilder;
     private final MessageSenderService messageSenderService;
 
-    private final PerformanceTracker performanceTracker;
-    private final Logger logger = LoggerFactory.getLogger(RoleService.class);
-
     /* Public Methods */
 
+    @Transactional
+    @LogExecutionTime(description = "Create a new role.",
+            tag = CustomLogger.TAG_ROLES)
     public void createRole(String getRoleByNamePath) {
-        logger.info("Start role creation...");
-        long startTimeNano = performanceTracker.getCurrentTime();
+        // retrieve microservice role
+        RoleActivationResponseDto roleDto = getMicroserviceRole(getRoleByNamePath);
+        // create new Role entity before database insertion
+        Role role = Role.builder()
+                .name(roleDto.getName())
+                .isEnable(roleDto.getIsEnable())
+                .build();
 
-        try {
-            // retrieve microservice role
-            RoleActivationResponseDto roleDto = getMicroserviceRole(getRoleByNamePath);
-            // create new Role entity before database insertion
-            Role role = Role.builder()
-                    .name(roleDto.getName())
-                    .isEnable(roleDto.getIsEnable())
-                    .build();
-
-            // insert Role entity
-            roleRepository.save(role);
-        } catch (Exception e) {
-            logger.error("Something went wrong with role creation : " + e.getCause());
-        }
-
-        long elapsedTimeMillis = performanceTracker.getElapsedTimeMillis(startTimeNano);
-        logger.info("Elapsed time to create new role : " + elapsedTimeMillis + " ms");
+        // insert Role entity
+        roleRepository.save(role);
     }
 
+    @LogExecutionTime(description = "Retrieve all role names.",
+            tag = CustomLogger.TAG_ROLES)
     public Set<RoleActivationResponseDto> getAllRoles() {
-        logger.info("Start retrieving roles...");
-        long startTimeNano = performanceTracker.getCurrentTime();
-
         // retrieve all roles
-        Set<RoleActivationResponseDto> roles = roleRepository.findAll().stream()
+        return roleRepository.findAll().stream()
                 .map(this::roleToRoleActivationResponseDto)
                 .collect(Collectors.toSet());
-
-        // return all roles
-        long elapsedTimeMillis = performanceTracker.getElapsedTimeMillis(startTimeNano);
-        logger.info("Elapsed time to retrieve roles and microservices : " + elapsedTimeMillis + " ms");
-        return roles;
     }
 
+    @LogExecutionTime(description = "Retrieve a role.",
+            tag = CustomLogger.TAG_ROLES)
     public RoleResponseDto getRoleByName(String roleName)
             throws NoSuchElementException {
-        logger.info("Start retrieving one role...");
-        long startTimeNano = performanceTracker.getCurrentTime();
-
         // check if role exists and retrieve it
         Role role = roleRepository.findById(roleName).orElseThrow();
 
@@ -100,39 +82,28 @@ public class RoleService {
                         .build())
                 .collect(Collectors.toSet());
 
-        // build RoleResponseDto entity
-        RoleResponseDto roleDto = RoleResponseDto.builder()
+        // build and return RoleResponseDto entity
+        return RoleResponseDto.builder()
                 .isEnable(role.getIsEnable())
                 .permissions(permissions)
                 .build();
-
-        // return RoleResponseDto entity
-        long elapsedTimeMillis = performanceTracker.getElapsedTimeMillis(startTimeNano);
-        logger.info("Elapsed time to retrieve one role : " + elapsedTimeMillis + " ms");
-        return roleDto;
     }
 
+    @LogExecutionTime(description = "Retrieve a role activation status.",
+            tag = CustomLogger.TAG_ROLES)
     public RoleActivationResponseDto getRoleActivationByName(String roleName)
             throws NoSuchElementException {
-        logger.info("Start retrieving one role activation...");
-        long startTimeNano = performanceTracker.getCurrentTime();
-
         // retrieve one Role Activation entity
-        RoleActivationResponseDto roleDto = roleRepository.findById(roleName)
+        return roleRepository.findById(roleName)
                 .map(this::roleToRoleActivationResponseDto)
                 .orElseThrow();
-
-        long elapsedTimeMillis = performanceTracker.getElapsedTimeMillis(startTimeNano);
-        logger.info("Elapsed time to retrieve one role activation : " + elapsedTimeMillis + " ms");
-        return roleDto;
     }
 
     @Transactional
+    @LogExecutionTime(description = "Update a role activation status and / or permissions in this service.",
+            tag = CustomLogger.TAG_ROLES)
     public void updateRoleByName(String roleName, RoleUpdateRequestDto roleDto)
             throws NoSuchElementException, DataIntegrityViolationException {
-        logger.info("Start updating one role...");
-        long startTimeNano = performanceTracker.getCurrentTime();
-
         // check if role already exists and retrieve it
         Role role = roleRepository.findById(roleName).orElseThrow();
 
@@ -154,8 +125,6 @@ public class RoleService {
         // send message to inform about a change on role activation status
         if (roleDto.getIsEnable() != null)
             messageSenderService.sendRoleActivationMessage(roleName);
-        long elapsedTimeMillis = performanceTracker.getElapsedTimeMillis(startTimeNano);
-        logger.info("Elapsed time to update one role : " + elapsedTimeMillis + " ms");
     }
 
     /* Private Methods */

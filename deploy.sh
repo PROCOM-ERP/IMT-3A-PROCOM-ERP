@@ -3,13 +3,35 @@
 # Description: Copy necessary files to every service, and then Create environment variables in the current shell, and deploy the project using stack
 # Author: maestro-bene (GitHub)
 # Date Created: 2024-02-02
-# Last Modified: 2024-02-06
-# Version: 1.2
-# Usage: Run the script to create secrets beforehand, and this is to solve the fact that docker stack deploy doesn't support .env placeholding
+# Last Modified: 2024-03-02
+# Version: 2.0
+# Usage: use --help
+
+# +-----------------------------------------------------------------------------+
+# | System-relative Functions                                                   |
+# +-----------------------------------------------------------------------------+
+
+clean_security() {
+    if [ "$CA" == "true" ]; then
+        echo "Cleaning certificates along with the CA's"
+        ${security_path}/clean_security.sh "--CA" >/dev/null 2>&1;
+    else
+        echo "Cleaning certificates"
+        ${security_path}/clean_security.sh >/dev/null 2>&1;
+    fi
+        echo "Certificates all cleaned up"
+}
+
+# +-----------------------------------------------------------------------------+
 
 security() {
-    ./src/security/security_setup.sh
+    echo "Generating certificates"
+    ${security_path}/security_setup.sh >/dev/null
+    echo "Certificates generated"
 }
+
+
+# +-----------------------------------------------------------------------------+
 
 copy_system_files() {
    # Define paths to backend and frontend directories
@@ -17,18 +39,19 @@ copy_system_files() {
     declare -a frontend_paths=("src/frontend/*")
 
     echo "Copying system files to services"
+    
     # Copy system files to backend services
     for backend_path in "${backend_paths[@]}"; do
         # Find and iterate over directories in the backend
         for SERVICE_PATH in $backend_path; do
             if [ -d "$SERVICE_PATH" ]; then
-                cp ./src/system/entrypoint.sh "${SERVICE_PATH}"
-                cp ./src/system/wait-for-it.sh "${SERVICE_PATH}"
-                cp ./src/system/procom-erp-truststore.jks "${SERVICE_PATH}"
-                cp ./src/system/procom-erp-ca.pem "${SERVICE_PATH}"
+                cp "${system_path}/entrypoint.sh" "${SERVICE_PATH}"
+                cp "${system_path}/wait-for-it.sh" "${SERVICE_PATH}"
+                cp "${system_path}/procom-erp-truststore.jks" "${SERVICE_PATH}"
+                cp "${system_path}/procom-erp-ca.pem" "${SERVICE_PATH}"
                 # Copy Maven Wrapper (mvnw) to backend services
-                cp ./src/system/mvnw "${SERVICE_PATH}"
-                cp -R ./src/system/.mvn "${SERVICE_PATH}/"
+                cp "${system_path}/mvnw" "${SERVICE_PATH}"
+                cp -R "${system_path}/.mvn" "${SERVICE_PATH}/"
             fi
         done
     done
@@ -38,8 +61,8 @@ copy_system_files() {
         # Find and iterate over directories in the frontend
         for SERVICE_PATH in $frontend_path; do
             if [ -d "$SERVICE_PATH" ]; then
-                cp ./src/system/procom-erp-truststore.jks "${SERVICE_PATH}"
-                cp ./src/system/procom-erp-ca.pem "${SERVICE_PATH}"
+                cp "${system_path}/procom-erp-truststore.jks" "${SERVICE_PATH}"
+                cp "${system_path}/procom-erp-ca.pem" "${SERVICE_PATH}"
             fi
         done
     done
@@ -49,11 +72,13 @@ copy_system_files() {
         # Find and iterate over directories in databases
         for SERVICE_PATH in $db_path; do
             if [ -d "$SERVICE_PATH" ]; then
-                cp ./src/system/db_entrypoint.sh "${SERVICE_PATH}"
+                cp "${system_path}/db_entrypoint.sh" "${SERVICE_PATH}"
             fi
         done
     done
 } 
+
+# +-----------------------------------------------------------------------------+
 
 # Litteral opposite of copy_system_files function
 clean_system_files() {
@@ -104,6 +129,10 @@ clean_system_files() {
     done
 }
 
+# +-----------------------------------------------------------------------------+
+# | Helper Functions                                                            |
+# +-----------------------------------------------------------------------------+
+
 is_stack_running() {
     local STACK_NAME="$1"
     local STACK_STATUS=$(docker stack ps --format "{{.Name}}" "$STACK_NAME" 2>/dev/null)
@@ -113,6 +142,16 @@ is_stack_running() {
         return 0
     fi
 }
+
+# +-----------------------------------------------------------------------------+
+
+latest_image_exists() {
+    local IMAGE_NAME="$1"
+    
+    docker images "$IMAGE_NAME:latest" | awk 'NR>1{exit} END{if (NR == 0) exit 1}'
+}
+
+# +-----------------------------------------------------------------------------+
 
 get_image_versions(){
     # Initialize an associative array to store image names and versions
@@ -132,31 +171,119 @@ get_image_versions(){
             IMAGE_NAME="${BASH_REMATCH[1]}"
             IMAGE_NAMES+=("$IMAGE_NAME")
         fi
-    done < .env
+    done < "${docker_path}/.env"
 }
 
-latest_image_exists() {
-    local IMAGE_NAME="$1"
-    
-    docker images "$IMAGE_NAME:latest" | awk 'NR>1{exit} END{if (NR == 0) exit 1}'
+# +-----------------------------------------------------------------------------+
+
+remove_elk_setup_container() {
+    echo "Now waiting for Elasticsearch setup to finish before starting complete ELK, and then ERP"
+    # Wait for the container to exit
+    docker wait "setup" >/dev/null
+
+    # Remove the container
+    docker rm "setup" >/dev/null
+    docker rmi "elk-setup" > /dev/null
 }
+
+# +-----------------------------------------------------------------------------+
+
+import_log_dashboard_in_kibana(){
+    echo -n "Waiting for Kibana to start"
+    while ! curl -s http://localhost:5601/api/status > /dev/null; do
+        echo -n '.'
+        sleep 2
+    done
+    echo ''
+
+    # Import the NDJSON file into Kibana
+    sleep 5
+
+    import="Successful"
+    max_attempts=10
+    attempt=0
+
+    while [ $attempt -lt $max_attempts ]; do
+        if curl -u "$ELASTIC_USER:$ELASTIC_PASSWORD" -X POST 'http://localhost:5601/api/saved_objects/_import?overwrite=true' -H "kbn-xsrf: true" --form file=@docker/elk/export.ndjson > /dev/null 2>&1; then
+            echo "Import successful."
+            break
+        else
+            attempt=$((attempt+1))
+            sleep 1
+        fi
+    done
+
+    if [ $attempt -eq $max_attempts ]; then
+        echo "Import failed after $max_attempts attempts. Please check and retry manually, or import the export file as indicated in the end of the ouptut of this handy script."
+        import="Failed"
+    fi
+}
+
+# +-----------------------------------------------------------------------------+
+
+check_system_files(){
+    # List of files to copy
+    files_to_copy=(
+        "entrypoint.sh"
+        "wait-for-it.sh"
+        "procom-erp-truststore.jks"
+        "procom-erp-ca.pem"
+        "mvnw"
+        "db_entrypoint.sh"
+    )
+
+    # Loop through files and verify existence
+    for file in "${files_to_copy[@]}"; do
+        if [ ! -f "${system_path}/${file}" ]; then
+            echo "System error: ${file} file not found in ${system_path}."
+            if [ "${file}" == "procom-erp-truststore.jks" ] || [ "${file}" == "procom-erp-ca.pem" ]; then
+                echo " "
+                echo "It's a CA security file, you should probably deploy again using security options."
+                echo "Try to run: ./deploy.sh --clean-sec \"CA\" --sec (you can also add other options if needed)"
+            fi
+            exit 1
+        fi
+    done
+}
+
+# +-----------------------------------------------------------------------------+
+# | Core Functions                                                              |
+# +-----------------------------------------------------------------------------+
+
+setup_elk(){
+    echo "Setting up Elasticsearch"
+    if [ "$SWARM" == "true" ]; then
+        docker-compose -f $ELK_COMPOSE_SWARM_FILE -f $ELK_FILEBEAT_COMPOSE_SWARM_FILE -p elk up -d --build setup
+    else
+        docker-compose -f $ELK_COMPOSE_FILE -f $ELK_FILEBEAT_COMPOSE_FILE -p elk up -d --build setup
+    fi
+}
+
+# +-----------------------------------------------------------------------------+
+
+deploy_elk(){
+    echo "Deploying Elastic stack (Filebeat, Logstash, Elasticsearch, Kibana)"
+    if [ "$SWARM" == "true" ]; then
+        docker-compose -f $ELK_COMPOSE_SWARM_FILE -f $ELK_FILEBEAT_COMPOSE_SWARM_FILE -p elk up -d --build
+    else
+        docker-compose -f $ELK_COMPOSE_FILE -f $ELK_FILEBEAT_COMPOSE_FILE -p elk up -d --build
+    fi
+}
+
+# +-----------------------------------------------------------------------------+
 
 build_images() {
-    docker-compose -f $COMPOSE_FILE build
+    docker-compose -f $COMPOSE_FILE --env-file ${docker_path}/.env build
 }
 
-build_and_push_images() {
+# +-----------------------------------------------------------------------------+
+
+push_images() {
     DOCKER_REGISTRY_PREFIX="$1"
     
     for ((i = 0; i < ${#IMAGE_NAMES[@]}; i++)); do
         SERVICE="${IMAGE_NAMES[i]}"
         IMAGE_VERSION="${IMAGE_VERSIONS[i]}"
-
-        # Build the image if it doesn't exist
-        if ! docker images "$DOCKER_REGISTRY:$SERVICE-$IMAGE_VERSION" | grep "$SERVICE"; then
-            echo "Building $SERVICE:$IMAGE_VERSION image"
-            docker-compose -f $COMPOSE_FILE build "$SERVICE"
-        fi
 
         # Tag and push the image
         if latest_image_exists "$SERVICE"; then
@@ -165,12 +292,13 @@ build_and_push_images() {
             docker tag "$SERVICE" "$IMAGE_NAME"
             docker push "$IMAGE_NAME"
         else
-            echo "You need to replace Image version by latest for $SERVICE"
-            echo "Then build by executing this script with the --build option"
+            echo "Warning: You need to replace Image version by latest for $SERVICE"
             break
         fi
     done
 }
+
+# +-----------------------------------------------------------------------------+
 
 pull_images() {
     DOCKER_REGISTRY_PREFIX="$1"
@@ -178,50 +306,92 @@ pull_images() {
     SERVICES=$(docker-compose -f $COMPOSE_FILE config --services)
     
     for SERVICE in $SERVICES; do
-        IMAGE_NAME="$DOCKER_REGISTRY:$SERVICE-latest"
+        IMAGE_NAME="$DOCKER_REGISTRY:$SERVICE-$VERSION"
         echo "Pulling $IMAGE_NAME"
         docker pull "$IMAGE_NAME"
     done
 }
 
+# +-----------------------------------------------------------------------------+
+
 deploy(){
     if [ "$SWARM" == "true" ]; then
         docker stack deploy -c $COMPOSE_FILE ERP
     else
-        docker-compose -f $COMPOSE_FILE up -d --build
+        docker-compose -f $COMPOSE_FILE -p erp up -d 
     fi
 }
 
+# +-----------------------------------------------------------------------------+
+# | Setup & Verification                                                        |
+# +-----------------------------------------------------------------------------+
 
+security_path="./security"
+system_path="./system"
+docker_path="./docker"
+elk_path="${docker_path}/elk"
+elk_filebeat_path="${elk_path}/extensions/filebeat"
 
-if ! [ -f .env ]; then
-    echo ".env file not found"
+if ! [ -f "${docker_path}/.env" ]; then
+    echo "System error: .env file not found in ${docker_path}"
     exit 1
 fi
 
-if ! [ -f docker-compose.yml ]; then
-    echo "docker-compose.yml file not found"
+if ! [ -f "${docker_path}/docker-compose.yml" ]; then
+    echo "System error: docker-compose.yml file not found in ${docker_path}"
     exit 1
 fi
 
-if ! [ -f docker-compose-swarm.yml ]; then
-    echo "docker-compose-swarm.yml file not found"
+if ! [ -f "${docker_path}/docker-compose-swarm.yml" ]; then
+    echo "System error: docker-compose-swarm.yml file not found in ${docker_path}"
+    exit 1
+fi
+
+
+if ! [ -d "${system_path}/.mvn" ]; then
+    echo "System error: .mnv/ directory not found in ${system_path}"
     exit 1
 fi
 
 SWARM=false
+CLEAN_SEC=false
+CA=false
 SEC=false
 PUSH=false
 PULL=false
 HOT=false
-COMPOSE_FILE=docker-compose.yml
+LOGS=true
+VERSION=latest
+VERSION_SPECIFIED=false
+
+COMPOSE_FILE="${docker_path}/docker-compose.yml"
+ELK_COMPOSE_FILE="${elk_path}/docker-compose.yml"
+ELK_COMPOSE_SWARM_FILE="${elk_path}/docker-compose-swarm.yml"
+ELK_FILEBEAT_COMPOSE_FILE="${elk_filebeat_path}/filebeat-compose.yml"
+ELK_FILEBEAT_COMPOSE_SWARM_FILE="${elk_filebeat_path}/filebeat-compose-swarm.yml"
+
+ELASTIC_USER="elastic"
+ELASTIC_PASSWORD=$(grep "^ELASTIC_PASSWORD=" "${elk_path}/.env" | cut -d '=' -f2  | tr -d '\n' | sed "s/^'//;s/'$//")
+
+# +-----------------------------------------------------------------------------+
+# | Argument Parsing                                                            |
+# +-----------------------------------------------------------------------------+
 
 while [[ $# -gt 0 ]]; do
     case $1 in
         --swarm)
             SWARM=true
-            COMPOSE_FILE=docker-compose-swarm.yml
+            COMPOSE_FILE="${docker_path}/docker-compose-swarm.yml"
             shift
+            ;;
+        --clean-sec)
+            CLEAN_SEC=true
+            if [ -n "$2" ] && [ "${2:0:1}" != "-" ] && [ "$2" == "CA" ]; then
+                CA=true
+                shift 2
+            else
+                shift
+            fi
             ;;
         --sec)
             SEC=true
@@ -229,43 +399,126 @@ while [[ $# -gt 0 ]]; do
             ;;
         --push)
             PUSH=true
-            shift
-            DOCKER_REGISTRY="$1"
-            if [ -z "$DOCKER_REGISTRY" ]; then
-                echo "No Docker registry entered, please enter one along with the option"
+            if [ -n "$2" ] && [ "${2:0:1}" != "-" ]; then
+                DOCKER_REGISTRY="$2"
+                shift 2
+            else
+                echo "Usage:    --push option requires a value."
+                echo " "
+                echo "Example:  --push repository/image"
                 exit 1
             fi
-            shift
             ;;
         --pull)
             PULL=true
-            shift
-            DOCKER_REGISTRY="$1"
-            if [ -z "$DOCKER_REGISTRY" ]; then
-                echo "No Docker registry entered, please enter one along with the option"
+            if [ -n "$2" ] && [ "${2:0:1}" != "-" ]; then
+                DOCKER_REGISTRY="$2"
+                shift 2
+            else
+                echo "Usage:    --pull option requires a value."
+                echo " "
+                echo "Example:  --pull repository/image"
                 exit 1
             fi
-            shift
+            ;;
+        --version)
+            if [ -n "$2" ] && [ "${2:0:1}" != "-" ]; then
+                VERSION="$2"
+                VERSION_SPECIFIED=true
+                shift 2
+            else
+                echo "Usage:    --version option requires a value."
+                echo " "
+                echo "Example:  '--version latest' or '--version 1.0.0'"
+                exit 1
+            fi
             ;;
         --hot)
             HOT=true
             shift
             ;;
+        --no-logs)
+            LOGS=false
+            shift
+            ;;
+        --help)
+            echo "Usage:"
+            echo "        './deploy.sh --option \"value\"'"
+            echo " "
+            echo "Possible options:"
+            echo "        '--swarm': --------------------->  Deploy using Docker Swarm mode."
+            echo "        '--clean-sec \"CA\"': ------------>  Execute the clean security setup before deploying, --sec option is required if you use this. CA: optional, to also clean CA cert files."
+            echo "        '--sec'  ----------------------->  Execute the security setup script as well."
+            echo "        '--push \"repository/image\"': --->  Tag and push Docker images to a repository, then deploy."
+            echo "        '--pull \"repository/image\"': --->  Pull Docker images from a repository from which to deploy, --version is required if you use this option"
+            echo "        '--version \"version\"': --------->  Specify the version of the images to use for the pull option."
+            echo "        '--hot': ----------------------->  Force redeployment even if the stack is already running, for swarm mode."
+            echo "        '--no-logs': ------------------->  Doesn't deploy monitoring and log aggregating containers (Elastic stack)."
+            echo "        '--help': ---------------------->  Display this help message."
+            echo "        '--doc': ----------------------->  Display the deployment documentation."
+            echo " "
+            echo "Examples:"
+            echo "        './deploy.sh --swarm --clean-sec CA --sec --pull --version 1.0.0 --hot'"
+            echo "        './deploy.sh --help'"
+            echo "        './deploy.sh --doc'"
+            echo " "
+            echo "You can use this script without specifying options, it will build and deploy by default with compose from docker-compose.yml"
+            exit 0
+            ;;
+        --doc)
+            # Check if `glow` is installed
+            if command -v glow >/dev/null 2>&1; then
+                # If `glow` is installed, use it to view the Markdown file
+                glow ./docs/DEPLOYING.md
+            else
+                # If `glow` is not installed, fallback to using `less`
+                less ./docs/DEPLOYING.md
+            fi
+            exit 0
+            ;;
         *)
-            echo "Invalid option: $1"
+            echo "Usage:"
+            echo " "
+            echo "Invalid option $1"
             exit 1
             ;;
     esac
 done
 
+# +-----------------------------------------------------------------------------+
+
+if [ "$PULL" != "$VERSION_SPECIFIED" ]; then
+    echo "Usage:    "
+    echo " "
+    echo "When using --pull 'registry/image', please also use --version to specify the version you'd like to pull."
+    exit 1
+fi
+
+# +-----------------------------------------------------------------------------+
+
+if [ "$SEC" != "$CLEAN_SEC" ]  && [ "$CLEAN_SEC" == "true" ]; then
+    echo "Usage:    "
+    echo " "
+    echo "When using --clean-sec, please also use --sec option, otherwise you'll face certificate problems."
+    exit 1
+fi
+
+# +-----------------------------------------------------------------------------+
+# | MAIN LOGIC                                                                  |
+# +-----------------------------------------------------------------------------+
+
+
+# +---Swarm Specific------------------------------------------------------------+
 if [ "$SWARM" == "true" ]; then
 
-    export $(cat ./.env) > /dev/null 2>&1
+    export $(cat ${docker_path}/.env) > /dev/null 2>&1
 
     if ! docker info 2>/dev/null | grep -q "Swarm: active"; then
         docker swarm init > /dev/null 2>&1
         echo "Swarm initialized"
-        ./src/security/docker_secrets.sh > /dev/null 2>&1
+        # +---Docker Secrets for swarm mode-------------------------------------+
+        echo "Generating docker secrets for Swarm"
+        ${security_path}/docker_secrets.sh > /dev/null 2>&1
     else
         echo "Swarm detected"
     fi
@@ -273,59 +526,110 @@ if [ "$SWARM" == "true" ]; then
     # Check if the stack is running
     while is_stack_running "ERP"; do
         if [ "$HOT" == "false" ]; then
-            echo "The stack is already running. Use --hot option to force redeployment."
+            echo "Error: The stack is already running. Use --hot option to force redeployment."
             exit 1
         else
             echo "Hot deployment requested. Stopping the stack..."
             docker stack rm ERP
-            sleep 1  # TODO: Redeploy dynamically
+            while is_stack_running "ERP"; do
+                sleep 3
+            done
         fi
     done
-
-
-    if [ "$HOT" == "false" ] && is_stack_running "ERP"; then
-        echo "The stack is already running. Use --hot option to force redeployment."
-        exit 1
-    fi
+else
+    # +---Docker Secrets for simple compose-------------------------------------+
+    echo "Generating docker secrets"
+    ${security_path}/docker_secrets_files.sh >/dev/null 2>&1
+    echo "Docker secrets generated"
+    echo " "
 fi
 
+# +---System-relative setup-----------------------------------------------------+
 
-copy_system_files
+if [ "$CLEAN_SEC" == "true" ]; then
+    clean_security
+fi
 
 if [ "$SEC" == "true" ]; then
     security
 fi
 
+check_system_files 
+
+copy_system_files
+
+
 get_image_versions
 
 
-# Define your Docker registry prefix (e.g., username or organization)
-#DOCKER_REGISTRY_PREFIX=gachille/erp
+# +---Deployment-----------------------------------------------------------------+
+
+
+# +---Log Setup & Deployment-----------------------------------------------------+
+
+if [ "$LOGS" == "true" ]; then
+    setup_elk
+
+    remove_elk_setup_container
+
+    deploy_elk
+
+    import_log_dashboard_in_kibana
+fi
+
+# +---ERP Setup & Deployment-----------------------------------------------------+
 
 if [ "$PUSH" == "true" ]; then
     docker login
-    build_and_push_images "$DOCKER_REGISTRY"
-    deploy
-    clean_system_files
-    exit 0
+    build_images
+    push_images "$DOCKER_REGISTRY"
 fi
 
-if [ "$PULL" == "true" ]; then
+if [ "$PULL" == "true" ] && [ "$VERSION_SPECIFIED" == "true" ]; then
     docker login
     # Pull the images instead of building
     pull_images "$DOCKER_REGISTRY"
-    deploy
-    clean_system_files
-    exit 0
 fi
 
 
 if [ "$PUSH" == "false" ] && [ "$PULL" == "false"  ]; then
     build_images
-    deploy
-    clean_system_files
-    exit 0
 fi
 
+echo "Deploying ERP"
+deploy
+clean_system_files
 
-exit 1
+cat << "EOF"
+ ______                                    _______  ______   ______  
+(_____ \                                  (_______)(_____ \ (_____ \ 
+ _____) )____  ___    ____  ___   ____     _____    _____) ) _____) )
+|  ____// ___)/ _ \  / ___)/ _ \ |    \   |  ___)  |  __  / |  ____/ 
+| |    | |   | |_| |( (___| |_| || | | |  | |_____ | |  \ \ | |      
+|_|    |_|    \___/  \____)\___/ |_|_|_|  |_______)|_|   |_||_|      
+
+EOF
+
+echo "Welcome to Procom ERP, here are the access links:"
+echo " "
+echo "1. Link to the frontend: [https://localhost:3000]"
+echo "2. Link to the gateway hello world to accept its certificate as well: [https://localhost:8041/api/authentication/v1/hello]"
+echo "3. Link to the Elastic stack (Kibana): [http://localhost:5601]"
+
+if [ "$import" == "Successful" ]; then
+    echo "4. Link to the Custom Dashboard: [http://localhost:5601/app/discover]. Click on \"Open\" to find and open the custom ERP-Dashboard"
+fi
+
+if [ "$import" == "Failed" ]; then
+    echo ""
+    echo "The Import of the custom dashboard failed, please try to do it manually within Elastic:"
+    echo " - In Elastic, in Discover [http://localhost:5601/app/discover], click on \"Open\"."
+    echo " - Click on \"Manage Searches\"."
+    echo " - Click on \"Import\"."
+    echo " - Import the ERP-Dashboard by selecting the export.ndjson file located here : \"./docker/elk/export.ndjson\"."
+fi
+
+echo -e "\a"
+
+exit 0
+# +----End of this handy script------------------------------------------------+

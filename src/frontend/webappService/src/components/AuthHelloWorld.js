@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
 function AuthHelloWorld() {
-  const [hello, setHello] = useState(null);
   useEffect(() => {
     fetch("https://localhost:8041/api/authentication/v1/hello", {
       method: "GET",

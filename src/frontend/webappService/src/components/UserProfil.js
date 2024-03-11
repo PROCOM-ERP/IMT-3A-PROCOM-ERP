@@ -21,7 +21,6 @@ function UserProfil({ title, userId }) {
   // Get the user profil information
   useEffect(() => {
     getUserDir();
-    getUserAuth();
   }, []);
 
   // Get user from API Directory
@@ -35,7 +34,11 @@ function UserProfil({ title, userId }) {
       headers: headers,
     })
       .then((response) => {
-        if (!response.ok) throw new Error(response.status);
+        if (!response.ok) {
+          if (response.status === 401) { navigate("/error401"); }
+          else if (response.status === 403) { navigate("/error403"); }
+          else { throw new Error(response.status + " " + response.statusText); }
+        }
         const res = response.json();
         return res;
       })
@@ -59,36 +62,6 @@ function UserProfil({ title, userId }) {
       });
   };
 
-  // Get user from API Authentification
-  const getUserAuth = async () => {
-    // API URL
-    const apiUrl =
-      "https://localhost:8041/api/authentication/v1/login-profiles/" + userId;
-
-    await fetch(apiUrl, {
-      method: "GET",
-      headers: headers,
-    })
-      .then((response) => {
-        if (!response.ok) throw new Error(response.status);
-        const res = response.json();
-        return res;
-      })
-      .then((data) => {
-        const roleNames = data.roles.map((role) => role.name);
-        setUser((prevUser) => ({
-          ...prevUser,
-          Roles: roleNames,
-        }));
-        console.info("[DATA] " + JSON.stringify(data));
-        console.log("[LOG] profil info retrieve");
-      })
-      .catch((error) => {
-        console.error("API request error: ", error);
-      });
-  };
-
-  // Modify the user profil TODO
   function handleModif(event) {
     // Prevent the browser from reloading the page
     event.preventDefault();

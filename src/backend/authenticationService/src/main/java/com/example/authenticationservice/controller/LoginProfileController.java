@@ -1,9 +1,6 @@
 package com.example.authenticationservice.controller;
 
-import com.example.authenticationservice.dto.LoginProfileActivationResponseDto;
-import com.example.authenticationservice.dto.LoginProfileCreationRequestDto;
-import com.example.authenticationservice.dto.LoginProfileResponseDto;
-import com.example.authenticationservice.dto.LoginProfileUpdateRequestDto;
+import com.example.authenticationservice.dto.*;
 import com.example.authenticationservice.model.Path;
 import com.example.authenticationservice.service.LoginProfileService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +22,7 @@ import java.net.URI;
 @RequiredArgsConstructor
 public class LoginProfileController {
 
+    /* Service Beans */
     private final LoginProfileService loginProfileService;
 
     @PostMapping
@@ -34,7 +33,8 @@ public class LoginProfileController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description =
                     "Login profile created correctly",
-                    content = {@Content(mediaType = "application/json") }),
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = LoginProfileIdResponseDto.class)) }),
             @ApiResponse(responseCode = "400", description =
                     "The request body is badly structured or formatted",
                     content = {@Content(mediaType = "application/json") }),
@@ -49,19 +49,21 @@ public class LoginProfileController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<String> createLoginProfile(
-            @RequestBody LoginProfileCreationRequestDto loginProfileCreationRequestDto)
-            throws Exception {
+    public ResponseEntity<LoginProfileIdResponseDto> createLoginProfile(
+            @Valid @RequestBody LoginProfileCreationRequestDto loginProfileCreationRequestDto)
+            throws Exception
+    {
         // try to create a new loginProfile
-        String idLoginProfile = loginProfileService.createLoginProfile(loginProfileCreationRequestDto);
+        LoginProfileIdResponseDto loginProfileIdResponseDto = loginProfileService
+                .createLoginProfile(loginProfileCreationRequestDto);
         // generate URI location to inform the client how to get information on the new loginProfile
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path(Path.LOGIN_PROFILE_ID)
-                .buildAndExpand(idLoginProfile)
+                .buildAndExpand(loginProfileIdResponseDto.getId())
                 .toUri();
         // send the response with 201 Http status
-        return ResponseEntity.created(location).build();
+        return ResponseEntity.created(location).body(loginProfileIdResponseDto);
     }
 
     @GetMapping(Path.LOGIN_PROFILE_ID)
@@ -84,7 +86,9 @@ public class LoginProfileController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<LoginProfileResponseDto> getLoginProfileById(@PathVariable String idLoginProfile) {
+    public ResponseEntity<LoginProfileResponseDto> getLoginProfileById(
+            @PathVariable String idLoginProfile)
+    {
         return ResponseEntity.ok(loginProfileService.getLoginProfileById(idLoginProfile));
     }
 
@@ -108,7 +112,9 @@ public class LoginProfileController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<LoginProfileActivationResponseDto> getLoginProfileActivationById(@PathVariable String idLoginProfile) {
+    public ResponseEntity<LoginProfileActivationResponseDto> getLoginProfileActivationById(
+            @PathVariable String idLoginProfile)
+    {
         return ResponseEntity.ok(loginProfileService.getLoginProfileActivationById(idLoginProfile));
     }
 
@@ -138,9 +144,11 @@ public class LoginProfileController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<String> updateLoginProfilePasswordById(@PathVariable String idLoginProfile,
-                                                         @RequestBody String password) {
-        loginProfileService.updateLoginProfilePasswordById(idLoginProfile, password);
+    public ResponseEntity<String> updateLoginProfilePasswordById(
+            @PathVariable String idLoginProfile,
+            @Valid @RequestBody LoginProfilePasswordUpdateRequestDto passwordDto)
+    {
+        loginProfileService.updateLoginProfilePasswordById(idLoginProfile, passwordDto);
         return ResponseEntity.noContent().build();
     }
 
@@ -170,8 +178,10 @@ public class LoginProfileController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<String> updateLoginProfileById(@PathVariable String idLoginProfile,
-                                                          @RequestBody LoginProfileUpdateRequestDto loginProfileDto) {
+    public ResponseEntity<String> updateLoginProfileById(
+            @PathVariable String idLoginProfile,
+            @Valid @RequestBody LoginProfileUpdateRequestDto loginProfileDto)
+    {
         loginProfileService.updateLoginProfileById(idLoginProfile, loginProfileDto);
         return ResponseEntity.noContent().build();
     }

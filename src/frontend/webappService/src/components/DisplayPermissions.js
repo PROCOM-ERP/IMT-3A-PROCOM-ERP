@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import Button from './Button';
-import Modal from './Popup';
+import Popup from './Popup';
 import { useNavigate } from 'react-router-dom';
+import '../css/DisplayPermissions.css';
 
 
 function DisplayPermissions() {
@@ -13,8 +14,8 @@ function DisplayPermissions() {
   const [permissions, setPermissions] = useState([]);
   const [prevIsEnabled, setPrevIsEnabled] = useState(false);
   const [prevPermissions, setPrevPermissions] = useState([]);
-  const [showModal, setShowModal] = useState(false);
-  const [modalContent, setModalContent] = useState({});
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupContent, setPopupContent] = useState({});
   const navigate = useNavigate();
 
   const [areSelected, setAreSelected] = useState(false); // to set true if a service AND a role is selected
@@ -50,7 +51,11 @@ function DisplayPermissions() {
       headers: headers,
     })
       .then((response) => {
-        if (!response.ok) throw new Error(response.status);
+        if (!response.ok) {
+          if (response.status === 401) { navigate("/error401"); }
+          else if (response.status === 403) { navigate("/error403"); }
+          else { throw new Error(response.status + " " + response.statusText); }
+        }
         const res = response.json();
         return res;
       })
@@ -100,7 +105,11 @@ function DisplayPermissions() {
       headers: headers,
     })
       .then((response) => {
-        if (!response.ok) throw new Error(response.status);
+        if (!response.ok) {
+          if (response.status === 401) { navigate("/error401"); }
+          else if (response.status === 403) { navigate("/error403"); }
+          else { throw new Error(response.status + " " + response.statusText); }
+        }
         const res = response.json();
         return res;
       })
@@ -145,17 +154,19 @@ function DisplayPermissions() {
     })
       .then(response => {
         if (!response.ok) {
-          throw new Error('Failed to save changes');
+          if (response.status === 401) { navigate("/error401"); }
+          else if (response.status === 403) { navigate("/error403"); }
+          else { throw new Error(response.status + " " + response.statusText); }
         }
-        setShowModal(true); // Show modal when update is successful
-        setModalContent({
+        setShowPopup(true); // Show popup when update is successful
+        setPopupContent({
           title: 'Update Permissions',
           content: 'It worked. You have been disconnected. Login.'
         });
         console.log("[LOG] Permissions updated with success");
       })
       .catch(error => {
-        console.error('Error saving changes for permissions:', error);
+        console.error('Error saving changes for permissions: ', error);
       });
   };
 
@@ -169,51 +180,50 @@ function DisplayPermissions() {
     navigate("/addRole");
   };
 
-  const closeModal = () => {
-    setShowModal(false);
-    navigate('/'); // Navigate to "/"
+  const closePopup = () => {
+    setShowPopup(false);
+    navigate('/'); // Navigate to "/" page to reconnect
   };
 
   return (
     <>
-      <h1>Permissions</h1>
-      <div>
-        <label htmlFor="services">Select Service:</label>
-        <select id="services" value={selectedService} onChange={handleServiceChange}>
-          <option value="">Select a service</option>
-          {Object.entries(services).map(([key, value]) => (
-            <option key={key} value={value}>{value}</option>
-          ))}
-        </select>
-      </div>
-      <div>
-        <label htmlFor="roles">Select Role:</label>
-        <select id="roles" value={selectedRole} onChange={handleRoleChange}>
-          <option value="">Select a role</option>
-          {Object.entries(roles).map(([key, value]) => (
-            <option key={key} value={value}>{value}</option>
-          ))}
-        </select>
-        <Button onClick={handleAddRole}>Add role</Button>
-      </div>
-      <div>
+      <div className='permissions-container'>
+        <div className='select-container service'>
+          <label htmlFor="services">Services</label>
+          <select id="services" value={selectedService} onChange={handleServiceChange}>
+            <option value="">Select</option>
+            {Object.entries(services).map(([key, value]) => (
+              <option key={key} value={value}>{value}</option>
+            ))}
+          </select>
+        </div>
+        <div className='select-container role'>
+          <label htmlFor="roles">Roles</label>
+          <div className='select-button-container'>
+            <select id="roles" value={selectedRole} onChange={handleRoleChange}>
+              <option value="">Select</option>
+              {Object.entries(roles).map(([key, value]) => (
+                <option key={key} value={value}>{value}</option>
+              ))}
+            </select>
+            <div className='add-role-button'><Button onClick={handleAddRole}>+</Button></div>
+          </div>
+        </div>
         {areSelected && (
-          <div>
-            <h2>{selectedService} - {selectedRole}: Permissions Details</h2>
-            <div>
-              <label>
+          <div className='checkbox-container'>
+            <div className='title2'>Detailed {selectedRole} permissions in {selectedService}</div>
+            <div className='checkbox-list-container'>
+              <div className='checkbox-item checkbox-is-enabled'>
                 <input
                   type="checkbox"
                   name={"isEnabled"}
                   checked={isEnabled}
                   onChange={handleIsEnabledChange}
                 />
-                Is active
-              </label>
-            </div>
-            {permissions.map((permission, index) => (
-              <div key={index}>
-                <label>
+                <label>Is active</label>
+              </div>
+              {permissions.map((permission, index) => (
+                <div key={index} className='checkbox-item'>
                   <input
                     type="checkbox"
                     name={permission.name}
@@ -221,22 +231,24 @@ function DisplayPermissions() {
                     onChange={handlePermissionChange}
                     disabled={!isEnabled} // Disable checkbox if isEnabled is false
                   />
-                  {permission.name}
-                </label>
+                  <label>{permission.name}</label>
+                </div>
+              ))}
+              <div className='button-container'>
+                <Button onClick={handleSaveChanges}>Save</Button>
+                <Button onClick={handleResetChanges}>Reset</Button>
               </div>
-            ))}
-            <Button onClick={handleSaveChanges}>Save</Button>
-            <Button onClick={handleResetChanges}>Reset</Button>
+            </div>
           </div>
         )}
+        {showPopup && (
+          <Popup
+            title={popupContent.title}
+            content={popupContent.content}
+            onClose={closePopup}
+          />
+        )}
       </div>
-      {showModal && (
-        <Modal
-          title={modalContent.title}
-          content={modalContent.content}
-          onClose={closeModal}
-        />
-      )}
     </>
   );
 }

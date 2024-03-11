@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class TransactionService {
-    final private TransactionRepository transactionRepository;
 
     static TransactionDto transactionToDto(Transaction transaction){
         return TransactionDto.builder()

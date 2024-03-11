@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import "../css/App.css";
 import "../css/ProfilForm.css";
 import Button from "./Button";
 
@@ -8,6 +9,8 @@ function ProfilForm({ title, userId }) {
   const [user, setUser] = useState({});
   const [modifiedUser, setModifiedUser] = useState({});
   const [orgUnits, setOrgUnits] = useState([]);
+  const [organizations, setOrganizations] = useState([]);
+  const [selectedOrg, setSelectedOrg] = useState(null);
 
   const tokenName = "Token"; // Need to be the same name as in AuthForm.js components
   const token = localStorage.getItem(tokenName);
@@ -20,7 +23,6 @@ function ProfilForm({ title, userId }) {
   // Get the user profil information
   useEffect(() => {
     getUserDir();
-    getUserAuth();
     getOrgUnits();
   }, []);
 
@@ -35,7 +37,11 @@ function ProfilForm({ title, userId }) {
       headers: headers,
     })
       .then((response) => {
-        if (!response.ok) throw new Error(response.status);
+        if (!response.ok) {
+          if (response.status === 401) { navigate("/error401"); }
+          else if (response.status === 403) { navigate("/error403"); }
+          else { throw new Error(response.status + " " + response.statusText); }
+        }
         const res = response.json();
         return res;
       })
@@ -48,37 +54,8 @@ function ProfilForm({ title, userId }) {
           Email: data.email,
           "Phone Number": data.phoneNumber,
           Job: data.job,
-          "Organization Unit": data.orgUnit?.name,
           Organization: data.organisation?.name,
-        }));
-        console.info("[DATA] " + JSON.stringify(data));
-        console.log("[LOG] profil info retrieve");
-      })
-      .catch((error) => {
-        console.error("API request error: ", error);
-      });
-  };
-
-  // Get user from API Authentification
-  const getUserAuth = async () => {
-    // API URL
-    const apiUrl =
-      "https://localhost:8041/api/authentication/v1/login-profiles/" + userId;
-
-    await fetch(apiUrl, {
-      method: "GET",
-      headers: headers,
-    })
-      .then((response) => {
-        if (!response.ok) throw new Error(response.status);
-        const res = response.json();
-        return res;
-      })
-      .then((data) => {
-        const roleNames = data.roles.map((role) => role.name);
-        setUser((prevUser) => ({
-          ...prevUser,
-          Roles: roleNames,
+          "Organization Unit": data.orgUnit?.id,
         }));
         console.info("[DATA] " + JSON.stringify(data));
         console.log("[LOG] profil info retrieve");
@@ -98,9 +75,12 @@ function ProfilForm({ title, userId }) {
         },
       );
       if (!response.ok) {
-        throw new Error("Failed to fetch organization units");
+        if (response.status === 401) { navigate("/error401"); }
+        else if (response.status === 403) { navigate("/error403"); }
+        else { throw new Error(response.status + " " + response.statusText); }
       }
       const data = await response.json();
+      setOrganizations(data);
 
       // Flatten the orgUnits array from each organization object
       const flattenedOrgUnits = data.reduce((acc, org) => {
@@ -143,7 +123,11 @@ function ProfilForm({ title, userId }) {
       body: JSON.stringify(mappedUserData), // Convert user object to JSON string
     })
       .then((response) => {
-        if (!response.ok) throw new Error(response.status);
+        if (!response.ok) {
+          if (response.status === 401) { navigate("/error401"); }
+          else if (response.status === 403) { navigate("/error403"); }
+          else { throw new Error(response.status + " " + response.statusText); }
+        }
         console.log("[LOG] Profile updated successfully");
         alert("Profile updated successfully"); // Show success message
       })
@@ -158,7 +142,13 @@ function ProfilForm({ title, userId }) {
       ...prevState,
       [fieldName]: value,
     }));
+    console.log(user["Organization Unit"]);
+    console.log(modifiedUser.orgUnit);
   };
+
+  function handleChangePassword() {
+    navigate("/updatePassword");
+  }
 
   return (
     <>
@@ -168,26 +158,43 @@ function ProfilForm({ title, userId }) {
           {Object.entries(user).map(([key, value]) => (
             <div className="input-container" key={key}>
               <label className="label">{key}:</label>
-              {key === "Id" || key === "Organization" ? (
+              {key === "Id" ? (
                 <input type="text" className="input" disabled value={value} />
-              ) : key === "Roles" ? (
-                <input
-                  type="text"
-                  className="input"
-                  disabled
-                  value={value.sort().join(" ; ").toUpperCase()}
-                />
+              ) : key === "Organization" ? (
+                <select
+                  className="add-user-input"
+                  value={selectedOrg}
+                  onChange={(e) => {
+                    const orgId = e.target.value;
+                    setSelectedOrg(
+                      organizations.find((org) => org.id == orgId),
+                    );
+                  }}
+                  defaultValue={user.Organization}
+                >
+                  {organizations.map((org) => (
+                    <option
+                      key={org.id}
+                      value={org.id}
+                      selected={selectedOrg === user.Organization}
+                    >
+                      {org.name}
+                    </option>
+                  ))}
+                </select>
               ) : key === "Organization Unit" ? (
                 <select
-                  className="input"
-                  value={modifiedUser.orgUnit || user.orgUnit}
-                  onChange={(e) =>
-                    handleChange("orgUnit", parseInt(e.target.value))
-                  }
+                  className="add-user-input"
+                  value={modifiedUser.orgUnit || user["Organization Unit"]}
+                  onChange={(e) => handleChange("orgUnit", e.target.value)}
+                  defaultValue={user["Organization Unit"]}
                 >
-                  <option value="">Select Organization Unit</option>
                   {orgUnits.map((unit) => (
-                    <option key={unit.id} value={unit.id}>
+                    <option
+                      key={unit.id}
+                      value={unit.id}
+                      selected={user["Organization Unit"] === unit.id}
+                    >
                       {unit.name}
                     </option>
                   ))}
@@ -209,6 +216,7 @@ function ProfilForm({ title, userId }) {
           <Button type="back" value="back" onClick={handleBack}>
             Back
           </Button>
+          <Button onClick={handleChangePassword}>Modify Password</Button>
           <Button type="submit" value="Submit" onClick={handleSubmit}>
             Submit
           </Button>

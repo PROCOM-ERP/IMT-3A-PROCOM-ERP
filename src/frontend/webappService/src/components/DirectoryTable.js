@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../css/DirectoryTable.css";
+import Button from "./Button";
 
 function DirectoryTable({ isAdmin = false }) {
   //const defaultUsers = data.users;
@@ -60,7 +61,11 @@ function DirectoryTable({ isAdmin = false }) {
       headers: headers,
     })
       .then((response) => {
-        if (!response.ok) throw new Error(response.status);
+        if (!response.ok) {
+          if (response.status === 401) { navigate("/error401"); }
+          else if (response.status === 403) { navigate("/error403"); }
+          else { throw new Error(response.status + " " + response.statusText); }
+        }
         const res = response.json();
         return res;
       })
@@ -70,6 +75,8 @@ function DirectoryTable({ isAdmin = false }) {
       })
       .catch((error) => {
         console.error("API request error: ", error);
+        if (error.status === 401) navigate("/error401");
+        if (error.status === 403) navigate("/error403");
       });
   };
 
@@ -81,15 +88,24 @@ function DirectoryTable({ isAdmin = false }) {
     getEmployees();
   }, []);
 
+  function handleAddUser() {
+    navigate("/addUser");
+  }
+
   return (
     <>
       <div className='directory-container'>
-        <input className='searchBar'
-          type="text"
-          placeholder="Search"
-          value={searchTerm}
-          onChange={handleChange}
-        />
+        <div className="line-container">
+          <div className="searchbar-container">
+            <input className='searchbar'
+              type="text"
+              placeholder="Search"
+              value={searchTerm}
+              onChange={handleChange}
+            />
+          </div>
+          {isAdmin && (<Button className="add-user-button" onClick={handleAddUser}>Add User</Button>)}
+        </div>
         <table className='table-container' >
           <thead className='table-head-container'>
             <tr>

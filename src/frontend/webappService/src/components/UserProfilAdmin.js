@@ -2,8 +2,10 @@ import React, { useState, useEffect } from "react";
 import Button from "../components/Button.js";
 import "../css/App.css";
 import "../css/UserProfil.css";
+import { useNavigate } from "react-router-dom";
 
 function UserProfilAdmin({ title, userId }) {
+  const navigate = useNavigate();
   const [userRoles, setUserRoles] = useState({});
   const [userInfo, setUserInfo] = useState({});
   const [modifiedUserRoles, setModifiedUserRoles] = useState({});
@@ -35,7 +37,11 @@ function UserProfilAdmin({ title, userId }) {
       headers: headers,
     })
       .then((response) => {
-        if (!response.ok) throw new Error(response.status);
+        if (!response.ok) {
+          if (response.status === 401) { navigate("/error401"); }
+          else if (response.status === 403) { navigate("/error403"); }
+          else { throw new Error(response.status + " " + response.statusText); }
+        }
         const res = response.json();
         return res;
       })
@@ -80,7 +86,11 @@ function UserProfilAdmin({ title, userId }) {
       headers: headers,
     })
       .then((response) => {
-        if (!response.ok) throw new Error(response.status);
+        if (!response.ok) {
+          if (response.status === 401) { navigate("/error401"); }
+          else if (response.status === 403) { navigate("/error403"); }
+          else { throw new Error(response.status + " " + response.statusText); }
+        }
         const res = response.json();
         return res;
       })
@@ -177,7 +187,9 @@ function UserProfilAdmin({ title, userId }) {
     })
       .then(response => {
         if (!response.ok) {
-          throw new Error('Failed to save changes');
+          if (response.status === 401) { navigate("/error401"); }
+          else if (response.status === 403) { navigate("/error403"); }
+          else { throw new Error(response.status + " " + response.statusText); }
         }
         console.log("[LOG] User information updated with success");
       })
@@ -212,7 +224,9 @@ function UserProfilAdmin({ title, userId }) {
     })
       .then(response => {
         if (!response.ok) {
-          throw new Error('Failed to save changes');
+          if (response.status === 401) { navigate("/error401"); }
+          else if (response.status === 403) { navigate("/error403"); }
+          else { throw new Error(response.status + " " + response.statusText); }
         }
         console.log("[LOG] User roles updated with success");
       })
@@ -233,7 +247,7 @@ function UserProfilAdmin({ title, userId }) {
 
   return (
     <>
-      <div className="user-container">
+      <div className="user-form-container">
         <div className="title">{title}</div>
         <div className="information-container">
           {Object.entries(userInfo).map(([key, value]) => (
@@ -289,7 +303,7 @@ function UserProfilAdmin({ title, userId }) {
             )))}
           </div>
         </div>
-        <div>
+        <div className="button-container">
           <Button onClick={handleModif}> {modify ? "Save" : "Modify"} </Button>
           {(modify && (
             <Button onClick={handleBack}>Back</Button>

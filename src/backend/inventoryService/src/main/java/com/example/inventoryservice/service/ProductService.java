@@ -27,12 +27,25 @@ public class ProductService {
     private final AddressService addressService;
     private final Logger logger = LoggerFactory.getLogger(InventoryServiceApplication.class);
 
+    /**
+     * Function that returns one product with all the information about this product (EAGER):
+     *  - associated categories
+     *  - product metadata
+     *  - items of the product, with the associated addresses and transactions
+     * @param id: id of the selected product
+     * @return ProductDto
+     * @throws NoSuchElementException: The element does not exist
+     */
     public ProductDto getProductById(int id)
             throws NoSuchElementException {
         Optional<Product> productOptional = productRepository.findById(id);
         return productOptional.map(ProductService::productToDto).orElseThrow();
     }
 
+    /**
+     * Function that retrieve all the products without the detailed information
+     * @return List<ProductDto>
+     */
     public List<ProductDto> getAllProducts(){
         return productRepository.findAll()
                 .stream()
@@ -53,7 +66,7 @@ public class ProductService {
                 .description(productRequest.getDescription())
                 .build();
 
-        List<Category> categories = categoryService.getAllByIds(productRequest.getCategories());
+        List<Category> categories = categoryService.getAllByIds(productRequest.getCategories());    
 
         if (categories == null || categories.isEmpty()) {
             // Error 422
@@ -104,14 +117,14 @@ public class ProductService {
             itemList.add(item);
 
             product.setItems(itemList);
-
-
         }
         product.setProductMeta(productMetaList);
         product.setCategories(categories);
 
         productRepository.save(product);
     }
+
+    // DTO converters:
 
     static ProductDto productToDto(Product product) {
         return ProductDto.builder()
@@ -121,6 +134,7 @@ public class ProductService {
                 .items(itemToDtoList(product.getItems()))
                 .categories(categoryToDtoList(product.getCategories()))
                 .productMeta(productMetaToDtoList(product.getProductMeta()))
+                .quantity(productQuantity(product))
                 .build();
     }
 
@@ -131,6 +145,7 @@ public class ProductService {
                 .description(product.getDescription())
                 .items(itemToDtoList(product.getItems()))
                 .productMeta(productMetaToDtoList(product.getProductMeta()))
+                .quantity(productQuantity(product))
                 .build();
     }
 
@@ -141,6 +156,7 @@ public class ProductService {
                 .description(product.getDescription())
                 .categories(categoryToDtoList(product.getCategories()))
                 .productMeta(productMetaToDtoList(product.getProductMeta()))
+                .quantity(productQuantity(product))
                 .build();
     }
 
@@ -150,6 +166,7 @@ public class ProductService {
                 .title(product.getTitle())
                 .description(product.getDescription())
                 .productMeta(productMetaToDtoList(product.getProductMeta()))
+                .quantity(productQuantity(product))
                 .build();
     }
 
@@ -169,5 +186,21 @@ public class ProductService {
         return productMeta.stream()
                 .map(ProductMetaService::productMetaToDto)
                 .toList();
+    }
+
+    /**
+     * Function that counts the quantity of the product.
+     * This is used to complement the ProductCategoryToDto for example
+     * @param product: Product with his associated items
+     * @return Integer
+     */
+    static Integer productQuantity(Product product){
+        Integer counter = 0;
+        if (product != null && product.getItems() != null){
+            for (Item item: product.getItems()){
+                counter += item.getQuantity();
+            }
+        }
+        return counter;
     }
 }

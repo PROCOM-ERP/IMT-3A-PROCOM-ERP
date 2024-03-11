@@ -1,5 +1,6 @@
 package com.example.authenticationservice.dto;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,7 +14,10 @@ import java.util.Set;
 @Builder
 public class RoleResponseDto {
 
+    @NotNull(message = "Role activation status cannot be null.")
     private Boolean isEnable;
-    private Set<PermissionDto> permissions;
+
+    @NotNull(message = "Role permission set cannot be null, but can be empty.")
+    private Set<@NotNull(message = "PermissionDto cannot be null.") PermissionDto> permissions;
 
 }

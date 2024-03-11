@@ -21,6 +21,11 @@ public class RabbitMQConfig {
         return new Queue("login-profiles-sec-queue");
     }
 
+    @Bean
+    public Queue employeeInfoGetDirectoryQueue() {
+        return new Queue("employee-info-get-queue");
+    }
+
     /* Exchanges */
 
     @Bean
@@ -36,6 +41,11 @@ public class RabbitMQConfig {
     @Bean
     public FanoutExchange loginProfilesSecExchange() {
         return new FanoutExchange("login-profiles-sec-exchange");
+    }
+
+    @Bean
+    public DirectExchange employeesDirectExchange() {
+        return new DirectExchange("employees-direct-exchange");
     }
 
     @Bean
@@ -60,6 +70,15 @@ public class RabbitMQConfig {
         return BindingBuilder.bind(loginProfilesSecQueue)
                 .to(loginProfilesSecExchange)
                 .with("*")
+                .noargs();
+    }
+
+    @Bean
+    public Binding employeeInfoGetBinding(Queue employeeInfoGetDirectoryQueue,
+                                          Exchange employeesDirectExchange) {
+        return BindingBuilder.bind(employeeInfoGetDirectoryQueue)
+                .to(employeesDirectExchange)
+                .with("employee.info.get")
                 .noargs();
     }
 }

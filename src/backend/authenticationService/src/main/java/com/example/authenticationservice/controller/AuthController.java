@@ -1,7 +1,9 @@
 package com.example.authenticationservice.controller;
 
+import com.example.authenticationservice.annotation.LogExecutionTime;
 import com.example.authenticationservice.model.Path;
 import com.example.authenticationservice.service.JwtService;
+import com.example.authenticationservice.utils.CustomLogger;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -23,6 +25,8 @@ public class AuthController {
     }
 
     @PostMapping( Path.JWT)
+    @LogExecutionTime(description = "Generate new Jwt token for a user.",
+            tag = CustomLogger.TAG_USERS)
     @Operation(operationId = "generateJwtToken", tags = {"auth"},
             summary = "Create Jwt encrypted token ", description =
             "Create Jwt encrypted token, by providing Basic authentication (username, password)")

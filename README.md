@@ -8,12 +8,19 @@ for new small businesses of all types (shops, restaurants, etc).
 Depending on their needs, companies can have a package with only the necessary functionalities,
 while being able to add or remove functionality later almost instantaneously.
 
+Here is a sneak peek :
+
+![Login](./docs/images/front-login.png "Login")
+
+![Order-Home](./docs/images/order-home.png "Order Page")
+
 For the moment, the modules on offer are:
 
 - Authentication service
 - Directory service
+- Order service
 
-Other services, such as an order and inventory service, are in the pipeline.
+Other services, such as an inventory service, are in the pipeline.
 
 **_NB_**: This project is part of the ProCom teaching unit in the 3rd year of the engineering course at IMT Atlantique.
 It is not really intended to be marketed,
@@ -26,9 +33,9 @@ You can find a comprehensive [Deployment guide](./docs/DEPLOYING.md) on how to d
 ## Metadata
 
 - **Timestamp**: 2023-11-02
-- **Last update**: 2024-02-19
+- **Last update**: 2024-02-26
 - **Status**: In development
-- **Current Version**: 0.1.0
+- **Current Version**: 1.0.0
 - **Supported Platforms**: Windows (Linux and macOS untested)
 - **Development Environment**:
   - [Intellij IDEA 2023.1](https://www.jetbrains.com/idea/)
@@ -57,11 +64,9 @@ IMT-3A-PROCOM-ERP/                     This repository
 ├── CONTRIBUTING.md                    Explains how to contribute to the project, by respecting some rules
 ├── CHANGELOG.md                       Tracked changes in the project's lifecycle
 ├── LICENSE.md                         License in place for this project
-├── docker-compose.yml                 Docker containers build script to simulate the project
-├── docker-compose-swarm.yml           Docker containers build script to simulate the project Swarm mode
 ├── deploy.sh                          Complete deploy script (available in a .ps1 for Windows devs)
+├── undeploy.sh                        Undeploy script (available in a .ps1 for Windows devs)
 ├── pom.xml                            Maven parent configuration file for all backend services (modules) for development purposes (IDE LSP detection)
-├── .env                               Environment variables of the projet
 ├── .github/                           Used by GitHub for CI/CD processes
 │   ├── CODEOWNERS                     Detail which team-member has to review which changes
 │   └── workflows/                     All CI/CD auto-running tasks depending on the triggered event
@@ -82,24 +87,33 @@ IMT-3A-PROCOM-ERP/                     This repository
 │   │   │   └── ...
 │   │   └── service-n/                 Another service
 │   │       └── ...
-│   ├── databases/                     Databases scripts and configurations
-│   │   ├── db-1/                      One database
-│   │   │   ├── Dockerfile             Dockerfile describing the operations required to build each service's image
-│   │   │   ├── reset.sql              Script to reset all tables in a relationnal database
-│   │   │   └── init.sql               Script to create tables in a relationnal database
-│   │   └── db-n/                      Another database
-│   │       └── ...
-│   ├── security/                      Security scripts (./deploy.sh uses all except for clean_security.sh), all are available in a .ps1 for Windows devs
-│   │    ├── clean_security.sh         Cleans all certificates from the repository
-│   │    ├── docker_secrets.sh         Generates all the docker secrets necessary for the deployment with normal compose
-│   │    ├── docker_secrets_files.sh   Generates all docker secrets in swarm mode
-│   │    └── security_setup.sh         Generates all needed certificates in the repository
-│   │
-│   └── system/                        System files: all entrypoints specific scripts, and centralized certificates
-│       ├── db_entrypoint.sh           Entrypoint for the databases
-│       ├── entrypoint.sh              Entrypoint for the backend services
-│       ├── mvnw                       Maven Wrapper copied to every service to better control maven version
-│       └── wait-for-it.sh             Handy script that waits for the availability of an service to execute a given command
+│   └── databases/                     Databases scripts and configurations
+│       ├── db-1/                      One database
+│       │   ├── Dockerfile             Dockerfile describing the operations required to build each service's image
+│       │   ├── reset.sql              Script to reset all tables in a relationnal database
+│       │   └── init.sql               Script to create tables in a relationnal database
+│       └── db-n/                      Another database
+│           └── ...
+│
+├── system/                            System files: all entrypoints specific scripts, and centralized certificates
+│   ├── db_entrypoint.sh               Entrypoint for the databases
+│   ├── entrypoint.sh                  Entrypoint for the backend services
+│   ├── mvnw                           Maven Wrapper copied to every service to better control maven version
+│   └── wait-for-it.sh                 Handy script that waits for the availability of an service to execute a given command
+│
+├── security/                          Security scripts (./deploy.sh uses all except for clean_security.sh), all are available in a .ps1 for Windows devs
+│   ├── clean_security.sh              Cleans all certificates from the repository
+│   ├── docker_secrets.sh              Generates all the docker secrets necessary for the deployment with normal compose
+│   ├── docker_secrets_files.sh        Generates all docker secrets in swarm mode
+│   ├── security_setup.sh              Generates all needed certificates in the repository
+│   └── ...                            Other scripts, such as the docker secrets scripts, or certicate generations
+│
+├── docker/                            Directory for Docker related files
+│   ├── elk /                          Directory for all the Elastic Stack, imported and adapted to our project from deviantony/docker-elk.
+│   │   └── ...
+│   ├── .env                           Environment variables of the projet
+│   ├── docker-compose.yml             Docker containers build script to simulate the project
+│   └── docker-compose-swarm.yml       Docker containers build script to simulate the project Swarm mode
 │
 └── docs/                              All technical and GitHub workflows documentation
     ├── workflows/                     GitHub workflows as sequence diagrams
@@ -126,14 +140,15 @@ any changes in this directory will need a review acceptation from a member of th
 [CONTRIBUTING.md](CONTRIBUTING.md) file explains how to contribute to the project,
 and what are the contributing rules.
 
-## Roadmap
+We follow a [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md), if you want to contribute, you will _have_ to follow it.
 
-The different steps to follow are described in the [BACKLOG.md](BACKLOG.md) file.
-They are assigned by the Product Owner of the project (see [Contributors](#contributors) section).
+## Security
+
+You can verify the versions of this software still maintained to this day, as well as how to report a bug or security issue in the [SECURITY.md](SECURITY.md) section.
 
 ## Suggestions
 
-Any enhancement idea can be suggested in the [Suggestions](BACKLOG.md#suggestions) section of the BACKLOG file.
+Any enhancement idea can be suggested in an [Feature Request Issue](https://github.com/PROCOM-ERP/IMT-3A-PROCOM-ERP/issues/new?assignees=&labels=&projects=&template=feature_request.md&title=), following the Feature Request template.
 
 ## License
 
@@ -149,6 +164,7 @@ Thanks also to external resources for their open-source samples / documentation:
 - [Baeldung](https://www.baeldung.com): Java Spring Boot tutorials and code samples
 - [Vertabelo](https://vertabelo.com): Data modeling
 - [vishnubob](https://github.com/vishnubob/wait-for-it): wait-for-it.sh script
+- [deviantony](https://github.com/deviantony/docker-elk): the entirety of Elastic Stack preconfigured, very helpufl, we only had to adjust it a little as indicated in the [Docker ELK README](./docker/elk/README.md).
 
 ## Contributors
 

@@ -1,0 +1,976 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "OrderService",
+    "description": "Service to manage orders for the company.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://localhost:8041",
+      "description": "API Gateway access URL"
+    }
+  ],
+  "tags": [
+    {
+      "name": "hello"
+    },
+    {
+      "name": "employees"
+    },
+    {
+      "name": "orders"
+    },
+    {
+      "name": "providers"
+    },
+    {
+      "name": "roles"
+    }
+  ],
+  "paths": {
+    "/api/order/v1/roles/{role}": {
+      "get": {
+        "tags": [
+          "roles"
+        ],
+        "summary": "Retrieve one role permissions and activation status",
+        "description": "Retrieve one role permissions and activation status, by providing its name.<br>Only available for admins.",
+        "operationId": "getRolebyName",
+        "parameters": [
+          {
+            "name": "role",
+            "in": "path",
+            "description": "The role name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "Role not found",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "401": {
+            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "500": {
+            "description": "Uncontrolled error appeared",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "200": {
+            "description": "Role information retrieved correctly",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoleResponseDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "roles"
+        ],
+        "summary": "Update a role permissions and / or activation status",
+        "description": "Update a role permissions and / or activation status, by providing a list of active ones.<br>Previous ones will be deleted.<br>Only available for admins.",
+        "operationId": "updateRoleByName",
+        "parameters": [
+          {
+            "name": "role",
+            "in": "path",
+            "description": "The role name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RoleUpdateRequestDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "422": {
+            "description": "Attribute values don't respect integrity constraints.<br>Permissions : retrieve a role information for the microservice, to know which one are available.<br>isEnable : provide a boolean to modify value (can be null to keep current value).",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "404": {
+            "description": "Role not found",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "401": {
+            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "204": {
+            "description": "Role permissions and / or activation status updated correctly",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "500": {
+            "description": "Uncontrolled error appeared",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "400": {
+            "description": "The request body is badly structured or formatted",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/order/v1/orders": {
+      "get": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "Retrieve all orders for a specific user",
+        "description": "Retrieve all orders for a specific user, by providing its id in the query string.<br>Orders will be grouped by those ordered by the user and those approved by the user.",
+        "operationId": "getAllOrdersByIdLoginProfile",
+        "parameters": [
+          {
+            "name": "idLoginProfile",
+            "in": "query",
+            "description": "The user id in the query string",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User orders retrieved correctly",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrdersByIdLoginProfileResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "500": {
+            "description": "Uncontrolled error appeared",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "Create a new order",
+        "description": "Create a new order by providing location information,employee information, provider, quote, and products (see body type).",
+        "operationId": "createOrder",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrderCreationRequestDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Order created correctly",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "401": {
+            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "500": {
+            "description": "Uncontrolled error appeared",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "400": {
+            "description": "The request body is badly structured or formatted",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "422": {
+            "description": "Attribute values don't respect integrity constraints.",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/order/v1/orders/{idOrder}/progress": {
+      "patch": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "Update the progress status of an order",
+        "description": "Update the progress status of an order. Only the order approver (or admin) can approve an order",
+        "operationId": "updateOrderProgressStatusById",
+        "parameters": [
+          {
+            "name": "idOrder",
+            "in": "path",
+            "description": "The order id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrderUpdateProgressStatusDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "422": {
+            "description": "Attribute values don't respect integrity constraints.<br>IdProgressStatus : an integer from 1 to 5.",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "204": {
+            "description": "Order progress status updated correctly",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "401": {
+            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "403": {
+            "description": "Forbidden to update the order progress status",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Uncontrolled error appeared",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "400": {
+            "description": "The request body is badly structured or formatted",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/order/v1/roles": {
+      "get": {
+        "tags": [
+          "roles"
+        ],
+        "summary": "Retrieve all roles",
+        "description": "Retrieve all roles.<br>Only available for admins.",
+        "operationId": "getAllRoles",
+        "responses": {
+          "200": {
+            "description": "Roles information retrieved correctly",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoleActivationResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "500": {
+            "description": "Uncontrolled error appeared",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/order/v1/roles/{role}/activation": {
+      "get": {
+        "tags": [
+          "roles"
+        ],
+        "summary": "Retrieve one role activation status for a microservice",
+        "description": "Retrieve one role activation status for a microservice, by providing its name.<br>Only available for admins.",
+        "operationId": "getRoleActivationByName",
+        "parameters": [
+          {
+            "name": "role",
+            "in": "path",
+            "description": "The role name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Role activation status retrieved correctly",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoleActivationResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "500": {
+            "description": "Uncontrolled error appeared",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "404": {
+            "description": "Role activation status not found for role provided",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/order/v1/providers": {
+      "get": {
+        "tags": [
+          "providers"
+        ],
+        "summary": "Retrieve all providers information",
+        "description": "Retrieve all providers information.",
+        "operationId": "getAllProviders",
+        "responses": {
+          "200": {
+            "description": "Providers information retrieved correctly",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Provider"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "500": {
+            "description": "Uncontrolled error appeared",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/order/v1/orders/{idOrder}": {
+      "get": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "Retrieve one order",
+        "description": "Retrieve one order, by providing its id in the path.",
+        "operationId": "getOrderById",
+        "parameters": [
+          {
+            "name": "idOrder",
+            "in": "path",
+            "description": "The order id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "403": {
+            "description": "Forbidden to get order because authenticated user is not the orderer neither the approver",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "200": {
+            "description": "Order retrieved correctly",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Uncontrolled error appeared",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/order/v1/hello": {
+      "get": {
+        "tags": [
+          "hello"
+        ],
+        "summary": "GET Hello World !",
+        "description": "GET Hello World ! from Order Service",
+        "operationId": "getHello",
+        "responses": {
+          "200": {
+            "description": "Hello World message retrieved correctly",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "500": {
+            "description": "Uncontrolled error appeared",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/order/v1/employees/{idEmployee}": {
+      "get": {
+        "tags": [
+          "employees"
+        ],
+        "summary": "Retrieve one employee information",
+        "description": "Retrieve one employee information, including its address, by providing its id.",
+        "operationId": "getEmployeeAndAddressById",
+        "parameters": [
+          {
+            "name": "idEmployee",
+            "in": "path",
+            "description": "The employee username (6 characters identifier)",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "Employee not found",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "200": {
+            "description": "Employee information retrieved correctly",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmployeeResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Roles in Jwt token are insufficient to authorize the access to this URL",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "500": {
+            "description": "Uncontrolled error appeared",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "RoleUpdateRequestDto": {
+        "type": "object",
+        "properties": {
+          "isEnable": {
+            "type": "boolean"
+          },
+          "permissions": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "AddressCreationRequestDto": {
+        "required": [
+          "city",
+          "country",
+          "number",
+          "street",
+          "zipcode"
+        ],
+        "type": "object",
+        "properties": {
+          "number": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "street": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string"
+          },
+          "zipcode": {
+            "type": "string"
+          },
+          "info": {
+            "type": "string"
+          }
+        }
+      },
+      "EmployeeCreationRequestDto": {
+        "required": [
+          "email",
+          "firstName",
+          "id",
+          "lastName",
+          "phoneNumber"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phoneNumber": {
+            "type": "string"
+          }
+        }
+      },
+      "OrderCreationRequestDto": {
+        "required": [
+          "address",
+          "orderer",
+          "products",
+          "provider",
+          "quote"
+        ],
+        "type": "object",
+        "properties": {
+          "provider": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "quote": {
+            "type": "string"
+          },
+          "address": {
+            "$ref": "#/components/schemas/AddressCreationRequestDto"
+          },
+          "orderer": {
+            "$ref": "#/components/schemas/EmployeeCreationRequestDto"
+          },
+          "products": {
+            "maxItems": 2147483647,
+            "minItems": 1,
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderProductCreationRequestDto"
+            }
+          }
+        }
+      },
+      "OrderProductCreationRequestDto": {
+        "required": [
+          "quantity",
+          "reference",
+          "unitPrice"
+        ],
+        "type": "object",
+        "properties": {
+          "reference": {
+            "type": "string"
+          },
+          "unitPrice": {
+            "type": "number"
+          },
+          "quantity": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "OrderUpdateProgressStatusDto": {
+        "type": "object",
+        "properties": {
+          "idProgressStatus": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "RoleActivationResponseDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "microservice": {
+            "type": "string"
+          },
+          "isEnable": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PermissionDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "isEnable": {
+            "type": "boolean"
+          }
+        }
+      },
+      "RoleResponseDto": {
+        "type": "object",
+        "properties": {
+          "isEnable": {
+            "type": "boolean"
+          },
+          "permissions": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PermissionDto"
+            }
+          }
+        }
+      },
+      "Provider": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "maxLength": 64,
+            "minLength": 0,
+            "type": "string"
+          }
+        }
+      },
+      "OrderByApproverResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "provider": {
+            "type": "string"
+          },
+          "totalAmount": {
+            "type": "number"
+          },
+          "orderer": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        }
+      },
+      "OrderByOrdererResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "provider": {
+            "type": "string"
+          },
+          "totalAmount": {
+            "type": "number"
+          },
+          "approver": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        }
+      },
+      "OrdersByIdLoginProfileResponseDto": {
+        "type": "object",
+        "properties": {
+          "ordersByOrderer": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderByOrdererResponseDto"
+            }
+          },
+          "ordersByApprover": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderByApproverResponseDto"
+            }
+          }
+        }
+      },
+      "OrderProductResponseDto": {
+        "required": [
+          "quantity",
+          "reference",
+          "unitPrice"
+        ],
+        "type": "object",
+        "properties": {
+          "reference": {
+            "type": "string"
+          },
+          "unitPrice": {
+            "type": "number"
+          },
+          "quantity": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "OrderResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "provider": {
+            "type": "string"
+          },
+          "totalAmount": {
+            "type": "number"
+          },
+          "orderer": {
+            "type": "string"
+          },
+          "approver": {
+            "type": "string"
+          },
+          "progress": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProgressStatusResponseDto"
+            }
+          },
+          "products": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderProductResponseDto"
+            }
+          }
+        }
+      },
+      "ProgressStatusResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          },
+          "completed": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AddressResponseDto": {
+        "required": [
+          "city",
+          "country",
+          "number",
+          "street",
+          "zipcode"
+        ],
+        "type": "object",
+        "properties": {
+          "number": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "street": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string"
+          },
+          "zipcode": {
+            "type": "string"
+          },
+          "info": {
+            "type": "string"
+          }
+        }
+      },
+      "EmployeeResponseDto": {
+        "required": [
+          "address",
+          "email",
+          "firstName",
+          "id",
+          "lastName",
+          "phoneNumber"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phoneNumber": {
+            "type": "string"
+          },
+          "address": {
+            "$ref": "#/components/schemas/AddressResponseDto"
+          }
+        }
+      }
+    }
+  }
+}

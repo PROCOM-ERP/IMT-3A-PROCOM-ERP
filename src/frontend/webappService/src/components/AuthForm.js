@@ -1,4 +1,3 @@
-import "../css/App.css";
 import "../css/AuthForm.css";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -76,7 +75,11 @@ function Form() {
       headers: headers,
     })
       .then((response) => {
-        if (!response.ok) throw new Error(response.status);
+        if (!response.ok) {
+          if (response.status === 401) { navigate("/error401"); }
+          else if (response.status === 403) { navigate("/error403"); }
+          else { throw new Error(response.status + " " + response.statusText); }
+        }
         const res = response.text();
         return res;
       })
@@ -98,7 +101,7 @@ function Form() {
   return (
     <>
       <div className="authentification-container">
-        <div className="login-title">Login</div>
+        <div className="title">Login</div>
         <form>
           <div className="usernameInput">
             <label>Username :</label>

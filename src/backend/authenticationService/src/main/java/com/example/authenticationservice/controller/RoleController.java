@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +23,10 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class RoleController {
 
+    /* Service Beans */
     private final RoleService roleService;
+
+    /* Public Methods */
 
     @PostMapping
     @Operation(operationId = "createRole", tags = {"roles"},
@@ -48,7 +52,9 @@ public class RoleController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<String> createRole(@RequestBody RoleCreationRequestDto roleCreationRequestDto) {
+    public ResponseEntity<String> createRole(
+            @Valid @RequestBody RoleCreationRequestDto roleCreationRequestDto)
+    {
         // try to create a new role
         String role = roleService.createRole(roleCreationRequestDto);
         // generate URI location to inform the client how to get information on the new role
@@ -77,7 +83,8 @@ public class RoleController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<Set<String>> getAllRoleNames() {
+    public ResponseEntity<Set<String>> getAllRoleNames()
+    {
         return ResponseEntity.ok(roleService.getAllRoleNames());
     }
 
@@ -97,7 +104,8 @@ public class RoleController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<RolesMicroservicesResponseDto> getAllRolesAndMicroservices() {
+    public ResponseEntity<RolesMicroservicesResponseDto> getAllRolesAndMicroservices()
+    {
         return ResponseEntity.ok(roleService.getAllRolesAndMicroservices());
     }
 
@@ -122,7 +130,9 @@ public class RoleController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<RoleResponseDto> getRoleByName(@PathVariable String role) {
+    public ResponseEntity<RoleResponseDto> getRoleByName(
+            @PathVariable String role)
+    {
         return ResponseEntity.ok(roleService.getRoleByName(role));
     }
 
@@ -151,8 +161,10 @@ public class RoleController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<RoleActivationResponseDto> getRoleActivationByRoleAndMicroservice(@PathVariable String role,
-                                                                                            @RequestParam("microservice") String microservice) {
+    public ResponseEntity<RoleActivationResponseDto> getRoleActivationByRoleAndMicroservice(
+            @PathVariable String role,
+            @RequestParam("microservice") String microservice)
+    {
         return ResponseEntity.ok(roleService.getRoleActivationByRoleAndMicroservice(role, microservice));
     }
 
@@ -186,8 +198,10 @@ public class RoleController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<String> updateRoleByName(@PathVariable String role,
-                                                   @RequestBody RoleUpdateRequestDto roleDto) {
+    public ResponseEntity<String> updateRoleByName(
+            @PathVariable String role,
+            @Valid @RequestBody RoleUpdateRequestDto roleDto)
+    {
         roleService.updateRoleByName(role, roleDto);
         return ResponseEntity.noContent().build();
     }

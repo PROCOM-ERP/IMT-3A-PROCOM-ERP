@@ -1,78 +1,103 @@
-/* import all fonts */
-@import url('https://fonts.googleapis.com/css2?family=Dosis:wght@300;400;500;600&family=Roboto+Condensed:wght@300;400;500;600;700&display=swap');
+/* Import all fonts */
+@import url('https://fonts.googleapis.com/css2?family=Dosis:wght@300;400;500;600&display=swap');
 
-:root{
-    /* login background */
-    --login-bg: #D7EBFC;
-    /* title page */
-    --login-title-family: Roboto Condensed;
-    --login-title-size: 2.2rem;
-    --login-title-weight: 700;
-    /* text page */
+/* Root variables for text styles */
+:root {
+    /* Text font family */
     --login-text-family: Dosis;
+    /* Text font size */
     --login-text-size: medium;
+    /* Text font weight */
     --login-text-weight: 400;
 }
 
-.authentification-container{
+/* Styles for the authentication container */
+.authentification-container {
+    /* Make the container a flex container with column direction */
     display: flex;
     flex-direction: column;
+    /* Center items horizontally and vertically */
     justify-content: center;
     align-items: center;
-    border: 1px solid var(--login-bg);
+    /* Background color for the container */
+    background-color: var(--usr-bg);
+    /* Border style for the container */
+    border: 1px solid var(--usr-bg);
+    /* Border radius for the container */
     border-radius: 5px;
+    /* Set margin to auto to horizontally center the container */
     margin: auto;
+    /* Add top margin */
     margin-top: 5rem;
+    /* Padding inside the container */
     padding: 1rem;
+    /* Set width of the container */
     width: 30rem;
-    background-color: var(--login-bg);
 }
 
-.login-title{
-    font-family: var(--login-title-family);
-    font-size: var(--login-title-size);
-    font-weight: var(--login-title-weight);
-    padding: 1rem 1rem 0.5rem 1rem;
-}
-
-form{
+/* Styles for the form inside the authentication container */
+form {
+    /* Display the form as a block element */
     display: block;
+    /* Flex direction for the form */
     flex-direction: column;
+    /* Reset margin for the form */
     margin: 0;
+    /* Padding inside the form */
     padding: 2rem;
+    /* Set width to auto */
     width: auto;
 }
 
-form label{
+/* Styles for labels inside the form */
+form label {
+    /* Font family for labels */
     font-family: var(--login-text-family);
+    /* Font size for labels */
     font-size: var(--login-text-size);
+    /* Font weight for labels */
     font-weight: var(--login-text-weight);
+    /* Padding around labels */
     padding: 1rem;
+    /* Margin for labels */
     margin: 1rem;
 }
 
-form input{
+/* Styles for input fields inside the form */
+form input {
+    /* Border radius for input fields */
     border-radius: 5px;
+    /* Border color for input fields */
     border-color: white;
+    /* Border style for input fields */
     border: 2px solid white;
 }
 
-.authentification-btn{
+/* Styles for the authentication buttons */
+.authentification-btn {
+    /* Make the button container a flex container with center alignment */
     display: flex;
     justify-content: center;
     align-items: center;
+    /* Reset margin */
     margin: 0;
+    /* Add padding to the top */
     padding-top: 1rem;
 }
 
-.error{
-    /* display: flex; */
-    /* justify-content: center; */
+/* Styles for error messages */
+.error {
+    /* Font family for error messages */
+    font-family: var(--login-text-family);
+    /* Font size for error messages */
+    font-size: var(--login-text-size);
+    /* Font weight for error messages */
+    font-weight: var(--login-text-weight);
+    /* Color for error messages */
+    color: red;
+    /* Padding for error messages */
     padding-top: 0.6rem;
     padding-left: 1rem;
+    /* Margin for error messages */
     margin-left: 1rem;
-    font-family: var(--login-text-family);
-    font-size: var(--login-text-size);
-    font-weight: var(--login-text-weight);
-    color: red;
 }

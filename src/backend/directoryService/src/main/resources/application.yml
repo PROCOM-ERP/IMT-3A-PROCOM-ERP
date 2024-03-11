@@ -12,6 +12,7 @@ spring:
   main:
     log-startup-info: off
     banner-mode: off
+    lazy-initialization: false
   profiles:
     active: dev
   datasource:
@@ -31,6 +32,8 @@ spring:
     username: ${BACKEND_MESSAGE_BROKER_SERVICE_USERNAME}
     password: ${BACKEND_MESSAGE_BROKER_SERVICE_PASSWORD}
     virtual-host: /
+    publisher-confirms: true # Enables publisher confirms
+    publisher-returns: true # Enables publisher returns
     ssl:
       enabled: true
       key-store: file:${BACKEND_DIRECTORY_SERVICE_HTTPS_KEY_STORE}
