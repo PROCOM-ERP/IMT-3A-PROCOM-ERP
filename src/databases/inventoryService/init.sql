@@ -163,16 +163,16 @@ VALUES ('A00001'),
 
 INSERT INTO categories (title, description)
 VALUES ('Tous', 'Catégorie par défaut sur l''ERP'),
-       ('Tissu'),
-       ('Fibre');
+       ('Tissu', null),
+       ('Fibre', null);
 
 
 INSERT INTO products (title, description)
 VALUES ('Nylon (tissu)', 'Unité en [cm] ; Utilisé pour le développement du produit A180'),
        ('Nylon(fibre)', 'Unité en [cm] ; Utilisé pour le développement du produit A180'),
        ('Kevlar', 'Unité en [cm] ; Utilisé pour le développement du produit D150'),
-       ('Mylar'),
-       ('Kinder Bueno');
+       ('Mylar', null),
+       ('Kinder Bueno', null);
 
 
 INSERT INTO joint_category_product (id_product, id_category)
@@ -209,21 +209,6 @@ VALUES (850, '2024-02-11 09:00:00', 'A00002', 1),
 INSERT INTO product_meta(key, type, value, description, id_product)
 VALUES
     ('Largeur (cm)', 'float', '110.5', 'dpe < 95cm', 1),
-    ('Epaisseur (mm)', 'float', '4.8', '', 2),
-    ('Couleur', 'string', 'cyan', '', 2),
-    ('Largeur (cm)', 'float', '60', '', 3);
-
-/*
-SELECT * FROM addresses;
-
-SELECT * FROM products;
-
-SELECT * FROM categories;
-
-SELECT * FROM items;
-
-SELECT * FROM transactions;
-
-SELECT * FROM category_product;
-
-*/
+    ('Epaisseur (mm)', 'float', '4.8', null, 2),
+    ('Couleur', 'string', 'cyan', null, 2),
+    ('Largeur (cm)', 'float', '60', null, 3);
