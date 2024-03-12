@@ -25,15 +25,13 @@ public class Path {
     public static final String DOCS = "/docs";
     public static final String V1_DOCS_ANYTHING = API + V1 + DOCS + ANYTHING;
 
-    // Categories:
 
+    // Categories:
     public static final String CATEGORIES = "categories";
     public static final String CATEGORY_ID = "/{id}";
     public static final String V1_CATEGORIES = API + V1 + CATEGORIES;
     public static final String V1_CATEGORY_ID = V1_CATEGORIES + CATEGORY_ID;
     public static final String V1_CATEGORY_CREATE = V1_CATEGORIES + CREATE;
-
-
 
 
     // Products:
