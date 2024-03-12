@@ -162,27 +162,40 @@ VALUES ('A00001'),
 -- +----------------------------------------------------------------------------------------------+
 
 INSERT INTO categories (title, description)
-VALUES ('test_category', 'test_description');
+VALUES ('Tous', 'Catégorie par défaut sur l''ERP'),
+       ('Tissu'),
+       ('Fibre');
 
 
 INSERT INTO products (title, description)
-VALUES ('Nordinateur', 'gaming'),
-       ('Carte graphique', 'très performante'),
-       ('Chips', 'très craquantes');
+VALUES ('Nylon (tissu)', 'Unité en [cm] ; Utilisé pour le développement du produit A180'),
+       ('Nylon(fibre)', 'Unité en [cm] ; Utilisé pour le développement du produit A180'),
+       ('Kevlar', 'Unité en [cm] ; Utilisé pour le développement du produit D150'),
+       ('Mylar'),
+       ('Donut');
 
 
 INSERT INTO joint_category_product (id_product, id_category)
 VALUES (1, 1),
-       (2, 1);
+       (1, 2),
+       (2, 1),
+       (2, 3),
+       (3, 1),
+       (3, 2),
+       (4, 1),
+       (4, 2),
+       (5, 1);
 
 
 INSERT INTO addresses (number, street, city, state, country, postal_code, info)
-VALUES ('15', 'entrepot de Malta Shopper', 'Malte', 'Valleta', 'Malte', '66666', 'je n''y reviendrai plus jamais !'),
-       ('100', 'Rue Louis veuillot', 'Brest', 'Bretage', 'France', '27000', '@ du challet');
+VALUES ('162', 'Cannon Rd', 'Santa Venera', 'Malte', 'Malte', '9034', 'MaltaShopper Limited : on stocke les stagiaires dans des cartons'),
+       ('10', 'Rue Louis veuillot', 'Brest', 'Bretage', 'France', '27000', 'Chalet'),
+       ('VF2F+RQF', 'Ghadajma', 'Mqabba', 'Malte', 'Malte', 'indisponible', 'MaltaShopper Warehouse : Stocke les matières premières');
 
 INSERT INTO items (quantity, id_address, id_product)
-VALUES (12, 1, 1),
-       (10, 1, 2);
+VALUES (850, 1, 1),
+       (10110, 1, 2),
+       (7440, 3, );
 
 INSERT INTO transactions(quantity, timestamp, employee, id_item)
 VALUES (10, '2024-02-11 09:00:00', 'A00001', 1),
