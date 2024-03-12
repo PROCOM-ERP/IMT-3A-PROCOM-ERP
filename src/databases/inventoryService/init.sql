@@ -172,7 +172,7 @@ VALUES ('Nylon (tissu)', 'Unité en [cm] ; Utilisé pour le développement du pr
        ('Nylon(fibre)', 'Unité en [cm] ; Utilisé pour le développement du produit A180'),
        ('Kevlar', 'Unité en [cm] ; Utilisé pour le développement du produit D150'),
        ('Mylar'),
-       ('Donut');
+       ('Kinder Bueno');
 
 
 INSERT INTO joint_category_product (id_product, id_category)
@@ -195,17 +195,23 @@ VALUES ('162', 'Cannon Rd', 'Santa Venera', 'Malte', 'Malte', '9034', 'MaltaShop
 INSERT INTO items (quantity, id_address, id_product)
 VALUES (850, 1, 1),
        (10110, 1, 2),
-       (7440, 3, );
+       (920, 3, 2),
+       (7440, 3, 3),
+       (1001, 2, 5);
 
 INSERT INTO transactions(quantity, timestamp, employee, id_item)
-VALUES (10, '2024-02-11 09:00:00', 'A00001', 1),
-       (2, '2024-02-11 10:00:00', 'A00002', 1);
+VALUES (850, '2024-02-11 09:00:00', 'A00002', 1),
+       (10110, '2024-02-11 10:00:00', 'A00002', 2),
+       (920, '2024-02-11 09:00:00', 'A00002', 3),
+       (7440, '2024-02-11 09:00:00', 'A00002', 4),
+       (1001, '2024-02-11 09:00:00', 'A00002', 5);
 
 INSERT INTO product_meta(key, type, value, description, id_product)
 VALUES
-('Volume', 'float', '1,553', 'Bière', 1),
-('Quantité de gras', 'integer', '10', 'Sauciflard', 1),
-('Poids', 'float', '168,4', 'Trop de BF', 1)
+    ('Largeur (cm)', 'float', '110.5', 'dpe < 95cm', 1),
+    ('Epaisseur (mm)', 'float', '4.8', '', 2),
+    ('Couleur', 'string', 'cyan', '', 2),
+    ('Largeur (cm)', 'float', '60', '', 3);
 
 /*
 SELECT * FROM addresses;
