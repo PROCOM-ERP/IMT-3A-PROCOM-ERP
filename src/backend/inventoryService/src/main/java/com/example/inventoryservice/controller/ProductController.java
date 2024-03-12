@@ -7,6 +7,7 @@ import com.example.inventoryservice.dtoRequest.MoveItemRequestDto;
 import com.example.inventoryservice.dtoRequest.NewItemRequestDto;
 import com.example.inventoryservice.dtoRequest.ProductRequestDto;
 import com.example.inventoryservice.dtoRequest.QuantityUpdateRequestDto;
+import com.example.inventoryservice.model.Path;
 import com.example.inventoryservice.service.ProductService;
 import com.example.inventoryservice.service.ItemService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,14 +29,14 @@ import java.util.List;
 @RestController
 @CrossOrigin(origins = "http://localhost")
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/products")
+@RequestMapping(Path.V1_PRODUCTS)
 public class ProductController {
 
     private final ProductService productService;
     private final ItemService itemService;
     //private final Logger logger = LoggerFactory.getLogger(InventoryServiceApplication.class);
 
-    @GetMapping("/{id}")
+    @GetMapping(Path.PRODUCT_ID)
     @Operation(operationId = "getProductById", tags = {"product", "inventory"},
             summary = "Returns the product information",
             description = "Returns the product with the associated categories and items",
@@ -58,7 +59,7 @@ public class ProductController {
     }
 
     @GetMapping
-    @Operation(operationId = "getProductById", tags = {"product", "inventory"},
+    @Operation(operationId = "getAllProducts", tags = {"product", "inventory"},
             summary = "Returns the product information",
             description = "Returns the product with the associated categories and items",
             parameters = {@Parameter(
@@ -69,9 +70,6 @@ public class ProductController {
                     "Product information retrieved correctly",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(type = "array", implementation = ProductDto.class))} ),
-            @ApiResponse(responseCode = "404", description =
-                    "Product not found",
-                    content = {@Content(mediaType = "application/json")} ),
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
@@ -108,7 +106,7 @@ public class ProductController {
     }
 
 
-    @PostMapping("/add")
+    @PostMapping(Path.ADD)
     @Validated
     @Operation(operationId = "addNewItem", tags = {"product", "inventory"},
             summary = "Creates a new item in this product",
@@ -135,7 +133,7 @@ public class ProductController {
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/update")
+    @PutMapping(Path.UPDATE)
     @Validated
     @Operation(operationId = "updateQuantity", tags = {"product", "inventory"},
             summary = "Update the quantity of the Item",
@@ -162,7 +160,7 @@ public class ProductController {
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/move")
+    @PutMapping(Path.MOVE)
     @Validated
     @Operation(operationId = "moveToAddress", tags = {"product", "inventory"},
             summary = "Transfers the quantity of items to another address",
