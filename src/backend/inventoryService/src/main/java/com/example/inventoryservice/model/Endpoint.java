@@ -13,7 +13,7 @@ public enum Endpoint {
     // CATEGORIES
     GET_V1_CATEGORIES(HttpMethod.GET, Path.V1_CATEGORIES, Permission.CanReadInventories),
     GET_V1_CATEGORY_ID(HttpMethod.GET, Path.V1_CATEGORY_ID, Permission.CanReadInventories),
-    POST_V1_CATEGORIES(HttpMethod.GET, Path.V1_CATEGORIES, Permission.CanCreateCategories),
+    POST_V1_CATEGORIES(HttpMethod.GET, Path.V1_CATEGORY_CREATE, Permission.CanCreateCategories),
 
     // PRODUCTS
     GET_V1_PRODUCTS(HttpMethod.GET, Path.V1_PRODUCTS, Permission.CanReadInventories),
