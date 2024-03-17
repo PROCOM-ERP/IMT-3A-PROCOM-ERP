@@ -17,7 +17,6 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClientException;
@@ -46,9 +45,8 @@ public class LoginProfileService {
     /* Utils Beans */
     private final CustomHttpRequestBuilder customHttpRequestBuilder;
     private final CustomLogger logger;
-    private final CustomPasswordGenerator customPasswordGenerator;
+    private final CustomPasswordUtils customPasswordUtils;
     private final CustomStringUtils customStringUtils;
-    private final PasswordEncoder passwordEncoder;
     private final RestTemplate restTemplate;
 
     /* Public Methods */
@@ -67,7 +65,7 @@ public class LoginProfileService {
                 .collect(Collectors.toSet()));
 
         // generate random password
-        String password = customPasswordGenerator.generateRandomPassword();
+        String password = customPasswordUtils.generateRandomPassword();
 
         // create loginProfile
         Integer nextIdLoginProfile = loginProfileRepository.getNextIdLoginProfile();
@@ -76,7 +74,7 @@ public class LoginProfileService {
                 .id(idLoginProfile)
                 .idLoginProfileGen(nextIdLoginProfile)
                 .email(loginProfileDto.getEmail())
-                .password(passwordEncoder.encode(password))
+                .password(customPasswordUtils.hashPassword(password))
                 .roles(loginProfileDto.getRoles().stream()
                         .map(roleName -> Role.builder()
                                 .name(roleName)
@@ -177,7 +175,7 @@ public class LoginProfileService {
         String password = passwordDto.getPassword();
 
         // try to update the password
-        int row = loginProfileRepository.updatePasswordById(idLoginProfile, passwordEncoder.encode(password));
+        int row = loginProfileRepository.updatePasswordById(idLoginProfile, customPasswordUtils.hashPassword(password));
 
         // check if only 1 row was modified
         if (row != 1)
