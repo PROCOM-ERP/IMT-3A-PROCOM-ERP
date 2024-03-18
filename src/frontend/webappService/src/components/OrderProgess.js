@@ -1,9 +1,39 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Button from './Button.js'
 
-function OrderProgess({ data }) {
-  const handleModifyProgress = () => {
+function OrderProgess({ data, approver, idOrder }) {
+  const [status, setStatus] = useState("idProgressStatus" = 0);
 
+  const getFirstIncompleteProgressId = () => {
+    const firstIncompleteProgress = data.find(progress => !progress.completed);
+    return firstIncompleteProgress ? firstIncompleteProgress.id : 0;
+  };
+
+  const validateProgressStatus = async () => {
+    const apiUrl = `https://localhost:8041/api/order/v1/orders/${idOrder}/progress`;
+    // Make the API request
+    try {
+      const response = await fetch(apiUrl, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("Token")}`,
+        },
+        body: JSON.stringify(status)
+      });
+      if (!response.ok) {
+        if (response.status === 401) { navigate("/error401"); }
+        else if (response.status === 403) { navigate("/error403"); }
+        else { throw new Error(response.status + " " + response.statusText); }
+      }
+    } catch (error) {
+      console.error("API request error: ", error);
+    }
+  }
+
+  const handleModifyProgress = () => {
+    setStatus(getFirstIncompleteProgressId);
+    validateProgressStatus();
   }
 
   return (
@@ -18,7 +48,10 @@ function OrderProgess({ data }) {
         ))
 
       }
-      <Button onClick={handleModifyProgress}>Modify</Button>
+      {(approver == localStorage.getItem('id')) && (
+        <Button onClick={handleModifyProgress}>Validate</Button>
+      )}
+
     </>
   )
 }

@@ -56,7 +56,7 @@ function DisplayOrder({ orderId }) {
       <div className='user-form-container'>
         <div className='title'>Order</div>
         <div className='information-container'>
-          <OrderProgess data={progress} />
+          <OrderProgess data={progress} approver={order.approver} idOrder={order.id} />
           <div className='title2'>Information</div>
           {Object.entries(order).map(([key, value]) => (
             <div className="information" key={key}>
