@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
 import Button from './Button.js'
+import { useNavigate } from 'react-router-dom';
 
 function OrderProgess({ data, approver, idOrder }) {
-  const [status, setStatus] = useState("idProgressStatus" = 0);
+  const navigate = useNavigate();
+  const [status, setStatus] = useState(0);
 
   const getFirstIncompleteProgressId = () => {
     const firstIncompleteProgress = data.find(progress => !progress.completed);
@@ -14,12 +16,12 @@ function OrderProgess({ data, approver, idOrder }) {
     // Make the API request
     try {
       const response = await fetch(apiUrl, {
-        method: "GET",
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("Token")}`,
         },
-        body: JSON.stringify(status)
+        body: JSON.stringify({ idProgressStatus: status })
       });
       if (!response.ok) {
         if (response.status === 401) { navigate("/error401"); }
@@ -51,7 +53,6 @@ function OrderProgess({ data, approver, idOrder }) {
       {(approver == localStorage.getItem('id')) && (
         <Button onClick={handleModifyProgress}>Validate</Button>
       )}
-
     </>
   )
 }
