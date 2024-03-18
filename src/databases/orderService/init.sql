@@ -84,10 +84,14 @@ CREATE TABLE employees
     CONSTRAINT fk_employees_table_login_profiles
         FOREIGN KEY (login_profile) REFERENCES login_profiles(id)
             ON UPDATE CASCADE,
+    CONSTRAINT check_employees_last_name
+        CHECK (employees.last_name ~* '^''?[\p{L}]([''\.\-]? ?[\p{L}])*[''\.]?$'),
+    CONSTRAINT check_employees_first_name
+        CHECK (employees.first_name ~* '^''?[\p{L}]([''\.\-]? ?[\p{L}])*[''\.]?$'),
     CONSTRAINT check_employees_email
         CHECK (employees.email ~* '^[a-z0-9]([\-\.]?[a-z0-9])*@[a-z0-9]([\-\.]?[a-z0-9])*$'),
     CONSTRAINT check_employees_phone_number
-        CHECK (employees.phone_number ~* '^\+?[0-9]{1,3}?[-\s]?([0-9]{1,4}[-\s]?)*[0-9]{1,4}$')
+        CHECK (employees.phone_number ~* '^\+?[0-9]{1,3}?[\-\s]?([0-9]{1,4}[\-\s]?)*[0-9]{1,4}$')
 );
 
 -- +----------------------------------------------------------------------------------------------+
@@ -157,9 +161,9 @@ CREATE TABLE order_products
 -- | Insert into                                                                                  |
 -- +----------------------------------------------------------------------------------------------+
 
-INSERT INTO roles (name)
-VALUES ('admin'),
-       ('user');
+INSERT INTO roles (name, is_enable)
+VALUES ('admin', true),
+       ('user', true);
 
 -- +----------------------------------------------------------------------------------------------+
 
@@ -182,16 +186,20 @@ VALUES ('admin', 'CanBypassAccessDeny'),
 -- +----------------------------------------------------------------------------------------------+
 
 INSERT INTO login_profiles (id)
-VALUES ('A00001'),
-       ('A00002');
+VALUES ('A00001'), ('A00002'), ('A00003'), ('A00004'), ('A00005'),
+       ('A00006'), ('A00007'), ('A00008'), ('A00009'), ('A00010'),
+       ('A00011'), ('A00012'), ('A00013'), ('A00014'), ('A00015'),
+       ('A00016'), ('A00017'), ('A00018'), ('A00019'), ('A00020'),
+       ('A00021'), ('A00022'), ('A00023'), ('A00024'), ('A00025'),
+       ('A00026'), ('A00027'), ('A00028'), ('A00029'), ('A00030');
 
 -- +----------------------------------------------------------------------------------------------+
 
-INSERT INTO addresses (id, number, street, city, country, zipcode)
+INSERT INTO addresses (id, number, street, city, country, zipcode, state)
 VALUES ('681370aec431f01f00f0949eecdd5afb640f6f9a195d14d5d229e722bc1ceb92',
-        1, 'Rue de la Paix', 'Paris', 'France', '75000'),
-       ('72e08cc844ccc2cde34dc2372166fe808f667d4dadbc4dd114386e4d9f88c574',
-        2, 'Rue de la Paix', 'Paris', 'France', '75000');
+        1, 'Rue de la Paix', 'Paris', 'France', '75000', 'Île-de-France'),
+       ('0a7535a629ce45ded54b7f2411934fa0e7d49e25716495e862342006101ca192',
+        180, 'Kerlaurent', 'Guipavas', 'France', '29490', 'Bretagne');
 
 -- +----------------------------------------------------------------------------------------------+
 
@@ -211,7 +219,7 @@ INSERT INTO orders (total_amount, quote, provider, orderer, address)
 VALUES (900.00, 'CRE0000000001', 2, 2,
         '681370aec431f01f00f0949eecdd5afb640f6f9a195d14d5d229e722bc1ceb92'),
        (1650.00, 'WFAEAD547FB00892387', 1, 1,
-        '72e08cc844ccc2cde34dc2372166fe808f667d4dadbc4dd114386e4d9f88c574');
+        '0a7535a629ce45ded54b7f2411934fa0e7d49e25716495e862342006101ca192');
 
 -- +----------------------------------------------------------------------------------------------+
 

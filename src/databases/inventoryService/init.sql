@@ -137,9 +137,9 @@ CREATE TABLE joint_category_product (
 -- | Insert into                                                                                  |
 -- +----------------------------------------------------------------------------------------------+
 
-INSERT INTO roles (name)
-VALUES ('admin'),
-       ('user');
+INSERT INTO roles (name, is_enable)
+VALUES ('admin', true),
+       ('user', true);
 
 -- +----------------------------------------------------------------------------------------------+
 
