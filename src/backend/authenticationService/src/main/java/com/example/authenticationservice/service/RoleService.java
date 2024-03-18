@@ -113,43 +113,46 @@ public class RoleService {
         // retrieve microservice RoleActivation entities
         Set<RoleActivationResponseDto> roleDtos = getAllMicroserviceRoles(getAllRolesPath);
 
-        // retrieve all existing Role and RoleActivation entities
+        // check if Role entities exists, else create them
         List<Role> existingRoles = roleRepository.findAll();
-        Map<String, RoleActivation> existingRoleActivations = roleActivationRepository.findAll().stream()
-                .collect(Collectors.toMap(
-                    ra -> ra.getRole().getName() + "_" + ra.getMicroservice(),
-                    ra -> ra));
+        List<Role> nonExistingRoles = roleDtos.stream()
+                .map(raDto -> Role.builder().name(raDto.getName()).build())
+                .filter(r -> ! existingRoles.contains(r))
+                .toList();
+        if (! nonExistingRoles.isEmpty())
+            roleRepository.saveAll(nonExistingRoles);
 
         // cast RoleActivationDto entities to RoleActivation entities before database insertion
-        Set<RoleActivation> roleActivations = new HashSet<>();
-        roleDtos.forEach(raDto -> {
-            String key = raDto.getName() + "_" + raDto.getMicroservice();
-            Role role = existingRoles.stream()
-                    .filter(r -> raDto.getName().equals(r.getName()))
-                    .findFirst()
-                    .orElseThrow(() ->
-                            new NoSuchElementException("No existing role named " + raDto.getName()));
-            RoleActivation ra;
-            if (existingRoleActivations.containsKey(key)) {
-                ra = existingRoleActivations.get(key);
-                ra.setIsEnable(raDto.getIsEnable());
-            } else {
-                ra = RoleActivation.builder()
-                        .role(role)
-                        .microservice(raDto.getMicroservice())
-                        .isEnable(raDto.getIsEnable())
-                        .build();
-            }
-            roleActivations.add(ra);
-        });
+        Map<String, Role> roles = roleRepository.findAll().stream()
+                .collect(Collectors.toMap(Role::getName, r -> r));
+        Map<String, RoleActivation> existingRoleActivations = roleActivationRepository.findAll().stream()
+                .collect(Collectors.toMap(
+                        ra -> ra.getRole().getName() + "_" + ra.getMicroservice(),
+                        ra -> ra));
+        Set<RoleActivation> roleActivations = roleDtos.stream()
+                .map(raDto -> {
+                    String key = raDto.getName() + "_" + raDto.getMicroservice();
+                    RoleActivation ra = existingRoleActivations.get(key);
+                    if (ra != null) {
+                        ra.setIsEnable(raDto.getIsEnable());
+                    } else {
+                        ra = RoleActivation.builder()
+                                .role(roles.get(raDto.getName()))
+                                .microservice(raDto.getMicroservice())
+                                .isEnable(raDto.getIsEnable())
+                                .build();
+                        existingRoleActivations.put(key, ra);
+                    }
+                    return ra;
+                }).collect(Collectors.toSet());
 
         // insert RoleActivation entities
-        roleActivationRepository.saveAllAndFlush(roleActivations);
+        roleActivationRepository.saveAll(roleActivations);
 
         // update and insert Role entities global isEnable property
         roleRepository.saveAll(roleRepository.findAll().stream()
                 .peek(this::updateRoleIsEnable)
-                .toList());
+                .collect(Collectors.toSet()));
 
         // expire all Login Profile entities jwt
         loginProfileRepository.updateAllJwtGenMinAt();
@@ -170,8 +173,10 @@ public class RoleService {
 
         // retrieve Role entity from database
         Role role = roleRepository.findById(roleDto.getName())
-                .orElseThrow(() ->
-                        new NoSuchElementException("No existing role named " + roleDto.getName()));
+                .orElse(roleRepository.save(Role.builder()
+                        .name(roleDto.getName())
+                        .isEnable(roleDto.getIsEnable())
+                        .build()));
 
         // update RoleActivation entity
         RoleActivation roleActivation = roleActivationRepository
