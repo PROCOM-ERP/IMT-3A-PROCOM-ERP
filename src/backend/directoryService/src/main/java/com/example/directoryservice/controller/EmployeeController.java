@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -49,7 +50,7 @@ public class EmployeeController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<String> createEmployee(@RequestBody EmployeeCreationRequestDto employeeDto) {
+    public ResponseEntity<String> createEmployee(@Valid @RequestBody EmployeeCreationRequestDto employeeDto) {
         // try to create a new entity
         String idEmployee = employeeService.createEmployee(employeeDto);
         // generate URI location to inform the client how to get information on the new entity
@@ -153,7 +154,7 @@ public class EmployeeController {
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
     public ResponseEntity<String> updateEmployeeById(@PathVariable String idEmployee,
-                                                     @RequestBody EmployeeUpdateRequestDto employeeDto) {
+                                                     @Valid @RequestBody EmployeeUpdateRequestDto employeeDto) {
         employeeService.updateEmployeeById(idEmployee, employeeDto);
         return ResponseEntity.noContent().build();
     }
