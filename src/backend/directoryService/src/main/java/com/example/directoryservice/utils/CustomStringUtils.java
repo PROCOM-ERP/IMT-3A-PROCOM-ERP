@@ -2,16 +2,11 @@ package com.example.directoryservice.utils;
 
 import org.springframework.stereotype.Component;
 
-import java.lang.reflect.Field;
-import java.util.Arrays;
-
 @Component
 public class CustomStringUtils {
 
     public static final String REGEX_ID_LOGIN_PROFILE =
             "^[A-Z][0-9]{5}$";
-    public static final String REGEX_PASSWORD =
-            "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!.*])(?=\\S+$).{12,}$";
     public static final String REGEX_ROLE_NAME =
             "^[a-zA-Z]([\\-\\.]?[a-zA-Z0-9])*$";
     public static final String REGEX_EMPLOYEE_LAST_NAME =
