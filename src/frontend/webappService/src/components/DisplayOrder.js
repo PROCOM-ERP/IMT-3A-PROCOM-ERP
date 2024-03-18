@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import OrderProgess from './OrderProgess';
 
 function DisplayOrder({ orderId }) {
 
@@ -49,12 +50,14 @@ function DisplayOrder({ orderId }) {
     getOrder();
   }, []);
 
+
   return (
     <>
       <div className='user-form-container'>
         <div className='title'>Order</div>
         <div className='information-container'>
-          <div className='title2'>Info</div>
+          <OrderProgess data={progress} />
+          <div className='title2'>Information</div>
           {Object.entries(order).map(([key, value]) => (
             <div className="information" key={key}>
               <div className="key-container">{key}</div>
@@ -72,13 +75,6 @@ function DisplayOrder({ orderId }) {
                 <div>Unit Price: {product.unitPrice}</div>
                 <div>Quantity: {product.quantity}</div>
               </div>
-            </div>
-          ))}
-          <div className='title2'>Progress</div>
-          {progress.map((progress, index) => (
-            <div className="information" key={index}>
-              <div className="key-container">{progress.name}: </div>
-              <div className="value-container">{progress.completed ? 'Done' : 'Ongoing'}</div>
             </div>
           ))}
         </div>
