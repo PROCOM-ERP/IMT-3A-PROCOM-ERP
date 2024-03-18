@@ -146,9 +146,9 @@ VALUES ('admin', 'authentication', true),
 -- +----------------------------------------------------------------------------------------------+
 
 INSERT INTO join_login_profiles_roles (login_profile, role)
-VALUES ('A00001', 'admin'),
-       ('A00002', 'admin'),
-       ('A00003', 'admin'),
+VALUES ('A00003', 'admin'),
+       ('A00004', 'admin'),
+       ('A00009', 'admin'),
 
        ('A00001', 'user'),
        ('A00002', 'user'),
