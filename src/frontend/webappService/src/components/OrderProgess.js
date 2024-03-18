@@ -51,7 +51,6 @@ function OrderProgess({ data, approver, orderId }) {
   // Effect to validate progress status when status changes
   useEffect(() => {
     if (status !== 0) {
-      console.log("STATUS:", status);
       validateProgressStatus(status);
     }
   }, [status]);
