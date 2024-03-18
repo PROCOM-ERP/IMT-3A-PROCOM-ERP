@@ -18,7 +18,7 @@ public class EmployeeEmailResponseDto {
             message = "User id should start by a capital letter, followed by exactly 5 digits.")
     private String id;
 
-    @NotBlank(message = "User id cannot be null or blank.")
+    @NotBlank(message = "User email cannot be null or blank.")
     @Size(min = 3, max = 320, message = "User email cannot have less than 3 characters and no more than 320.")
     @Email(regexp = CustomStringUtils.REGEX_EMAIL,
             message = "User email should start, and end, with alphanumeric characters, " +

@@ -27,6 +27,9 @@ public class RoleCreationRequestDto {
     private Set<
             @NotBlank(message = "Microservice name cannot be null or blank.")
             @Size(min = 1, max = 32, message = "Microservice name must contain between 1 and 32 characters.")
+            @Pattern(regexp = CustomStringUtils.REGEX_MICROSERVICE_NAME,
+            message = "Microservice name must start with a letter and can only contain letters, " +
+                    "numbers, dashes, and dots. Consecutive special characters are not allowed.")
             String> microservices;
 
 }

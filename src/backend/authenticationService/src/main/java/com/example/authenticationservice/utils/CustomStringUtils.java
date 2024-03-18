@@ -13,6 +13,8 @@ public class CustomStringUtils {
             "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!.*])(?=\\S+$).{12,}$";
     public static final String REGEX_ROLE_NAME =
             "^[a-zA-Z]([\\-\\.]?[a-zA-Z0-9])*$";
+    public static final String REGEX_MICROSERVICE_NAME =
+            "^[a-zA-Z]([\\-\\.]?[a-zA-Z0-9])*$";
 
     public String sanitizeString(String input)
     {
