@@ -232,7 +232,7 @@ public class RoleService {
         // check role pattern
         customStringUtils.checkNullOrBlankString(roleName, ERROR_MSG_ROLE_NAME_BLANK);
         customStringUtils.checkStringSize(roleName, ERROR_MSG_ROLE_NAME_SIZE, 1, 32);
-        customStringUtils.checkStringPattern(roleName, ERROR_MSG_ROLE_NAME_PATTERN, CustomStringUtils.REGEX_ROLE_NAME);
+        customStringUtils.checkStringPattern(roleName, CustomStringUtils.REGEX_ROLE_NAME, ERROR_MSG_ROLE_NAME_PATTERN);
 
         // sanitize all request parameters
         String roleNameSanitized = customStringUtils.sanitizeString(roleName);
@@ -266,7 +266,7 @@ public class RoleService {
         // check role pattern
         customStringUtils.checkNullOrBlankString(roleName, ERROR_MSG_ROLE_NAME_BLANK);
         customStringUtils.checkStringSize(roleName, ERROR_MSG_ROLE_NAME_SIZE, 1, 32);
-        customStringUtils.checkStringPattern(roleName, ERROR_MSG_ROLE_NAME_PATTERN, CustomStringUtils.REGEX_ROLE_NAME);
+        customStringUtils.checkStringPattern(roleName, CustomStringUtils.REGEX_ROLE_NAME, ERROR_MSG_ROLE_NAME_PATTERN);
 
         // check microservice pattern
         customStringUtils.checkNullOrBlankString(microservice, ERROR_MSG_MICROSERVICE_NAME_BLANK);
@@ -301,7 +301,7 @@ public class RoleService {
         // check role pattern
         customStringUtils.checkNullOrBlankString(roleName, ERROR_MSG_ROLE_NAME_BLANK);
         customStringUtils.checkStringSize(roleName, ERROR_MSG_ROLE_NAME_SIZE, 1, 32);
-        customStringUtils.checkStringPattern(roleName, ERROR_MSG_ROLE_NAME_PATTERN, CustomStringUtils.REGEX_ROLE_NAME);
+        customStringUtils.checkStringPattern(roleName, CustomStringUtils.REGEX_ROLE_NAME, ERROR_MSG_ROLE_NAME_PATTERN);
 
         // sanitize all request parameters
         String roleNameSanitized = customStringUtils.sanitizeString(roleName);
