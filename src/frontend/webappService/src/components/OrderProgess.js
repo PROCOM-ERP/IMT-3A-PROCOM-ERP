@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import Button from './Button.js'
+import React, { useState, useEffect } from 'react';
+import Button from './Button.js';
 import { useNavigate } from 'react-router-dom';
 
 function OrderProgess({ data, approver, idOrder }) {
@@ -11,7 +11,8 @@ function OrderProgess({ data, approver, idOrder }) {
     return firstIncompleteProgress ? firstIncompleteProgress.id : 0;
   };
 
-  const validateProgressStatus = async () => {
+  const validateProgressStatus = async (statusValue) => {
+    console.log("status: ", statusValue);
     const apiUrl = `https://localhost:8041/api/order/v1/orders/${idOrder}/progress`;
     // Make the API request
     try {
@@ -21,21 +22,31 @@ function OrderProgess({ data, approver, idOrder }) {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("Token")}`,
         },
-        body: JSON.stringify({ idProgressStatus: status })
+        body: JSON.stringify({ idProgressStatus: statusValue })
       });
       if (!response.ok) {
         if (response.status === 401) { navigate("/error401"); }
         else if (response.status === 403) { navigate("/error403"); }
         else { throw new Error(response.status + " " + response.statusText); }
+      } else {
+        // If the API request is successful, reload the page
+        window.location.reload();
       }
     } catch (error) {
       console.error("API request error: ", error);
     }
   }
 
+  useEffect(() => {
+    if (status !== 0) {
+      console.log("STATUS:", status);
+      validateProgressStatus(status);
+    }
+  }, [status]);
+
   const handleModifyProgress = () => {
-    setStatus(getFirstIncompleteProgressId);
-    validateProgressStatus();
+    const progressId = getFirstIncompleteProgressId(); // Get the progress id
+    setStatus(progressId); // Set the status state with the progress id
   }
 
   return (
@@ -57,4 +68,4 @@ function OrderProgess({ data, approver, idOrder }) {
   )
 }
 
-export default OrderProgess
+export default OrderProgess;
