@@ -136,15 +136,15 @@ CREATE TABLE employees
     CONSTRAINT uq_employees_email
         UNIQUE (email),
     CONSTRAINT check_employees_last_name
-        CHECK (employees.last_name ~* '^''?[\p{L}]([''\.\-]? ?[\p{L}])*[''\.]?$'),
+        CHECK (employees.last_name ~* '^''?[[:alpha:]]([''\.\-]? ?[[:alpha:]])*[''\.]?$'),
     CONSTRAINT check_employees_first_name
-        CHECK (employees.first_name ~* '^''?[\p{L}]([''\.\-]? ?[\p{L}])*[''\.]?$'),
+        CHECK (employees.first_name ~* '^''?[[:alpha:]]([''\.\-]? ?[[:alpha:]])*[''\.]?$'),
     CONSTRAINT check_employees_email
         CHECK (employees.email ~* '^[a-z0-9]([\-\.]?[a-z0-9])*@[a-z0-9]([\-\.]?[a-z0-9])*$'),
     CONSTRAINT check_employees_phone_number
         CHECK (employees.phone_number ~* '^\+?[0-9]{1,3}?[\-\s]?([0-9]{1,4}[\-\s]?)*[0-9]{1,4}$'),
     CONSTRAINT check_employees_job
-        CHECK (employees.job ~* '^([\p{L}]''?[\p{L}]+ ?)*[\p{L}]$')
+        CHECK (employees.job ~* '^([[:alpha:]]''?[[:alpha:]]+ ?)*[[:alpha:]]$')
 );
 
 -- +----------------------------------------------------------------------------------------------+

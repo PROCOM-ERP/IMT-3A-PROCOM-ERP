@@ -85,9 +85,9 @@ CREATE TABLE employees
         FOREIGN KEY (login_profile) REFERENCES login_profiles(id)
             ON UPDATE CASCADE,
     CONSTRAINT check_employees_last_name
-        CHECK (employees.last_name ~* '^''?[\p{L}]([''\.\-]? ?[\p{L}])*[''\.]?$'),
+        CHECK (employees.last_name ~* '^''?[[:alpha:]]([''\.\-]? ?[[:alpha:]])*[''\.]?$'),
     CONSTRAINT check_employees_first_name
-        CHECK (employees.first_name ~* '^''?[\p{L}]([''\.\-]? ?[\p{L}])*[''\.]?$'),
+        CHECK (employees.first_name ~* '^''?[[:alpha:]]([''\.\-]? ?[[:alpha:]])*[''\.]?$'),
     CONSTRAINT check_employees_email
         CHECK (employees.email ~* '^[a-z0-9]([\-\.]?[a-z0-9])*@[a-z0-9]([\-\.]?[a-z0-9])*$'),
     CONSTRAINT check_employees_phone_number
@@ -104,7 +104,7 @@ CREATE TABLE providers
     CONSTRAINT pk_providers PRIMARY KEY (id),
     CONSTRAINT uq_providers_name UNIQUE (name),
     CONSTRAINT check_providers_name
-        CHECK (providers.name ~* '^([\p{L}]+[&_\-\. ]?)+$')
+        CHECK (providers.name ~* '^([[:alpha:]]+[&_\-\. ]?)+$')
 
 );
 
