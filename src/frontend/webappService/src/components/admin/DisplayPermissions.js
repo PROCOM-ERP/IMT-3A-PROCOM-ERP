@@ -1,26 +1,28 @@
 import React, { useEffect, useState } from 'react';
-import Button from './Button';
-import Popup from './Popup';
 import { useNavigate } from 'react-router-dom';
-import '../css/DisplayPermissions.css';
-
+import Button from '../Button';
+import Popup from '../Popup';
+import '../../css/DisplayPermissions.css';
 
 function DisplayPermissions() {
-  const [services, setServices] = useState({});
-  const [roles, setRoles] = useState({});
-  const [selectedService, setSelectedService] = useState('');
-  const [selectedRole, setSelectedRole] = useState('');
-  const [isEnabled, setIsEnabled] = useState(false);
-  const [permissions, setPermissions] = useState([]);
-  const [prevIsEnabled, setPrevIsEnabled] = useState(false);
-  const [prevPermissions, setPrevPermissions] = useState([]);
-  const [showPopup, setShowPopup] = useState(false);
-  const [popupContent, setPopupContent] = useState({});
+
   const navigate = useNavigate();
 
+  const [services, setServices] = useState({});
+  const [roles, setRoles] = useState({});
+  const [isEnabled, setIsEnabled] = useState(false);
+  const [permissions, setPermissions] = useState([]);
+
+  const [prevIsEnabled, setPrevIsEnabled] = useState(false);
+  const [prevPermissions, setPrevPermissions] = useState([]);
+
+  const [selectedService, setSelectedService] = useState('');
+  const [selectedRole, setSelectedRole] = useState('');
   const [areSelected, setAreSelected] = useState(false); // to set true if a service AND a role is selected
 
-  const user = localStorage.getItem('id');
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupContent, setPopupContent] = useState({});
+
   const token = localStorage.getItem('Token');
   const headers = {
     'Content-Type': 'application/json',
@@ -35,14 +37,13 @@ function DisplayPermissions() {
     if (selectedService && selectedRole) {
       setAreSelected(true);
       // Fetch permissions based on selected service and role
-      fetchPermissions(selectedService, selectedRole);
+      fetchPermissions();
     } else {
       setAreSelected(false);
       setPermissions([]);
     }
   }, [selectedService, selectedRole]);
 
-  // TODO
   const fetchServicesAndRoles = async () => {
     const apiUrl = "https://localhost:8041/api/authentication/v1/roles/microservices";
     // Make the API request
@@ -96,9 +97,9 @@ function DisplayPermissions() {
     setIsEnabled(checked);
   };
 
-  const fetchPermissions = async (service, role) => {
+  const fetchPermissions = async () => {
     // Get permissions from api thanks to service and role name
-    const apiUrl = `https://localhost:8041/api/${service}/v1/roles/${role}`;
+    const apiUrl = `https://localhost:8041/api/${selectedService}/v1/roles/${selectedRole}`;
     // Make the API request
     await fetch(apiUrl, {
       method: "GET",

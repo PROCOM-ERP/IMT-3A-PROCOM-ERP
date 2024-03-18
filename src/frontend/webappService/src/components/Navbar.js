@@ -1,13 +1,17 @@
-import '../css/Navbar.css'
-import React from 'react'
+import '../css/Navbar.css';
+import React, { useEffect, useState } from 'react';
 
-
-function Navbar({ navUser = "user" }) { // navUSer can be user or admin
+function Navbar({ navUser = "user" }) {
     const companyName = "ERP FIP";
-    let isAdmin = false;
-    if (navUser === "admin") isAdmin = true;
+    const [isAdmin, setIsAdmin] = useState(false);
 
-    const getNavTitle = () => {
+    // UseEffect hook to set isAdmin state when navUser changes
+    useEffect(() => {
+        setIsAdmin(navUser === "admin");
+    }, [navUser]);
+
+    const getNavTab = () => {
+        // Determine the navigation links based on user role
         if (isAdmin) {
             return (
                 <>
@@ -21,7 +25,7 @@ function Navbar({ navUser = "user" }) { // navUSer can be user or admin
                         <a href="/adminDirectory">Users</a>
                     </li>
                 </>
-            )
+            );
         } else {
             return (
                 <>
@@ -41,23 +45,22 @@ function Navbar({ navUser = "user" }) { // navUSer can be user or admin
                         <a href="/profil">Profil</a>
                     </li>
                 </>
-            )
+            );
         }
-    }
-
+    };
 
     return (
         <>
-            <nav className={` navigation ${navUser} `} > {/* navUser is used to set the right navbar color */}
+            <nav className={`navigation ${navUser}`}>
                 <a href="/" className="brand-name">{companyName}</a>
-                <div className={`navigation-menu ${navUser}`}>
+                <div className="navigation-menu">
                     <ul>
-                        {getNavTitle()}
+                        {getNavTab()}
                     </ul>
                 </div>
             </nav>
         </>
-    )
+    );
 }
 
-export default Navbar
+export default Navbar;
