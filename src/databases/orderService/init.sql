@@ -3,7 +3,7 @@
 -- Creation date :     2024-02-21
 -- Update date :       2024-03-05
 -- Author :            BOPS
--- Description :       Database initialisation script for IMT-3A-PROCOM-ERP project
+-- Description :       Order management service database initialisation script
 --                     Note : Script for PostgreSQL
 
 -- +----------------------------------------------------------------------------------------------+
@@ -13,7 +13,7 @@
 CREATE TABLE roles
 (
     name VARCHAR(32) UNIQUE NOT NULL,
-    is_enable BOOLEAN NOT NULL DEFAULT true,
+    is_enable BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT pk_roles PRIMARY KEY (name),
     CONSTRAINT check_roles_name
