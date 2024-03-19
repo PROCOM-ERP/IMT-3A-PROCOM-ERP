@@ -135,7 +135,7 @@ CREATE TABLE orders
     CONSTRAINT fk_orders_table_employes_approver
         FOREIGN KEY (approver) REFERENCES employees(id),
     CONSTRAINT check_orders_quote
-        CHECK (orders.quote ~* '^[a-zA-Z0-9]([_\-\s]?[a-zA-Z0-9])*$')
+        CHECK (orders.quote ~* '^[a-zA-Z0-9]([_\- ]?[a-zA-Z0-9])*$')
 );
 
 -- +----------------------------------------------------------------------------------------------+
@@ -154,7 +154,7 @@ CREATE TABLE order_products
             ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT uq_order_products_reference_order UNIQUE (reference, "order"),
     CONSTRAINT check_orders_quote
-        CHECK (order_products.reference ~* '^[a-zA-Z0-9]([_\-\s]?[a-zA-Z0-9])*$')
+        CHECK (order_products.reference ~* '^[a-zA-Z0-9]([_\- ]?[a-zA-Z0-9])*$')
 );
 
 -- +----------------------------------------------------------------------------------------------+

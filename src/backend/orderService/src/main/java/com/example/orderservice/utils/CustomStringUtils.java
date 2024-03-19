@@ -10,36 +10,20 @@ public class CustomStringUtils {
 
     public static final String REGEX_ID_LOGIN_PROFILE =
             "^[A-Z][0-9]{5}$";
-    public static final String REGEX_EMAIL =
-            "^[a-z0-9]([\\-\\.]?[a-z0-9])*@[a-z0-9]([\\-\\.]?[a-z0-9])*$";
-    public static final String REGEX_PASSWORD =
-            "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!.*])(?=\\S+$).{12,}$";
     public static final String REGEX_ROLE_NAME =
             "^[a-zA-Z]([\\-\\.]?[a-zA-Z0-9])*$";
-
-    public void sanitizeAllStrings(Object obj)
-    {
-        if (obj == null)
-            return;
-
-        // get all Object instance fields
-        Field[] fields = obj.getClass().getDeclaredFields();
-        Arrays.stream(fields).forEach(field -> {
-            try {
-                // sanitize field if it is a String
-                if (field.getType().equals(String.class)) { //
-                    field.setAccessible(true);
-                    String fieldValue = (String) field.get(obj);
-                    field.set(obj, sanitizeString(fieldValue));
-                    // sanitize embedded Object String fields
-                } else if (!field.getType().isPrimitive()) {
-                    field.setAccessible(true);
-                    sanitizeAllStrings(field.get(obj));
-                }
-            } catch (IllegalAccessException ignored) {
-            }
-        });
-    }
+    public static final String REGEX_EMPLOYEE_LAST_NAME =
+            "^'?[\\p{L}](['\\.\\-]? ?[\\p{L}])*['\\.]?$";
+    public static final String REGEX_EMPLOYEE_FIRST_NAME =
+            "^'?[\\p{L}](['\\.\\-]? ?[\\p{L}])*['\\.]?$";
+    public static final String REGEX_EMPLOYEE_EMAIL =
+            "^[a-z0-9]([\\-\\.]?[a-z0-9])*@[a-z0-9]([\\-\\.]?[a-z0-9])*$";
+    public static final String REGEX_EMPLOYEE_PHONE_NUMBER =
+            "^\\+?[0-9]{1,3}[\\- ]?([0-9]{1,4}[\\- ]?)*[0-9]{1,4}$";
+    public static final String REGEX_ORDER_QUOTE =
+            "^[a-zA-Z0-9]([_\\- ]?[a-zA-Z0-9])*$";
+    public static final String REGEX_ORDER_PRODUCT_REFERENCE =
+            "^[a-zA-Z0-9]([_\\- ]?[a-zA-Z0-9])*$";
 
     public String sanitizeString(String input)
     {

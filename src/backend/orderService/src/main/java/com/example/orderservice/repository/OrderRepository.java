@@ -29,7 +29,8 @@ public interface OrderRepository extends JpaRepository<Order, Integer>, JpaSpeci
     @Modifying
     @Query(value =
             "update orders " +
-            "set approver = :idApprover " +
+            "set approver = :idApprover, " +
+            "progress_status = 2 " +
             "where orderer in :idsOrderer and progress_status < :progressStatus", nativeQuery = true)
     int updateAllByOrdererAndProgressStatusLessThan(@Param("idsOrderer") @NonNull Set<Integer> idsOrderer,
                                                     @Param("idApprover") @NonNull Integer idApprover,

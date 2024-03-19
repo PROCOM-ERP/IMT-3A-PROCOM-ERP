@@ -148,7 +148,8 @@ public class OrderService {
         tag = CustomLogger.TAG_ORDERS)
     public void updateOrderProgressStatusById(Integer idOrder, OrderUpdateProgressStatusDto orderDto)
             throws IllegalArgumentException,
-            NoSuchElementException
+            NoSuchElementException,
+            DataIntegrityViolationException
     {
         // retrieve Order entity
         Order order = orderRepository.findById(idOrder)
@@ -156,8 +157,9 @@ public class OrderService {
 
         // checks that the new ProgressStatus is the next as that of the current order
         Integer idNextProgressStatus = orderDto.getIdProgressStatus();
+        progressStatusService.isValidProgressStatus(idNextProgressStatus);
         if (order.getProgressStatus() != idNextProgressStatus - 1)
-            throw new IllegalArgumentException(
+            throw new DataIntegrityViolationException(
                     "Provided progress status id is not the next logical one for the order " + idOrder + ".");
 
         // check if the LoginProfile of the authenticated user is the orderer,
