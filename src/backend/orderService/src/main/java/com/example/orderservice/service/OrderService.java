@@ -76,7 +76,9 @@ public class OrderService {
 
     @LogExecutionTime(description = "Retrieve all orders that a user has placed or needs to approve.",
             tag = CustomLogger.TAG_ORDERS)
-    public OrdersByIdLoginProfileResponseDto getAllOrdersByIdLoginProfile(String idLoginProfile) {
+    public OrdersByIdLoginProfileResponseDto getAllOrdersByIdLoginProfile(String idLoginProfile)
+    {
+
 
         // retrieve all Employee entities id for the LoginProfile's id provided
         Set<Integer> idEmployees = employeeRepository.findAllIdsByIdLoginProfile(idLoginProfile);

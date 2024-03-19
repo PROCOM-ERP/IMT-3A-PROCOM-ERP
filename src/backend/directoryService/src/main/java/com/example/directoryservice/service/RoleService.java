@@ -86,7 +86,14 @@ public class RoleService {
     @LogExecutionTime(description = "Retrieve a role.",
             tag = CustomLogger.TAG_ROLES)
     public RoleResponseDto getRoleByName(String roleName)
-            throws NoSuchElementException {
+            throws IllegalArgumentException,
+            NoSuchElementException
+    {
+        // check role pattern
+        customStringUtils.checkNullOrBlankString(roleName, ERROR_MSG_ROLE_NAME_BLANK);
+        customStringUtils.checkStringSize(roleName, ERROR_MSG_ROLE_NAME_SIZE, 1, 32);
+        customStringUtils.checkStringPattern(roleName, CustomStringUtils.REGEX_ROLE_NAME, ERROR_MSG_ROLE_NAME_PATTERN);
+
         // check if role exists and retrieve it
         Role role = roleRepository.findById(roleName).orElseThrow();
 
@@ -108,7 +115,14 @@ public class RoleService {
     @LogExecutionTime(description = "Retrieve a role activation status.",
             tag = CustomLogger.TAG_ROLES)
     public RoleActivationResponseDto getRoleActivationByName(String roleName)
-            throws NoSuchElementException {
+            throws IllegalArgumentException,
+            NoSuchElementException
+    {
+        // check role pattern
+        customStringUtils.checkNullOrBlankString(roleName, ERROR_MSG_ROLE_NAME_BLANK);
+        customStringUtils.checkStringSize(roleName, ERROR_MSG_ROLE_NAME_SIZE, 1, 32);
+        customStringUtils.checkStringPattern(roleName, CustomStringUtils.REGEX_ROLE_NAME, ERROR_MSG_ROLE_NAME_PATTERN);
+
         // retrieve one Role Activation entity
         return roleRepository.findById(roleName)
                 .map(this::roleToRoleActivationResponseDto)
@@ -121,7 +135,8 @@ public class RoleService {
     public void updateRoleByName(
             String roleName,
             RoleUpdateRequestDto roleDto)
-            throws NoSuchElementException,
+            throws IllegalArgumentException,
+            NoSuchElementException,
             DataIntegrityViolationException
     {
         // check role pattern

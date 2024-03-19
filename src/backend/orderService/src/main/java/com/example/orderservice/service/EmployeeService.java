@@ -32,8 +32,13 @@ import java.util.NoSuchElementException;
 @RequiredArgsConstructor
 public class EmployeeService {
 
+    /* Repository Beans */
+
     private final EmployeeRepository employeeRepository;
     private final LoginProfileRepository loginProfileRepository;
+
+    /* Utils Beans */
+
     private final CustomHttpRequestBuilder customHttpRequestBuilder;
     private final RestTemplate restTemplate;
 
@@ -44,9 +49,6 @@ public class EmployeeService {
     public Employee createEmployee(EmployeeCreationRequestDto employeeDto)
             throws DataIntegrityViolationException
     {
-        // sanitize fields before Employee entity creation
-        sanitizeEmployeeCreationRequestDto(employeeDto);
-
         // check if a LoginProfile exists for this Employee and retrieve it
         LoginProfile loginProfile = loginProfileRepository.findById(employeeDto.getId())
                 .orElseThrow(() -> new DataIntegrityViolationException("Non-existing LoginProfile for this id"));
@@ -99,16 +101,6 @@ public class EmployeeService {
     }
 
     /* Private Methods */
-    private void sanitizeEmployeeCreationRequestDto(EmployeeCreationRequestDto employeeDto)
-    {
-        // sanitize fields before Employee entity creation
-        employeeDto.setId(employeeDto.getId().trim());
-        employeeDto.setLastName(employeeDto.getLastName().trim());
-        employeeDto.setFirstName(employeeDto.getFirstName().trim());
-        employeeDto.setEmail(employeeDto.getEmail().trim());
-        employeeDto.setPhoneNumber(employeeDto.getPhoneNumber() == null ? null : employeeDto.getPhoneNumber().trim());
-    }
-
     private Employee creationRequestDtoToModel(EmployeeCreationRequestDto employeeDto, LoginProfile loginProfile)
     {
         return Employee.builder()
