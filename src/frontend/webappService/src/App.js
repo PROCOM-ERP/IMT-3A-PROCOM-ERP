@@ -21,9 +21,9 @@ import AddUser from "./pages/admin/AddUser.js";
 import AdminPermissions from "./pages/admin/AdminPermissions.js";
 import AddRole from "./pages/admin/AddRole.js";
 
-import Error404 from "./pages/Error404.js";
-import Error401 from "./pages/Error401.js";
-import Error403 from "./pages/Error403.js";
+import Error404 from "./pages/errors/Error404.js";
+import Error401 from "./pages/errors/Error401.js";
+import Error403 from "./pages/errors/Error403.js";
 
 
 function App() {
