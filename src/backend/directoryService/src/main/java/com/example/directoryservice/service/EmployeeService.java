@@ -82,8 +82,10 @@ public class EmployeeService {
 
     @LogExecutionTime(description = "Retrieve a user information profile.",
             tag = CustomLogger.TAG_USERS)
-    public EmployeeResponseDto getEmployeeById(String idEmployee) {
-
+    public EmployeeResponseDto getEmployeeById(String idEmployee)
+            throws IllegalArgumentException,
+            NoSuchElementException
+    {
         // check employee id value
         customStringUtils.checkNullOrBlankString(idEmployee, ERROR_MSG_EMPLOYEE_ID_BLANK);
         customStringUtils.checkStringSize(idEmployee, ERROR_MSG_EMPLOYEE_ID_SIZE, 6, 6);

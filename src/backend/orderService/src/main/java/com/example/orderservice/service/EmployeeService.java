@@ -12,6 +12,7 @@ import com.example.orderservice.repository.EmployeeRepository;
 import com.example.orderservice.repository.LoginProfileRepository;
 import com.example.orderservice.utils.CustomHttpRequestBuilder;
 import com.example.orderservice.utils.CustomLogger;
+import com.example.orderservice.utils.CustomStringUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -32,6 +33,14 @@ import java.util.NoSuchElementException;
 @RequiredArgsConstructor
 public class EmployeeService {
 
+    /* Constants */
+    public static final String ERROR_MSG_EMPLOYEE_ID_BLANK =
+            "User id cannot be null or blank.";
+    public static final String ERROR_MSG_EMPLOYEE_ID_SIZE =
+            "User id must contain exactly 6 characters.";
+    public static final String ERROR_MSG_EMPLOYEE_ID_PATTERN =
+            "User id should start by a capital letter, followed by exactly 5 digits.";
+
     /* Repository Beans */
 
     private final EmployeeRepository employeeRepository;
@@ -40,6 +49,7 @@ public class EmployeeService {
     /* Utils Beans */
 
     private final CustomHttpRequestBuilder customHttpRequestBuilder;
+    private final CustomStringUtils customStringUtils;
     private final RestTemplate restTemplate;
 
     /* Public Methods */
@@ -65,8 +75,15 @@ public class EmployeeService {
 
     @LogExecutionTime(description = "Retrieve a user information profile with location.",
             tag = CustomLogger.TAG_USERS)
-    public EmployeeResponseDto getEmployeeAndAddressById(String idEmployee) throws
-            NoSuchElementException {
+    public EmployeeResponseDto getEmployeeAndAddressById(String idEmployee)
+            throws IllegalArgumentException,
+            NoSuchElementException
+    {
+        // check employee id value
+        customStringUtils.checkNullOrBlankString(idEmployee, ERROR_MSG_EMPLOYEE_ID_BLANK);
+        customStringUtils.checkStringSize(idEmployee, ERROR_MSG_EMPLOYEE_ID_SIZE, 6, 6);
+        customStringUtils.checkStringPattern(idEmployee, CustomStringUtils.REGEX_ID_LOGIN_PROFILE, ERROR_MSG_EMPLOYEE_ID_PATTERN);
+
         List<Object[]> results = employeeRepository.findEmployeeAndLastOrderAddressByIdLoginProfile(
                 idEmployee, PageRequest.of(0, 1));
         if (!results.isEmpty()) {
