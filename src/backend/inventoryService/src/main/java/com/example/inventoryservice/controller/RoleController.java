@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -125,7 +126,7 @@ public class RoleController {
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
     public ResponseEntity<String> updateRoleByName(@PathVariable String role,
-                                                   @RequestBody RoleUpdateRequestDto roleDto) {
+                                                   @Valid @RequestBody RoleUpdateRequestDto roleDto) {
         roleService.updateRoleByName(role, roleDto);
         return ResponseEntity.noContent().build();
     }

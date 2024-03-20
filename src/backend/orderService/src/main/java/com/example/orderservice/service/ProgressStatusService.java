@@ -18,7 +18,7 @@ public class ProgressStatusService {
             throws DataIntegrityViolationException
     {
         isValidProgressStatus(id);
-        return allProgressStatus.get(id);
+        return allProgressStatus.get(id-1);
     }
 
     public void isValidProgressStatus(Integer progressStatus)

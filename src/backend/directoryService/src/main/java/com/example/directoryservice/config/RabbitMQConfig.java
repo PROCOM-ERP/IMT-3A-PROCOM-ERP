@@ -12,13 +12,13 @@ public class RabbitMQConfig {
     /* Queues */
 
     @Bean
-    public Queue rolesNewQueue() {
-        return new Queue("roles-new-queue");
+    public Queue rolesNewQueueDirectory() {
+        return new Queue("roles-new-queue-directory");
     }
 
     @Bean
-    public Queue loginProfilesSecQueue() {
-        return new Queue("login-profiles-sec-queue");
+    public Queue loginProfilesSecQueueDirectory() {
+        return new Queue("login-profiles-sec-queue-directory");
     }
 
     @Bean
@@ -56,18 +56,18 @@ public class RabbitMQConfig {
     /* Bindings */
 
     @Bean
-    public Binding rolesNewBinding(Queue rolesNewQueue,
+    public Binding rolesNewBinding(Queue rolesNewQueueDirectory,
                                    Exchange rolesFanoutExchange) {
-        return BindingBuilder.bind(rolesNewQueue)
+        return BindingBuilder.bind(rolesNewQueueDirectory)
                 .to(rolesFanoutExchange)
                 .with("*")
                 .noargs();
     }
 
     @Bean
-    public Binding loginProfilesSecBinding(Queue loginProfilesSecQueue,
+    public Binding loginProfilesSecBinding(Queue loginProfilesSecQueueDirectory,
                                            Exchange loginProfilesSecExchange) {
-        return BindingBuilder.bind(loginProfilesSecQueue)
+        return BindingBuilder.bind(loginProfilesSecQueueDirectory)
                 .to(loginProfilesSecExchange)
                 .with("*")
                 .noargs();

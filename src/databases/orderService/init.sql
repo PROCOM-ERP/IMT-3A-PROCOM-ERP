@@ -91,7 +91,7 @@ CREATE TABLE employees
     CONSTRAINT check_employees_email
         CHECK (employees.email ~* '^[a-z0-9]([\-\.]?[a-z0-9])*@[a-z0-9]([\-\.]?[a-z0-9])*$'),
     CONSTRAINT check_employees_phone_number
-        CHECK (employees.phone_number ~* '^\+?[0-9]{1,3}?[\-\s]?([0-9]{1,4}[\-\s]?)*[0-9]{1,4}$')
+        CHECK (employees.phone_number ~* '^\+?[0-9]{1,3} ?[\- ]?([0-9]{1,4}[\- ]?)*[0-9]{1,4}$')
 );
 
 -- +----------------------------------------------------------------------------------------------+
@@ -135,7 +135,7 @@ CREATE TABLE orders
     CONSTRAINT fk_orders_table_employes_approver
         FOREIGN KEY (approver) REFERENCES employees(id),
     CONSTRAINT check_orders_quote
-        CHECK (orders.quote ~* '^[a-zA-Z0-9]([_\-\s]?[a-zA-Z0-9])*$')
+        CHECK (orders.quote ~* '^[a-zA-Z0-9]([_\- ]?[a-zA-Z0-9])*$')
 );
 
 -- +----------------------------------------------------------------------------------------------+
@@ -154,7 +154,7 @@ CREATE TABLE order_products
             ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT uq_order_products_reference_order UNIQUE (reference, "order"),
     CONSTRAINT check_orders_quote
-        CHECK (order_products.reference ~* '^[a-zA-Z0-9]([_\-\s]?[a-zA-Z0-9])*$')
+        CHECK (order_products.reference ~* '^[a-zA-Z0-9]([_\- ]?[a-zA-Z0-9])*$')
 );
 
 -- +----------------------------------------------------------------------------------------------+

@@ -142,7 +142,7 @@ CREATE TABLE employees
     CONSTRAINT check_employees_email
         CHECK (employees.email ~* '^[a-z0-9]([\-\.]?[a-z0-9])*@[a-z0-9]([\-\.]?[a-z0-9])*$'),
     CONSTRAINT check_employees_phone_number
-        CHECK (employees.phone_number ~* '^\+?[0-9]{1,3}?[\-\s]?([0-9]{1,4}[\-\s]?)*[0-9]{1,4}$'),
+        CHECK (employees.phone_number ~* '^\+?[0-9]{1,3}[\- ]?([0-9]{1,4}[\- ]?)*[0-9]{1,4}$'),
     CONSTRAINT check_employees_job
         CHECK (employees.job ~* '^([[:alpha:]]''?[[:alpha:]]+ ?)*[[:alpha:]]$')
 );
