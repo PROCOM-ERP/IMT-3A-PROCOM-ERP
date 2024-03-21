@@ -12,6 +12,8 @@ function ProfilForm({ title, userId }) {
   const [orgUnits, setOrgUnits] = useState([]);
   const [organizations, setOrganizations] = useState([]);
   const [selectedOrg, setSelectedOrg] = useState(null);
+  const [error, setError] = useState({ "title": null, "message": null });
+  const [gettingError, setGettingError] = useState(false);
 
   const tokenName = "Token"; // Need to be the same name as in AuthForm.js components
   const token = localStorage.getItem(tokenName);
@@ -41,7 +43,7 @@ function ProfilForm({ title, userId }) {
         if (!response.ok) {
           if (response.status === 401) { navigate("/error401"); }
           else if (response.status === 403) { navigate("/error403"); }
-          else if (response.status === 400 || response.status === 422) { <ErrorForm title={response.status} message={response.statusText} />; }
+          // else if (response.status === 400 || response.status === 422) { <ErrorForm title={response.status} message={response.statusText} />; }
           else { throw new Error(response.status + " " + response.statusText); }
         }
         const res = response.json();
@@ -79,7 +81,7 @@ function ProfilForm({ title, userId }) {
       if (!response.ok) {
         if (response.status === 401) { navigate("/error401"); }
         else if (response.status === 403) { navigate("/error403"); }
-        else if (response.status === 400 || response.status === 422) { <ErrorForm title={response.status} message={response.statusText} />; }
+        // else if (response.status === 400 || response.status === 422) { <ErrorForm title={response.status} message={response.statusText} />; }
         else { throw new Error(response.status + " " + response.statusText); }
       }
       const data = await response.json();
@@ -129,7 +131,13 @@ function ProfilForm({ title, userId }) {
         if (!response.ok) {
           if (response.status === 401) { navigate("/error401"); }
           else if (response.status === 403) { navigate("/error403"); }
-          else if (response.status === 400 || response.status === 422) { <ErrorForm title={response.status} message={response.statusText} />; }
+          else if (response.status === 400 || response.status === 422) {
+            setGettingError(true);
+            setError({
+              title: response.status,
+              message: response.message || 'An error occurred',
+            });
+          }
           else { throw new Error(response.status + " " + response.statusText); }
         }
         console.log("[LOG] Profile updated successfully");
@@ -226,6 +234,10 @@ function ProfilForm({ title, userId }) {
           </Button>
         </div>
       </div>
+      {
+        gettingError &&
+        (<ErrorForm title={error.title} message={error.message} />)
+      }
     </>
   );
 }
