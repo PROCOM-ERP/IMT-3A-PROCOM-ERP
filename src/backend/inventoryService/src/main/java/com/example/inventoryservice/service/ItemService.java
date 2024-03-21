@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -47,8 +48,7 @@ public class ItemService {
                 () -> new NoSuchElementException("The item id refers to a non-existent item."));       // E404
         Address address = addressRepository.findById(newQuantity.getAddressId()).orElseThrow(
                 () -> new NoSuchElementException("The address id refers to a non-existent address.")); // E404
-        // Employee employee = employeeRepository.findById(newQuantity.getEmployeeId()).orElseThrow(
-        //                () -> new NoSuchElementException("The employee id refers to a non-existent employee."));
+        String employeeId = SecurityContextHolder.getContext().getAuthentication().getName();
 
         if (newQuantity.getQuantity() <= 0){
             throw new IllegalArgumentException("The created item must be positive.");                  // E400
@@ -61,7 +61,7 @@ public class ItemService {
                 QuantityUpdateRequestDto quantityUpdate = new QuantityUpdateRequestDto(
                         produtItem.getId(),
                         newQuantity.getQuantity(),
-                        newQuantity.getEmployee());
+                        employeeId);
                 updateQuantity(quantityUpdate);     // This call the updateQuantity() function.
                 logger.info("The new item refers to an already existing address.");
                 // The new item refers to an already existing address.
@@ -78,7 +78,7 @@ public class ItemService {
 
         Transaction transaction = Transaction.builder()
                 .item(item)
-                .employee(newQuantity.getEmployee())
+                .employee(employeeId)
                 .timestamp(Instant.now())
                 .quantity(newQuantity.getQuantity())
                 .build();
@@ -102,8 +102,7 @@ public class ItemService {
         logger.info("Start updating the item...");
         Item item = itemRepository.findById(quantityUpdate.getItemId()).orElseThrow(
                 () -> new NoSuchElementException("The item id refers to a non existent item."));// Error 404
-        // Employee employee = employeeRepository.findById(newQuantity.getEmployeeId()).orElseThrow(
-        //                () -> new NoSuchElementException("The employee id refers to a non-existent employee."));
+        String employeeId = SecurityContextHolder.getContext().getAuthentication().getName();
 
         if(quantityUpdate.getQuantity() == 0){
             throw new IllegalArgumentException("The quantity cannot be null.");                         // Error 400
@@ -115,7 +114,7 @@ public class ItemService {
         Transaction transaction = Transaction.builder()
                 .quantity(quantityUpdate.getQuantity())
                 .timestamp(Instant.now())
-                .employee(quantityUpdate.getEmployee())
+                .employee(employeeId)
                 .item(item)
                 .build();
         item.setQuantity(item.getQuantity() + quantityUpdate.getQuantity());
@@ -141,8 +140,7 @@ public class ItemService {
                 () -> new NoSuchElementException("The item id refers to a non existent item."));       // E404
         addressRepository.findById(moveItemRequest.getAddressId()).orElseThrow(
                 () -> new NoSuchElementException("The address id refers to a non existent address.")); // E404
-        // Employee employee = employeeRepository.findById(newQuantity.getEmployeeId()).orElseThrow(
-        //                () -> new NoSuchElementException("The employee Id refers to a non-existent employee."));
+        String employeeId = SecurityContextHolder.getContext().getAuthentication().getName();
 
         if (Objects.equals(item.getAddress().getId(), moveItemRequest.getAddressId())){
             throw new DataIntegrityViolationException("The pointed address is the same as before.");   // E422
@@ -161,13 +159,13 @@ public class ItemService {
                 QuantityUpdateRequestDto quantityCleanRequestDto = new QuantityUpdateRequestDto(
                         moveItemRequest.getItemId(),
                         -item.getQuantity(),
-                        moveItemRequest.getEmployee()
+                        employeeId
                 );
                 // Transfers the quantity to the destination Item.
                 QuantityUpdateRequestDto quantityTransferredRequestDto = new QuantityUpdateRequestDto(
                         neighborItem.getId(),
                         item.getQuantity(),
-                        moveItemRequest.getEmployee()
+                        employeeId
                 );
                 updateQuantity(quantityCleanRequestDto);
                 updateQuantity(quantityTransferredRequestDto);
@@ -180,14 +178,14 @@ public class ItemService {
         NewItemRequestDto newItemRequestDto = new NewItemRequestDto(
                 item.getProduct().getId(),
                 item.getQuantity(),
-                moveItemRequest.getEmployee(),
+                employeeId,
                 moveItemRequest.getAddressId());
 
         // Cleans the previous Item:
         QuantityUpdateRequestDto quantityCleanRequestDto = new QuantityUpdateRequestDto(
                 moveItemRequest.getItemId(),
                 -item.getQuantity(),
-                moveItemRequest.getEmployee()
+                employeeId
         );
         addNewItem(newItemRequestDto);
         updateQuantity(quantityCleanRequestDto);
