@@ -17,8 +17,8 @@ function UserProfilAdmin({ title, userId }) {
 
   // Prepare the 'Authorization' header with the value 'Bearer' and the token
   const headers = {
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${token}`
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
   };
 
   // Get the user profil information
@@ -30,7 +30,8 @@ function UserProfilAdmin({ title, userId }) {
   // Get user from API Directory
   const getUserDir = async () => {
     // API URL
-    const apiUrl = "https://localhost:8041/api/directory/v1/employees/" + userId;
+    const apiUrl =
+      "https://localhost:8041/api/directory/v1/employees/" + userId;
 
     await fetch(apiUrl, {
       method: "GET",
@@ -38,9 +39,13 @@ function UserProfilAdmin({ title, userId }) {
     })
       .then((response) => {
         if (!response.ok) {
-          if (response.status === 401) { navigate("/error401"); }
-          else if (response.status === 403) { navigate("/error403"); }
-          else { throw new Error(response.status + " " + response.statusText); }
+          if (response.status === 401) {
+            navigate("/error401");
+          } else if (response.status === 403) {
+            navigate("/error403");
+          } else {
+            throw new Error(response.status + " " + response.statusText);
+          }
         }
         const res = response.json();
         return res;
@@ -56,8 +61,6 @@ function UserProfilAdmin({ title, userId }) {
           Job: data.job,
           Organisation: data.organisation.name,
           Unit: data.orgUnit.name,
-          City: data.orgUnit.city,
-          Country: data.orgUnit.country,
         }));
         setModifiedUserInfo((prevUser) => ({
           ...prevUser,
@@ -87,9 +90,13 @@ function UserProfilAdmin({ title, userId }) {
     })
       .then((response) => {
         if (!response.ok) {
-          if (response.status === 401) { navigate("/error401"); }
-          else if (response.status === 403) { navigate("/error403"); }
-          else { throw new Error(response.status + " " + response.statusText); }
+          if (response.status === 401) {
+            navigate("/error401");
+          } else if (response.status === 403) {
+            navigate("/error403");
+          } else {
+            throw new Error(response.status + " " + response.statusText);
+          }
         }
         const res = response.json();
         return res;
@@ -113,12 +120,11 @@ function UserProfilAdmin({ title, userId }) {
       });
   };
 
-
   const handleChangeInfo = (e) => {
     const { name, value } = e.target;
-    setModifiedUserInfo(prevUser => ({
+    setModifiedUserInfo((prevUser) => ({
       ...prevUser,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -145,8 +151,6 @@ function UserProfilAdmin({ title, userId }) {
           getUserAuth();
         }, 30);
       }
-
-
     }
   }
 
@@ -154,7 +158,7 @@ function UserProfilAdmin({ title, userId }) {
     // Prevent the browser from reloading the page
     event.preventDefault();
     setModify(!modify);
-    setModifiedUserInfo(prevUser => ({
+    setModifiedUserInfo((prevUser) => ({
       ...prevUser,
       Lastname: userInfo.lastName,
       Firstname: userInfo.firstName,
@@ -166,35 +170,46 @@ function UserProfilAdmin({ title, userId }) {
   }
 
   function updateUserInfo() {
-
-    const { Lastname, Firstname, Email, "Phone Number": phoneNumber, Job, OrgUnitId } = modifiedUserInfo;
+    const {
+      Lastname,
+      Firstname,
+      Email,
+      "Phone Number": phoneNumber,
+      Job,
+      OrgUnitId,
+    } = modifiedUserInfo;
     const dataToSend = {
       lastName: Lastname,
       firstName: Firstname,
       email: Email,
       phoneNumber: phoneNumber,
       job: Job,
-      orgUnit: OrgUnitId // Assuming orgUnit is an integer value
+      orgUnit: OrgUnitId, // Assuming orgUnit is an integer value
     };
 
-    const apiUrl = "https://localhost:8041/api/directory/v1/employees/" + userId;
+    const apiUrl =
+      "https://localhost:8041/api/directory/v1/employees/" + userId;
 
     // Send API request to update database
     fetch(apiUrl, {
-      method: 'PUT',
+      method: "PUT",
       headers: headers,
-      body: JSON.stringify(dataToSend)
+      body: JSON.stringify(dataToSend),
     })
-      .then(response => {
+      .then((response) => {
         if (!response.ok) {
-          if (response.status === 401) { navigate("/error401"); }
-          else if (response.status === 403) { navigate("/error403"); }
-          else { throw new Error(response.status + " " + response.statusText); }
+          if (response.status === 401) {
+            navigate("/error401");
+          } else if (response.status === 403) {
+            navigate("/error403");
+          } else {
+            throw new Error(response.status + " " + response.statusText);
+          }
         }
         console.log("[LOG] User information updated with success");
       })
-      .catch(error => {
-        console.error('Error saving changes for user information:', error);
+      .catch((error) => {
+        console.error("Error saving changes for user information:", error);
       });
   }
 
@@ -203,44 +218,51 @@ function UserProfilAdmin({ title, userId }) {
     const { isEnabled, Roles } = modifiedUserRoles;
 
     // Filter roles where isEnable is true and extract role names
-    const enabledRoles = Roles.filter(role => role.isEnable).map(role => role.name);
+    const enabledRoles = Roles.filter((role) => role.isEnable).map(
+      (role) => role.name,
+    );
 
     // Create dataToSend object with the correct format
     const dataToSend = {
       isEnable: isEnabled,
-      roles: enabledRoles
+      roles: enabledRoles,
     };
 
     console.log("data to send: ");
     console.log(JSON.stringify(dataToSend));
 
-    const apiUrl = "https://localhost:8041/api/authentication/v1/login-profiles/" + userId;
+    const apiUrl =
+      "https://localhost:8041/api/authentication/v1/login-profiles/" + userId;
 
     // Send API request to update database
     fetch(apiUrl, {
-      method: 'PUT',
+      method: "PUT",
       headers: headers,
-      body: JSON.stringify(dataToSend)
+      body: JSON.stringify(dataToSend),
     })
-      .then(response => {
+      .then((response) => {
         if (!response.ok) {
-          if (response.status === 401) { navigate("/error401"); }
-          else if (response.status === 403) { navigate("/error403"); }
-          else { throw new Error(response.status + " " + response.statusText); }
+          if (response.status === 401) {
+            navigate("/error401");
+          } else if (response.status === 403) {
+            navigate("/error403");
+          } else {
+            throw new Error(response.status + " " + response.statusText);
+          }
         }
         console.log("[LOG] User roles updated with success");
       })
-      .catch(error => {
-        console.error('Error saving changes for user roles:', error);
+      .catch((error) => {
+        console.error("Error saving changes for user roles:", error);
       });
   }
 
   const handleIsEnabledChange = (e) => {
     const checked = e.target.checked;
     console.log(checked);
-    setModifiedUserRoles(prevUser => ({
+    setModifiedUserRoles((prevUser) => ({
       ...prevUser,
-      isEnabled: checked
+      isEnabled: checked,
     }));
     console.log(modifiedUserRoles);
   };
@@ -252,7 +274,8 @@ function UserProfilAdmin({ title, userId }) {
         <div className="information-container">
           {Object.entries(userInfo).map(([key, value]) => (
             <div className="information">
-              <label htmlFor={key} >{key}
+              <label htmlFor={key}>
+                {key}
                 <input
                   name={key}
                   value={modify ? modifiedUserInfo[key] : value}
@@ -261,7 +284,6 @@ function UserProfilAdmin({ title, userId }) {
                   onChange={handleChangeInfo}
                 />
               </label>
-
             </div>
           ))}
           <div className="information-container">
@@ -270,43 +292,47 @@ function UserProfilAdmin({ title, userId }) {
                 type="checkbox"
                 name={"isEnabled"}
                 disabled={!modify}
-                checked={modify ? modifiedUserRoles.isEnabled : userRoles.isEnabled}
+                checked={
+                  modify ? modifiedUserRoles.isEnabled : userRoles.isEnabled
+                }
                 onChange={handleIsEnabledChange}
               />
               Is active
             </label>
             <label>Roles:</label>
-            {userRoles.Roles && (userRoles.Roles.map((role, index) => (
-
-              <div key={index}>
-                <label>
-                  <input
-                    type="checkbox"
-                    disabled={!modify}
-                    name={`role-${index}`}
-                    checked={modify ? modifiedUserRoles.Roles[index].isEnable : role.isEnable}
-                    onChange={(e) => {
-                      const checked = e.target.checked;
-                      setModifiedUserRoles(prevUser => ({
-                        ...prevUser,
-                        Roles: [
-                          ...prevUser.Roles.slice(0, index),
-                          { ...prevUser.Roles[index], isEnable: checked },
-                          ...prevUser.Roles.slice(index + 1)
-                        ]
-                      }));
-                    }}
-                  />
-                  {role.name}
-                </label>
-              </div>
-            )))}
+            {userRoles.Roles &&
+              userRoles.Roles.map((role, index) => (
+                <div key={index}>
+                  <label>
+                    <input
+                      type="checkbox"
+                      disabled={!modify}
+                      name={`role-${index}`}
+                      checked={
+                        modify
+                          ? modifiedUserRoles.Roles[index].isEnable
+                          : role.isEnable
+                      }
+                      onChange={(e) => {
+                        const checked = e.target.checked;
+                        setModifiedUserRoles((prevUser) => ({
+                          ...prevUser,
+                          Roles: [
+                            ...prevUser.Roles.slice(0, index),
+                            { ...prevUser.Roles[index], isEnable: checked },
+                            ...prevUser.Roles.slice(index + 1),
+                          ],
+                        }));
+                      }}
+                    />
+                    {role.name}
+                  </label>
+                </div>
+              ))}
           </div>
         </div>
         <div className="button-container">
-          {(modify && (
-            <Button onClick={handleBack}>Back</Button>
-          ))}
+          {modify && <Button onClick={handleBack}>Back</Button>}
           <Button onClick={handleModif}> {modify ? "Save" : "Modify"} </Button>
         </div>
       </div>
