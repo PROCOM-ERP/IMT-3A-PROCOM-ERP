@@ -175,6 +175,7 @@ function ProfilForm({ title, userId }) {
           }
         }
         console.log("[LOG] Profile updated successfully");
+        navigate("/profil");
         // alert("Profile updated successfully"); // Show success message
       })
       .catch((error) => {
