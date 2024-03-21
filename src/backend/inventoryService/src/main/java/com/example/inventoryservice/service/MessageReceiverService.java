@@ -18,9 +18,9 @@ public class MessageReceiverService {
 
     /* Public Methods */
 
-    @RabbitListener(queues = "roles-new-queue-order")
+    @RabbitListener(queues = "roles-new-queue-inventory")
     @LogMessageReceived(tag = CustomLogger.TAG_ROLES,
-            deliveryMethod = "Broadcast", queue = "roles-new-queue-order")
+            deliveryMethod = "Broadcast", queue = "roles-new-queue-inventory")
     public void receiveRolesNewMessage(Message message)
     {
         String getRoleByNamePath = new String(message.getBody());
@@ -34,9 +34,9 @@ public class MessageReceiverService {
         }
     }
 
-    @RabbitListener(queues = "login-profiles-sec-queue-order")
+    @RabbitListener(queues = "login-profiles-sec-queue-inventory")
     @LogMessageReceived(tag = CustomLogger.TAG_USERS,
-            deliveryMethod = "Broadcast", queue = "login-profiles-sec-queue-order")
+            deliveryMethod = "Broadcast", queue = "login-profiles-sec-queue-inventory")
     public void receiveLoginProfilesSecMessage(Message message, @Header("amqp_receivedRoutingKey") String routingKey)
     {
         String body = new String(message.getBody());

@@ -37,6 +37,6 @@ public class RoleActivation {
     @Builder.Default
     @NotNull
     @Column(name = "is_enable", nullable = false)
-    private Boolean isEnable = true;
+    private Boolean isEnable = false;
 
 }

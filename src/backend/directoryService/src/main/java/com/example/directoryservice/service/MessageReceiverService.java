@@ -19,7 +19,7 @@ public class MessageReceiverService {
 
     /* Public Methods */
 
-    @RabbitListener(queues = "roles-new-queue")
+    @RabbitListener(queues = "roles-new-queue-directory")
     @LogMessageReceived(tag = CustomLogger.TAG_ROLES,
             deliveryMethod = "Broadcast", queue = "roles-new-queue")
     public void receiveRolesNewMessage(Message message)
@@ -35,7 +35,7 @@ public class MessageReceiverService {
         }
     }
 
-    @RabbitListener(queues = "login-profiles-sec-queue")
+    @RabbitListener(queues = "login-profiles-sec-queue-directory")
     @LogMessageReceived(tag = CustomLogger.TAG_USERS,
             deliveryMethod = "Broadcast", queue = "login-profiles-sec-queue")
     public void receiveLoginProfilesSecMessage(Message message, @Header("amqp_receivedRoutingKey") String routingKey)

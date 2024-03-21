@@ -13,7 +13,7 @@
 CREATE TABLE roles
 (
     name VARCHAR(32) UNIQUE NOT NULL,
-    is_enable BOOLEAN NOT NULL DEFAULT true,
+    is_enable BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT pk_roles PRIMARY KEY (name),
     CONSTRAINT check_roles_name
@@ -137,9 +137,9 @@ CREATE TABLE joint_category_product (
 -- | Insert into                                                                                  |
 -- +----------------------------------------------------------------------------------------------+
 
-INSERT INTO roles (name)
-VALUES ('admin'),
-       ('user');
+INSERT INTO roles (name, is_enable)
+VALUES ('admin', true),
+       ('user', true);
 
 -- +----------------------------------------------------------------------------------------------+
 
@@ -151,8 +151,12 @@ VALUES ('admin', 'CanBypassAccessDeny'),
 -- +----------------------------------------------------------------------------------------------+
 
 INSERT INTO login_profiles (id)
-VALUES ('A00001'),
-       ('A00002');
+VALUES ('A00001'), ('A00002'), ('A00003'), ('A00004'), ('A00005'),
+       ('A00006'), ('A00007'), ('A00008'), ('A00009'), ('A00010'),
+       ('A00011'), ('A00012'), ('A00013'), ('A00014'), ('A00015'),
+       ('A00016'), ('A00017'), ('A00018'), ('A00019'), ('A00020'),
+       ('A00021'), ('A00022'), ('A00023'), ('A00024'), ('A00025'),
+       ('A00026'), ('A00027'), ('A00028'), ('A00029'), ('A00030');
 
 -- +----------------------------------------------------------------------------------------------+
 

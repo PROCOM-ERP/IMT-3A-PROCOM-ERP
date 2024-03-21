@@ -5,6 +5,7 @@ import com.example.authenticationservice.utils.CustomLogger;
 import lombok.RequiredArgsConstructor;
 
 import java.io.IOException;
+import java.util.NoSuchElementException;
 
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -50,7 +51,11 @@ public class MessageReceiverService {
             // try to save all microservice roles
             roleService.saveAllMicroserviceRoles(getAllRolesPath);
         } catch (RestClientException e) {
-            logger.error("Roles initialisation failed",
+            logger.error("Roles initialisation failed due to: Error with REST call between microservices",
+                    CustomLogger.TAG_ROLES, methodName);
+            messageSenderService.sendToDeadLetterQueueFrom(message, "roles-init-queue");
+        } catch (NoSuchElementException e) {
+            logger.error("Roles initialisation failed due to: " + e.getMessage(),
                     CustomLogger.TAG_ROLES, methodName);
             messageSenderService.sendToDeadLetterQueueFrom(message, "roles-init-queue");
         }

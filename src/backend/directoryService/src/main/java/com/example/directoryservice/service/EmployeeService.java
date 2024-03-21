@@ -7,6 +7,7 @@ import com.example.directoryservice.model.Permission;
 import com.example.directoryservice.repository.EmployeeRepository;
 import com.example.directoryservice.repository.OrgUnitRepository;
 import com.example.directoryservice.utils.CustomLogger;
+import com.example.directoryservice.utils.CustomStringUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.access.AccessDeniedException;
@@ -24,11 +25,24 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class EmployeeService {
 
+    /* Constants */
+    public static final String ERROR_MSG_EMPLOYEE_ID_BLANK =
+            "User id cannot be null or blank.";
+    public static final String ERROR_MSG_EMPLOYEE_ID_SIZE =
+            "User id must contain exactly 6 characters.";
+    public static final String ERROR_MSG_EMPLOYEE_ID_PATTERN =
+            "User id should start by a capital letter, followed by exactly 5 digits.";
+
+    /* Repository Beans */
     private final EmployeeRepository employeeRepository;
     private final OrgUnitRepository orgUnitRepository;
-    private final AddressService addressService;
 
+    /* Service Beans */
+    private final AddressService addressService;
     private final MessageSenderService messageSenderService;
+
+    /* Utils Beans */
+    private final CustomStringUtils customStringUtils;
 
     /* Public Methods */
 
@@ -68,7 +82,16 @@ public class EmployeeService {
 
     @LogExecutionTime(description = "Retrieve a user information profile.",
             tag = CustomLogger.TAG_USERS)
-    public EmployeeResponseDto getEmployeeById(String idEmployee) {
+    public EmployeeResponseDto getEmployeeById(String idEmployee)
+            throws IllegalArgumentException,
+            NoSuchElementException
+    {
+        // check employee id value
+        customStringUtils.checkNullOrBlankString(idEmployee, ERROR_MSG_EMPLOYEE_ID_BLANK);
+        customStringUtils.checkStringSize(idEmployee, ERROR_MSG_EMPLOYEE_ID_SIZE, 6, 6);
+        customStringUtils.checkStringPattern(idEmployee, CustomStringUtils.REGEX_ID_LOGIN_PROFILE, ERROR_MSG_EMPLOYEE_ID_PATTERN);
+
+        // retrieve and return Employee entity
         return employeeRepository.findById(idEmployee)
                 .map(this::modelToResponseDto)
                 .orElseThrow();
@@ -77,6 +100,13 @@ public class EmployeeService {
     @LogExecutionTime(description = "Retrieve a user email.",
             tag = CustomLogger.TAG_USERS)
     public EmployeeEmailResponseDto getEmployeeEmailById(String idEmployee) {
+
+        // check employee id value
+        customStringUtils.checkNullOrBlankString(idEmployee, ERROR_MSG_EMPLOYEE_ID_BLANK);
+        customStringUtils.checkStringSize(idEmployee, ERROR_MSG_EMPLOYEE_ID_SIZE, 6, 6);
+        customStringUtils.checkStringPattern(idEmployee, CustomStringUtils.REGEX_ID_LOGIN_PROFILE, ERROR_MSG_EMPLOYEE_ID_PATTERN);
+
+        // retrieve and return EmployeeEmailResponseDto entity
         return employeeRepository.findById(idEmployee)
                 .map(e -> EmployeeEmailResponseDto.builder()
                         .id(e.getId())
@@ -87,8 +117,16 @@ public class EmployeeService {
 
     @LogExecutionTime(description = "Update a user information.",
             tag = CustomLogger.TAG_USERS)
-    public void updateEmployeeById(String idEmployee, EmployeeUpdateRequestDto employeeDto)
-            throws NoSuchElementException, DataIntegrityViolationException {
+    public void updateEmployeeById(
+            String idEmployee,
+            EmployeeUpdateRequestDto employeeDto)
+            throws NoSuchElementException,
+            DataIntegrityViolationException
+    {
+        // check employee id value
+        customStringUtils.checkNullOrBlankString(idEmployee, ERROR_MSG_EMPLOYEE_ID_BLANK);
+        customStringUtils.checkStringSize(idEmployee, ERROR_MSG_EMPLOYEE_ID_SIZE, 6, 6);
+        customStringUtils.checkStringPattern(idEmployee, CustomStringUtils.REGEX_ID_LOGIN_PROFILE, ERROR_MSG_EMPLOYEE_ID_PATTERN);
 
         // check if the employee to modify is the same as the authenticated one (or admin)
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -103,7 +141,7 @@ public class EmployeeService {
         Employee employee = employeeRepository.findById(idEmployee).orElseThrow();
 
         // check if email will change
-       boolean isEmailUpdated = ! employeeDto.getEmail().equals(employee.getEmail());
+        boolean isEmailUpdated = ! employeeDto.getEmail().equals(employee.getEmail());
 
         // update employee attributes
         employee.setLastName(employeeDto.getLastName());
