@@ -176,7 +176,6 @@ function ProfilForm({ title, userId }) {
                 <input type="text" className="input" disabled value={value} />
               ) : key === "Organization" ? (
                 <select
-                  className="add-user-input"
                   value={selectedOrg}
                   onChange={(e) => {
                     const orgId = e.target.value;
@@ -198,7 +197,6 @@ function ProfilForm({ title, userId }) {
                 </select>
               ) : key === "Organization Unit" ? (
                 <select
-                  className="add-user-input"
                   value={modifiedUser.orgUnit || user["Organization Unit"]}
                   onChange={(e) => handleChange("orgUnit", e.target.value)}
                   defaultValue={user["Organization Unit"]}
