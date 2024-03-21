@@ -3,7 +3,7 @@
   "info": {
     "title": "AuthenticationService",
     "description": "Service to register login-profiles with password and roles.<br>It allows to get Jwt token for future connections to other services<br>.BasicAuth required to get a Jwt token.",
-    "version": "0.1.0"
+    "version": "1.1.0"
   },
   "servers": [
     {
