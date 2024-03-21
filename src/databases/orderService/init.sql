@@ -209,7 +209,7 @@ VALUES ('681370aec431f01f00f0949eecdd5afb640f6f9a195d14d5d229e722bc1ceb92',
 -- +----------------------------------------------------------------------------------------------+
 
 INSERT INTO employees (login_profile, last_name, first_name, email, phone_number)
-VALUES ('A00001', 'Rousseau', 'Émilie', 'emilie.rousseau@example.com', '+33 1 01 02 03 04'),
+VALUES ('A00001', 'Rousseau', 'Emilie', 'emilie.rousseau@example.com', '+33 1 01 02 03 04'),
        ('A00002', 'Bernard', 'Lucas', 'lucas.bernard@example.com', '+33 1 05 06 07 08'),
        ('A00003', 'Petit', 'Chloé', 'chloe.petit@example.com', '+33 1 09 10 11 12'),
 
@@ -238,12 +238,12 @@ VALUES ('A00001', 'Rousseau', 'Émilie', 'emilie.rousseau@example.com', '+33 1 0
        ('A00022', 'Fontaine', 'Hugo', 'hugo.fontaine@example.com', '+33 2 85 86 87 88'),
        ('A00023', 'Robin', 'Anaïs', 'anais.robin@example.com', '+33 2 89 90 91 92'),
        ('A00024', 'Henry', 'Sébastien', 'sebastien.henry@example.com', '+33 2 93 94 95 96'),
-       ('A00025', 'Morin', 'Élise', 'elise.morin@example.com', '+33 2 97 98 99 00'),
+       ('A00025', 'Morin', 'Elise', 'elise.morin@example.com', '+33 2 97 98 99 00'),
 
        ('A00026', 'Nicolas', 'Rémi', 'remi.nicolas@example.com', '+33 2 01 02 03 04'),
        ('A00027', 'Pierre', 'Clara', 'clara.pierre@example.com', '+33 2 05 06 07 08'),
        ('A00028', 'Sanchez', 'Florian', 'florian.sanchez@example.com', '+33 2 09 10 11 12'),
-       ('A00029', 'Robert', 'Éva', 'eva.robert@example.com', '+33 2 13 14 15 16'),
+       ('A00029', 'Robert', 'Eva', 'eva.robert@example.com', '+33 2 13 14 15 16'),
        ('A00030', 'Morel', 'David', 'david.morel@example.com', '+33 2 17 18 19 20');
 
 -- +----------------------------------------------------------------------------------------------+

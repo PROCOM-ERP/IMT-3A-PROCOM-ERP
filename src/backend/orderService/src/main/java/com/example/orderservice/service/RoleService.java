@@ -70,7 +70,8 @@ public class RoleService {
                 .build();
 
         // insert Role entity
-        roleRepository.save(role);
+        if (! roleRepository.existsById(role.getName()))
+            roleRepository.save(role);
     }
 
     @LogExecutionTime(description = "Retrieve all role names.",
@@ -147,7 +148,9 @@ public class RoleService {
         Role role = roleRepository.findById(roleName).orElseThrow();
 
         // update isEnable property if provided or different of null
-        if (roleDto.getIsEnable() != null) {
+        boolean isEnableChange = false;
+        if (roleDto.getIsEnable() != null && roleDto.getIsEnable() != role.getIsEnable()) {
+            isEnableChange = true;
             role.setIsEnable(roleDto.getIsEnable());
         }
 
@@ -162,7 +165,7 @@ public class RoleService {
         roleRepository.save(role);
 
         // send message to inform about a change on role activation status
-        if (roleDto.getIsEnable() != null)
+        if (isEnableChange)
             messageSenderService.sendRoleActivationMessage(roleName);
     }
 

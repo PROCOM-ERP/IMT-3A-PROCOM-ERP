@@ -119,8 +119,10 @@ public class RoleService {
                 .map(raDto -> Role.builder().name(raDto.getName()).build())
                 .filter(r -> ! existingRoles.contains(r))
                 .toList();
-        if (! nonExistingRoles.isEmpty())
+        if (! nonExistingRoles.isEmpty()) {
             roleRepository.saveAll(nonExistingRoles);
+            nonExistingRoles.forEach(r -> messageSenderService.sendRolesNewMessage(r.getName()));
+        }
 
         // cast RoleActivationDto entities to RoleActivation entities before database insertion
         Map<String, Role> roles = roleRepository.findAll().stream()
@@ -184,7 +186,9 @@ public class RoleService {
                 .orElse(RoleActivation.builder()
                         .role(role)
                         .microservice(roleDto.getMicroservice())
+                        .isEnable(roleDto.getIsEnable())
                         .build());
+        boolean isEnableChange = roleDto.getIsEnable() != roleActivation.getIsEnable();
         roleActivation.setIsEnable(roleDto.getIsEnable());
 
         // insert RoleActivation entity
@@ -199,11 +203,13 @@ public class RoleService {
         // insert Role entity
         roleRepository.save(role);
 
-        // expire all Login Profile entities jwt
-        loginProfileRepository.updateAllJwtGenMinAt();
-
-        // send message to inform the network about all login profiles jwt expiration
-        messageSenderService.sendLoginProfilesJwtDisableOldMessage();
+        // check if role activation status has changed before resetting all user Jwt tokens
+        if (isEnableChange) {
+            // expire all Login Profile entities jwt
+            loginProfileRepository.updateAllJwtGenMinAt();
+            // send message to inform the network about all login profiles jwt expiration
+            messageSenderService.sendLoginProfilesJwtDisableOldMessage();
+        }
     }
 
     @LogExecutionTime(description = "Retrieve all role names.",
@@ -310,6 +316,7 @@ public class RoleService {
                 .collect(Collectors.toSet()));
 
         // update isEnable property if provided or different of null
+        boolean isEnableChange = false;
         if (roleDto.getIsEnable() != null) {
             RoleActivation ra = roleActivationRepository.findByRoleAndMicroservice(roleNameSanitized, currentMicroservice)
                     .orElse(RoleActivation.builder()
@@ -318,8 +325,11 @@ public class RoleService {
                                     new NoSuchElementException("No existing role named " + roleNameSanitized)))
                             .microservice(currentMicroservice)
                             .build());
-            ra.setIsEnable(roleDto.getIsEnable());
-            roleActivationRepository.saveAndFlush(ra);
+            if (roleDto.getIsEnable() != ra.getIsEnable()) {
+                isEnableChange = true;
+                ra.setIsEnable(roleDto.getIsEnable());
+                roleActivationRepository.saveAndFlush(ra);
+            }
         }
 
         // check if role already exists and retrieve it
@@ -346,7 +356,8 @@ public class RoleService {
         loginProfileRepository.updateAllJwtGenMinAt();
 
         // send message to inform the network about all login profiles jwt expiration
-        messageSenderService.sendLoginProfilesJwtDisableOldMessage();
+        if (isEnableChange)
+            messageSenderService.sendLoginProfilesJwtDisableOldMessage();
     }
 
     /* Private Methods */
