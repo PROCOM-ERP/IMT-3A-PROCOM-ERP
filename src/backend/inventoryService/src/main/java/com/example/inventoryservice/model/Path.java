@@ -9,8 +9,8 @@ public class Path {
     public static final String ACTIVATION = "/activation";
     public static final String CREATE = "/create";
     public static final String ADD = "/add";
-    public static final String UPDATE = "UPDATE";
-    public static final String MOVE = "move";
+    public static final String UPDATE = "/update";
+    public static final String MOVE = "/move";
 
     public static final String ROLES = "/roles";
     public static final String V1_ROLES = API + V1 + ROLES;
@@ -27,7 +27,7 @@ public class Path {
 
 
     // Categories:
-    public static final String CATEGORIES = "categories";
+    public static final String CATEGORIES = "/categories";
     public static final String CATEGORY_ID = "/{id}";
     public static final String V1_CATEGORIES = API + V1 + CATEGORIES;
     public static final String V1_CATEGORY_ID = V1_CATEGORIES + CATEGORY_ID;
@@ -46,7 +46,7 @@ public class Path {
 
 
     // Addresses:
-    public static final String ADDRESSES = "addresses";
+    public static final String ADDRESSES = "/addresses";
     public static final String ADDRESS_ID = "/{id}";
     public static final String V1_ADDRESSES = API + V1 + ADDRESSES;
     public static final String V1_ADDRESS_ID = V1_ADDRESSES + ADDRESS_ID;
