@@ -47,7 +47,6 @@ function ProfilForm({ title, userId }) {
           } else if (response.status === 403) {
             navigate("/error403");
           }
-          // else if (response.status === 400 || response.status === 422) { <ErrorForm title={response.status} message={response.statusText} />; }
           else {
             throw new Error(response.status + " " + response.statusText);
           }
@@ -90,7 +89,6 @@ function ProfilForm({ title, userId }) {
         } else if (response.status === 403) {
           navigate("/error403");
         }
-        // else if (response.status === 400 || response.status === 422) { <ErrorForm title={response.status} message={response.statusText} />; }
         else {
           throw new Error(response.status + " " + response.statusText);
         }
@@ -141,8 +139,6 @@ function ProfilForm({ title, userId }) {
       .then(async (response) => {
         const [getError, error] = await handleFormError(response, navigate);
         if (getError) {
-          console.log(getError);
-          console.log(error);
           setGettingError(true);
           setError(error);
         } else {
