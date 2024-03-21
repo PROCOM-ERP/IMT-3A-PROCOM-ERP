@@ -187,7 +187,7 @@ function OrderForm() {
         orderer: {
           ...orderData.orderer,
           // Update fields only if they are empty
-          ...(isIdEmpty && { id: ordererInfo.id }),
+          ...(isIdEmpty && { id: ordererInfo.id || userId }),
           ...(isLastNameEmpty && { lastName: ordererInfo.lastName }),
           ...(isFirstNameEmpty && { firstName: ordererInfo.firstName }),
           ...(isEmailEmpty && { email: ordererInfo.email }),
