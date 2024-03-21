@@ -25,7 +25,8 @@
 											"});\r",
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -44,7 +45,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"number\": 666,\r\n    \"street\": \"Sata Venera\",\r\n    \"city\": \"La Valette\",\r\n    \"state\": \"\",\r\n    \"country\": \"Malta\",\r\n    \"zipcode\": \"12345\",\r\n    \"info\": \"\"\r\n}",
+									"raw": "{\r\n    \"number\": 666,\r\n    \"street\": \"Sata Venera\",\r\n    \"city\": \"La Valette\",\r\n    \"state\": \"San Julian\",\r\n    \"country\": \"Malta\",\r\n    \"zipcode\": \"12345\",\r\n    \"info\": \"info\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -237,62 +238,6 @@
 							"response": []
 						},
 						{
-							"name": "400-2",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"// Add a new address\r",
-											"pm.test(\"Create role with an invalid request body\", function () {\r",
-											"    pm.response.to.have.status(400);\r",
-											"});\r",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{test_token}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"number\": 10,\r\n    \"street\": \"Rue Louis Veuillot\",\r\n    \"city\": \"Brest\",\r\n    \"state\": \"Bretagne\",\r\n    \"country\": \"France\",\r\n    \"zipcode\": \"27000\",\r\n    \"glacier dans le coin\": \"Tiffany Gelateria\" // bad field\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "https://localhost:8041/api/directory/v1/addresses",
-									"protocol": "https",
-									"host": [
-										"localhost"
-									],
-									"port": "8041",
-									"path": [
-										"api",
-										"directory",
-										"v1",
-										"addresses"
-									]
-								}
-							},
-							"response": []
-						},
-						{
 							"name": "400-3",
 							"event": [
 								{
@@ -381,65 +326,6 @@
 								"body": {
 									"mode": "raw",
 									"raw": "{\r\n    \"number\": 10,\r\n    \"street\": \"Rue Louis Veuillot\",\r\n    \"city\": \"Brest\",\r\n    \"state\": \"Bretagne\",\r\n    \"country\": \"France\",\r\n    \"zipcode\": 27000, //Must be a string according to the current API\r\n    \"info\": \"Habite le RG\"\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "https://localhost:8041/api/directory/v1/addresses",
-									"protocol": "https",
-									"host": [
-										"localhost"
-									],
-									"port": "8041",
-									"path": [
-										"api",
-										"directory",
-										"v1",
-										"addresses"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "403-1",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"// Add a new address\r",
-											"/*\r",
-											"pm.test(\"Create role with an invalid request body\", function () {\r",
-											"    pm.response.to.have.status(403);\r",
-											"});\r",
-											"\r",
-											"*/ // To uncomment if 403 available in API \r",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{test_token}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"number\": 666,\r\n    \"street\": \"<script>alert(document.gruyere)</script>\", // Example of XSS veunerability\r\n    \"city\": \"La Valette\",\r\n    \"state\": \"\",\r\n    \"country\": \"Malta\",\r\n    \"zipcode\": \"12345\",\r\n    \"info\": \"\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"

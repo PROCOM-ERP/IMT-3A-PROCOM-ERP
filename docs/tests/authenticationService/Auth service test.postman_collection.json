@@ -45,7 +45,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"name\": \"test\",\r\n    \"microservices\": [\"inventory\", \"directory\"]\r\n}",
+									"raw": "{\r\n    \"name\": \"tdest\",\r\n    \"microservices\": [\"inventory\", \"directory\"]\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
