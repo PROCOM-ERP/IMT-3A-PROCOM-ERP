@@ -1,12 +1,12 @@
 package com.example.inventoryservice.controller;
 
-import com.example.inventoryservice.InventoryServiceApplication;
 import com.example.inventoryservice.dto.ItemDto;
 import com.example.inventoryservice.dto.ProductDto;
 import com.example.inventoryservice.dtoRequest.MoveItemRequestDto;
 import com.example.inventoryservice.dtoRequest.NewItemRequestDto;
 import com.example.inventoryservice.dtoRequest.ProductRequestDto;
 import com.example.inventoryservice.dtoRequest.QuantityUpdateRequestDto;
+import com.example.inventoryservice.model.Path;
 import com.example.inventoryservice.service.ProductService;
 import com.example.inventoryservice.service.ItemService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -17,25 +17,23 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "http://localhost")
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/products")
+@RequestMapping(Path.V1_PRODUCTS)
+@Validated
 public class ProductController {
 
     private final ProductService productService;
     private final ItemService itemService;
     //private final Logger logger = LoggerFactory.getLogger(InventoryServiceApplication.class);
 
-    @GetMapping("/{id}")
+    @GetMapping(Path.PRODUCT_ID)
     @Operation(operationId = "getProductById", tags = {"product", "inventory"},
             summary = "Returns the product information",
             description = "Returns the product with the associated categories and items",
@@ -58,7 +56,7 @@ public class ProductController {
     }
 
     @GetMapping
-    @Operation(operationId = "getProductById", tags = {"product", "inventory"},
+    @Operation(operationId = "getAllProducts", tags = {"product", "inventory"},
             summary = "Returns the product information",
             description = "Returns the product with the associated categories and items",
             parameters = {@Parameter(
@@ -69,9 +67,6 @@ public class ProductController {
                     "Product information retrieved correctly",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(type = "array", implementation = ProductDto.class))} ),
-            @ApiResponse(responseCode = "404", description =
-                    "Product not found",
-                    content = {@Content(mediaType = "application/json")} ),
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
@@ -98,17 +93,13 @@ public class ProductController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<String> createProduct(@Valid @RequestBody ProductRequestDto newProduct){
-        if (!checkValidity(newProduct)){
-            return ResponseEntity.badRequest().build();
-        }
-
+    public @ResponseBody ResponseEntity<String> createProduct(@Valid @RequestBody ProductRequestDto newProduct){
         productService.createProduct(newProduct);
         return ResponseEntity.ok().build();
     }
 
 
-    @PostMapping("/add")
+    @PostMapping(Path.ADD)
     @Validated
     @Operation(operationId = "addNewItem", tags = {"product", "inventory"},
             summary = "Creates a new item in this product",
@@ -135,7 +126,7 @@ public class ProductController {
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/update")
+    @PutMapping(Path.UPDATE)
     @Validated
     @Operation(operationId = "updateQuantity", tags = {"product", "inventory"},
             summary = "Update the quantity of the Item",
@@ -162,7 +153,7 @@ public class ProductController {
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/move")
+    @PutMapping(Path.MOVE)
     @Validated
     @Operation(operationId = "moveToAddress", tags = {"product", "inventory"},
             summary = "Transfers the quantity of items to another address",
@@ -188,28 +179,4 @@ public class ProductController {
         itemService.moveToAddress(newQuantity);
         return ResponseEntity.ok().build();
     }
-
-    /**
-     * Function that check the values of the request. Returns true if the fields are valid.
-     * @param dtoObject: input object.
-     * @return boolean
-     */
-    private boolean checkValidity(Object dtoObject){
-        if(dtoObject instanceof ProductRequestDto request){
-            if (request.getNumberOfItem() == 0){
-                return (request.getAddress() == null);
-            }
-            else if (request.getNumberOfItem() <= 0){
-                return false;
-            }
-            else{
-                return (request.getAddress() != null &&
-                        request.getAddress() > 0);
-            }
-        }
-        // This should be nether be reached:
-        return false;
-    }
-
-    //Later: add renameProduct(); changeMetaData(); addMetaData(); removeMetaData()
 }

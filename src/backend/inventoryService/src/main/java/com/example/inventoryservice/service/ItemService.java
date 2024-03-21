@@ -148,7 +148,7 @@ public class ItemService {
             throw new DataIntegrityViolationException("The pointed address is the same as before.");   // E422
         }
         else if(item.getQuantity() <= 0){
-            throw new DataIntegrityViolationException("The pointed item is is empty. Cannot be moved.");
+            throw new DataIntegrityViolationException("The pointed item is empty. Cannot be moved.");
         }
 
         List<Item> neighborItems = item.getProduct().getItems();

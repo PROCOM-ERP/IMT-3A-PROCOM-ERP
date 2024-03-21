@@ -1,6 +1,7 @@
 package com.example.inventoryservice.controller;
 
 import com.example.inventoryservice.dto.AddressDto;
+import com.example.inventoryservice.model.Path;
 import com.example.inventoryservice.service.AddressService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -17,11 +18,11 @@ import java.util.List;
 @RestController
 @CrossOrigin(origins = "http://localhost")
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/addresses")
+@RequestMapping(Path.V1_ADDRESSES)
 public class AddressController {
     final private AddressService addressService;
 
-    @GetMapping("/{id}")
+    @GetMapping(Path.ADDRESS_ID)
     @Operation(operationId = "getAddressById", tags = {"address", "inventory"},
             summary = "Returns the address information",
             description = "Returns the address information with the items at this address",

@@ -146,7 +146,12 @@ VALUES ('admin', true),
 INSERT INTO role_permissions (role, permission)
 VALUES ('admin', 'CanBypassAccessDeny'),
        ('admin', 'CanModifyRole'),
-       ('admin', 'CanReadRole');
+       ('admin', 'CanReadRole'),
+       ('admin', 'CanReadInventories'),
+       ('admin', 'CanManageInventories'),
+       ('admin', 'CanCreateCategories'),
+
+       ('user', 'CanReadInventories');
 
 -- +----------------------------------------------------------------------------------------------+
 
@@ -161,49 +166,53 @@ VALUES ('A00001'), ('A00002'), ('A00003'), ('A00004'), ('A00005'),
 -- +----------------------------------------------------------------------------------------------+
 
 INSERT INTO categories (title, description)
-VALUES ('test_category', 'test_description');
+VALUES ('Tous', 'Catégorie par défaut sur l''ERP'),
+       ('Tissu', null),
+       ('Fibre', null);
 
 
 INSERT INTO products (title, description)
-VALUES ('Nordinateur', 'gaming'),
-       ('Carte graphique', 'très performante'),
-       ('Chips', 'très craquantes');
+VALUES ('Nylon (tissu)', 'Unité en [cm] ; Utilisé pour le développement du produit A180'),
+       ('Nylon(fibre)', 'Unité en [cm] ; Utilisé pour le développement du produit A180'),
+       ('Kevlar', 'Unité en [cm] ; Utilisé pour le développement du produit D150'),
+       ('Mylar', null),
+       ('Kinder Bueno', null);
 
 
 INSERT INTO joint_category_product (id_product, id_category)
 VALUES (1, 1),
-       (2, 1);
+       (1, 2),
+       (2, 1),
+       (2, 3),
+       (3, 1),
+       (3, 2),
+       (4, 1),
+       (4, 2),
+       (5, 1);
 
 
 INSERT INTO addresses (number, street, city, state, country, postal_code, info)
-VALUES ('15', 'entrepot de Malta Shopper', 'Malte', 'Valleta', 'Malte', '66666', 'je n''y reviendrai plus jamais !'),
-       ('100', 'Rue Louis veuillot', 'Brest', 'Bretage', 'France', '27000', '@ du challet');
+VALUES ('162', 'Cannon Rd', 'Santa Venera', 'Malte', 'Malte', '9034', 'MaltaShopper Limited : on stocke les stagiaires dans des cartons'),
+       ('10', 'Rue Louis veuillot', 'Brest', 'Bretage', 'France', '27000', 'Chalet'),
+       ('VF2F+RQF', 'Ghadajma', 'Mqabba', 'Malte', 'Malte', 'indisponible', 'MaltaShopper Warehouse : Stocke les matières premières');
 
 INSERT INTO items (quantity, id_address, id_product)
-VALUES (12, 1, 1),
-       (10, 1, 2);
+VALUES (850, 1, 1),
+       (10110, 1, 2),
+       (920, 3, 2),
+       (7440, 3, 3),
+       (1001, 2, 5);
 
 INSERT INTO transactions(quantity, timestamp, employee, id_item)
-VALUES (10, '2024-02-11 09:00:00', 'A00001', 1),
-       (2, '2024-02-11 10:00:00', 'A00002', 1);
+VALUES (850, '2024-02-11 09:00:00', 'A00002', 1),
+       (10110, '2024-02-11 10:00:00', 'A00002', 2),
+       (920, '2024-02-11 09:00:00', 'A00002', 3),
+       (7440, '2024-02-11 09:00:00', 'A00002', 4),
+       (1001, '2024-02-11 09:00:00', 'A00002', 5);
 
 INSERT INTO product_meta(key, type, value, description, id_product)
 VALUES
-('Volume', 'float', '1,553', 'Bière', 1),
-('Quantité de gras', 'integer', '10', 'Sauciflard', 1),
-('Poids', 'float', '168,4', 'Trop de BF', 1)
-
-/*
-SELECT * FROM addresses;
-
-SELECT * FROM products;
-
-SELECT * FROM categories;
-
-SELECT * FROM items;
-
-SELECT * FROM transactions;
-
-SELECT * FROM category_product;
-
-*/
+    ('Largeur (cm)', 'float', '110.5', 'dpe < 95cm', 1),
+    ('Epaisseur (mm)', 'float', '4.8', null, 2),
+    ('Couleur', 'string', 'cyan', null, 2),
+    ('Largeur (cm)', 'float', '60', null, 3);

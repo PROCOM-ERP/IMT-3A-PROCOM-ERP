@@ -60,13 +60,13 @@ public class ProductService {
      */
     @Transactional
     public void createProduct(ProductRequestDto productRequest){
-
         Product product = Product.builder()
                 .title(productRequest.getTitle())
                 .description(productRequest.getDescription())
                 .build();
 
-        List<Category> categories = categoryService.getAllByIds(productRequest.getCategories());    
+        List<Category> categories = categoryService.getAllByIds(productRequest.getCategories());
+        //LoginProfile employee = loginProfileRepository.findById(productRequest.get);
 
         if (categories == null || categories.isEmpty()) {
             // Error 422
@@ -76,16 +76,19 @@ public class ProductService {
         for (Category category : categories) {
             category.getProducts().add(product);
         }
+        if(productRequest.getProductMeta() != null && !productRequest.getProductMeta().isEmpty()){
+            List<ProductMeta> productMetaList = productRequest.getProductMeta().stream()
+                    .map(metaDto -> ProductMeta.builder()
+                            .key(metaDto.getKey())
+                            .value(metaDto.getValue())
+                            .type(metaDto.getType())
+                            .description(metaDto.getDescription())
+                            .product(product)
+                            .build())
+                    .collect(Collectors.toList());
 
-        List<ProductMeta> productMetaList = productRequest.getProductMeta().stream()
-                .map(metaDto -> ProductMeta.builder()
-                        .key(metaDto.getKey())
-                        .value(metaDto.getValue())
-                        .type(metaDto.getType())
-                        .description(metaDto.getDescription())
-                        .product(product)
-                        .build())
-                .collect(Collectors.toList());
+            product.setProductMeta(productMetaList);
+        }
 
         if ((productRequest.getNumberOfItem() > 0)){
             Address address = addressService.getAddressById(productRequest.getAddress());
@@ -118,7 +121,6 @@ public class ProductService {
 
             product.setItems(itemList);
         }
-        product.setProductMeta(productMetaList);
         product.setCategories(categories);
 
         productRepository.save(product);

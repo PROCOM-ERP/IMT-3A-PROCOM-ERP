@@ -3,15 +3,17 @@ package com.example.inventoryservice.controller;
 import com.example.inventoryservice.dto.CategoryDto;
 import com.example.inventoryservice.dto.ProductDto;
 import com.example.inventoryservice.dtoRequest.CategoryRequestDto;
+import com.example.inventoryservice.model.Path;
 import com.example.inventoryservice.service.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,11 +21,11 @@ import java.util.List;
 @RestController
 @CrossOrigin(origins = "http://localhost")
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/categories")
+@RequestMapping(Path.V1_CATEGORIES)
 public class CategoryController {
     private final CategoryService categoryService;
 
-    @GetMapping("/{id}")
+    @GetMapping(Path.CATEGORY_ID)
     @Operation(operationId = "getCategoryById", tags = {"categories", "inventory"},
             summary = "Returns one category",
             description = "Returns the category with the associated information")
@@ -51,14 +53,19 @@ public class CategoryController {
                     "All categories retrieved correctly",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(type = "array", implementation = ProductDto.class))} ),
+            @ApiResponse(responseCode = "403", description =
+                    "This controller has been closed",
+                    content = {@Content(mediaType = "application/json")}),
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
     public ResponseEntity<List<CategoryDto>> getAllCategory(){
-        return ResponseEntity.ok(categoryService.getAllCategories());
+        //return ResponseEntity.ok(categoryService.getAllCategories());
+        return ResponseEntity.status(403).body(null); // <- This endpoint is closed.
     }
 
     @PostMapping
+    @Validated
     @Operation(operationId = "createCategory", tags = {"category", "inventory"},
             summary = "Creates a new category",
             description = "Creates a new category according to the CategoryRequestDto data")
@@ -75,7 +82,7 @@ public class CategoryController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<String> createCategory(@RequestBody CategoryRequestDto newCategory){
+    public ResponseEntity<String> createCategory(@Valid @RequestBody CategoryRequestDto newCategory){
         categoryService.createCategory(newCategory);
         return ResponseEntity.ok().build();
     }
