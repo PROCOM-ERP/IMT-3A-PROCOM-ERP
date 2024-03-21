@@ -21,6 +21,7 @@ public class ProductRequestDto {
     @Pattern(regexp = "^[^';\"\\\\]*$", message = ("Bad request"))
     private String description;
     @NotNull
+    @NotEmpty
     private List<Integer> categories;   // This contains the id of each category.
     private List<ProductMetaRequestDto> productMeta;
     @Min(0)

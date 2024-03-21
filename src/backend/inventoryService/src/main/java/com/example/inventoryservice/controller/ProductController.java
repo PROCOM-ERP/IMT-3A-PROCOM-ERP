@@ -100,7 +100,7 @@ public class ProductController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public @ResponseBody ResponseEntity<String> createProduct(@Valid @RequestBody ProductRequestDto newProduct, BindingResult bindingResult){
+    public @ResponseBody ResponseEntity<String> createProduct(@Valid @RequestBody ProductRequestDto newProduct){
         productService.createProduct(newProduct);
         return ResponseEntity.ok().build();
     }
