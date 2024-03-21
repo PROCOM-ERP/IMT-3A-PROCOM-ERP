@@ -35,7 +35,7 @@ public class Path {
 
 
     // Products:
-    public static final String PRODUCTS = "products";
+    public static final String PRODUCTS = "/products";
     public static final String PRODUCT_ID = "/{id}";
     public static final String V1_PRODUCTS = API + V1 + PRODUCTS;
     public static final String V1_PRODUCT_ID = V1_PRODUCTS + PRODUCT_ID;

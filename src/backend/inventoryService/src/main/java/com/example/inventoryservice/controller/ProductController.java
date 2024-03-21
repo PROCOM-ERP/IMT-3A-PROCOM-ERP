@@ -97,10 +97,6 @@ public class ProductController {
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
     public ResponseEntity<String> createProduct(@Valid @RequestBody ProductRequestDto newProduct){
-        if (!checkValidity(newProduct)){
-            return ResponseEntity.badRequest().build();
-        }
-
         productService.createProduct(newProduct);
         return ResponseEntity.ok().build();
     }
@@ -208,6 +204,4 @@ public class ProductController {
         // This should be nether be reached:
         return false;
     }
-
-    //Later: add renameProduct(); changeMetaData(); addMetaData(); removeMetaData()
 }

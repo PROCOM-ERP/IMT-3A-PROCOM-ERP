@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
@@ -60,7 +62,6 @@ public class ProductService {
      */
     @Transactional
     public void createProduct(ProductRequestDto productRequest){
-
         Product product = Product.builder()
                 .title(productRequest.getTitle())
                 .description(productRequest.getDescription())
@@ -202,5 +203,50 @@ public class ProductService {
             }
         }
         return counter;
+    }
+
+    static void errorThrower(Object dtoObject){
+        if(dtoObject instanceof ProductRequestDto request){
+            // [title]
+            if (request.getTitle() == null || detectXSS(request.getTitle())){
+                throw new IllegalArgumentException("The title field is missing");
+            }
+            if (request.getTitle() == ""){
+                throw new DataIntegrityViolationException("The title cannot be empty");
+            }
+            // [categories]
+            if (request.getCategories() == null || detectXSS(request.getTitle())){
+                throw new IllegalArgumentException("Categories field are missing");
+            }
+            if (request.getCategories().isEmpty()){
+                throw new DataIntegrityViolationException("The list of categories is empty");
+            }
+
+            // [productMeta]
+            if (request.getProductMeta() == null){
+                throw new IllegalArgumentException("ProductMeta field is missing");
+            }
+            // [numberOfItem]
+            if (request.getNumberOfItem() == null){
+                throw new IllegalArgumentException("The numberOfItem field is missing");
+            }
+            if (request.getNumberOfItem() < 0){
+                throw new IllegalArgumentException("The numberOfItem field cannot be negative");
+            }
+            // [address]
+            if (request.getNumberOfItem() != null && request.getNumberOfItem() == 0 && request.getAddress() != null){
+                throw new IllegalArgumentException("The address field should be empty if numberOfItem is 0");
+            }
+        }
+    }
+
+    static boolean detectXSS(String input) {
+        String xssPattern = "<script[^>]*>(.*?)</script>";
+        Pattern pattern = Pattern.compile(xssPattern, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(input);
+        if (matcher.find()) {
+            return true;
+        }
+        return false;
     }
 }
