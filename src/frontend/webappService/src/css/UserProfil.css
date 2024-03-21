@@ -1,6 +1,5 @@
 /* CSS for UserProfil component */
 .user-profile-container {
-  background-color: var(--usr-bg);
   display: flex;
   flex-direction: column;
   /* Change to column direction */
@@ -54,4 +53,3 @@
   justify-content: center;
   /* Center the button horizontally */
 }
-
