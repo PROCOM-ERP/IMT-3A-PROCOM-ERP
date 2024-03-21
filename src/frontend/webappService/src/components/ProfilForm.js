@@ -4,6 +4,7 @@ import "../css/App.css";
 import "../css/ProfilForm.css";
 import Button from "./Button";
 import ErrorForm from "../pages/errors/ErrorForm";
+import handleFormError from "../utils/handleFormError.js";
 
 function ProfilForm({ title, userId }) {
   const navigate = useNavigate();
@@ -137,50 +138,20 @@ function ProfilForm({ title, userId }) {
       },
       body: JSON.stringify(mappedUserData), // Convert user object to JSON string
     })
-      .then((response) => {
-        if (!response.ok) {
-          if (response.status === 401) {
-            navigate("/error401");
-          } else if (response.status === 403) {
-            navigate("/error403");
-          } else if (response.status === 400 || response.status === 422) {
-            console.log(response);
-            response
-              .json()
-              .then((data) => {
-                console.log(data);
-                setGettingError(true);
-                let formattedMessage = "";
-                for (const [field, content] of Object.entries(
-                  data.fields || {},
-                )) {
-                  formattedMessage += `${field} : ${content}\n\n`;
-                }
-
-                setError({
-                  title: data.message || "An error occurred",
-                  message: formattedMessage || "No details available",
-                });
-              })
-              .catch((error) => {
-                console.error("Error parsing JSON:", error);
-                setGettingError(true);
-                setError({
-                  title: response.status,
-                  message: "An error occurred while parsing the response JSON",
-                });
-              });
-          } else {
-            throw new Error(response.status + " " + response.statusText);
-          }
+      .then(async (response) => {
+        const [getError, error] = await handleFormError(response, navigate);
+        if (getError) {
+          console.log(getError);
+          console.log(error);
+          setGettingError(true);
+          setError(error);
+        } else {
+          console.log("[LOG] Profile updated successfully");
+          navigate("/profil");
         }
-        console.log("[LOG] Profile updated successfully");
-        navigate("/profil");
-        // alert("Profile updated successfully"); // Show success message
       })
       .catch((error) => {
         console.error("API request error: ", error);
-        // alert("Failed to update profile"); // Show error message
       });
   }
 
