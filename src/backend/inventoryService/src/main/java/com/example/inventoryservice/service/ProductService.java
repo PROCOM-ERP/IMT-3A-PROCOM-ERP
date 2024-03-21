@@ -4,7 +4,6 @@ import com.example.inventoryservice.InventoryServiceApplication;
 import com.example.inventoryservice.dto.*;
 import com.example.inventoryservice.dtoRequest.ProductRequestDto;
 import com.example.inventoryservice.model.*;
-import com.example.inventoryservice.repository.LoginProfileRepository;
 import com.example.inventoryservice.repository.ProductRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
