@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Profile;
 @OpenAPIDefinition(
         info = @Info(
                 title = "AuthenticationService",
-                version = "0.1.0",
+                version = "1.1.0",
                 description =
                         "Service to register login-profiles with password and roles.<br>" +
                         "It allows to get Jwt token for future connections to other services<br>." +

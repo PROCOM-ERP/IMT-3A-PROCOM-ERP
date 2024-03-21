@@ -1,7 +1,7 @@
 -- Title :             Database creation for IMT-3A-PROCOM-ERP project
--- Version :           1.0.0
+-- Version :           1.1.0
 -- Creation date :     2023-12-22
--- Update date :       2024-03-05
+-- Update date :       2024-03-21
 -- Author :            BOPS
 -- Description :       Directory service database initialisation script
 --                     Note : Script for PostgreSQL
