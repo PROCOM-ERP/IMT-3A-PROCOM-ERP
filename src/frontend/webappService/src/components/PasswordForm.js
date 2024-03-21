@@ -52,8 +52,8 @@ function PasswordChangeForm() {
 
     // Prepare the data to be sent
     const requestBody = {
-      password: user.newPassword
-    }
+      password: user.newPassword,
+    };
 
     const apiUrl =
       "https://localhost:8041/api/authentication/v1/login-profiles/" +
@@ -72,7 +72,7 @@ function PasswordChangeForm() {
           setError(error);
         } else {
           console.log("[LOG] Profile updated successfully");
-          navigate("/home");
+          navigate("/");
         }
       })
       .catch((error) => {
