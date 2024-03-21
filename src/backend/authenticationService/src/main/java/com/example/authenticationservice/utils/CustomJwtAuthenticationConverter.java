@@ -46,7 +46,8 @@ public class CustomJwtAuthenticationConverter implements Converter<Jwt, Abstract
         } else {
             checkTokenValidity(jwt);
             permissions = roleRepository.findDistinctPermissionsByRoleNames(roles);
-            logger.infoServiceMethod(permissions.toString(), "Jwt", "checkTokenValidity", 1L);
+            logger.infoServiceMethod(jwt.getSubject() + " available permissions in this service: " +
+                    permissions.toString(), CustomLogger.TAG_JWT, "checkTokenValidity", 1L);
         }
         return new JwtAuthenticationToken(jwt, permissionsToAuthorities(permissions));
     }
@@ -60,17 +61,17 @@ public class CustomJwtAuthenticationConverter implements Converter<Jwt, Abstract
             loginProfile = loginProfileRepository.findById(jwt.getSubject())
                     .orElseThrow(() -> new AccessDeniedException(""));
         } catch (AccessDeniedException e) {
-            logger.error(jwt.getSubject() + " doesn't exist.", "Jwt", "checkTokenValidity", HttpStatus.FORBIDDEN);
+            logger.error(jwt.getSubject() + " doesn't exist.", CustomLogger.TAG_JWT, "checkTokenValidity", HttpStatus.FORBIDDEN);
             throw e;
         }
 
         if (! loginProfile.getIsEnable()) {
-            logger.error(jwt.getSubject() + " is not activated.", "Jwt", "checkTokenValidity", HttpStatus.FORBIDDEN);
+            logger.error(jwt.getSubject() + " is not activated.", CustomLogger.TAG_JWT, "checkTokenValidity", HttpStatus.FORBIDDEN);
             throw new AccessDeniedException("");
         }
         Instant jwtGenMinAt = loginProfile.getJwtGenMinAt();
         if (jwt.getIssuedAt() == null || jwt.getIssuedAt().isBefore(jwtGenMinAt)) {
-            logger.error(jwt.getSubject() + " credentials have expired.", "Jwt", "checkTokenValidity", HttpStatus.UNAUTHORIZED);
+            logger.error(jwt.getSubject() + " credentials have expired.", CustomLogger.TAG_JWT, "checkTokenValidity", HttpStatus.UNAUTHORIZED);
             throw new InsufficientAuthenticationException("Authentication missing or expired.");
         }
     }

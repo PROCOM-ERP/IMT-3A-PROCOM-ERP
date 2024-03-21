@@ -2,6 +2,7 @@ package com.example.directoryservice.config;
 
 import com.example.directoryservice.model.Endpoint;
 import com.example.directoryservice.service.EndpointService;
+import com.example.directoryservice.utils.CustomAccessDeniedHandler;
 import com.example.directoryservice.utils.CustomJwtAuthenticationConverter;
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +35,7 @@ public class SecurityConfig {
     private String jwtKey;
 
     private final CustomJwtAuthenticationConverter customJwtAuthenticationConverter;
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
     private final EndpointService endpointService;
 
     //private final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
@@ -69,6 +71,10 @@ public class SecurityConfig {
                         (oauth2)
                                 -> oauth2.jwt(jwtConfigurer
                                 -> jwtConfigurer.jwtAuthenticationConverter(customJwtAuthenticationConverter)))
+                // handle AccessDeniedException
+                .exceptionHandling(exception -> exception
+                        .accessDeniedHandler(customAccessDeniedHandler)
+                )
                 // finalize the build
                 .build();
     }

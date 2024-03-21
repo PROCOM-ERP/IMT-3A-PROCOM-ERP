@@ -10,7 +10,7 @@ public class CustomStringUtils {
     public static final String REGEX_EMAIL =
             "^[a-z0-9]([\\-\\.]?[a-z0-9])*@[a-z0-9]([\\-\\.]?[a-z0-9])*$";
     public static final String REGEX_PASSWORD =
-            "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!.*])(?=\\S+$).{12,}$";
+            "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^+=!.*])(?=\\S+$).{12,}$";
     public static final String REGEX_ROLE_NAME =
             "^[a-zA-Z]([\\-\\.]?[a-zA-Z0-9])*$";
     public static final String REGEX_MICROSERVICE_NAME =

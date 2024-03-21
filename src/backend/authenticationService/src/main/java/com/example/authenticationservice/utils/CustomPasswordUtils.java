@@ -15,7 +15,7 @@ public class CustomPasswordUtils {
     private static final String LOWER = "abcdefghijklmnopqrstuvwxyz";
     private static final String UPPER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     private static final String DIGITS = "0123456789";
-    private static final String SPECIAL_CHARACTERS = "@#$%^&+=!*";
+    private static final String SPECIAL_CHARACTERS = "@#$%^+=!*";
     private static final String ALL_ALLOWED_CHARACTERS = LOWER + UPPER + DIGITS + SPECIAL_CHARACTERS;
     private static final int LENGTH = 12;
     private static final SecureRandom random = new SecureRandom();

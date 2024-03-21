@@ -19,6 +19,7 @@ public class CustomLogger {
 
     public static final String TAG_USERS = "Users";
     public static final String TAG_ROLES = "Roles";
+    public static final String TAG_JWT = "Jwt";
     public static final String TAG_MESSAGE = "MessageIssues";
 
     /* Utils Beans */
