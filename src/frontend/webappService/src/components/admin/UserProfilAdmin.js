@@ -3,6 +3,8 @@ import Button from "../Button.js";
 import "../../css/App.css";
 import "../../css/UserProfil.css";
 import { useNavigate } from "react-router-dom";
+import handleFormError from "../../utils/handleFormError.js";
+import ErrorForm from "../../pages/errors/ErrorForm.js";
 
 function UserProfilAdmin({ title, userId }) {
   const navigate = useNavigate();
@@ -11,6 +13,9 @@ function UserProfilAdmin({ title, userId }) {
   const [modifiedUserRoles, setModifiedUserRoles] = useState({});
   const [modifiedUserInfo, setModifiedUserInfo] = useState({});
   const [modify, setModify] = useState(false);
+
+  const [error, setError] = useState({ title: null, message: null });
+  const [gettingError, setGettingError] = useState(false);
 
   const tokenName = "Token"; // Need to be the same name as in AuthForm.js components
   const token = localStorage.getItem(tokenName);
@@ -185,13 +190,14 @@ function UserProfilAdmin({ title, userId }) {
       headers: headers,
       body: JSON.stringify(dataToSend)
     })
-      .then(response => {
-        if (!response.ok) {
-          if (response.status === 401) { navigate("/error401"); }
-          else if (response.status === 403) { navigate("/error403"); }
-          else { throw new Error(response.status + " " + response.statusText); }
+      .then(async (response) => {
+        const [getError, error] = await handleFormError(response, navigate);
+        if (getError) {
+          setGettingError(true);
+          setError(error);
+        } else {
+          console.log("[LOG] User information updated with success");
         }
-        console.log("[LOG] User information updated with success");
       })
       .catch(error => {
         console.error('Error saving changes for user information:', error);
@@ -222,13 +228,14 @@ function UserProfilAdmin({ title, userId }) {
       headers: headers,
       body: JSON.stringify(dataToSend)
     })
-      .then(response => {
-        if (!response.ok) {
-          if (response.status === 401) { navigate("/error401"); }
-          else if (response.status === 403) { navigate("/error403"); }
-          else { throw new Error(response.status + " " + response.statusText); }
+      .then(async (response) => {
+        const [getError, error] = await handleFormError(response, navigate);
+        if (getError) {
+          setGettingError(true);
+          setError(error);
+        } else {
+          console.log("[LOG] User roles updated with success");
         }
-        console.log("[LOG] User roles updated with success");
       })
       .catch(error => {
         console.error('Error saving changes for user roles:', error);
@@ -310,6 +317,15 @@ function UserProfilAdmin({ title, userId }) {
           <Button onClick={handleModif}> {modify ? "Save" : "Modify"} </Button>
         </div>
       </div>
+      {gettingError && (
+        <ErrorForm
+          title={error.title}
+          message={error.message}
+          onClose={() => {
+            setGettingError(false);
+          }}
+        />
+      )}
     </>
   );
 }
