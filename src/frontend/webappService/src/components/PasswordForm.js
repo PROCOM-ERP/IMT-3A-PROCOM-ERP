@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "./Button";
 import "../css/AuthForm.css";
+import handleFormError from "../utils/handleFormError";
+import ErrorForm from "../pages/errors/ErrorForm";
 
 function PasswordChangeForm() {
   const navigate = useNavigate();
