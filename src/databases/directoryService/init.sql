@@ -227,7 +227,7 @@ VALUES ('Management', null, 1,
 
 INSERT INTO employees (id, last_name, first_name, email, phone_number, org_unit, job)
 VALUES -- Management (3 employees)
-       ('A00001', 'Rousseau', 'Émilie', 'emilie.rousseau@example.com', '+33 1 01 02 03 04', 1, 'CEO'),
+       ('A00001', 'Rousseau', 'Emilie', 'emilie.rousseau@example.com', '+33 1 01 02 03 04', 1, 'CEO'),
        ('A00002', 'Bernard', 'Lucas', 'lucas.bernard@example.com', '+33 1 05 06 07 08', 1, 'CFO'),
        ('A00003', 'Petit', 'Chloé', 'chloe.petit@example.com', '+33 1 09 10 11 12', 1, 'CTO'),
 
@@ -261,13 +261,13 @@ VALUES -- Management (3 employees)
        ('A00022', 'Fontaine', 'Hugo', 'hugo.fontaine@example.com', '+33 2 85 86 87 88', 6, 'Maintenance Technician'),
        ('A00023', 'Robin', 'Anaïs', 'anais.robin@example.com', '+33 2 89 90 91 92', 6, 'Material Handler'),
        ('A00024', 'Henry', 'Sébastien', 'sebastien.henry@example.com', '+33 2 93 94 95 96', 6, 'Packaging Operator'),
-       ('A00025', 'Morin', 'Élise', 'elise.morin@example.com', '+33 2 97 98 99 00', 6, 'Inventory Specialist'),
+       ('A00025', 'Morin', 'Elise', 'elise.morin@example.com', '+33 2 97 98 99 00', 6, 'Inventory Specialist'),
 
        -- Logistics (5 employees)
        ('A00026', 'Nicolas', 'Rémi', 'remi.nicolas@example.com', '+33 2 01 02 03 04', 7, 'Logistics Manager'),
        ('A00027', 'Pierre', 'Clara', 'clara.pierre@example.com', '+33 2 05 06 07 08', 7, 'Warehouse Supervisor'),
        ('A00028', 'Sanchez', 'Florian', 'florian.sanchez@example.com', '+33 2 09 10 11 12', 7, 'Transport Coordinator'),
-       ('A00029', 'Robert', 'Éva', 'eva.robert@example.com', '+33 2 13 14 15 16', 7, 'Supply Chain Analyst'),
+       ('A00029', 'Robert', 'Eva', 'eva.robert@example.com', '+33 2 13 14 15 16', 7, 'Supply Chain Analyst'),
        ('A00030', 'Morel', 'David', 'david.morel@example.com', '+33 2 17 18 19 20', 7, 'Logistics Specialist');
 
 -- +----------------------------------------------------------------------------------------------+

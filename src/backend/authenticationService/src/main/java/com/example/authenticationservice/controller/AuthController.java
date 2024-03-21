@@ -8,8 +8,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,14 +19,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequestMapping(Path.V1_AUTH)
 @RestController
+@RequiredArgsConstructor
 public class AuthController {
 
     private final JwtService jwtService;
-
-    @Autowired
-    public AuthController(JwtService jwtService) {
-        this.jwtService = jwtService;
-    }
 
     @PostMapping( Path.JWT)
     @LogExecutionTime(description = "Generate new Jwt token for a user.",
@@ -45,7 +43,11 @@ public class AuthController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<String> generateJwtToken(Authentication authentication) {
+    public ResponseEntity<String> generateJwtToken(
+            Authentication authentication)
+            throws InsufficientAuthenticationException,
+            AccessDeniedException
+    {
         return ResponseEntity.ok(jwtService.generateJwtToken(authentication.getName()));
     }
 }
