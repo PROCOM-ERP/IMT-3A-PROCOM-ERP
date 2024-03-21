@@ -17,7 +17,7 @@ public class LoginProfilePasswordUpdateRequestDto {
     @Size(min = 12, message = "User password must contain at least 12 characters.")
     @Pattern(regexp = CustomStringUtils.REGEX_PASSWORD,
             message = "User password should have at least 12 characters, including 1 capital letter, " +
-                    "1 lowercase letter, 1 digit, and 1 special character (@#$%^&+=!.*).")
+                    "1 lowercase letter, 1 digit, and 1 special character (@#$%^+=!.*).")
     private String password;
 
 }
