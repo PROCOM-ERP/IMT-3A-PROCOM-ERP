@@ -79,6 +79,7 @@ function ProfilForm({ title, userId }) {
       if (!response.ok) {
         if (response.status === 401) { navigate("/error401"); }
         else if (response.status === 403) { navigate("/error403"); }
+        else if (response.status === 400 || response.status === 422) { <ErrorForm title={response.status} message={response.statusText} />; }
         else { throw new Error(response.status + " " + response.statusText); }
       }
       const data = await response.json();
@@ -128,14 +129,15 @@ function ProfilForm({ title, userId }) {
         if (!response.ok) {
           if (response.status === 401) { navigate("/error401"); }
           else if (response.status === 403) { navigate("/error403"); }
+          else if (response.status === 400 || response.status === 422) { <ErrorForm title={response.status} message={response.statusText} />; }
           else { throw new Error(response.status + " " + response.statusText); }
         }
         console.log("[LOG] Profile updated successfully");
-        alert("Profile updated successfully"); // Show success message
+        // alert("Profile updated successfully"); // Show success message
       })
       .catch((error) => {
         console.error("API request error: ", error);
-        alert("Failed to update profile"); // Show error message
+        // alert("Failed to update profile"); // Show error message
       });
   }
 
