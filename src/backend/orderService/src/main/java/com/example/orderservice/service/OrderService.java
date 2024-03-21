@@ -161,7 +161,7 @@ public class OrderService {
 
     @LogExecutionTime(description = "Update an order progress status.",
         tag = CustomLogger.TAG_ORDERS)
-    public void updateOrderProgressStatusById(Integer idOrder, OrderUpdateProgressStatusDto orderDto)
+    public void updateOrderProgressStatusById(Integer idOrder)
             throws IllegalArgumentException,
             NoSuchElementException,
             DataIntegrityViolationException
@@ -170,12 +170,9 @@ public class OrderService {
         Order order = orderRepository.findById(idOrder)
                 .orElseThrow(() -> new NoSuchElementException("No existing order with id " + idOrder + "."));
 
-        // checks that the new ProgressStatus is the next as that of the current order
-        Integer idNextProgressStatus = orderDto.getIdProgressStatus();
+        // checks that the next ProgressStatus is valid (not the final one)
+        Integer idNextProgressStatus = order.getProgressStatus() + 1;
         progressStatusService.isValidProgressStatus(idNextProgressStatus);
-        if (order.getProgressStatus() != idNextProgressStatus - 1)
-            throw new DataIntegrityViolationException(
-                    "Provided progress status id is not the next logical one for the order " + idOrder + ".");
 
         // check if the LoginProfile of the authenticated user is the orderer,
         // or the approver of the order (or admin), and can change the Order ProgressStatus
@@ -189,7 +186,7 @@ public class OrderService {
                 order.getApprover() != null &&
                 currentLoginProfileId.equals(idApprover) ||
                 currentLoginProfileId.equals(idOrderer) &&
-                !(idNextProgressStatus.equals(ProgressStatus.Approved.getId()))))
+                !idNextProgressStatus.equals(ProgressStatus.Approved.getId())))
         {
             throw new AccessDeniedException("");
         }

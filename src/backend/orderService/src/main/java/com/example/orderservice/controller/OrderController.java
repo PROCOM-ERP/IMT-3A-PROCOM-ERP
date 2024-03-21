@@ -2,7 +2,6 @@ package com.example.orderservice.controller;
 
 import com.example.orderservice.dto.OrderCreationRequestDto;
 import com.example.orderservice.dto.OrderResponseDto;
-import com.example.orderservice.dto.OrderUpdateProgressStatusDto;
 import com.example.orderservice.dto.OrdersByIdLoginProfileResponseDto;
 import com.example.orderservice.model.Path;
 import com.example.orderservice.service.OrderService;
@@ -142,10 +141,9 @@ public class OrderController {
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
     public ResponseEntity<String> updateOrderProgressStatusById(
-            @PathVariable Integer idOrder,
-            @Valid @RequestBody OrderUpdateProgressStatusDto orderDto)
+            @PathVariable Integer idOrder)
     {
-        orderService.updateOrderProgressStatusById(idOrder, orderDto);
+        orderService.updateOrderProgressStatusById(idOrder);
         return ResponseEntity.noContent().build();
     }
 
