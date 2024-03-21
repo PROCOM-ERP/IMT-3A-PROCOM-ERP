@@ -136,3 +136,8 @@ td {
   text-decoration: none;
   color: black;
 }
+
+.empty-message {
+  background-color: #D7EBFC;
+  text-align: center;
+}

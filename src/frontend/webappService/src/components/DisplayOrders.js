@@ -5,6 +5,7 @@ import "../css/DirectoryTable.css";
 
 function DisplayOrders() {
   const navigate = useNavigate();
+  const user = 'user';
   const userId = localStorage.getItem("id");
   const [userOrders, setUserOrders] = useState({});
   const [managerOrders, setManagerOrders] = useState({});
@@ -112,18 +113,18 @@ function DisplayOrders() {
       <div className='order-container'>
         <div className="line-container">
           <div className="searchbar-container">
-            <input className='searchbar'
+            <input className={`searchbar ${user}`}
               type="text"
               placeholder="Search"
               value={searchTerm}
               onChange={handleChange}
             />
           </div>
-          <Button onClick={handleAddOrder}>Add Order</Button>
+          <Button user={user} onClick={handleAddOrder}>Add Order</Button>
         </div>
         <div className='title2'>Your orders</div>
-        <table className='table-container' >
-          <thead className='table-head-container'>
+        <table className={`table-container ${user}`} >
+          <thead className={`table-head-container ${user}`}>
             <tr>
               <th onClick={() => handleSort('id')} >ID</th>
               <th onClick={() => handleSort('provider')} >Provider</th>
@@ -134,7 +135,7 @@ function DisplayOrders() {
             </tr>
           </thead>
 
-          <tbody className='table-body-container'>
+          <tbody className={`table-body-container ${user}`}>
             {filteredUserOrders.map((order, index) => {
               return (
                 <tr key={index} onClick={() => handleOrder(order.id)} >
@@ -158,8 +159,8 @@ function DisplayOrders() {
         <div className="line-container">
         </div>
         <div className='title2'>Orders to validate</div>
-        <table className='table-container' >
-          <thead className='table-head-container'>
+        <table className={`table-container ${user}`} >
+          <thead className={`table-head-container ${user}`}>
             <tr>
               <th onClick={() => handleSort('id')} >ID</th>
               <th onClick={() => handleSort('provider')} >Provider</th>
@@ -170,7 +171,7 @@ function DisplayOrders() {
             </tr>
           </thead>
 
-          <tbody className='table-body-container'>
+          <tbody className={`table-body-container ${user}`}>
             {filteredManagerOrders.map((order, index) => {
               return (
                 <tr key={index} onClick={() => handleOrder(order.id)} >

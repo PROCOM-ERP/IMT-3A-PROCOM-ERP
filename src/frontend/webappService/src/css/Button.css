@@ -44,13 +44,14 @@ button.admin:hover {
 }
 
 button.user {
-    background-color: #F1D394;
-    border-color: #F1D394;
-    color: #000000;
+    background-color: #0A316C;
+    border-color: #0A316C;
+    color: #D7EBFC;
+
 }
 
 button.user:hover {
-    background-color: #0A316C;
-    border-color: #0A316C;
-    color: #F1D394;
+    background-color: #F1D394;
+    border-color: #F1D394;
+    color: #000000;
 }
