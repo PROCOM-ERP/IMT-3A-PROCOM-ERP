@@ -5,6 +5,8 @@ import "../css/AuthForm.css";
 
 function PasswordChangeForm() {
   const navigate = useNavigate();
+  const [error, setError] = useState({ title: null, message: null });
+  const [gettingError, setGettingError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [user, setUser] = useState({
     username: localStorage.getItem("id"),
@@ -61,14 +63,15 @@ function PasswordChangeForm() {
       headers: headers,
       body: JSON.stringify(requestBody),
     })
-      .then((response) => {
-        if (!response.ok) {
-          if (response.status === 401) { navigate("/error401"); }
-          else if (response.status === 403) { navigate("/error403"); }
-          else { throw new Error(response.status + " " + response.statusText); }
+      .then(async (response) => {
+        const [getError, error] = await handleFormError(response, navigate);
+        if (getError) {
+          setGettingError(true);
+          setError(error);
+        } else {
+          console.log("[LOG] Profile updated successfully");
+          navigate("/home");
         }
-        console.log("[LOG] Password updated successfully");
-        navigate("/home");
       })
       .catch((error) => {
         setErrorMessage("Failed to update password");
@@ -118,6 +121,15 @@ function PasswordChangeForm() {
           </div>
         </form>
       </div>
+      {gettingError && (
+        <ErrorForm
+          title={error.title}
+          message={error.message}
+          onClose={() => {
+            setGettingError(false);
+          }}
+        />
+      )}
     </>
   );
 }
