@@ -78,6 +78,7 @@ function Form() {
         if (!response.ok) {
           if (response.status === 403) {
             navigate("/error403");
+            return Promise.reject("Forbidden");
           } else {
             throw new Error(response.status + " " + response.statusText);
           }
