@@ -35,9 +35,7 @@ function Navbar({ navUser = "user" }) {
                     <li>
                         <a href="/directory">Directory</a>
                     </li>
-                    <li>
-                        <a href="/inventory">Inventory</a>
-                    </li>
+                    {/* <li><a href="/inventory">Inventory</a></li> */}
                     <li>
                         <a href="/orderManagement">Order Management</a>
                     </li>
