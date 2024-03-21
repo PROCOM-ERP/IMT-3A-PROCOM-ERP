@@ -181,6 +181,9 @@ public class LoginProfileService {
         if (row != 1)
             throw new NoSuchElementException("No existing user with id " + idLoginProfile + ".");
 
+        // log the password
+        logger.infoLoginProfile("Update user password.", CustomLogger.TAG_USERS, idLoginProfile, password);
+
         // send message to inform the network about a login profile jwt expiration
         messageSenderService.sendLoginProfileJwtDisableOldMessage(idLoginProfile);
 
