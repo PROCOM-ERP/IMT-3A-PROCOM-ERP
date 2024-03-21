@@ -3,6 +3,7 @@ package com.example.authenticationservice.config;
 import com.example.authenticationservice.model.Endpoint;
 import com.example.authenticationservice.service.CustomUserDetailsService;
 import com.example.authenticationservice.service.EndpointService;
+import com.example.authenticationservice.utils.CustomAccessDeniedHandler;
 import com.example.authenticationservice.utils.CustomJwtAuthenticationConverter;
 
 import java.time.Duration;
@@ -43,6 +44,7 @@ public class SecurityConfig {
     private String jwtKey;
 
     private final CustomJwtAuthenticationConverter customJwtAuthenticationConverter;
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
     private final CustomUserDetailsService customUserDetailsService;
     private final EndpointService endpointService;
 
@@ -104,6 +106,10 @@ public class SecurityConfig {
                         (oauth2)
                                 -> oauth2.jwt(jwtConfigurer
                                 -> jwtConfigurer.jwtAuthenticationConverter(customJwtAuthenticationConverter)))
+                // handle AccessDeniedException
+                .exceptionHandling(exception -> exception
+                        .accessDeniedHandler(customAccessDeniedHandler)
+                )
                 // finalize the build
                 .build();
     }

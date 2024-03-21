@@ -25,7 +25,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<LoginProfile> loginProfile = loginProfileRepository.findById(username);
         if (loginProfile.isEmpty())
-            logger.error(username + " doesn't exist.", "Jwt", "loadUserByUsername", HttpStatus.FORBIDDEN);
+            logger.error(username + " doesn't exist.", CustomLogger.TAG_JWT, "loadUserByUsername", HttpStatus.FORBIDDEN);
         return loginProfile.map(
                 e -> new User(username, e.getPassword(), Collections.emptyList()))
                 .orElseThrow(() -> new UsernameNotFoundException(""));
