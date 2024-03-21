@@ -1,5 +1,6 @@
 package com.example.inventoryservice.dtoRequest;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,7 +27,6 @@ public class ProductRequestDto {
     @NotNull
     private Integer numberOfItem;       // Defines the initial quantity of this product.
     @Min(1)
-    @Digits(integer = Integer.MAX_VALUE, fraction = 0, message = "Address must be a valid number")
     private Integer address;    // Should be empty if numberOfItem == 0;
     @AssertTrue(message = "Address is required when numberOfItem is greater than 1")
     private boolean isAddressValid() {

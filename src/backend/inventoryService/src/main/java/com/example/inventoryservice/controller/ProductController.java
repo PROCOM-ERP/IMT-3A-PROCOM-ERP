@@ -21,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -178,7 +179,14 @@ public class ProductController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<String> moveToAddress(@Valid @RequestBody MoveItemRequestDto newQuantity){
+    public ResponseEntity<String> moveToAddress(@Valid @RequestBody MoveItemRequestDto newQuantity, BindingResult bindingResult){
+        if(bindingResult.hasErrors()){
+            List<String> errors = new ArrayList<>();
+            for (FieldError error : bindingResult.getFieldErrors()) {
+                errors.add(error.getDefaultMessage());
+            }
+            return ResponseEntity.badRequest().body(errors.toString());
+        }
         itemService.moveToAddress(newQuantity);
         return ResponseEntity.ok().build();
     }
