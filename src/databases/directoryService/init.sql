@@ -225,7 +225,7 @@ VALUES ('Management', null, 1,
 
 -- +----------------------------------------------------------------------------------------------+
 
-INSERT INTO employees (id, first_name, last_name, email, phone_number, org_unit, job)
+INSERT INTO employees (id, last_name, first_name, email, phone_number, org_unit, job)
 VALUES -- Management (3 employees)
        ('A00001', 'Rousseau', 'Émilie', 'emilie.rousseau@example.com', '+33 1 01 02 03 04', 1, 'CEO'),
        ('A00002', 'Bernard', 'Lucas', 'lucas.bernard@example.com', '+33 1 05 06 07 08', 1, 'CFO'),
