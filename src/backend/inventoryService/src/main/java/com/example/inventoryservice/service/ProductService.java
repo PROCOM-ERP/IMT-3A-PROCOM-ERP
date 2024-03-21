@@ -4,6 +4,7 @@ import com.example.inventoryservice.InventoryServiceApplication;
 import com.example.inventoryservice.dto.*;
 import com.example.inventoryservice.dtoRequest.ProductRequestDto;
 import com.example.inventoryservice.model.*;
+import com.example.inventoryservice.repository.LoginProfileRepository;
 import com.example.inventoryservice.repository.ProductRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +19,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
@@ -67,7 +66,8 @@ public class ProductService {
                 .description(productRequest.getDescription())
                 .build();
 
-        List<Category> categories = categoryService.getAllByIds(productRequest.getCategories());    
+        List<Category> categories = categoryService.getAllByIds(productRequest.getCategories());
+        //LoginProfile employee = loginProfileRepository.findById(productRequest.get);
 
         if (categories == null || categories.isEmpty()) {
             // Error 422

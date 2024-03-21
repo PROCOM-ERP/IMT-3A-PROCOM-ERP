@@ -18,8 +18,6 @@ public class QuantityUpdateRequestDto {
     private Integer quantity;
     @NotBlank
     @NotNull
-    @Size(max=6)
     @Pattern(regexp = "[A-Z][0-9]{5}")
-    @Pattern(regexp = "^[^';\"\\\\]*$")
     private String employee;
 }

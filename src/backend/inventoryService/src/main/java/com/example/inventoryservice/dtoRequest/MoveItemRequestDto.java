@@ -20,7 +20,6 @@ public class MoveItemRequestDto {
     @NotBlank
     @NotNull
     @Size(max=6)
-    @Pattern(regexp = "^[^';\"\\\\]*$")
     @Pattern(regexp = "[A-Z][0-9]{5}")
     private String employee;
 }

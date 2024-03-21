@@ -6,13 +6,14 @@ import com.example.inventoryservice.dtoRequest.CategoryRequestDto;
 import com.example.inventoryservice.model.Path;
 import com.example.inventoryservice.service.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -64,6 +65,7 @@ public class CategoryController {
     }
 
     @PostMapping
+    @Validated
     @Operation(operationId = "createCategory", tags = {"category", "inventory"},
             summary = "Creates a new category",
             description = "Creates a new category according to the CategoryRequestDto data")
@@ -80,7 +82,7 @@ public class CategoryController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<String> createCategory(@RequestBody CategoryRequestDto newCategory){
+    public ResponseEntity<String> createCategory(@Valid @RequestBody CategoryRequestDto newCategory){
         categoryService.createCategory(newCategory);
         return ResponseEntity.ok().build();
     }

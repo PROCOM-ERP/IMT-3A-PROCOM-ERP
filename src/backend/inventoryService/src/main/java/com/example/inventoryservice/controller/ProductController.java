@@ -1,6 +1,5 @@
 package com.example.inventoryservice.controller;
 
-import com.example.inventoryservice.InventoryServiceApplication;
 import com.example.inventoryservice.dto.ItemDto;
 import com.example.inventoryservice.dto.ProductDto;
 import com.example.inventoryservice.dtoRequest.MoveItemRequestDto;
@@ -18,15 +17,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -182,7 +175,7 @@ public class ProductController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<String> moveToAddress(@Valid @RequestBody MoveItemRequestDto newQuantity, BindingResult bindingResult){
+    public ResponseEntity<String> moveToAddress(@Valid @RequestBody MoveItemRequestDto newQuantity){
         itemService.moveToAddress(newQuantity);
         return ResponseEntity.ok().build();
     }
