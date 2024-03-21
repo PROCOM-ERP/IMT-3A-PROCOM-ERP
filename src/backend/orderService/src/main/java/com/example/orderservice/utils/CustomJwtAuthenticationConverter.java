@@ -46,7 +46,8 @@ public class CustomJwtAuthenticationConverter implements Converter<Jwt, Abstract
         } else {
             checkTokenValidity(jwt);
             permissions = roleRepository.findDistinctPermissionsByRoleNames(roles);
-            logger.infoServiceMethod(permissions.toString(), "Jwt", "checkTokenValidity", 1L);
+            logger.infoServiceMethod(jwt.getSubject() + " available permissions in this service: " +
+                    permissions.toString(), "Jwt", "checkTokenValidity", 1L);
         }
         return new JwtAuthenticationToken(jwt, permissionsToAuthorities(permissions));
     }
