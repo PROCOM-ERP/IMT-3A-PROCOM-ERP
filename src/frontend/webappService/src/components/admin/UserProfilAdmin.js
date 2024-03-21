@@ -310,11 +310,11 @@ function UserProfilAdmin({ title, userId }) {
             )))}
           </div>
         </div>
-        <div className="button-container admin">
+        <div className="button-container">
           {(modify && (
-            <Button onClick={handleBack}>Back</Button>
+            <Button user='admin' onClick={handleBack}>Back</Button>
           ))}
-          <Button onClick={handleModif}> {modify ? "Save" : "Modify"} </Button>
+          <Button user='admin' onClick={handleModif}> {modify ? "Save" : "Modify"} </Button>
         </div>
       </div>
       {gettingError && (

@@ -30,3 +30,27 @@ button:hover {
     color: var(--btn-text-color-hover);
     border: 2px solid var(--btn-bg-hover);
 }
+
+button.admin {
+    background-color: #0A316C;
+    border-color: #0A316C;
+    color: #F1D394;
+}
+
+button.admin:hover {
+    background-color: #D7EBFC;
+    border-color: #D7EBFC;
+    color: #0A316C;
+}
+
+button.user {
+    background-color: #F1D394;
+    border-color: #F1D394;
+    color: #000000;
+}
+
+button.user:hover {
+    background-color: #0A316C;
+    border-color: #0A316C;
+    color: #F1D394;
+}
