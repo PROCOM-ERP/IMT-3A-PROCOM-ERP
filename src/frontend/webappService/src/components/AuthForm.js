@@ -76,8 +76,11 @@ function Form() {
     })
       .then((response) => {
         if (!response.ok) {
-          if (response.status === 403) { navigate("/error403"); }
-          else { throw new Error(response.status + " " + response.statusText); }
+          if (response.status === 403) {
+            navigate("/error403");
+          } else {
+            throw new Error(response.status + " " + response.statusText);
+          }
         }
         const res = response.text();
         return res;
@@ -121,6 +124,7 @@ function Form() {
               value={user.password}
             />
             <Button
+              type="button"
               onClick={handleClickShowPassword}
               onMouseDown={handleMouseDownPassword}
             >
