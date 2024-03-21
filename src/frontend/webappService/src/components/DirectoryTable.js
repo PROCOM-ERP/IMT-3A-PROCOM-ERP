@@ -106,7 +106,7 @@ function DirectoryTable({ isAdmin = false }) {
               onChange={handleChange}
             />
           </div>
-          {isAdmin && (<Button className="add-user-button" onClick={handleAddUser}>Add User</Button>)}
+          {isAdmin && (<Button className={`add-user-button ${user}`} onClick={handleAddUser}>Add User</Button>)}
         </div>
         <table className={`table-container ${user}`} >
           <thead className={`table-head-container ${user}`}>

@@ -52,6 +52,30 @@
   margin: 0;
 }
 
+.add-user-button.admin {
+  background-color: #F1D394;
+  border-color: #F1D394;
+  color: #000000;
+}
+
+.add-user-button.admin:hover {
+  background-color: #0A316C;
+  border-color: #0A316C;
+  color: #F1D394;
+}
+
+.add-user-button.user {
+  background-color: #0A316C;
+  border-color: #0A316C;
+  color: #F1D394;
+}
+
+.add-user-button.user:hover {
+  background-color: #F1D394;
+  border-color: #F1D394;
+  color: #000000;
+}
+
 /* Styles for the table */
 .table-container {
   border: 1px solid #0D3E87;
