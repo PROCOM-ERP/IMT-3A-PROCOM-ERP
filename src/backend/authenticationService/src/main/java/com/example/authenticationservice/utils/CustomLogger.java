@@ -58,9 +58,8 @@ public class CustomLogger {
 
     public void error(Exception e, String tag, String methodName, HttpStatus httpStatus)
     {
-        MDC.put("httpStatus", httpStatus.toString());
         MDC.put("stackTrace", Arrays.toString(e.getStackTrace()));
-        error(e.getMessage(), tag, methodName);
+        error(e.getMessage(), tag, methodName, httpStatus);
     }
 
     public void error(String message, String methodName,
@@ -77,6 +76,12 @@ public class CustomLogger {
         MDC.put("deliveryMethod", deliveryMethod);
         MDC.put("amqpSendingRetries", String.valueOf(retries));
         error(message, TAG_MESSAGE, methodName);
+    }
+
+    public void error(String message, String tag, String methodName, HttpStatus httpStatus)
+    {
+        MDC.put("httpStatus", httpStatus.toString());
+        error(message, tag, methodName);
     }
 
     public void error(String message, String tag, String methodName)

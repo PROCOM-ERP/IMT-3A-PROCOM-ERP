@@ -7,6 +7,7 @@ import com.example.directoryservice.service.PermissionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
@@ -34,6 +35,7 @@ public class CustomJwtAuthenticationConverter implements Converter<Jwt, Abstract
     private final PermissionService permissionService;
     private final RoleRepository roleRepository;
     private final LoginProfileRepository loginProfileRepository;
+    private final CustomLogger logger;
 
     @Override
     public AbstractAuthenticationToken convert(Jwt jwt) {
@@ -52,13 +54,24 @@ public class CustomJwtAuthenticationConverter implements Converter<Jwt, Abstract
             throws InsufficientAuthenticationException,
             AccessDeniedException
     {
-        LoginProfile loginProfile = loginProfileRepository.findById(jwt.getSubject())
-                .orElseThrow(() -> new AccessDeniedException(""));
-        if (! loginProfile.getIsEnable())
+        LoginProfile loginProfile;
+        try {
+            loginProfile = loginProfileRepository.findById(jwt.getSubject())
+                    .orElseThrow(() -> new AccessDeniedException(""));
+        } catch (AccessDeniedException e) {
+            logger.error(jwt.getSubject() + " doesn't exist.", "Jwt", "checkTokenValidity", HttpStatus.FORBIDDEN);
+            throw e;
+        }
+
+        if (! loginProfile.getIsEnable()) {
+            logger.error(jwt.getSubject() + " is not activated.", "Jwt", "checkTokenValidity", HttpStatus.FORBIDDEN);
             throw new AccessDeniedException("");
+        }
         Instant jwtGenMinAt = loginProfile.getJwtGenMinAt();
-        if (jwt.getIssuedAt() == null || jwt.getIssuedAt().isBefore(jwtGenMinAt))
+        if (jwt.getIssuedAt() == null || jwt.getIssuedAt().isBefore(jwtGenMinAt)) {
+            logger.error(jwt.getSubject() + " credentials have expired.", "Jwt", "checkTokenValidity", HttpStatus.UNAUTHORIZED);
             throw new InsufficientAuthenticationException("Authentication missing or expired.");
+        }
     }
 
     private List<SimpleGrantedAuthority> permissionsToAuthorities(Set<String> permissions) {
