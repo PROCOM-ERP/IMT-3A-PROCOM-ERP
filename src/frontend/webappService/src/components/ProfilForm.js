@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import "../css/App.css";
 import "../css/ProfilForm.css";
 import Button from "./Button";
+import ErrorForm from "../pages/errors/ErrorForm";
+import handleFormError from "../utils/handleFormError.js";
 
 function ProfilForm({ title, userId }) {
   const navigate = useNavigate();
@@ -11,6 +13,8 @@ function ProfilForm({ title, userId }) {
   const [orgUnits, setOrgUnits] = useState([]);
   const [organizations, setOrganizations] = useState([]);
   const [selectedOrg, setSelectedOrg] = useState(null);
+  const [error, setError] = useState({ title: null, message: null });
+  const [gettingError, setGettingError] = useState(false);
 
   const tokenName = "Token"; // Need to be the same name as in AuthForm.js components
   const token = localStorage.getItem(tokenName);
@@ -38,9 +42,14 @@ function ProfilForm({ title, userId }) {
     })
       .then((response) => {
         if (!response.ok) {
-          if (response.status === 401) { navigate("/error401"); }
-          else if (response.status === 403) { navigate("/error403"); }
-          else { throw new Error(response.status + " " + response.statusText); }
+          if (response.status === 401) {
+            navigate("/error401");
+          } else if (response.status === 403) {
+            navigate("/error403");
+          }
+          else {
+            throw new Error(response.status + " " + response.statusText);
+          }
         }
         const res = response.json();
         return res;
@@ -75,9 +84,14 @@ function ProfilForm({ title, userId }) {
         },
       );
       if (!response.ok) {
-        if (response.status === 401) { navigate("/error401"); }
-        else if (response.status === 403) { navigate("/error403"); }
-        else { throw new Error(response.status + " " + response.statusText); }
+        if (response.status === 401) {
+          navigate("/error401");
+        } else if (response.status === 403) {
+          navigate("/error403");
+        }
+        else {
+          throw new Error(response.status + " " + response.statusText);
+        }
       }
       const data = await response.json();
       setOrganizations(data);
@@ -122,18 +136,18 @@ function ProfilForm({ title, userId }) {
       },
       body: JSON.stringify(mappedUserData), // Convert user object to JSON string
     })
-      .then((response) => {
-        if (!response.ok) {
-          if (response.status === 401) { navigate("/error401"); }
-          else if (response.status === 403) { navigate("/error403"); }
-          else { throw new Error(response.status + " " + response.statusText); }
+      .then(async (response) => {
+        const [getError, error] = await handleFormError(response, navigate);
+        if (getError) {
+          setGettingError(true);
+          setError(error);
+        } else {
+          console.log("[LOG] Profile updated successfully");
+          navigate("/profil");
         }
-        console.log("[LOG] Profile updated successfully");
-        alert("Profile updated successfully"); // Show success message
       })
       .catch((error) => {
         console.error("API request error: ", error);
-        alert("Failed to update profile"); // Show error message
       });
   }
 
@@ -222,6 +236,15 @@ function ProfilForm({ title, userId }) {
           </Button>
         </div>
       </div>
+      {gettingError && (
+        <ErrorForm
+          title={error.title}
+          message={error.message}
+          onClose={() => {
+            setGettingError(false);
+          }}
+        />
+      )}
     </>
   );
 }
