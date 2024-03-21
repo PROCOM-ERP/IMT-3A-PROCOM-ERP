@@ -33,6 +33,7 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost")
 @RequiredArgsConstructor
 @RequestMapping(Path.V1_PRODUCTS)
+@Validated
 public class ProductController {
 
     private final ProductService productService;
@@ -99,7 +100,7 @@ public class ProductController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<String> createProduct(@Valid @RequestBody ProductRequestDto newProduct){
+    public @ResponseBody ResponseEntity<String> createProduct(@Valid @RequestBody ProductRequestDto newProduct, BindingResult bindingResult){
         productService.createProduct(newProduct);
         return ResponseEntity.ok().build();
     }
@@ -182,36 +183,7 @@ public class ProductController {
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
     public ResponseEntity<String> moveToAddress(@Valid @RequestBody MoveItemRequestDto newQuantity, BindingResult bindingResult){
-        if(bindingResult.hasErrors()){
-            List<String> errors = new ArrayList<>();
-            for (FieldError error : bindingResult.getFieldErrors()) {
-                errors.add(error.getDefaultMessage());
-            }
-            return ResponseEntity.badRequest().body(errors.toString());
-        }
         itemService.moveToAddress(newQuantity);
         return ResponseEntity.ok().build();
-    }
-
-    /**
-     * Function that check the values of the request. Returns true if the fields are valid.
-     * @param dtoObject: input object.
-     * @return boolean
-     */
-    private boolean checkValidity(Object dtoObject){
-        if(dtoObject instanceof ProductRequestDto request){
-            if (request.getNumberOfItem() == 0){
-                return (request.getAddress() == null);
-            }
-            else if (request.getNumberOfItem() <= 0){
-                return false;
-            }
-            else{
-                return (request.getAddress() != null &&
-                        request.getAddress() > 0);
-            }
-        }
-        // This should be nether be reached:
-        return false;
     }
 }
