@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import "../css/App.css";
 import "../css/ProfilForm.css";
 import Button from "./Button";
+import ErrorForm from "../pages/errors/ErrorForm";
 
 function ProfilForm({ title, userId }) {
   const navigate = useNavigate();
@@ -40,6 +41,7 @@ function ProfilForm({ title, userId }) {
         if (!response.ok) {
           if (response.status === 401) { navigate("/error401"); }
           else if (response.status === 403) { navigate("/error403"); }
+          else if (response.status === 400 || response.status === 422) { <ErrorForm title={response.status} message={response.statusText} />; }
           else { throw new Error(response.status + " " + response.statusText); }
         }
         const res = response.json();
