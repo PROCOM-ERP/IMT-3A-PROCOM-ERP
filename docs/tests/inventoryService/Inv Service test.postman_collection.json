@@ -1,0 +1,2857 @@
+{
+	"info": {
+		"_postman_id": "10a43a8f-c939-4cfa-af5b-b25e78e01ba3",
+		"name": "Inv Service test",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "32852210"
+	},
+	"item": [
+		{
+			"name": "ProductController",
+			"item": [
+				{
+					"name": "getProductById",
+					"item": [
+						{
+							"name": "200-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// getProductById\r",
+											"pm.test(\"getProductById\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://localhost:8041/api/inventory/v1/products",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"inventory",
+										"v1",
+										"products"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "404-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// getProductById\r",
+											"pm.test(\"getProductById\", function () {\r",
+											"    pm.response.to.have.status(404);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://localhost:8041/api/inventory/v1/products/19999999",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"inventory",
+										"v1",
+										"products",
+										"19999999"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "getAllProducts",
+					"item": [
+						{
+							"name": "200-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// getProductById\r",
+											"pm.test(\"get Id 200OK\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://localhost:8041/api/inventory/v1/products",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"inventory",
+										"v1",
+										"products"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "createProduct",
+					"item": [
+						{
+							"name": "200-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// CreateRole\r",
+											"pm.test(\"valid product request\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"title\": \"Nom du produit\",\r\n    \"description\": \"Description du produit\",\r\n    \"categories\": [1], \r\n    \"productMeta\": [\r\n        {\r\n            \"key\": \"Clé 1\",\r\n            \"value\": \"Valeur 1\",\r\n            \"type\": \"Type 1\",\r\n            \"description\": \"Description 1\"\r\n        },\r\n        {\r\n            \"key\": \"Clé 2\",\r\n            \"value\": \"Valeur 2\",\r\n            \"type\": \"Type 2\",\r\n            \"description\": \"Description 2\"\r\n        }\r\n    ],\r\n    \"numberOfItem\": 1,\r\n    \"address\": 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/inventory/v1/products",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"inventory",
+										"v1",
+										"products"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "200-2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// CreateRole\r",
+											"pm.test(\"valid product request\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"title\": \"Nom du produit\",\r\n    \"description\": \"Description du produit\",\r\n    \"categories\": [1], \r\n    \"productMeta\": [\r\n        {\r\n            \"key\": \"Clé 1\",\r\n            \"value\": \"Valeur 1\",\r\n            \"type\": \"Type 1\",\r\n            \"description\": \"Description 1\"\r\n        },\r\n        {\r\n            \"key\": \"Clé 2\",\r\n            \"value\": \"Valeur 2\",\r\n            \"type\": \"Type 2\",\r\n            \"description\": \"Description 2\"\r\n        }\r\n    ],\r\n    \"numberOfItem\": 0\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/inventory/v1/products",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"inventory",
+										"v1",
+										"products"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "200-3",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// CreateRole\r",
+											"pm.test(\"valid product request\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"title\": \"Nom du produit\",\r\n    \"description\": \"Description du produit\",\r\n    // this can have no metadata\r\n    \"categories\": [1], \r\n    \"numberOfItem\": 0\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/inventory/v1/products",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"inventory",
+										"v1",
+										"products"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "200-4",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// CreateRole\r",
+											"pm.test(\"valid product request\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"title\": \"Nom du produit\",\r\n    // No description is possible\r\n    \"categories\": [1], \r\n    \"productMeta\": [\r\n        {\r\n            \"key\": \"Clé 1\",\r\n            \"value\": \"Valeur 1\",\r\n            \"type\": \"Type 1\",\r\n            \"description\": \"Description 1\"\r\n        },\r\n        {\r\n            \"key\": \"Clé 2\",\r\n            \"value\": \"Valeur 2\",\r\n            \"type\": \"Type 2\",\r\n            \"description\": \"Description 2\"\r\n        }\r\n    ],\r\n    \"numberOfItem\": 1,\r\n    \"address\": 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/inventory/v1/products",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"inventory",
+										"v1",
+										"products"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "400-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// CreateRole\r",
+											"pm.test(\"Invalid product request\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"title\": \"test: invelid address\",\r\n    \"description\": \"test\",\r\n    \"categories\": [1],\r\n    \"productMeta\": [\r\n        {\r\n            \"key\": \"key\",\r\n            \"value\": \"value\",\r\n            \"type\": \"int\"\r\n        }\r\n    ],\r\n    \"numberOfItem\":1  // should be =0\r\n    // No address\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/inventory/v1/products",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"inventory",
+										"v1",
+										"products"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "400-2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// CreateRole\r",
+											"pm.test(\"Invalid product request\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"title\": \"test: invelid address\",\r\n    \"description\": \"<script>echo('hello!')</script>\", // XSS input\r\n    \"categories\": [1],\r\n    \"productMeta\": [\r\n        {\r\n            \"key\": \"key\",\r\n            \"value\": \"value\",\r\n            \"type\": \"int\"\r\n        }\r\n    ],\r\n    \"numberOfItem\":1, \r\n    \"address\": 1 \r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/inventory/v1/products",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"inventory",
+										"v1",
+										"products"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "400-3",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// CreateRole\r",
+											"pm.test(\"Invalid product request\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"title\": \"test: invelid address\",\r\n    \"description\": \"test\",\r\n    \"categories\": [1],\r\n    \"productMeta\": [\r\n        {\r\n            \"key\": \"key\",\r\n            \"value\": \"value\",\r\n            \"type\": \"int\"\r\n        }\r\n    ],\r\n    \"numberOfItem\":1,\r\n    \"address\": -1 // cannot be negative\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/inventory/v1/products",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"inventory",
+										"v1",
+										"products"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "400-4",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// CreateRole\r",
+											"pm.test(\"Invalid product request\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"title\": \"test: invelid address\",\r\n    \"description\": \"test\",\r\n    \"categories\": [1],\r\n    \"productMeta\": [\r\n        {\r\n            \"key\": \"key\",\r\n            \"value\": \"value\",\r\n            \"type\": \"int\"\r\n        }\r\n    ],\r\n    \"numberOfItem\":-1, // items cannot be negative if it is being created\r\n    \"address\": 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/inventory/v1/products",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"inventory",
+										"v1",
+										"products"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "400-5",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// CreateRole\r",
+											"pm.test(\"Invalid product request\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"title\": \"test: invelid address\",\r\n    \"description\": \"test\",\r\n    \"categories\": [1],\r\n    \"productMeta\": [\r\n        {\r\n            \"key\": \"key\",\r\n            \"value\": \"value\",\r\n            \"type\": \"int\"\r\n        }\r\n    ],\r\n    \"numberOfItem\":-1, // items cannot be negative if it is being created\r\n    \"address\": -1 // cannot be negative\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/inventory/v1/products",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"inventory",
+										"v1",
+										"products"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "400-6",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// CreateRole\r",
+											"pm.test(\"valid product request\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											"\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"title\": \"Nom du produit\",\r\n    \"description\": \"Description du produit\",\r\n    // no category\r\n    \"productMeta\": [\r\n        {\r\n            \"key\": \"Clé 1\",\r\n            \"value\": \"Valeur 1\",\r\n            \"type\": \"Type 1\",\r\n            \"description\": \"Description 1\"\r\n        },\r\n        {\r\n            \"key\": \"Clé 2\",\r\n            \"value\": \"Valeur 2\",\r\n            \"type\": \"Type 2\",\r\n            \"description\": \"Description 2\"\r\n        }\r\n    ],\r\n    \"numberOfItem\": 1,\r\n    \"address\": 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/inventory/v1/products",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"inventory",
+										"v1",
+										"products"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "400-7",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// CreateRole\r",
+											"pm.test(\"valid product request\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											"\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"title\": \"Nom du produit\",\r\n    \"description\": \"Description du produit\",\r\n    \"categories\": [], // No category\r\n    \"productMeta\": [\r\n        {\r\n            \"key\": \"Clé 1\",\r\n            \"value\": \"Valeur 1\",\r\n            \"type\": \"Type 1\",\r\n            \"description\": \"Description 1\"\r\n        },\r\n        {\r\n            \"key\": \"Clé 2\",\r\n            \"value\": \"Valeur 2\",\r\n            \"type\": \"Type 2\",\r\n            \"description\": \"Description 2\"\r\n        }\r\n    ],\r\n    \"numberOfItem\": 1,\r\n    \"address\": 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/inventory/v1/products",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"inventory",
+										"v1",
+										"products"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "400-8",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// CreateRole\r",
+											"pm.test(\"Invalid product request\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"title\": \"test: invelid address\",\r\n    \"description\": \"test\",\r\n    \"jean-michel\": [1],    // Bad field \r\n    \"productMeta\": [\r\n        {\r\n            \"key\": \"key\",\r\n            \"value\": \"value\",\r\n            \"type\": \"int\"\r\n        }\r\n    ],\r\n    \"numberOfItem\":1,\r\n    \"address\": 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/inventory/v1/products",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"inventory",
+										"v1",
+										"products"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "addNewItem",
+					"item": [
+						{
+							"name": "200-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// addNewItem\r",
+											"pm.test(\"valid product request\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"productId\": 1,\r\n    \"quantity\":10,\r\n    \"employee\": \"A01234\",\r\n    \"addressId\": 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/inventory/v1/products/add",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"inventory",
+										"v1",
+										"products",
+										"add"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "400-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// addNewItem\r",
+											"pm.test(\"valid product request\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"badField\": 1,\r\n    \"quantity\":10,\r\n    \"employee\": \"A01234\",\r\n    \"addressId\": 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/inventory/v1/products/add",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"inventory",
+										"v1",
+										"products",
+										"add"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "400-2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// addNewItem\r",
+											"pm.test(\"valid product request\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"productId\": 1,\r\n    \"badField\": 10,\r\n    \"employee\": \"A01234\",\r\n    \"addressId\": 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/inventory/v1/products/add",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"inventory",
+										"v1",
+										"products",
+										"add"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "400-3",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// addNewItem\r",
+											"pm.test(\"valid product request\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"productId\": 1,\r\n    \"quantity\":10,\r\n    \"badField\": \"A01234\",\r\n    \"addressId\": 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/inventory/v1/products/add",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"inventory",
+										"v1",
+										"products",
+										"add"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "400-4",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// addNewItem\r",
+											"pm.test(\"valid product request\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"productId\": 1,\r\n    \"quantity\":10,\r\n    \"employee\": \"A01234\",\r\n    \"badField\": 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/inventory/v1/products/add",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"inventory",
+										"v1",
+										"products",
+										"add"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "400-5",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// addNewItem\r",
+											"pm.test(\"valid product request\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"productId\": 1,\r\n    \"quantity\":-1,  // cannot be negative\r\n    \"employee\": \"A01234\",\r\n    \"addressId\": 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/inventory/v1/products/add",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"inventory",
+										"v1",
+										"products",
+										"add"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "400-6",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// addNewItem\r",
+											"pm.test(\"valid product request\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"productId\": 1,\r\n    \"quantity\":10,\r\n    \"employee\": \"Chirac\",\r\n    \"addressId\": 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/inventory/v1/products/add",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"inventory",
+										"v1",
+										"products",
+										"add"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "400-7",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// addNewItem\r",
+											"pm.test(\"valid product request\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"productId\": 1,\r\n    \"quantity\":10,\r\n    \"employee\": \"123456\",\r\n    \"addressId\": 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/inventory/v1/products/add",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"inventory",
+										"v1",
+										"products",
+										"add"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "404-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// addNewItem\r",
+											"pm.test(\"valid product request\", function () {\r",
+											"    pm.response.to.have.status(404);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"productId\": 1,\r\n    \"quantity\":10,\r\n    \"employee\": \"A01234\",\r\n    \"addressId\": 9999\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/inventory/v1/products/add",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"inventory",
+										"v1",
+										"products",
+										"add"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "404-2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// addNewItem\r",
+											"pm.test(\"valid product request\", function () {\r",
+											"    pm.response.to.have.status(404);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"productId\": 9999,\r\n    \"quantity\":10,\r\n    \"employee\": \"A01234\",\r\n    \"addressId\": 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/inventory/v1/products/add",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"inventory",
+										"v1",
+										"products",
+										"add"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "updateQuantity",
+					"item": [
+						{
+							"name": "200-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// UpdateQuantity\r",
+											"pm.test(\"valid product request\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"itemId\": 1,\r\n    \"quantity\": 1,\r\n    \"employee\": \"J00022\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/inventory/v1/products/update",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"inventory",
+										"v1",
+										"products",
+										"update"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "400-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// UpdateQuantity\r",
+											"pm.test(\"INVALID product request\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"badField\": 1, //badField\r\n    \"quantity\": 10,\r\n    \"employee\": \"A00002\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/inventory/v1/products/update",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"inventory",
+										"v1",
+										"products",
+										"update"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "400-2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// UpdateQuantity\r",
+											"pm.test(\"INVALID product request\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"itemId\": 1,\r\n    \"badField\": 10,\r\n    \"employee\": \"A00002\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/inventory/v1/products/update",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"inventory",
+										"v1",
+										"products",
+										"update"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "400-3",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// UpdateQuantity\r",
+											"pm.test(\"INVALID product request\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"itemId\": 1,\r\n    \"quantity\": 10,\r\n    \"badField\": \"A00002\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/inventory/v1/products/update",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"inventory",
+										"v1",
+										"products",
+										"update"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "400-4",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// UpdateQuantity\r",
+											"pm.test(\"INVALID product request\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"itemId\": 1,\r\n    \"quantity\": \"10\",\r\n    \"badField\": \"A00002\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/inventory/v1/products/update",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"inventory",
+										"v1",
+										"products",
+										"update"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "400-5",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// UpdateQuantity\r",
+											"pm.test(\"INVALID product request\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"itemId\": 1,\r\n    \"quantity\": 0,  // cannot be null\r\n    \"employee\": \"A00002\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/inventory/v1/products/update",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"inventory",
+										"v1",
+										"products",
+										"update"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "400-6",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// UpdateQuantity\r",
+											"pm.test(\"INVALID product request\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"itemId\": 1,\r\n    \"quantity\": 10,\r\n    \"employee\": \"Chirac\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/inventory/v1/products/update",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"inventory",
+										"v1",
+										"products",
+										"update"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "404-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// UpdateQuantity\r",
+											"pm.test(\"INVALID product request\", function () {\r",
+											"    pm.response.to.have.status(404);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"itemId\": 1999,\r\n    \"quantity\": 10,\r\n    \"employee\": \"A00002\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/inventory/v1/products/update",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"inventory",
+										"v1",
+										"products",
+										"update"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "422-3",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// UpdateQuantity\r",
+											"pm.test(\"INVALID product request\", function () {\r",
+											"    pm.response.to.have.status(422);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"itemId\": 1,\r\n    \"quantity\": -1111000000, \r\n    \"employee\": \"A00002\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/inventory/v1/products/update",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"inventory",
+										"v1",
+										"products",
+										"update"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "moveToAddress",
+					"item": [
+						{
+							"name": "200-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// moveToAddress\r",
+											"pm.test(\"valid product request\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var jsonBody = {\r",
+											"    mode: 'raw',\r",
+											"    raw: JSON.stringify({\r",
+											"        \"productId\": 1,\r",
+											"        \"quantity\":1,\r",
+											"        \"employee\": \"A01234\",\r",
+											"        \"addressId\": 1\r",
+											"    }),\r",
+											"    options: {\r",
+											"        raw: {\r",
+											"            language: 'json'\r",
+											"        }\r",
+											"    }\r",
+											"};\r",
+											"\r",
+											"pm.sendRequest({\r",
+											"    url: \"https://localhost:8041/api/inventory/v1/products/add\",\r",
+											"    method: \"POST\",\r",
+											"    header: {\r",
+											"        \"Authorization\": \"Bearer \" + pm.environment.get(\"test_token\")\r",
+											"    },\r",
+											"    body: jsonBody\r",
+											"}, function (err) {\r",
+											"    if (err) {\r",
+											"        console.error(err);\r",
+											"        return;\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"itemId\": 1,\r\n    \"addressId\": 2,\r\n    \"employee\": \"J00044\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/inventory/v1/products/move",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"inventory",
+										"v1",
+										"products",
+										"move"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "400-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// moveToAddress\r",
+											"pm.test(\"valid product request\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var jsonBody = {\r",
+											"    mode: 'raw',\r",
+											"    raw: JSON.stringify({\r",
+											"        \"productId\": 1,\r",
+											"        \"quantity\":1,\r",
+											"        \"employee\": \"A01234\",\r",
+											"        \"addressId\": 1\r",
+											"    }),\r",
+											"    options: {\r",
+											"        raw: {\r",
+											"            language: 'json'\r",
+											"        }\r",
+											"    }\r",
+											"};\r",
+											"\r",
+											"pm.sendRequest({\r",
+											"    url: \"https://localhost:8041/api/inventory/v1/products/add\",\r",
+											"    method: \"POST\",\r",
+											"    header: {\r",
+											"        \"Authorization\": \"Bearer \" + pm.environment.get(\"test_token\")\r",
+											"    },\r",
+											"    body: jsonBody\r",
+											"}, function (err) {\r",
+											"    if (err) {\r",
+											"        console.error(err);\r",
+											"        return;\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"badField\": 1,\r\n    \"addressId\": 2,\r\n    \"employee\": \"J00044\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/inventory/v1/products/move",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"inventory",
+										"v1",
+										"products",
+										"move"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "400-2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// moveToAddress\r",
+											"pm.test(\"valid product request\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var jsonBody = {\r",
+											"    mode: 'raw',\r",
+											"    raw: JSON.stringify({\r",
+											"        \"productId\": 1,\r",
+											"        \"quantity\":1,\r",
+											"        \"employee\": \"A01234\",\r",
+											"        \"addressId\": 1\r",
+											"    }),\r",
+											"    options: {\r",
+											"        raw: {\r",
+											"            language: 'json'\r",
+											"        }\r",
+											"    }\r",
+											"};\r",
+											"\r",
+											"pm.sendRequest({\r",
+											"    url: \"https://localhost:8041/api/inventory/v1/products/add\",\r",
+											"    method: \"POST\",\r",
+											"    header: {\r",
+											"        \"Authorization\": \"Bearer \" + pm.environment.get(\"test_token\")\r",
+											"    },\r",
+											"    body: jsonBody\r",
+											"}, function (err) {\r",
+											"    if (err) {\r",
+											"        console.error(err);\r",
+											"        return;\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"itemId\": 1,\r\n    \"badField\": 2,\r\n    \"employee\": \"J00044\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/inventory/v1/products/move",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"inventory",
+										"v1",
+										"products",
+										"move"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "400-3",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// moveToAddress\r",
+											"pm.test(\"valid product request\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var jsonBody = {\r",
+											"    mode: 'raw',\r",
+											"    raw: JSON.stringify({\r",
+											"        \"productId\": 1,\r",
+											"        \"quantity\":1,\r",
+											"        \"employee\": \"A01234\",\r",
+											"        \"addressId\": 1\r",
+											"    }),\r",
+											"    options: {\r",
+											"        raw: {\r",
+											"            language: 'json'\r",
+											"        }\r",
+											"    }\r",
+											"};\r",
+											"\r",
+											"pm.sendRequest({\r",
+											"    url: \"https://localhost:8041/api/inventory/v1/products/add\",\r",
+											"    method: \"POST\",\r",
+											"    header: {\r",
+											"        \"Authorization\": \"Bearer \" + pm.environment.get(\"test_token\")\r",
+											"    },\r",
+											"    body: jsonBody\r",
+											"}, function (err) {\r",
+											"    if (err) {\r",
+											"        console.error(err);\r",
+											"        return;\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"itemId\": 1,\r\n    \"addressId\": 2,\r\n    \"badField\": \"J00044\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/inventory/v1/products/move",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"inventory",
+										"v1",
+										"products",
+										"move"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "400-5",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// moveToAddress\r",
+											"pm.test(\"already moved\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var jsonBody = {\r",
+											"    mode: 'raw',\r",
+											"    raw: JSON.stringify({\r",
+											"        \"productId\": 1,\r",
+											"        \"quantity\":1,\r",
+											"        \"employee\": \"A01234\",\r",
+											"        \"addressId\": 1\r",
+											"    }),\r",
+											"    options: {\r",
+											"        raw: {\r",
+											"            language: 'json'\r",
+											"        }\r",
+											"    }\r",
+											"};\r",
+											"\r",
+											"pm.sendRequest({\r",
+											"    url: \"https://localhost:8041/api/inventory/v1/products/add\",\r",
+											"    method: \"POST\",\r",
+											"    header: {\r",
+											"        \"Authorization\": \"Bearer \" + pm.environment.get(\"test_token\")\r",
+											"    },\r",
+											"    body: jsonBody\r",
+											"}, function (err) {\r",
+											"    if (err) {\r",
+											"        console.error(err);\r",
+											"        return;\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"itemId\": 1,\r\n    \"addressId\": 2,\r\n    \"employee\": \"Chirac\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/inventory/v1/products/move",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"inventory",
+										"v1",
+										"products",
+										"move"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "404-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// moveToAddress\r",
+											"pm.test(\"valid product request\", function () {\r",
+											"    pm.response.to.have.status(404);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var jsonBody = {\r",
+											"    mode: 'raw',\r",
+											"    raw: JSON.stringify({\r",
+											"        \"productId\": 1,\r",
+											"        \"quantity\":1,\r",
+											"        \"employee\": \"A01234\",\r",
+											"        \"addressId\": 1\r",
+											"    }),\r",
+											"    options: {\r",
+											"        raw: {\r",
+											"            language: 'json'\r",
+											"        }\r",
+											"    }\r",
+											"};\r",
+											"\r",
+											"pm.sendRequest({\r",
+											"    url: \"https://localhost:8041/api/inventory/v1/products/add\",\r",
+											"    method: \"POST\",\r",
+											"    header: {\r",
+											"        \"Authorization\": \"Bearer \" + pm.environment.get(\"test_token\")\r",
+											"    },\r",
+											"    body: jsonBody\r",
+											"}, function (err) {\r",
+											"    if (err) {\r",
+											"        console.error(err);\r",
+											"        return;\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"itemId\": 1999,\r\n    \"addressId\": 2,\r\n    \"employee\": \"J00044\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/inventory/v1/products/move",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"inventory",
+										"v1",
+										"products",
+										"move"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "404-2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// moveToAddress\r",
+											"pm.test(\"valid product request\", function () {\r",
+											"    pm.response.to.have.status(404);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var jsonBody = {\r",
+											"    mode: 'raw',\r",
+											"    raw: JSON.stringify({\r",
+											"        \"productId\": 1,\r",
+											"        \"quantity\":1,\r",
+											"        \"employee\": \"A01234\",\r",
+											"        \"addressId\": 1\r",
+											"    }),\r",
+											"    options: {\r",
+											"        raw: {\r",
+											"            language: 'json'\r",
+											"        }\r",
+											"    }\r",
+											"};\r",
+											"\r",
+											"pm.sendRequest({\r",
+											"    url: \"https://localhost:8041/api/inventory/v1/products/add\",\r",
+											"    method: \"POST\",\r",
+											"    header: {\r",
+											"        \"Authorization\": \"Bearer \" + pm.environment.get(\"test_token\")\r",
+											"    },\r",
+											"    body: jsonBody\r",
+											"}, function (err) {\r",
+											"    if (err) {\r",
+											"        console.error(err);\r",
+											"        return;\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"itemId\": 1,\r\n    \"addressId\": 2999,\r\n    \"employee\": \"J00044\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/inventory/v1/products/move",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"inventory",
+										"v1",
+										"products",
+										"move"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "422-2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// moveToAddress\r",
+											"pm.test(\"already moved\", function () {\r",
+											"    pm.response.to.have.status(422);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var jsonBody = {\r",
+											"    mode: 'raw',\r",
+											"    raw: JSON.stringify({\r",
+											"        \"itemId\": 1,\r",
+											"        \"addressId\": 2,\r",
+											"        \"employee\": \"J00044\"\r",
+											"    }),\r",
+											"    options: {\r",
+											"        raw: {\r",
+											"            language: 'json'\r",
+											"        }\r",
+											"    }\r",
+											"};\r",
+											"\r",
+											"pm.sendRequest({\r",
+											"    url: \"https://localhost:8041/api/inventory/v1/products/move\",\r",
+											"    method: \"PUT\",\r",
+											"    header: {\r",
+											"        \"Authorization\": \"Bearer \" + pm.environment.get(\"test_token\")\r",
+											"    },\r",
+											"    body: jsonBody\r",
+											"}, function (err) {\r",
+											"    if (err) {\r",
+											"        console.error(err);\r",
+											"        return;\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{   // This should fail because there is no item at this address anymore\r\n    \"itemId\": 1,\r\n    \"addressId\": 2,\r\n    \"employee\": \"J00044\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/inventory/v1/products/move",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"inventory",
+										"v1",
+										"products",
+										"move"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "422-3",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// moveToAddress\r",
+											"pm.test(\"already moved\", function () {\r",
+											"    pm.response.to.have.status(422);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"itemId\": 1,        // This item {1} is at addressId = 1\r\n    \"addressId\": 1,     // This should fail because the destination address is the same as the source address\r\n    \"employee\": \"J00044\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/inventory/v1/products/move",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"inventory",
+										"v1",
+										"products",
+										"move"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "CategoryController",
+			"item": [
+				{
+					"name": "createCategory",
+					"item": [
+						{
+							"name": "200-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"strictSSL": false
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"title\": \"test\",\r\n    \"description\": \"test\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/inventory/v1/categories",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"inventory",
+										"v1",
+										"categories"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	]
+}

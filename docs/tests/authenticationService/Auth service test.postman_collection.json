@@ -1,0 +1,2430 @@
+{
+	"info": {
+		"_postman_id": "d438903a-39b0-42ad-8c8b-e4b95ac2c910",
+		"name": "Auth service test",
+		"description": "# ⛓️ Get started here\n\nPostman allows you to test your APIs using simple Javascript code. You can evaluate your response body, headers, cookies, and more using the [ChaiJS BDD](https://www.chaijs.com/api/bdd/) syntax.\n\nThis template guides you through the process of setting up an integration test to ensure that all individual components of an API function together seamlessly.\n\nThe API under test in this collection includes three endpoints for registering and receiving a token, accessing your unique generated name, and unregistering a token:\n\n- POST `/register`\n- POST `/unregister`\n- GET `/my-name`\n    \n\nBy setting up requests in the order of the operation, we can test the flow of data to and from the endpoints and ensure they work together as expected. We also verify that the data persists between requests on the back end.\n\n## 🔖 **How to use this template**\n\n**Step 1:** Check out the requests' documentation to learn more about -\n\n- what each request is meant to do.\n- the tests we've added against each one.\n    \n\n**Step 2:** Run this collection by clicking on \"Run\".\n\n<img src=\"https://content.pstmn.io/84019b0f-69c8-4c5f-98b9-2c90a6f9a0b1/Y29sbGVjdGlvbi1ydW5uZXItYnV0dG9uLmpwZWc=\" width=\"266\" height=\"103\">\n\n**Step 3:** To customize this template, replace the request URLs with your API endpoints and add or edit the tests if needed.\n\n## ℹ️ Resources\n\n[Scripting in Postman](https://learning.postman.com/docs/writing-scripts/intro-to-scripts/)\n\n[Test script examples](https://learning.postman.com/docs/writing-scripts/script-references/test-examples/)\n\n[Postman Sandbox API reference](https://learning.postman.com/docs/sending-requests/grpc/postman-sandbox-api/#writing-assertions)\n\n[Using the Collection Runner](https://learning.postman.com/docs/collections/running-collections/intro-to-collection-runs/)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "32852210"
+	},
+	"item": [
+		{
+			"name": "RoleController",
+			"item": [
+				{
+					"name": "createRole",
+					"item": [
+						{
+							"name": "201-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// CreateRole\r",
+											"pm.test(\"Create role with valid request body\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"tdest\",\r\n    \"microservices\": [\"inventory\", \"directory\"]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/authentication/v1/roles",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"authentication",
+										"v1",
+										"roles"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "400-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// CreateRole\r",
+											"pm.test(\"Validate request body structure\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"test-400-2\",\r\n    \"incorrect field\": [\"microservice1\", \"microservice2\"]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/authentication/v1/roles",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"authentication",
+										"v1",
+										"roles"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "400-3",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// CreateRole\r",
+											"pm.test(\"Invalid attributes in request body\", function () {\r",
+											"    \r",
+											"    pm.response.to.have.status(422);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"SELECT * FROM *;\",\r\n    \"microservices\": [\"inventory\", \"directory\"] \r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/authentication/v1/roles",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"authentication",
+										"v1",
+										"roles"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "401-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// CreateRole\r",
+											"pm.test(\"Unauthorized access due to insufficient roles\", function () {;\r",
+											"    \r",
+											"    pm.response.to.have.status(401);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "expired tocken",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"test-401-1\",\r\n    \"microservices\": [\"microservice1\", \"microservice2\"]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/authentication/v1/roles",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"authentication",
+										"v1",
+										"roles"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "422-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// CreateRole\r",
+											"pm.test(\"Invalid attributes in request body\", function () {\r",
+											"    \r",
+											"    pm.response.to.have.status(422);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"test-201-1\", //Already exists\r\n    \"microservices\": [\"inventory\", \"directory\"]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/authentication/v1/roles",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"authentication",
+										"v1",
+										"roles"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "422-2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// CreateRole\r",
+											"pm.test(\"Validate request body structure\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"test-422-2\",\r\n    \"microservices\": [\"microservice1\", \"microservice1\"]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/authentication/v1/roles",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"authentication",
+										"v1",
+										"roles"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "getAllRoleNames",
+					"item": [
+						{
+							"name": "200-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// getAllRoleNames\r",
+											"pm.test(\"Role names retrieved correctly\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://localhost:8041/api/authentication/v1/roles",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"authentication",
+										"v1",
+										"roles"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "401-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// getAllRoleNames\r",
+											"pm.test(\"Roles in Jwt token are insufficient to authorize the access to this URL\", function () {\r",
+											"    pm.response.to.have.status(401);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "expired_tocken",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://localhost:8041/api/authentication/v1/roles",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"authentication",
+										"v1",
+										"roles"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "getRoleByName",
+					"item": [
+						{
+							"name": "200-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// getRoleByName\r",
+											"pm.test(\"Role permissions and activation status retrieved correctly\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://localhost:8041/api/authentication/v1/roles/user",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"authentication",
+										"v1",
+										"roles",
+										"user"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "401-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// getRoleByName\r",
+											"pm.test(\"Roles in Jwt token are insufficient to authorize the access to this URL\", function () {\r",
+											"    pm.response.to.have.status(401);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://localhost:8041/api/authentication/v1/roles/user",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"authentication",
+										"v1",
+										"roles",
+										"user"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "404-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// getRoleByName\r",
+											"pm.test(\"Role not found\", function () {\r",
+											"    pm.response.to.have.status(404);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://localhost:8041/api/authentication/v1/roles/Jeankevin",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"authentication",
+										"v1",
+										"roles",
+										"Jeankevin"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "getRoleActivationByRoleAndMicroservice",
+					"item": [
+						{
+							"name": "200-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// getRoleActivationByRoleAndMicroservice\r",
+											"pm.test(\"Role activation status retrieved correctly\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/authentication/v1/roles/user/activation?microservice=authentication",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"authentication",
+										"v1",
+										"roles",
+										"user",
+										"activation"
+									],
+									"query": [
+										{
+											"key": "microservice",
+											"value": "authentication"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "401-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// getRoleActivationByRoleAndMicroservice\r",
+											"pm.test(\"Roles in Jwt token are insufficient to authorize the access to this URL\", function () {\r",
+											"    pm.response.to.have.status(401);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://localhost:8041/api/authentication/v1/roles/user/activation?microservice=test",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"authentication",
+										"v1",
+										"roles",
+										"user",
+										"activation"
+									],
+									"query": [
+										{
+											"key": "microservice",
+											"value": "test"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "404-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// getRoleActivationByRoleAndMicroservice\r",
+											"pm.test(\"Role activation status not found for role and microservice provided\", function () {\r",
+											"    pm.response.to.have.status(404);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://localhost:8041/api/authentication/v1/roles/user/activation?microservice=DistributeurDeChips",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"authentication",
+										"v1",
+										"roles",
+										"user",
+										"activation"
+									],
+									"query": [
+										{
+											"key": "microservice",
+											"value": "DistributeurDeChips"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "404-2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// getRoleActivationByRoleAndMicroservice\r",
+											"pm.test(\"Role activation status not found for role and microservice provided\", function () {\r",
+											"    pm.response.to.have.status(404);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://localhost:8041/api/authentication/v1/roles/Jean-Kilian/activation?microservice=authentication",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"authentication",
+										"v1",
+										"roles",
+										"Jean-Kilian",
+										"activation"
+									],
+									"query": [
+										{
+											"key": "microservice",
+											"value": "authentication"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "404-3",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// getRoleActivationByRoleAndMicroservice\r",
+											"pm.test(\"Role activation status not found for role and microservice provided\", function () {\r",
+											"    pm.response.to.have.status(404);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://localhost:8041/api/authentication/v1/roles/Jean-Kevin/activation?microservice=cookie",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"authentication",
+										"v1",
+										"roles",
+										"Jean-Kevin",
+										"activation"
+									],
+									"query": [
+										{
+											"key": "microservice",
+											"value": "cookie"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "updateRoleByName",
+					"item": [
+						{
+							"name": "204-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// updateRoleByName\r",
+											"pm.test\r",
+											"\r",
+											"pm.test(\"Role activation status and / or permissions updated correctly\", function () {\r",
+											"    pm.response.to.have.status(204);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.sendRequest({\r",
+											"    url: \"https://localhost:8041/api/authentication/v1/auth/jwt\",\r",
+											"    method: \"POST\",\r",
+											"    header: {\r",
+											"        \"Authorization\": pm.environment.get(\"basic_token\")\r",
+											"    }\r",
+											"}, function (err, response) {\r",
+											"    if (err) {\r",
+											"        console.error(err);\r",
+											"        return;\r",
+											"    }\r",
+											"    pm.environment.set(\"test_token\", response.text());\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"isEnable\": \"true\",\r\n    \"permissions\": []\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/authentication/v1/roles/user",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"authentication",
+										"v1",
+										"roles",
+										"user"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "204-2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// updateRoleByName\r",
+											"pm.test\r",
+											"\r",
+											"pm.test(\"Role activation status and / or permissions updated correctly\", function () {\r",
+											"    pm.response.to.have.status(204);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.sendRequest({\r",
+											"    url: \"https://localhost:8041/api/authentication/v1/auth/jwt\",\r",
+											"    method: \"POST\",\r",
+											"    header: {\r",
+											"        \"Authorization\": pm.environment.get(\"basic_token\")\r",
+											"    }\r",
+											"}, function (err, response) {\r",
+											"    if (err) {\r",
+											"        console.error(err);\r",
+											"        return;\r",
+											"    }\r",
+											"    pm.environment.set(\"test_token\", response.text());\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"isEnable\": \"true\",\r\n    \"permissions\": [\r\n    \"CanCreateLoginProfile\",\r\n    \"CanCreateRole\",\r\n    \"CanModifyLoginProfilePassword\",\r\n    \"CanModifyLoginProfile\",\r\n    \"CanModifyRole\",\r\n    \"CanReadLoginProfile\",\r\n    \"CanReadRole\"\r\n  ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/authentication/v1/roles/user/activation?microservice=authentication",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"authentication",
+										"v1",
+										"roles",
+										"user",
+										"activation"
+									],
+									"query": [
+										{
+											"key": "microservice",
+											"value": "authentication"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "400-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// updateRoleByName\r",
+											"pm.test(\"The request body is badly structured or formatted\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.sendRequest({\r",
+											"    url: \"https://localhost:8041/api/authentication/v1/auth/jwt\",\r",
+											"    method: \"POST\",\r",
+											"    header: {\r",
+											"        \"Authorization\": pm.environment.get(\"basic_token\")\r",
+											"    }\r",
+											"}, function (err, response) {\r",
+											"    if (err) {\r",
+											"        console.error(err);\r",
+											"        return;\r",
+											"    }\r",
+											"    pm.environment.set(\"test_token\", response.text());\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"isEnable\": \"true\",\r\n    \"wrong_field\": [\"CanReadRole\", \"CanReadLoginProfile\"]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/authentication/v1/roles/user",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"authentication",
+										"v1",
+										"roles",
+										"user"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "400-2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// updateRoleByName\r",
+											"pm.test(\"The request body is badly structured or formatted\", function () {\r",
+											"    pm.sendRequest({\r",
+											"        url: \"https://localhost:8041/api/authentication/v1/auth/jwt\",\r",
+											"        method: \"POST\",\r",
+											"        function (err, response) {\r",
+											"            if (err) {\r",
+											"                console.error(err);\r",
+											"                return;\r",
+											"            }\r",
+											"            pm.environment.set(\"test_token\", pm.response.text());\r",
+											"        }\r",
+											"    });\r",
+											"    pm.response.to.have.status(400);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.sendRequest({\r",
+											"    url: \"https://localhost:8041/api/authentication/v1/auth/jwt\",\r",
+											"    method: \"POST\",\r",
+											"    header: {\r",
+											"        \"Authorization\": pm.environment.get(\"basic_token\")\r",
+											"    }\r",
+											"}, function (err, response) {\r",
+											"    if (err) {\r",
+											"        console.error(err);\r",
+											"        return;\r",
+											"    }\r",
+											"    pm.environment.set(\"test_token\", response.text());\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/authentication/v1/roles/user",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"authentication",
+										"v1",
+										"roles",
+										"user"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "401-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// updateRoleByName\r",
+											"pm.test(\"Roles in Jwt token are insufficient to authorize the access to this URL\", function () {\r",
+											"    pm.response.to.have.status(401);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"isEnable\": \"true\",\r\n    \"permissions\": [\"CanReadRole\", \"CanReadLoginProfile\"]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/authentication/v1/roles/user",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"authentication",
+										"v1",
+										"roles",
+										"user"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "404-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// updateRoleByName\r",
+											"pm.test(\"Role not found\", function () {\r",
+											"    pm.response.to.have.status(404);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.sendRequest({\r",
+											"    url: \"https://localhost:8041/api/authentication/v1/auth/jwt\",\r",
+											"    method: \"POST\",\r",
+											"    header: {\r",
+											"        \"Authorization\": pm.environment.get(\"basic_token\")\r",
+											"    }\r",
+											"}, function (err, response) {\r",
+											"    if (err) {\r",
+											"        console.error(err);\r",
+											"        return;\r",
+											"    }\r",
+											"    pm.environment.set(\"test_token\", response.text());\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"isEnable\": \"true\",\r\n    \"permissions\": [\"CanReadRole\", \"CanReadLoginProfile\"]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/authentication/v1/roles/Jean-Michel-absent",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"authentication",
+										"v1",
+										"roles",
+										"Jean-Michel-absent"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "422-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// updateRoleByName\r",
+											"pm.test(\"Attribute values don't respect integrity constraints. Permissions : retrieve a role information for the microservice, to know which one are available. isEnable : provide a boolean to modify value (can be null to keep current value).\", function () {\r",
+											"    \r",
+											"    pm.response.to.have.status(422);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.sendRequest({\r",
+											"    url: \"https://localhost:8041/api/authentication/v1/auth/jwt\",\r",
+											"    method: \"POST\",\r",
+											"    header: {\r",
+											"        \"Authorization\": pm.environment.get(\"basic_token\")\r",
+											"    }\r",
+											"}, function (err, response) {\r",
+											"    if (err) {\r",
+											"        console.error(err);\r",
+											"        return;\r",
+											"    }\r",
+											"    pm.environment.set(\"test_token\", response.text());\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"isEnable\": \"true\",\r\n    \"permissions\": [\"sellKindersBuenos\", \"buy'La boisson verte de Grenoble'\"]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/authentication/v1/roles/user",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"authentication",
+										"v1",
+										"roles",
+										"user"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "AuthController",
+			"item": [
+				{
+					"name": "generateJwtToken",
+					"item": [
+						{
+							"name": "201-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// CreateRole\r",
+											"pm.test(\"Create role with valid request body\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "A00001",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "toto",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "https://localhost:8041/api/authentication/v1/auth/jwt",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"authentication",
+										"v1",
+										"auth",
+										"jwt"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "401-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// CreateRole\r",
+											"pm.test(\"Create role with valid request body\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.sendRequest({\r",
+											"    url: \"https://localhost:8041/api/authentication/v1/roles/user\",\r",
+											"    method: \"PUT\",\r",
+											"    header: {\r",
+											"        \"Authorization\": \"Bearer \" + pm.environment.get(\"test_token\"),\r",
+											"        \"Content-Type\": \"application/json\"\r",
+											"    },\r",
+											"    body: {\r",
+											"        mode: 'raw',\r",
+											"        raw: JSON.stringify({\r",
+											"            \"isEnable\": \"true\", // Notez que true est utilisé comme une valeur booléenne, pas comme une chaîne\r",
+											"            \"permissions\": []\r",
+											"        })\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "toto",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "A00002",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "https://localhost:8041/api/authentication/v1/auth/jwt",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"authentication",
+										"v1",
+										"auth",
+										"jwt"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "LoginProfileController",
+			"item": [
+				{
+					"name": "createLoginProfile",
+					"item": [
+						{
+							"name": "201-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// CreateRole\r",
+											"pm.test(\"Create login-profile with a valid request body\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\": \"jean-michmich@barpmu.fr\",\r\n    \"roles\": [\"user\"]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/authentication/v1/login-profiles",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"authentication",
+										"v1",
+										"login-profiles"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "400-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// CreateRole\r",
+											"pm.test(\"Create login-profile with a valid request body\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"bar-PMU\": \"jean-michmich@barpmu.net\",\r\n    \"roles\": [\"user\"]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/authentication/v1/login-profiles",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"authentication",
+										"v1",
+										"login-profiles"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "400-2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// CreateRole\r",
+											"pm.test(\"Create login-profile with an invalid request body\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\": 123,\r\n    \"roles\": [\"user\"]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/authentication/v1/login-profiles",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"authentication",
+										"v1",
+										"login-profiles"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "400-3",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// CreateRole\r",
+											"pm.test(\"Create login-profile with an invalid request body\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    // Coucou\r\n    \"roles\": [\"user\"]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/authentication/v1/login-profiles",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"authentication",
+										"v1",
+										"login-profiles"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "401-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// CreateRole\r",
+											"pm.test(\"Create login-profile with an invalid request body\", function () {\r",
+											"    pm.response.to.have.status(401);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "123",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\": \"vincent.Nourrit@pdf-de-merde.fr\",\r\n    \"roles\": [\"user\"]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/authentication/v1/login-profiles",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"authentication",
+										"v1",
+										"login-profiles"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "422-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// CreateRole\r",
+											"pm.test(\"Create login-profile with an invalid request body\", function () {\r",
+											"    pm.response.to.have.status(422);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\": \"jean-mich@bistro\",\r\n    \"roles\": [\"user\"]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/authentication/v1/login-profiles",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"authentication",
+										"v1",
+										"login-profiles"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "422-2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// CreateRole\r",
+											"pm.test(\"Create login-profile with an invalid request body\", function () {\r",
+											"    pm.response.to.have.status(422);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\": \"jean-mich<3@bistro.fr\",\r\n    \"roles\": [\"user\"]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/authentication/v1/login-profiles",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"authentication",
+										"v1",
+										"login-profiles"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "422-3",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// CreateRole\r",
+											"pm.test(\"Create login-profile with an invalid request body\", function () {\r",
+											"    pm.response.to.have.status(422);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\": \".Josianne@ta-grand-mere.net\",\r\n    \"roles\": [\"user\"]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/authentication/v1/login-profiles",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"authentication",
+										"v1",
+										"login-profiles"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "422-3.1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// CreateRole\r",
+											"pm.test(\"Create login-profile with an invalid request body\", function () {\r",
+											"    pm.response.to.have.status(422);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\": \"Josianne.ta-grand-mere.fr\",\r\n    \"roles\": [\"user\"]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/authentication/v1/login-profiles",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"authentication",
+										"v1",
+										"login-profiles"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "422-4",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// CreateRole\r",
+											"pm.test(\"Create login-profile with an invalid request body\", function () {\r",
+											"    pm.response.to.have.status(422);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\": \"Josianne   @ta-grand-mere.gouv\",\r\n    \"roles\": [\"user\"]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/authentication/v1/login-profiles",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"authentication",
+										"v1",
+										"login-profiles"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "422-5",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// CreateRole\r",
+											"pm.test(\"Create login-profile with an invalid request body\", function () {\r",
+											"    pm.response.to.have.status(422);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\": \" josianne@ta-grand-mere.free\",\r\n    \"roles\": [\"user\"]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/authentication/v1/login-profiles",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"authentication",
+										"v1",
+										"login-profiles"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "422-6",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// CreateRole\r",
+											"pm.test(\"Create login-profile with an invalid request body\", function () {\r",
+											"    pm.response.to.have.status(422);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\": \"Кофейная-чашка@gmail.com\",\r\n    \"roles\": [\"user\"]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/authentication/v1/login-profiles",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"authentication",
+										"v1",
+										"login-profiles"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "422-7",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// CreateRole\r",
+											"pm.test(\"Create login-profile with an invalid request body\", function () {\r",
+											"    pm.response.to.have.status(422);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\": \"Dindon_du27@wanadoo.fr\",\r\n    \"roles\": [\"idiotDuVillage\"]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/authentication/v1/login-profiles",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"authentication",
+										"v1",
+										"login-profiles"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "422-8",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// CreateRole\r",
+											"pm.test(\"Create login-profile with an invalid request body\", function () {\r",
+											"    pm.response.to.have.status(422);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\": \"Dindon_du27@wanadoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo.fr\",\r\n    \"roles\": [\"user\"]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/authentication/v1/login-profiles",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"authentication",
+										"v1",
+										"login-profiles"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "422-9",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// CreateRole\r",
+											"pm.test(\"Create login-profile with an invalid request body\", function () {\r",
+											"    pm.response.to.have.status(422);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\": \"Gilbert.laplanque@orange.fr\",\r\n    \"roles\": [\"user\"]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/authentication/v1/login-profiles",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"authentication",
+										"v1",
+										"login-profiles"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "token",
+			"value": ""
+		},
+		{
+			"key": "baseUrl",
+			"value": "https://postman-integration-testing.glitch.me/"
+		}
+	]
+}
