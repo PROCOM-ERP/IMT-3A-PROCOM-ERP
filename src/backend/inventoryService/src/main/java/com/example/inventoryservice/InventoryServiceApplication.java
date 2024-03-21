@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Profile;
 @OpenAPIDefinition(
         info = @Info(
                 title = "InventoryService",
-                version = "0.1.0",
+                version = "1.1.0",
                 description =
                         "Service that offers the possibility of managing products data in the company.<br>" +
                                 "This service expose the data of the products, categories and address.<br>" +

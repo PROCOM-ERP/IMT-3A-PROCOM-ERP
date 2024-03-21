@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Profile;
 @OpenAPIDefinition(
         info = @Info(
                 title = "OrderService",
-                version = "1.0.0",
+                version = "1.1.0",
                 description =
                         "Service to manage orders for the company."),
         tags = {

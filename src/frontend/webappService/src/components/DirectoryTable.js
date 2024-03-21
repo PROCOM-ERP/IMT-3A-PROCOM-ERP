@@ -21,7 +21,7 @@ function DirectoryTable({ isAdmin = false }) {
   };
 
   const handleProfil = (id) => {
-    isAdmin ? navigate("/manageUser/" + id) : navigate("/user/" + id);
+    isAdmin ? navigate("/adminUserProfil/" + id) : navigate("/user/" + id);
   };
 
   let filteredUsers = users.filter(user => {

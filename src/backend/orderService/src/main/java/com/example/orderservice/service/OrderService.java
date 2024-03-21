@@ -6,6 +6,7 @@ import com.example.orderservice.dto.*;
 import com.example.orderservice.model.*;
 import com.example.orderservice.repository.*;
 import com.example.orderservice.utils.CustomLogger;
+import com.example.orderservice.utils.CustomStringUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.access.AccessDeniedException;
@@ -24,15 +25,23 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class OrderService {
 
+
+    /* Repository Beans */
+
     private final OrderRepository orderRepository;
     private final EmployeeRepository employeeRepository;
     private final OrderProductRepository orderProductRepository;
     private final ProviderRepository providerRepository;
 
+    /* Service Beans */
+
     private final AddressService addressService;
     private final EmployeeService employeeService;
     private final MessageSenderService messageSenderService;
     private final ProgressStatusService progressStatusService;
+
+    /* Utils Beans */
+    private final CustomStringUtils customStringUtils;
 
     /* Public Methods */
     @Transactional
@@ -76,7 +85,13 @@ public class OrderService {
 
     @LogExecutionTime(description = "Retrieve all orders that a user has placed or needs to approve.",
             tag = CustomLogger.TAG_ORDERS)
-    public OrdersByIdLoginProfileResponseDto getAllOrdersByIdLoginProfile(String idLoginProfile) {
+    public OrdersByIdLoginProfileResponseDto getAllOrdersByIdLoginProfile(String idLoginProfile)
+            throws IllegalArgumentException
+    {
+        // check employee id value
+        customStringUtils.checkNullOrBlankString(idLoginProfile, EmployeeService.ERROR_MSG_EMPLOYEE_ID_BLANK);
+        customStringUtils.checkStringSize(idLoginProfile, EmployeeService.ERROR_MSG_EMPLOYEE_ID_SIZE, 6, 6);
+        customStringUtils.checkStringPattern(idLoginProfile, CustomStringUtils.REGEX_ID_LOGIN_PROFILE, EmployeeService.ERROR_MSG_EMPLOYEE_ID_PATTERN);
 
         // retrieve all Employee entities id for the LoginProfile's id provided
         Set<Integer> idEmployees = employeeRepository.findAllIdsByIdLoginProfile(idLoginProfile);
@@ -146,19 +161,18 @@ public class OrderService {
 
     @LogExecutionTime(description = "Update an order progress status.",
         tag = CustomLogger.TAG_ORDERS)
-    public void updateOrderProgressStatusById(Integer idOrder, OrderUpdateProgressStatusDto orderDto)
+    public void updateOrderProgressStatusById(Integer idOrder)
             throws IllegalArgumentException,
-            NoSuchElementException
+            NoSuchElementException,
+            DataIntegrityViolationException
     {
         // retrieve Order entity
         Order order = orderRepository.findById(idOrder)
                 .orElseThrow(() -> new NoSuchElementException("No existing order with id " + idOrder + "."));
 
-        // checks that the new ProgressStatus is the next as that of the current order
-        Integer idNextProgressStatus = orderDto.getIdProgressStatus();
-        if (order.getProgressStatus() != idNextProgressStatus - 1)
-            throw new IllegalArgumentException(
-                    "Provided progress status id is not the next logical one for the order " + idOrder + ".");
+        // checks that the next ProgressStatus is valid (not the final one)
+        Integer idNextProgressStatus = order.getProgressStatus() + 1;
+        progressStatusService.isValidProgressStatus(idNextProgressStatus);
 
         // check if the LoginProfile of the authenticated user is the orderer,
         // or the approver of the order (or admin), and can change the Order ProgressStatus
@@ -172,7 +186,7 @@ public class OrderService {
                 order.getApprover() != null &&
                 currentLoginProfileId.equals(idApprover) ||
                 currentLoginProfileId.equals(idOrderer) &&
-                !(idNextProgressStatus.equals(ProgressStatus.Approved.getId()))))
+                !idNextProgressStatus.equals(ProgressStatus.Approved.getId())))
         {
             throw new AccessDeniedException("");
         }

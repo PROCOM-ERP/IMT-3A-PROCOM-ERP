@@ -6,6 +6,7 @@ import com.example.directoryservice.dto.AddressResponseDto;
 import com.example.directoryservice.model.Address;
 import com.example.directoryservice.repository.AddressRepository;
 import com.example.directoryservice.utils.CustomLogger;
+import com.example.directoryservice.utils.CustomStringUtils;
 import lombok.RequiredArgsConstructor;
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
@@ -24,7 +25,12 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AddressService {
 
+    /* Repository Beans */
+
     private final AddressRepository addressRepository;
+
+    /* Utils Beans */
+    private final CustomStringUtils customStringUtils;
 
     /* Public Methods */
 
@@ -77,14 +83,15 @@ public class AddressService {
     private void sanitizeAddressCreationRequestDto(AddressCreationRequestDto addressDto)
     {
         // sanitize fields before Address entity creation
-        addressDto.setStreet(addressDto.getStreet().trim());
-        addressDto.setCity(addressDto.getCity().trim());
+
+        addressDto.setStreet(customStringUtils.sanitizeString(addressDto.getStreet()));
+        addressDto.setCity(customStringUtils.sanitizeString(addressDto.getCity()));
         if (addressDto.getState() != null)
-            addressDto.setState(addressDto.getState().trim());
-        addressDto.setCountry(addressDto.getCountry().trim());
-        addressDto.setZipcode(addressDto.getZipcode().trim());
+            addressDto.setState(customStringUtils.sanitizeString(addressDto.getState()));
+        addressDto.setCountry(customStringUtils.sanitizeString(addressDto.getCountry()));
+        addressDto.setZipcode(customStringUtils.sanitizeString(addressDto.getZipcode()));
         if (addressDto.getInfo() != null)
-            addressDto.setInfo(addressDto.getInfo().trim());
+            addressDto.setInfo(customStringUtils.sanitizeString(addressDto.getInfo()));
     }
 
 

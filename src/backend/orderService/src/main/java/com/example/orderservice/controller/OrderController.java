@@ -2,7 +2,6 @@ package com.example.orderservice.controller;
 
 import com.example.orderservice.dto.OrderCreationRequestDto;
 import com.example.orderservice.dto.OrderResponseDto;
-import com.example.orderservice.dto.OrderUpdateProgressStatusDto;
 import com.example.orderservice.dto.OrdersByIdLoginProfileResponseDto;
 import com.example.orderservice.model.Path;
 import com.example.orderservice.service.OrderService;
@@ -13,6 +12,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -48,7 +48,7 @@ public class OrderController {
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<String> createOrder(@RequestBody OrderCreationRequestDto orderDto)
+    public ResponseEntity<String> createOrder(@Valid @RequestBody OrderCreationRequestDto orderDto)
             throws Exception
     {
         // try to create a new entity
@@ -141,10 +141,9 @@ public class OrderController {
                     "Uncontrolled error appeared",
                     content = {@Content(mediaType = "application/json")} )})
     public ResponseEntity<String> updateOrderProgressStatusById(
-            @PathVariable Integer idOrder,
-            @RequestBody OrderUpdateProgressStatusDto orderDto)
+            @PathVariable Integer idOrder)
     {
-        orderService.updateOrderProgressStatusById(idOrder, orderDto);
+        orderService.updateOrderProgressStatusById(idOrder);
         return ResponseEntity.noContent().build();
     }
 

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import "../css/AddUser.css";
 import { useNavigate } from "react-router-dom";
+import "../../css/AddUser.css";
 
-function AddUserForm({ title }) {
+
+function UserForm({ title }) {
   const navigate = useNavigate();
   const [roles, setRoles] = useState({});
   const [selectedRoles, setSelectedRoles] = useState([]);
@@ -247,4 +248,4 @@ function AddUserForm({ title }) {
   );
 }
 
-export default AddUserForm;
+export default UserForm;

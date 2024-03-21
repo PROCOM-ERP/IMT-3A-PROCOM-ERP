@@ -57,3 +57,14 @@ body {
   padding: 1rem 0;
   text-align: center;
 }
+
+.user {
+  /* Background color for user-specific navigation */
+  background-color: var(--usr-bg);
+}
+
+/* Styles for the admin-specific navigation */
+.admin {
+  /* Background color for admin-specific navigation */
+  background-color: var(--admin-bg);
+}

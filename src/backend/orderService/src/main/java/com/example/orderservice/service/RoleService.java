@@ -9,6 +9,7 @@ import com.example.orderservice.model.Role;
 import com.example.orderservice.repository.RoleRepository;
 import com.example.orderservice.utils.CustomHttpRequestBuilder;
 import com.example.orderservice.utils.CustomLogger;
+import com.example.orderservice.utils.CustomStringUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -31,14 +32,29 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class RoleService {
 
+    /* Constants */
+    public static final String ERROR_MSG_ROLE_NAME_BLANK =
+            "Role name cannot be null or empty.";
+    public static final String ERROR_MSG_ROLE_NAME_SIZE =
+            "Role name must contain between 1 and 32 characters.";
+    public static final String ERROR_MSG_ROLE_NAME_PATTERN =
+            "Role name must start with a letter and can only contain letters, numbers, dashes, and dots. " +
+                    "Consecutive special characters are not allowed.";
+
     @Value("${security.service.name}")
     private String currentMicroservice;
 
+    /* Repository Beans */
     private final RoleRepository roleRepository;
+
+    /* Service Beans */
     private final PermissionService permissionService;
+    private final MessageSenderService messageSenderService;
+
+    /* Utils Beans */
     private final RestTemplate restTemplate;
     private final CustomHttpRequestBuilder customHttpRequestBuilder;
-    private final MessageSenderService messageSenderService;
+    private final CustomStringUtils customStringUtils;
 
     /* Public Methods */
 
@@ -54,7 +70,8 @@ public class RoleService {
                 .build();
 
         // insert Role entity
-        roleRepository.save(role);
+        if (! roleRepository.existsById(role.getName()))
+            roleRepository.save(role);
     }
 
     @LogExecutionTime(description = "Retrieve all role names.",
@@ -69,7 +86,14 @@ public class RoleService {
     @LogExecutionTime(description = "Retrieve a role.",
             tag = CustomLogger.TAG_ROLES)
     public RoleResponseDto getRoleByName(String roleName)
-            throws NoSuchElementException {
+            throws IllegalArgumentException,
+            NoSuchElementException
+    {
+        // check role pattern
+        customStringUtils.checkNullOrBlankString(roleName, ERROR_MSG_ROLE_NAME_BLANK);
+        customStringUtils.checkStringSize(roleName, ERROR_MSG_ROLE_NAME_SIZE, 1, 32);
+        customStringUtils.checkStringPattern(roleName, CustomStringUtils.REGEX_ROLE_NAME, ERROR_MSG_ROLE_NAME_PATTERN);
+
         // check if role exists and retrieve it
         Role role = roleRepository.findById(roleName).orElseThrow();
 
@@ -91,7 +115,14 @@ public class RoleService {
     @LogExecutionTime(description = "Retrieve a role activation status.",
             tag = CustomLogger.TAG_ROLES)
     public RoleActivationResponseDto getRoleActivationByName(String roleName)
-            throws NoSuchElementException {
+            throws IllegalArgumentException,
+            NoSuchElementException
+    {
+        // check role pattern
+        customStringUtils.checkNullOrBlankString(roleName, ERROR_MSG_ROLE_NAME_BLANK);
+        customStringUtils.checkStringSize(roleName, ERROR_MSG_ROLE_NAME_SIZE, 1, 32);
+        customStringUtils.checkStringPattern(roleName, CustomStringUtils.REGEX_ROLE_NAME, ERROR_MSG_ROLE_NAME_PATTERN);
+
         // retrieve one Role Activation entity
         return roleRepository.findById(roleName)
                 .map(this::roleToRoleActivationResponseDto)
@@ -101,13 +132,25 @@ public class RoleService {
     @Transactional
     @LogExecutionTime(description = "Update a role activation status and / or permissions in this service.",
             tag = CustomLogger.TAG_ROLES)
-    public void updateRoleByName(String roleName, RoleUpdateRequestDto roleDto)
-            throws NoSuchElementException, DataIntegrityViolationException {
+    public void updateRoleByName(
+            String roleName,
+            RoleUpdateRequestDto roleDto)
+            throws IllegalArgumentException,
+            NoSuchElementException,
+            DataIntegrityViolationException
+    {
+        // check role pattern
+        customStringUtils.checkNullOrBlankString(roleName, ERROR_MSG_ROLE_NAME_BLANK);
+        customStringUtils.checkStringSize(roleName, ERROR_MSG_ROLE_NAME_SIZE, 1, 32);
+        customStringUtils.checkStringPattern(roleName, CustomStringUtils.REGEX_ROLE_NAME, ERROR_MSG_ROLE_NAME_PATTERN);
+
         // check if role already exists and retrieve it
         Role role = roleRepository.findById(roleName).orElseThrow();
 
         // update isEnable property if provided or different of null
-        if (roleDto.getIsEnable() != null) {
+        boolean isEnableChange = false;
+        if (roleDto.getIsEnable() != null && roleDto.getIsEnable() != role.getIsEnable()) {
+            isEnableChange = true;
             role.setIsEnable(roleDto.getIsEnable());
         }
 
@@ -122,7 +165,7 @@ public class RoleService {
         roleRepository.save(role);
 
         // send message to inform about a change on role activation status
-        if (roleDto.getIsEnable() != null)
+        if (isEnableChange)
             messageSenderService.sendRoleActivationMessage(roleName);
     }
 
