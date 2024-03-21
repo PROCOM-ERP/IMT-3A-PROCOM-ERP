@@ -1,5 +1,5 @@
 /* CSS for UserProfil component */
-.user-form-container {
+.user-profile-container {
   background-color: var(--usr-bg);
   display: flex;
   flex-direction: column;
@@ -54,3 +54,4 @@
   justify-content: center;
   /* Center the button horizontally */
 }
+

@@ -3,10 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import Button from '../Button';
 import Popup from '../Popup';
 import '../../css/DisplayPermissions.css';
+import handleFormError from '../../utils/handleFormError';
+import ErrorForm from '../../pages/errors/ErrorForm';
 
 function DisplayPermissions() {
 
   const navigate = useNavigate();
+
+  const [error, setError] = useState({ title: null, message: null });
+  const [gettingError, setGettingError] = useState(false);
 
   const [services, setServices] = useState({});
   const [roles, setRoles] = useState({});
@@ -153,18 +158,19 @@ function DisplayPermissions() {
       headers: headers,
       body: JSON.stringify(payload)
     })
-      .then(response => {
-        if (!response.ok) {
-          if (response.status === 401) { navigate("/error401"); }
-          else if (response.status === 403) { navigate("/error403"); }
-          else { throw new Error(response.status + " " + response.statusText); }
+      .then(async (response) => {
+        const [getError, error] = await handleFormError(response, navigate);
+        if (getError) {
+          setGettingError(true);
+          setError(error);
+        } else {
+          setShowPopup(true); // Show popup when update is successful
+          setPopupContent({
+            title: 'Update Permissions',
+            content: 'It worked. You have been disconnected. Login.'
+          });
+          console.log("[LOG] Permissions updated with success");
         }
-        setShowPopup(true); // Show popup when update is successful
-        setPopupContent({
-          title: 'Update Permissions',
-          content: 'It worked. You have been disconnected. Login.'
-        });
-        console.log("[LOG] Permissions updated with success");
       })
       .catch(error => {
         console.error('Error saving changes for permissions: ', error);
@@ -236,8 +242,8 @@ function DisplayPermissions() {
                 </div>
               ))}
               <div className='button-container'>
-                <Button onClick={handleSaveChanges}>Save</Button>
                 <Button onClick={handleResetChanges}>Reset</Button>
+                <Button onClick={handleSaveChanges}>Save</Button>
               </div>
             </div>
           </div>
@@ -249,7 +255,17 @@ function DisplayPermissions() {
             onClose={closePopup}
           />
         )}
+        {gettingError && (
+          <ErrorForm
+            title={error.title}
+            message={error.message}
+            onClose={() => {
+              setGettingError(false);
+            }}
+          />
+        )}
       </div>
+
     </>
   );
 }

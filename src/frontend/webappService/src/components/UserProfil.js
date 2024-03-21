@@ -35,9 +35,13 @@ function UserProfil({ title, userId }) {
     })
       .then((response) => {
         if (!response.ok) {
-          if (response.status === 401) { navigate("/error401"); }
-          else if (response.status === 403) { navigate("/error403"); }
-          else { throw new Error(response.status + " " + response.statusText); }
+          if (response.status === 401) {
+            navigate("/error401");
+          } else if (response.status === 403) {
+            navigate("/error403");
+          } else {
+            throw new Error(response.status + " " + response.statusText);
+          }
         }
         const res = response.json();
         return res;
@@ -111,7 +115,7 @@ function UserProfil({ title, userId }) {
 
   return (
     <>
-      <div className="user-form-container">
+      <div className="user-profile-container">
         <div className="title">{title}</div>
         <div className="information-container">
           {Object.entries(user).map(([key, value]) => (

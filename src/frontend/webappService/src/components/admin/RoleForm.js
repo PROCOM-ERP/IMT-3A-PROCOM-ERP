@@ -2,12 +2,17 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '../Button';
 import '../../css/RoleForm.css';
+import handleFormError from "../../utils/handleFormError";
+import ErrorForm from "../../pages/errors/ErrorForm";
 
 function RoleForm() {
   // State to hold the role data
   const [roleData, setRoleData] = useState({ name: '', microservices: [] });
   // Hook to navigate to another page
   const navigate = useNavigate();
+
+  const [error, setError] = useState({ title: null, message: null });
+  const [gettingError, setGettingError] = useState(false);
 
   // Function to handle input change
   const handleChange = (e) => {
@@ -40,15 +45,16 @@ function RoleForm() {
       headers: headers,
       body: JSON.stringify(roleData)
     })
-      .then(response => {
-        if (!response.ok) {
-          if (response.status === 401) { navigate("/error401"); }
-          else if (response.status === 403) { navigate("/error403"); }
-          else { throw new Error(response.status + " " + response.statusText); }
+      .then(async (response) => {
+        const [getError, error] = await handleFormError(response, navigate);
+        if (getError) {
+          setGettingError(true);
+          setError(error);
+        } else {
+          console.log("[LOG] Role added with success");
+          // Navigate to the admin permissions page after successfully adding the role
+          navigate("/adminPermissions");
         }
-        console.log("[LOG] Role added with success");
-        // Navigate to the admin permissions page after successfully adding the role
-        navigate("/adminPermissions");
       })
       .catch(error => {
         console.error('Error adding role:', error);
@@ -74,6 +80,15 @@ function RoleForm() {
           </form>
         </div>
       </div>
+      {gettingError && (
+        <ErrorForm
+          title={error.title}
+          message={error.message}
+          onClose={() => {
+            setGettingError(false);
+          }}
+        />
+      )}
     </>
   );
 }
