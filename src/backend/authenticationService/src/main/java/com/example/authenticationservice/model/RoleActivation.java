@@ -12,6 +12,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @NoArgsConstructor
 @Getter
 @Setter
+@ToString
 @Entity
 @Table(name = "role_activations", schema = "public", indexes = {
         @Index(name = "uq_role_activations_role_microservice", columnList = "role, microservice", unique = true)
@@ -23,6 +24,7 @@ public class RoleActivation {
     @Column(name = "id", nullable = false)
     private Integer id;
 
+    @ToString.Exclude
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
