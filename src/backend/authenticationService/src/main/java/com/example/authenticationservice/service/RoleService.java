@@ -59,7 +59,6 @@ public class RoleService {
     private final CustomHttpRequestBuilder customHttpRequestBuilder;
     private final CustomStringUtils customStringUtils;
     private final RestTemplate restTemplate;
-    private final CustomLogger logger;
 
     /* Public Methods */
 
@@ -332,11 +331,9 @@ public class RoleService {
         }
         boolean isEnableChange = roleDto.getIsEnable() != roleActivation.getIsEnable();
         roleActivation.setIsEnable(roleDto.getIsEnable());
-        logger.infoServiceMethod(role.toString(), CustomLogger.TAG_ROLES, "updateRoleByName", 1L);
 
         // update Role entity global isEnable property
         updateRoleIsEnable(role);
-        logger.infoServiceMethod(role.toString(), CustomLogger.TAG_ROLES, "updateRoleByName", 1L);
 
         // update permissions if permissions are provided
         if (roleDto.getPermissions() != null) {
@@ -347,7 +344,6 @@ public class RoleService {
         }
 
         // insert Role entity
-        logger.infoServiceMethod(role.toString(), CustomLogger.TAG_ROLES, "updateRoleByName", 1L);
         roleRepository.save(role);
 
         // check if role activation status has changed before resetting all user Jwt tokens
