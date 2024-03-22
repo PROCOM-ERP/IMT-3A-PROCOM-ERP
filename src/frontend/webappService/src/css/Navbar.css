@@ -27,6 +27,10 @@
     background-color: var(--admin-bg);
 }
 
+.brand-container {
+    display: contents;
+}
+
 /* Styles for the brand name */
 .brand-name {
     /* Font family for the brand name */
@@ -40,7 +44,7 @@
     /* Remove default underline for anchor text */
     text-decoration: none;
     /* Add margin to the left of the brand name */
-    margin-left: 1rem;
+    margin: 1rem O;
 }
 
 /* Styles for the navigation menu */
@@ -93,4 +97,14 @@
 .navigation-menu.admin li a:hover {
     /* Change color on hover */
     color: var(--admin-nav-text-color-hover);
+}
+
+/* Styles for the logo image */
+.logo-image {
+    width: 60px;
+    /* Adjust the width of the logo image */
+    height: auto;
+    /* Automatically adjust the height to maintain aspect ratio */
+    margin: 0 1rem;
+    /* Add margin to the right of the logo image */
 }
