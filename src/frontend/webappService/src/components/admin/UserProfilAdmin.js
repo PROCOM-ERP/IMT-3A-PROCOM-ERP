@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Button from "../Button.js";
 import "../../css/App.css";
-import "../../css/UserProfil.css";
+import "../../css/ProfilForm.css";
 import { useNavigate } from "react-router-dom";
 import handleFormError from "../../utils/handleFormError.js";
 import ErrorForm from "../../pages/errors/ErrorForm.js";
@@ -254,40 +254,41 @@ function UserProfilAdmin({ title, userId }) {
 
   return (
     <>
-      <div className="user-form-container admin">
+      <div className="user-container admin">
         <div className="title">{title}</div>
-        <div className="information-container">
+        <div className="info-container">
           {Object.entries(userInfo).map(([key, value]) => (
-            <div className="information">
-              <label htmlFor={key} >{key}
-                <input
-                  name={key}
-                  value={modify ? modifiedUserInfo[key] : value}
-                  // disable all input fields except those present in modifiedUserInfo when modify is true
-                  disabled={!modify || !(key in modifiedUserInfo)}
-                  onChange={handleChangeInfo}
-                />
-              </label>
-
+            <div className="input-container">
+              <label className='label' htmlFor={key} >{key}</label>
+              <input
+                className="input"
+                name={key}
+                value={modify ? modifiedUserInfo[key] : value}
+                // disable all input fields except those present in modifiedUserInfo when modify is true
+                disabled={!modify || !(key in modifiedUserInfo)}
+                onChange={handleChangeInfo}
+              />
             </div>
           ))}
-          <div className="information-container">
-            <label>
-              <input
-                type="checkbox"
-                name={"isEnabled"}
-                disabled={!modify}
-                checked={modify ? modifiedUserRoles.isEnabled : userRoles.isEnabled}
-                onChange={handleIsEnabledChange}
-              />
-              Is active
-            </label>
-            <label>Roles:</label>
+          <div className="info-container">
+            <label className="label" >Is active</label>
+            <input
+              className="input"
+              type="checkbox"
+              name={"isEnabled"}
+              disabled={!modify}
+              checked={modify ? modifiedUserRoles.isEnabled : userRoles.isEnabled}
+              onChange={handleIsEnabledChange}
+            />
+          </div>
+          <div className="info-container">
+            <label className="label" >Roles:</label>
             {userRoles.Roles && (userRoles.Roles.map((role, index) => (
 
               <div key={index}>
-                <label>
+                <label className="label">
                   <input
+                    className="input"
                     type="checkbox"
                     disabled={!modify}
                     name={`role-${index}`}

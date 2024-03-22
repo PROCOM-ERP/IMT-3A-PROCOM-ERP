@@ -166,7 +166,7 @@ function ProfilForm({ title, userId }) {
 
   return (
     <>
-      <div className="user-container">
+      <div className="user-container user">
         <div className="title">{title}</div>
         <div className="info-container">
           {Object.entries(user).map(([key, value]) => (
