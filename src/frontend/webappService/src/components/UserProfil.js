@@ -115,7 +115,7 @@ function UserProfil({ title, userId }) {
 
   return (
     <>
-      <div className="user-profile-container">
+      <div className="user-profile-container user">
         <div className="title">{title}</div>
         <div className="information-container">
           {Object.entries(user).map(([key, value]) => (

@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import Button from "../Button.js";
 import "../../css/App.css";
-import "../../css/UserProfil.css";
+import "../../css/ProfilForm.css";
 import { useNavigate } from "react-router-dom";
+import handleFormError from "../../utils/handleFormError.js";
+import ErrorForm from "../../pages/errors/ErrorForm.js";
 
 function UserProfilAdmin({ title, userId }) {
   const navigate = useNavigate();
@@ -11,6 +13,9 @@ function UserProfilAdmin({ title, userId }) {
   const [modifiedUserRoles, setModifiedUserRoles] = useState({});
   const [modifiedUserInfo, setModifiedUserInfo] = useState({});
   const [modify, setModify] = useState(false);
+
+  const [error, setError] = useState({ title: null, message: null });
+  const [gettingError, setGettingError] = useState(false);
 
   const tokenName = "Token"; // Need to be the same name as in AuthForm.js components
   const token = localStorage.getItem(tokenName);
@@ -196,17 +201,14 @@ function UserProfilAdmin({ title, userId }) {
       headers: headers,
       body: JSON.stringify(dataToSend),
     })
-      .then((response) => {
-        if (!response.ok) {
-          if (response.status === 401) {
-            navigate("/error401");
-          } else if (response.status === 403) {
-            navigate("/error403");
-          } else {
-            throw new Error(response.status + " " + response.statusText);
-          }
+      .then(async (response) => {
+        const [getError, error] = await handleFormError(response, navigate);
+        if (getError) {
+          setGettingError(true);
+          setError(error);
+        } else {
+          console.log("[LOG] User information updated with success");
         }
-        console.log("[LOG] User information updated with success");
       })
       .catch((error) => {
         console.error("Error saving changes for user information:", error);
@@ -240,17 +242,14 @@ function UserProfilAdmin({ title, userId }) {
       headers: headers,
       body: JSON.stringify(dataToSend),
     })
-      .then((response) => {
-        if (!response.ok) {
-          if (response.status === 401) {
-            navigate("/error401");
-          } else if (response.status === 403) {
-            navigate("/error403");
-          } else {
-            throw new Error(response.status + " " + response.statusText);
-          }
+      .then(async (response) => {
+        const [getError, error] = await handleFormError(response, navigate);
+        if (getError) {
+          setGettingError(true);
+          setError(error);
+        } else {
+          console.log("[LOG] User roles updated with success");
         }
-        console.log("[LOG] User roles updated with success");
       })
       .catch((error) => {
         console.error("Error saving changes for user roles:", error);
@@ -269,73 +268,80 @@ function UserProfilAdmin({ title, userId }) {
 
   return (
     <>
-      <div className="user-form-container">
+      <div className="user-container admin">
         <div className="title">{title}</div>
-        <div className="information-container">
+        <div className="info-container">
           {Object.entries(userInfo).map(([key, value]) => (
-            <div className="information">
-              <label htmlFor={key}>
-                {key}
-                <input
-                  name={key}
-                  value={modify ? modifiedUserInfo[key] : value}
-                  // disable all input fields except those present in modifiedUserInfo when modify is true
-                  disabled={!modify || !(key in modifiedUserInfo)}
-                  onChange={handleChangeInfo}
-                />
-              </label>
+            <div className="input-container">
+              <label className='label' htmlFor={key} >{key}</label>
+              <input
+                className="input"
+                name={key}
+                value={modify ? modifiedUserInfo[key] : value}
+                // disable all input fields except those present in modifiedUserInfo when modify is true
+                disabled={!modify || !(key in modifiedUserInfo)}
+                onChange={handleChangeInfo}
+              />
             </div>
           ))}
-          <div className="information-container">
-            <label>
-              <input
-                type="checkbox"
-                name={"isEnabled"}
-                disabled={!modify}
-                checked={
-                  modify ? modifiedUserRoles.isEnabled : userRoles.isEnabled
-                }
-                onChange={handleIsEnabledChange}
-              />
-              Is active
-            </label>
-            <label>Roles:</label>
-            {userRoles.Roles &&
-              userRoles.Roles.map((role, index) => (
-                <div key={index}>
-                  <label>
-                    <input
-                      type="checkbox"
-                      disabled={!modify}
-                      name={`role-${index}`}
-                      checked={
-                        modify
-                          ? modifiedUserRoles.Roles[index].isEnable
-                          : role.isEnable
-                      }
-                      onChange={(e) => {
-                        const checked = e.target.checked;
-                        setModifiedUserRoles((prevUser) => ({
-                          ...prevUser,
-                          Roles: [
-                            ...prevUser.Roles.slice(0, index),
-                            { ...prevUser.Roles[index], isEnable: checked },
-                            ...prevUser.Roles.slice(index + 1),
-                          ],
-                        }));
-                      }}
-                    />
-                    {role.name}
-                  </label>
-                </div>
-              ))}
+          <div className="info-container">
+            <label className="label" >Is active</label>
+            <input
+              className="input"
+              type="checkbox"
+              name={"isEnabled"}
+              disabled={!modify}
+              checked={modify ? modifiedUserRoles.isEnabled : userRoles.isEnabled}
+              onChange={handleIsEnabledChange}
+            />
+          </div>
+          <div className="info-container">
+            <label className="label" >Roles:</label>
+            {userRoles.Roles && (userRoles.Roles.map((role, index) => (
+
+              <div key={index}>
+                <label className="label">
+                  <input
+                    className="input"
+                    type="checkbox"
+                    disabled={!modify}
+                    name={`role-${index}`}
+                    checked={modify ? modifiedUserRoles.Roles[index].isEnable : role.isEnable}
+                    onChange={(e) => {
+                      const checked = e.target.checked;
+                      setModifiedUserRoles(prevUser => ({
+                        ...prevUser,
+                        Roles: [
+                          ...prevUser.Roles.slice(0, index),
+                          { ...prevUser.Roles[index], isEnable: checked },
+                          ...prevUser.Roles.slice(index + 1)
+                        ]
+                      }));
+                    }}
+                  />
+                  {role.name}
+                </label>
+              </div>
+            )))}
           </div>
         </div>
         <div className="button-container">
-          {modify && <Button onClick={handleBack}>Back</Button>}
-          <Button onClick={handleModif}> {modify ? "Save" : "Modify"} </Button>
+          {(modify && (
+            <Button user='admin' onClick={handleBack}>Back</Button>
+          ))}
+          <Button user='admin' onClick={handleModif}> {modify ? "Save" : "Modify"} </Button>
+
         </div>
       </div>
+      {gettingError && (
+        <ErrorForm
+          title={error.title}
+          message={error.message}
+          onClose={() => {
+            setGettingError(false);
+          }}
+        />
+      )}
     </>
   );
 }

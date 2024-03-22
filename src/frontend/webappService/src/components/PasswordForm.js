@@ -90,7 +90,7 @@ function PasswordChangeForm() {
             <label>Username :</label>
             <input
               type="text"
-              className="input"
+              name="username"
               disabled
               value={user.username}
             />
@@ -105,6 +105,7 @@ function PasswordChangeForm() {
               value={user.newPassword}
             />
             <Button
+              type="button"
               onClick={handleClickShowPassword}
               onMouseDown={handleMouseDownPassword}
             >
