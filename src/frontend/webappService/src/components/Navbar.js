@@ -50,7 +50,10 @@ function Navbar({ navUser = "user" }) {
     return (
         <>
             <nav className={`navigation ${navUser}`}>
-                <a href="/" className="brand-name">{companyName}</a>
+                <a href="/" className="brand-container">
+                    <img className='logo-image' src="/images/logo-remove-bg.png" alt="Logo" />
+                    <div className="brand-name">{companyName}</div>
+                </a>
                 <div className="navigation-menu">
                     <ul>
                         {getNavTab()}
