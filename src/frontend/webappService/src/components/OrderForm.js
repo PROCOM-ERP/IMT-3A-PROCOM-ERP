@@ -204,10 +204,10 @@ function OrderForm() {
           ...(isNumberEmpty && { number: ordererInfo.address.number }),
           ...(isStreetEmpty && { street: ordererInfo.address.street }),
           ...(isCityEmpty && { city: ordererInfo.address.city }),
-          ...(isStateEmpty && { state: ordererInfo.address.state }),
+          ...(isStateEmpty && { state: ordererInfo.address.state || null }),
           ...(isCountryEmpty && { country: ordererInfo.address.country }),
           ...(isZipcodeEmpty && { zipcode: ordererInfo.address.zipcode }),
-          ...(isInfoEmpty && { info: ordererInfo.address.info })
+          ...(isInfoEmpty && { info: ordererInfo.address.info || null })
         }
       };
       switchEmptyStringToNull(updatedOrderData);
