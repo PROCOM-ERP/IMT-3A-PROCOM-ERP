@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -101,10 +103,12 @@ public class ProductService {
                     .product(product)
                     .build();
 
+            String employeeId = SecurityContextHolder.getContext().getAuthentication().getName();
+
             Transaction transaction = Transaction.builder()
                     .quantity(productRequest.getNumberOfItem())
                     .timestamp(Instant.now())
-                    .employee("B11111")
+                    .employee(employeeId)
                     .item(item)
                     .build();
 
