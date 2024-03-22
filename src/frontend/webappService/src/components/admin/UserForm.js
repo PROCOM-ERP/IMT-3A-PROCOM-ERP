@@ -4,7 +4,6 @@ import "../../css/AddUser.css";
 import handleFormError from "../../utils/handleFormError";
 import ErrorForm from "../../pages/errors/ErrorForm";
 
-
 function UserForm({ title }) {
   const navigate = useNavigate();
 
@@ -50,9 +49,13 @@ function UserForm({ title }) {
         },
       });
       if (!response.ok) {
-        if (response.status === 401) { navigate("/error401"); }
-        else if (response.status === 403) { navigate("/error403"); }
-        else { throw new Error(response.status + " " + response.statusText); }
+        if (response.status === 401) {
+          navigate("/error401");
+        } else if (response.status === 403) {
+          navigate("/error403");
+        } else {
+          throw new Error(response.status + " " + response.statusText);
+        }
       }
       const data = await response.json();
       setRoles(data);
@@ -72,9 +75,13 @@ function UserForm({ title }) {
         },
       });
       if (!response.ok) {
-        if (response.status === 401) { navigate("/error401"); }
-        else if (response.status === 403) { navigate("/error403"); }
-        else { throw new Error(response.status + " " + response.statusText); }
+        if (response.status === 401) {
+          navigate("/error401");
+        } else if (response.status === 403) {
+          navigate("/error403");
+        } else {
+          throw new Error(response.status + " " + response.statusText);
+        }
       }
       const data = await response.json();
       setOrganizations(data);
@@ -123,7 +130,6 @@ function UserForm({ title }) {
         return; // Return early to stop further execution
       }
 
-
       const data = await response.json();
       setUserInfo((prevUserInfo) => ({
         ...prevUserInfo,
@@ -161,6 +167,7 @@ function UserForm({ title }) {
 
         // Handle success response for the second request
         console.log("User creation request successful");
+        navigate("/adminDirectory");
       } catch (error) {
         console.error("Error submitting user email:", error);
       }
