@@ -164,7 +164,7 @@ function DisplayOrders() {
             <tr>
               <th onClick={() => handleSort('id')} >ID</th>
               <th onClick={() => handleSort('provider')} >Provider</th>
-              <th onClick={() => handleSort('approver')} >Approver</th>
+              <th onClick={() => handleSort('orderer')} >Orderer</th>
               <th onClick={() => handleSort('createdAt')} >Created</th>
               <th onClick={() => handleSort('status')} >Status</th>
               <th onClick={() => handleSort('totalAmount')} >Amount</th>
@@ -177,7 +177,7 @@ function DisplayOrders() {
                 <tr key={index} onClick={() => handleOrder(order.id)} >
                   <td>{order.id}</td>
                   <td> {order.provider} </td>
-                  <td> {order.approver} </td>
+                  <td> {order.orderer} </td>
                   <td> {order.createdAt} </td>
                   <td> {order.status} </td>
                   <td> {order.totalAmount} </td>
