@@ -44,7 +44,7 @@ public class RoleService {
             "Microservice name must contain between 1 and 32 characters.";
 
     @Value("${security.service.name}")
-    private static String currentMicroservice;
+    private String currentMicroservice;
 
     /* Repository Beans */
     private final LoginProfileRepository loginProfileRepository;
@@ -59,6 +59,7 @@ public class RoleService {
     private final CustomHttpRequestBuilder customHttpRequestBuilder;
     private final CustomStringUtils customStringUtils;
     private final RestTemplate restTemplate;
+    private final CustomLogger logger;
 
     /* Public Methods */
 
@@ -127,12 +128,13 @@ public class RoleService {
         // cast RoleActivationDto entities to RoleActivation entities before database insertion
         Map<String, Role> roles = roleRepository.findAll().stream()
                 .collect(Collectors.toMap(Role::getName, r -> r));
-        Map<String, RoleActivation> existingRoleActivations = roleActivationRepository.findAll().stream()
+        Map<String, RoleActivation> existingRoleActivations = roles.values().stream()
+                .map(Role::getRoleActivations)
+                .flatMap(Set::stream)
                 .collect(Collectors.toMap(
                         ra -> ra.getRole().getName() + "_" + ra.getMicroservice(),
                         ra -> ra));
-        Set<RoleActivation> roleActivations = roleDtos.stream()
-                .map(raDto -> {
+        roleDtos.forEach(raDto -> {
                     String key = raDto.getName() + "_" + raDto.getMicroservice();
                     RoleActivation ra = existingRoleActivations.get(key);
                     if (ra != null) {
@@ -145,16 +147,16 @@ public class RoleService {
                                 .build();
                         existingRoleActivations.put(key, ra);
                     }
-                    return ra;
-                }).collect(Collectors.toSet());
-
-        // insert RoleActivation entities
-        roleActivationRepository.saveAll(roleActivations);
+                });
 
         // update and insert Role entities global isEnable property
-        roleRepository.saveAll(roleRepository.findAll().stream()
-                .peek(this::updateRoleIsEnable)
+        roles.values().forEach(r -> {
+            r.setRoleActivations(existingRoleActivations.values().stream()
+                .filter(ra -> ra.getRole().getName().equals(r.getName()))
                 .collect(Collectors.toSet()));
+            updateRoleIsEnable(r);
+        });
+        roleRepository.saveAll(roles.values());
 
         // expire all Login Profile entities jwt
         loginProfileRepository.updateAllJwtGenMinAt();
@@ -175,29 +177,25 @@ public class RoleService {
 
         // retrieve Role entity from database
         Role role = roleRepository.findById(roleDto.getName())
-                .orElse(roleRepository.save(Role.builder()
-                        .name(roleDto.getName())
-                        .isEnable(roleDto.getIsEnable())
-                        .build()));
+                .orElseThrow(() ->
+                        new NoSuchElementException("No existing role named " + roleDto.getName()));
 
         // update RoleActivation entity
-        RoleActivation roleActivation = roleActivationRepository
-                .findByRoleAndMicroservice(roleDto.getName(), roleDto.getMicroservice())
-                .orElse(RoleActivation.builder()
-                        .role(role)
-                        .microservice(roleDto.getMicroservice())
-                        .isEnable(roleDto.getIsEnable())
-                        .build());
+        RoleActivation roleActivation = role.getRoleActivations().stream()
+                .filter(ra -> ra.getMicroservice().equals(roleDto.getMicroservice()))
+                .findFirst()
+                .orElse(null);
+        if (roleActivation == null) {
+            roleActivation = RoleActivation.builder()
+                    .role(role)
+                    .microservice(roleDto.getMicroservice())
+                    .build();
+            role.getRoleActivations().add(roleActivation);
+        }
         boolean isEnableChange = roleDto.getIsEnable() != roleActivation.getIsEnable();
         roleActivation.setIsEnable(roleDto.getIsEnable());
 
-        // insert RoleActivation entity
-        roleActivationRepository.save(roleActivation);
-
         // update Role entity global isEnable property
-        role = roleRepository.findById(roleDto.getName())
-                .orElseThrow(() ->
-                        new NoSuchElementException("No existing role named " + roleDto.getName()));
         updateRoleIsEnable(role);
 
         // insert Role entity
@@ -315,27 +313,30 @@ public class RoleService {
                 .map(customStringUtils::sanitizeString)
                 .collect(Collectors.toSet()));
 
-        // update isEnable property if provided or different of null
-        boolean isEnableChange = false;
-        if (roleDto.getIsEnable() != null) {
-            RoleActivation ra = roleActivationRepository.findByRoleAndMicroservice(roleNameSanitized, currentMicroservice)
-                    .orElse(RoleActivation.builder()
-                            // check if role already exists
-                            .role(roleRepository.findById(roleNameSanitized).orElseThrow(() ->
-                                    new NoSuchElementException("No existing role named " + roleNameSanitized)))
-                            .microservice(currentMicroservice)
-                            .build());
-            if (roleDto.getIsEnable() != ra.getIsEnable()) {
-                isEnableChange = true;
-                ra.setIsEnable(roleDto.getIsEnable());
-                roleActivationRepository.saveAndFlush(ra);
-            }
-        }
-
         // check if role already exists and retrieve it
         Role role = roleRepository.findById(roleNameSanitized)
                 .orElseThrow(() ->
                         new NoSuchElementException("No existing role named " + roleNameSanitized));
+
+        // update RoleActivation entity
+        RoleActivation roleActivation = role.getRoleActivations().stream()
+                .filter(ra -> ra.getMicroservice().equals(currentMicroservice))
+                .findFirst()
+                .orElse(null);
+        if (roleActivation == null) {
+            roleActivation = RoleActivation.builder()
+                    .role(role)
+                    .microservice(currentMicroservice)
+                    .build();
+            role.getRoleActivations().add(roleActivation);
+        }
+        boolean isEnableChange = roleDto.getIsEnable() != roleActivation.getIsEnable();
+        roleActivation.setIsEnable(roleDto.getIsEnable());
+        logger.infoServiceMethod(role.toString(), CustomLogger.TAG_ROLES, "updateRoleByName", 1L);
+
+        // update Role entity global isEnable property
+        updateRoleIsEnable(role);
+        logger.infoServiceMethod(role.toString(), CustomLogger.TAG_ROLES, "updateRoleByName", 1L);
 
         // update permissions if permissions are provided
         if (roleDto.getPermissions() != null) {
@@ -345,19 +346,17 @@ public class RoleService {
             role.setPermissions(new LinkedHashSet<>(roleDto.getPermissions()));
         }
 
-        // update global isEnable property if microservice new isEnable property is provided
-        if (roleDto.getIsEnable() != null)
-            updateRoleIsEnable(role);
-
-        // save all changes
+        // insert Role entity
+        logger.infoServiceMethod(role.toString(), CustomLogger.TAG_ROLES, "updateRoleByName", 1L);
         roleRepository.save(role);
 
-        // expire all Login Profile entities jwt
-        loginProfileRepository.updateAllJwtGenMinAt();
-
-        // send message to inform the network about all login profiles jwt expiration
-        if (isEnableChange)
+        // check if role activation status has changed before resetting all user Jwt tokens
+        if (isEnableChange) {
+            // expire all Login Profile entities jwt
+            loginProfileRepository.updateAllJwtGenMinAt();
+            // send message to inform the network about all login profiles jwt expiration
             messageSenderService.sendLoginProfilesJwtDisableOldMessage();
+        }
     }
 
     /* Private Methods */
