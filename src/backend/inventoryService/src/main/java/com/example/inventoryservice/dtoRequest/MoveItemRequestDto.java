@@ -17,6 +17,7 @@ public class MoveItemRequestDto {
     @Min(0)
     @NotNull
     private Integer addressId;
+
     @NotBlank
     @NotNull
     @Size(max=6)
