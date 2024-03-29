@@ -6,13 +6,13 @@ Application databases are filled to simulate a textile company named "Text Ile",
 3 of whom are administrators.
 By un-deploying the app and deploying again, 
 databases are restored to the with the minimum required setup for scenarios.
+
 ## Scenarios table of contents
 
 - [User access management](#user-access-management)
 - [Adding and modifying a user profile](#adding-and-modifying-a-user-profile)
 - [Adding and modifying a role](#adding-and-modifying-a-role)
 - [Placing and viewing an order](#placing-and-viewing-an-order)
-
 
 ## User access management
 
