@@ -28,14 +28,14 @@ but rather to demonstrate the feasibility of such a system with a Proof Of Conce
 
 ## Using / Deploying our system
 
-You can find a comprehensive [Deployment guide](./docs/DEPLOYING.md) on how to deploy and use our system, in the [documentation section](./docs/).
+You can find a comprehensive [Deployment guide](./docs/DEPLOYING.md) on how to deploy and use our system, in the [documentation section](./docs).
 
 ## Metadata
 
 - **Timestamp**: 2023-11-02
-- **Last update**: 2024-02-26
+- **Last update**: 2024-03-21
 - **Status**: In development
-- **Current Version**: 1.0.0
+- **Current Version**: 1.1.0
 - **Supported Platforms**: Windows (Linux and macOS untested)
 - **Development Environment**:
   - [Intellij IDEA 2023.1](https://www.jetbrains.com/idea/)

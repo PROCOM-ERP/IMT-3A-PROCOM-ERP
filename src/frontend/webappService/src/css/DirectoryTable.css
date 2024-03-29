@@ -34,14 +34,46 @@
 }
 
 .searchbar {
-  background-color: #D7EBFC;
   border: 1px solid #ddd;
   border-radius: 10px;
   padding: 5px;
 }
 
+.searchbar.user {
+  background-color: #D7EBFC;
+}
+
+.searchbar.admin {
+  background-color: #F1D394;
+}
+
+
 .add-user-button {
   margin: 0;
+}
+
+.add-user-button.admin {
+  background-color: #F1D394;
+  border-color: #F1D394;
+  color: #000000;
+}
+
+.add-user-button.admin:hover {
+  background-color: #0A316C;
+  border-color: #0A316C;
+  color: #F1D394;
+}
+
+.add-user-button.user {
+  background-color: #0A316C;
+  border-color: #0A316C;
+  color: #F1D394;
+}
+
+.add-user-button.user:hover {
+  background-color: #F1D394;
+  border-color: #F1D394;
+  color: #000000;
 }
 
 /* Styles for the table */
@@ -52,24 +84,45 @@
 }
 
 /* Styles for the table header */
-.table-head-container {
+.table-head-container.user {
   background-color: #0D3E87;
   color: #D7EBFC;
 }
 
-.table-head-container th:hover {
+.table-head-container.user th:hover {
   background-color: #F1D394;
   color: black;
 }
 
-/* Styles for the table body */
-.table-body-container {
+/* Styles for the table body for user */
+.table-body-container.user {
   background-color: #D7EBFC;
 }
 
 /* Styles for table rows on hover */
-.table-body-container tr:hover {
+.table-body-container.user tr:hover {
   background-color: #F1D394;
+}
+
+/* Styles for the table header */
+.table-head-container.admin {
+  background-color: #5D491F;
+  color: #F1D394;
+}
+
+.table-head-container.admin th:hover {
+  background-color: #0D3E87;
+  color: #D7EBFC;
+}
+
+/* Styles for the table body for admin */
+.table-body-container.admin {
+  background-color: #F1D394;
+}
+
+/* Styles for table rows on hover for admin */
+.table-body-container.admin tr:hover {
+  background-color: #D7EBFC;
 }
 
 /* Styles for table cells */
@@ -82,4 +135,9 @@ td {
 .table-link {
   text-decoration: none;
   color: black;
+}
+
+.empty-message {
+  background-color: #D7EBFC;
+  text-align: center;
 }

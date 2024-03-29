@@ -4,6 +4,8 @@ import "../css/DirectoryTable.css";
 import Button from "./Button";
 
 function DirectoryTable({ isAdmin = false }) {
+  const user = isAdmin ? 'admin' : 'user';
+
   //const defaultUsers = data.users;
   const navigate = useNavigate();
   const userId = localStorage.getItem("id");
@@ -97,17 +99,17 @@ function DirectoryTable({ isAdmin = false }) {
       <div className='directory-container'>
         <div className="line-container">
           <div className="searchbar-container">
-            <input className='searchbar'
+            <input className={`searchbar ${user}`}
               type="text"
               placeholder="Search"
               value={searchTerm}
               onChange={handleChange}
             />
           </div>
-          {isAdmin && (<Button className="add-user-button" onClick={handleAddUser}>Add User</Button>)}
+          {isAdmin && (<Button className={`add-user-button ${user}`} onClick={handleAddUser}>Add User</Button>)}
         </div>
-        <table className='table-container' >
-          <thead className='table-head-container'>
+        <table className={`table-container ${user}`} >
+          <thead className={`table-head-container ${user}`}>
             <tr>
               <th onClick={() => handleSort('id')} >ID</th>
               <th onClick={() => handleSort('firstName')} >Firstname</th>
@@ -119,7 +121,7 @@ function DirectoryTable({ isAdmin = false }) {
               <th onClick={() => handleSort('phoneNumber')} >Phone number</th>
             </tr>
           </thead>
-          <tbody className='table-body-container'>
+          <tbody className={`table-body-container ${user}`}>
             {filteredUsers.map((user, index) => {
               return (
                 <tr key={index} onClick={() => handleProfil(user.id)} >

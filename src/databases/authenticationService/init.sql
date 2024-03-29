@@ -1,7 +1,7 @@
 -- Title :             Database creation for IMT-3A-PROCOM-ERP project
--- Version :           1.0.0
+-- Version :           1.1.0
 -- Creation date :     2023-11-23
--- Update date :       2024-03-05
+-- Update date :       2024-03-21
 -- Author :            BOPS
 -- Description :       Authentication service database initialisation script
 --                     Note : Script for PostgreSQL
@@ -133,14 +133,13 @@ VALUES ('A00001', '$2a$10$4ckdBc/ZzfmfHkQL8fyvcO.8QnV8Vf62olUN9k0BWr.h1x3BWEUxC'
 
 INSERT INTO roles (name, is_enable)
 VALUES ('admin', true),
-
-       ('user', true);
+       ('user', true),
+       ('orderer', false);
 
 -- +----------------------------------------------------------------------------------------------+
 
 INSERT INTO role_activations (role, microservice, is_enable)
 VALUES ('admin', 'authentication', true),
-
        ('user', 'authentication', true);
 
 -- +----------------------------------------------------------------------------------------------+
@@ -179,7 +178,9 @@ VALUES ('A00003', 'admin'),
        ('A00027', 'user'),
        ('A00028', 'user'),
        ('A00029', 'user'),
-       ('A00030', 'user');
+       ('A00030', 'user'),
+
+       ('A00023','orderer');
 
 -- +----------------------------------------------------------------------------------------------+
 

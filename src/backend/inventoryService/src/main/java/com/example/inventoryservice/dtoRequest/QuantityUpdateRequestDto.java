@@ -16,4 +16,9 @@ public class QuantityUpdateRequestDto {
     private Integer itemId;
     @NotNull
     private Integer quantity;
+  
+    @NotBlank
+    @NotNull
+    @Pattern(regexp = "[A-Z][0-9]{5}")
+    private String employee;
 }

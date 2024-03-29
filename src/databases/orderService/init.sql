@@ -1,7 +1,7 @@
 -- Title :             Database creation for IMT-3A-PROCOM-ERP project
--- Version :           1.0.0
+-- Version :           1.1.0
 -- Creation date :     2024-02-21
--- Update date :       2024-03-05
+-- Update date :       2024-03-21
 -- Author :            BOPS
 -- Description :       Order management service database initialisation script
 --                     Note : Script for PostgreSQL
@@ -163,8 +163,8 @@ CREATE TABLE order_products
 
 INSERT INTO roles (name, is_enable)
 VALUES ('admin', true),
-       ('order-broker', true),
-       ('user', true);
+       ('user', true),
+       ('orderer', true);
 
 -- +----------------------------------------------------------------------------------------------+
 
@@ -178,11 +178,11 @@ VALUES ('admin', 'CanBypassAccessDeny'),
        ('admin', 'CanReadProvider'),
        ('admin', 'CanReadRole'),
 
-       ('order-broker', 'CanCreateOrder'),
-       ('order-broker', 'CanModifyOrder'),
-       ('order-broker', 'CanReadEmployee'),
-       ('order-broker', 'CanReadOrder'),
-       ('order-broker', 'CanReadProvider'),
+       ('orderer', 'CanCreateOrder'),
+       ('orderer', 'CanModifyOrder'),
+       ('orderer', 'CanReadEmployee'),
+       ('orderer', 'CanReadOrder'),
+       ('orderer', 'CanReadProvider'),
 
        ('user', 'CanReadEmployee'),
        ('user', 'CanReadOrder'),
@@ -255,23 +255,3 @@ VALUES ('Tech Supplies Inc.'), -- id = 1
        ('Logistics Solutions LLC'), -- id = 4
        ('HR Essentials S.A.'), -- id = 5
        ('Designing Lab Co.'); -- id = 6
-
--- +----------------------------------------------------------------------------------------------+
-
-INSERT INTO orders (total_amount, quote, provider, orderer, approver, address)
-VALUES (1079.84, 'TSI0007526801', 1, 1, 1, '681370aec431f01f00f0949eecdd5afb640f6f9a195d14d5d229e722bc1ceb92'), -- Management order
-       (150.00, 'ONL00005387', 2, 8, 7, '681370aec431f01f00f0949eecdd5afb640f6f9a195d14d5d229e722bc1ceb92'), -- Sales order
-       (4269.00, 'MGC2674298612646', 3, 23, 16, '0a7535a629ce45ded54b7f2411934fa0e7d49e25716495e862342006101ca192'), -- Manufacturing order
-       (150.00, 'LSLLC224479532', 6, 14, 12, '0a7535a629ce45ded54b7f2411934fa0e7d49e25716495e862342006101ca192'); -- Desing order
-
--- +----------------------------------------------------------------------------------------------+
-
-INSERT INTO order_products (reference, unit_price, quantity, "order") -- quotes because order is a PostgreSQL reserved keyword
-VALUES ('Laptop', 799.99, 1, 1),
-       ('Mouse', 30.00, 1, 1),
-       ('Screen', 199.90, 1, 1),
-       ('Keyboard', 49.95, 1, 1),
-       ('Office Chair', 150.00, 1, 2),
-       ('Wool', 5.00, 800, 3),
-       ('Sewing machine', 269.00, 1, 3),
-       ('Design Software', 150.00, 1, 4);

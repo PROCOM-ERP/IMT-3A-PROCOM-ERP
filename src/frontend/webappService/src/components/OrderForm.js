@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import '../css/OrderForm.css'
 import { useNavigate } from 'react-router-dom';
+import handleFormError from '../utils/handleFormError';
+import ErrorForm from '../pages/errors/ErrorForm';
 
 function OrderForm() {
   const navigate = useNavigate();
+  const [error, setError] = useState({ title: null, message: null });
+  const [gettingError, setGettingError] = useState(false);
   const userId = localStorage.getItem('id');
   const [orderData, setOrderData] = useState({
     provider: '',
@@ -187,7 +191,7 @@ function OrderForm() {
         orderer: {
           ...orderData.orderer,
           // Update fields only if they are empty
-          ...(isIdEmpty && { id: ordererInfo.id }),
+          ...(isIdEmpty && { id: ordererInfo.id || userId }),
           ...(isLastNameEmpty && { lastName: ordererInfo.lastName }),
           ...(isFirstNameEmpty && { firstName: ordererInfo.firstName }),
           ...(isEmailEmpty && { email: ordererInfo.email }),
@@ -200,10 +204,10 @@ function OrderForm() {
           ...(isNumberEmpty && { number: ordererInfo.address.number }),
           ...(isStreetEmpty && { street: ordererInfo.address.street }),
           ...(isCityEmpty && { city: ordererInfo.address.city }),
-          ...(isStateEmpty && { state: ordererInfo.address.state }),
+          ...(isStateEmpty && { state: ordererInfo.address.state || null }),
           ...(isCountryEmpty && { country: ordererInfo.address.country }),
           ...(isZipcodeEmpty && { zipcode: ordererInfo.address.zipcode }),
-          ...(isInfoEmpty && { info: ordererInfo.address.info })
+          ...(isInfoEmpty && { info: ordererInfo.address.info || null })
         }
       };
       switchEmptyStringToNull(updatedOrderData);
@@ -245,15 +249,15 @@ function OrderForm() {
       headers: headers,
       body: JSON.stringify(dataToSend)
     })
-      .then(response => {
-        if (!response.ok) {
-          if (response.status === 401) { navigate("/error401"); }
-          else if (response.status === 403) { navigate("/error403"); }
-          else { throw new Error(response.status + " " + response.statusText); }
+      .then(async (response) => {
+        const [getError, error] = await handleFormError(response, navigate);
+        if (getError) {
+          setGettingError(true);
+          setError(error);
+        } else {
+          console.log("[LOG] Order added with success");
+          navigate("/orderManagement");
         }
-        console.log("[LOG] Order added with success");
-        console.log(JSON.stringify(dataToSend));
-        navigate("/orderManagement");
       })
       .catch(error => {
         console.error('Error adding order:', error);
@@ -288,7 +292,7 @@ function OrderForm() {
           {
             orderData.products.map((product, index) => (
               <div key={index}>
-                <p>Product {index + 1}</p>
+                <div className='text'>Product {index + 1}</div>
                 <div className='order-line-container'>
                   <label htmlFor={`productReference${index}`}>Reference:</label>
                   <input type="text" id={`productReference${index}`} name="reference" value={product.reference} onChange={(e) => handleProductChange(e, index)} />
@@ -305,7 +309,7 @@ function OrderForm() {
             ))
           }
         </div>
-        <button type="button" onClick={handleAddProduct}>Add Product</button>
+        <button className='user' type="button" onClick={handleAddProduct}>Add Product</button>
 
         {/* Orderer */}
         <div className='title2'>Orderer</div>
@@ -363,11 +367,19 @@ function OrderForm() {
             <input type="text" id="info" name="info" value={orderData.address.info} placeholder={ordererInfo.address ? ordererInfo.address.info : ''} onChange={handleAddressChange} />
           </div>
         </div >
-
-
-
-        <button type="submit">Submit</button>
+        <button className="user" type="submit">Submit</button>
       </form >
+
+      {gettingError && (
+        <ErrorForm
+          title={error.title}
+          message={error.message}
+          onClose={() => {
+            setGettingError(false);
+          }}
+        />
+      )}
+
     </>
   );
 }

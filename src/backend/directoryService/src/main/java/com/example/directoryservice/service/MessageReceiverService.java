@@ -21,7 +21,7 @@ public class MessageReceiverService {
 
     @RabbitListener(queues = "roles-new-queue-directory")
     @LogMessageReceived(tag = CustomLogger.TAG_ROLES,
-            deliveryMethod = "Broadcast", queue = "roles-new-queue")
+            deliveryMethod = "Broadcast", queue = "roles-new-queue-directory")
     public void receiveRolesNewMessage(Message message)
     {
         String getRoleByNamePath = new String(message.getBody());
@@ -37,7 +37,7 @@ public class MessageReceiverService {
 
     @RabbitListener(queues = "login-profiles-sec-queue-directory")
     @LogMessageReceived(tag = CustomLogger.TAG_USERS,
-            deliveryMethod = "Broadcast", queue = "login-profiles-sec-queue")
+            deliveryMethod = "Broadcast", queue = "login-profiles-sec-queue-directory")
     public void receiveLoginProfilesSecMessage(Message message, @Header("amqp_receivedRoutingKey") String routingKey)
     {
         String body = new String(message.getBody());

@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Profile;
 @OpenAPIDefinition(
         info = @Info(
                 title = "DirectoryService",
-                version = "0.1.0",
+                version = "1.1.0",
                 description =
                         "Service to register employees contact information as a directory."),
         tags = {

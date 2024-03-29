@@ -1,10 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../css/AddUser.css";
-
+import handleFormError from "../../utils/handleFormError";
+import ErrorForm from "../../pages/errors/ErrorForm";
 
 function UserForm({ title }) {
   const navigate = useNavigate();
+
+  const [error, setError] = useState({ title: null, message: null });
+  const [gettingError, setGettingError] = useState(false);
+
   const [roles, setRoles] = useState({});
   const [selectedRoles, setSelectedRoles] = useState([]);
   const [organizations, setOrganizations] = useState([]);
@@ -44,9 +49,13 @@ function UserForm({ title }) {
         },
       });
       if (!response.ok) {
-        if (response.status === 401) { navigate("/error401"); }
-        else if (response.status === 403) { navigate("/error403"); }
-        else { throw new Error(response.status + " " + response.statusText); }
+        if (response.status === 401) {
+          navigate("/error401");
+        } else if (response.status === 403) {
+          navigate("/error403");
+        } else {
+          throw new Error(response.status + " " + response.statusText);
+        }
       }
       const data = await response.json();
       setRoles(data);
@@ -66,9 +75,13 @@ function UserForm({ title }) {
         },
       });
       if (!response.ok) {
-        if (response.status === 401) { navigate("/error401"); }
-        else if (response.status === 403) { navigate("/error403"); }
-        else { throw new Error(response.status + " " + response.statusText); }
+        if (response.status === 401) {
+          navigate("/error401");
+        } else if (response.status === 403) {
+          navigate("/error403");
+        } else {
+          throw new Error(response.status + " " + response.statusText);
+        }
       }
       const data = await response.json();
       setOrganizations(data);
@@ -109,11 +122,14 @@ function UserForm({ title }) {
         },
       );
 
-      if (!response.ok) {
-        if (response.status === 401) { navigate("/error401"); }
-        else if (response.status === 403) { navigate("/error403"); }
-        else { throw new Error(response.status + " " + response.statusText); }
+      // Handle error using handleFormError function
+      const [getError, error] = await handleFormError(response, navigate);
+      if (getError) {
+        setGettingError(true);
+        setError(error);
+        return; // Return early to stop further execution
       }
+
       const data = await response.json();
       setUserInfo((prevUserInfo) => ({
         ...prevUserInfo,
@@ -141,14 +157,17 @@ function UserForm({ title }) {
           },
         );
 
-        if (!secondResponse.ok) {
-          if (response.status === 401) { navigate("/error401"); }
-          else if (response.status === 403) { navigate("/error403"); }
-          else { throw new Error(response.status + " " + response.statusText); }
+        // Handle error using handleFormError function
+        const [getError, error] = await handleFormError(response, navigate);
+        if (getError) {
+          setGettingError(true);
+          setError(error);
+          return; // Return early to stop further execution
         }
 
         // Handle success response for the second request
         console.log("User creation request successful");
+        navigate("/adminDirectory");
       } catch (error) {
         console.error("Error submitting user email:", error);
       }
@@ -243,6 +262,15 @@ function UserForm({ title }) {
             Submit
           </button>
         </form>
+        {gettingError && (
+          <ErrorForm
+            title={error.title}
+            message={error.message}
+            onClose={() => {
+              setGettingError(false);
+            }}
+          />
+        )}
       </div>
     </>
   );

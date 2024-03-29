@@ -1,7 +1,7 @@
 -- Title :             Database creation for IMT-3A-PROCOM-ERP project
--- Version :           1.0.0
+-- Version :           1.1.0
 -- Creation date :     2023-12-22
--- Update date :       2024-03-05
+-- Update date :       2024-03-21
 -- Author :            BOPS
 -- Description :       Directory service database initialisation script
 --                     Note : Script for PostgreSQL
@@ -158,8 +158,8 @@ ALTER TABLE org_units ADD CONSTRAINT fk_org_units_table_employees
 
 INSERT INTO roles (name, is_enable)
 VALUES ('admin', true),
-       ('HR', true),
-       ('user', true);
+       ('user', true),
+       ('HR', true);
 
 -- +----------------------------------------------------------------------------------------------+
 

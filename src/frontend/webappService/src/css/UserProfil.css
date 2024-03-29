@@ -1,6 +1,5 @@
 /* CSS for UserProfil component */
-.user-form-container {
-  background-color: var(--usr-bg);
+.user-profile-container {
   display: flex;
   flex-direction: column;
   /* Change to column direction */
