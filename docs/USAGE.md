@@ -2,6 +2,10 @@
 
 Once it has been deployed, see [DEPLOYING.md](DEPLOYING.md), you can use the application freely, 
 or follow the typical usage scenarios below, which illustrate the concepts of distributed systems.
+Application databases are filled to simulate a textile company named "Text Ile", with 30 employees, 
+3 of whom are administrators.
+By un-deploying the app and deploying again, 
+databases are restored to the with the minimum required setup for scenarios.
 
 ## User access management
 
