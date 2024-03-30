@@ -58,9 +58,10 @@ public class ItemService {
             // If this true, then this mean the address already exists. So me must not create another item with
             // the same address:
             if(Objects.equals(produtItem.getAddress().getId(), address.getId())){
-                QuantityUpdateRequestDto quantityUpdate = new QuantityUpdateRequestDto(
-                        produtItem.getId(),
-                        newQuantity.getQuantity());
+                QuantityUpdateRequestDto quantityUpdate = QuantityUpdateRequestDto.builder()
+                        .itemId(produtItem.getId())
+                        .quantity(newQuantity.getQuantity())
+                        .build();
                 updateQuantity(quantityUpdate);     // This call the updateQuantity() function.
                 logger.info("The new item refers to an already existing address.");
                 // The new item refers to an already existing address.
@@ -154,15 +155,15 @@ public class ItemService {
                 // If true, we just update the quantity of the both items.
 
                 // Cleans the previous Item:
-                QuantityUpdateRequestDto quantityCleanRequestDto = new QuantityUpdateRequestDto(
-                        moveItemRequest.getItemId(),
-                        -item.getQuantity()
-                );
+                QuantityUpdateRequestDto quantityCleanRequestDto = QuantityUpdateRequestDto.builder()
+                        .itemId(moveItemRequest.getItemId())
+                        .quantity(-item.getQuantity())
+                        .build();
                 // Transfers the quantity to the destination Item.
-                QuantityUpdateRequestDto quantityTransferredRequestDto = new QuantityUpdateRequestDto(
-                        neighborItem.getId(),
-                        item.getQuantity()
-                );
+                QuantityUpdateRequestDto quantityTransferredRequestDto = QuantityUpdateRequestDto.builder()
+                        .itemId(neighborItem.getId())
+                        .quantity(item.getQuantity())
+                        .build();
                 updateQuantity(quantityCleanRequestDto);
                 updateQuantity(quantityTransferredRequestDto);
                 return;
@@ -177,10 +178,10 @@ public class ItemService {
                 moveItemRequest.getAddressId());
 
         // Cleans the previous Item:
-        QuantityUpdateRequestDto quantityCleanRequestDto = new QuantityUpdateRequestDto(
-                moveItemRequest.getItemId(),
-                -item.getQuantity()
-        );
+        QuantityUpdateRequestDto quantityCleanRequestDto = QuantityUpdateRequestDto.builder()
+                .itemId(moveItemRequest.getItemId())
+                .quantity(-item.getQuantity())
+                .build();
         addNewItem(newItemRequestDto);
         updateQuantity(quantityCleanRequestDto);
     }
