@@ -5,7 +5,7 @@ or follow the typical usage scenarios below, which illustrate the concepts of di
 Application databases are filled to simulate a textile company named "Text Ile", with 30 employees, 
 3 of whom are administrators.
 By un-deploying and deploying the app again, 
-databases are restored to the with the minimum required setup for scenarios.
+databases are restored to the minimum required setup for scenarios.
 
 _NOTE_: The Admin panel is accessible through the /admin url extension (e.g., https://domain.name/admin).
 Domain name is given at the end of the execution of the deployment script.
