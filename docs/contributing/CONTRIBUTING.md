@@ -57,7 +57,7 @@ If a production stable version has any problem, the `hotfix` branch is created f
 identified with the date (YYYY-MM-DD), and following the 
 [hotfix workflow diagram](contributing-workflow-git-hotfix.png).
 
-## Rules and recommandations
+## Rules and recommendations
 This project follows specific rules to ensure code quality and efficient collaboration.
 The different workflows are described as sequence diagrams in the [workflows]() directory.
 By following these practices, we can ensure that the codebase remains clean and organised,
