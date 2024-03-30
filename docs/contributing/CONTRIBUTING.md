@@ -46,20 +46,20 @@ Follow those steps to install all the backend dependencies:
 ### Adding new feature
 The **feature-branch workflow** is used to implement new features.
 For each new feature, dedicated branches are created, following the
-[new feature workflow diagram](docs/workflows/workflow-git-new-feature.png).
+[new feature workflow diagram](contributing-workflow-git-new-feature.png).
 
 ### Create new release
 When all features are ready to make a stable version, a release is created, following the
-[new release workflow diagram](docs/workflows/workflow-git-new-release.png).
+[new release workflow diagram](contributing-workflow-git-new-release.png).
 
 ### Hotfix production version
-If a production stable version has any problem, the `hotfix` branch is created from the `master` to fix it, 
+If a production stable version has any problem, the `hotfix` branch is created from the `main` to fix it, 
 identified with the date (YYYY-MM-DD), and following the 
-[hotfix workflow diagram](docs/workflows/workflow-git-hotfix.png).
+[hotfix workflow diagram](contributing-workflow-git-hotfix.png).
 
-## Rules and recommandations
+## Rules and recommendations
 This project follows specific rules to ensure code quality and efficient collaboration.
-The different workflows are described as sequence diagrams in the [workflows](docs/workflows) directory.
+The different workflows are described as sequence diagrams in the [workflows]() directory.
 By following these practices, we can ensure that the codebase remains clean and organised,
 and that each feature is fully tested before it's deployed.
 
@@ -71,29 +71,23 @@ Before contributing, make sure there is an `issue` opened with you and your revi
 
 Each issue has to be tagged by labels to understand the context.
 They are described in the [labels](https://github.com/BOPS38IMT/IMT-3A-PROCOM-ERP/labels) panel.
-The moment to use them is explained in the different [workflows](docs/workflows).
+The moment to use them is explained in the different [workflows]().
 If labels are missing, please contact the GitHub manager on
 [Discord](https://discord.com/channels/1157244196332245096/1159476398155640872),
 by prefixing the message with the tag `@Github`.
-
-### Format for naming issues, branches, and pull requests
-Each action, to realise in the project, is explicitly mentioned in the [backlog](BACKLOG.md), 
-and got a unique formatted identifier. 
-Each workflow asks to create items with identifier (`{id}`), depending on the [backlog's](BACKLOG.md) action.
-Make sure to use the good one.
 
 ### Branch management
 This git repository works as a **MonoRepository** for the project.
 It means that a unique git will version all subprojects for each part, even if they are totally independent.
 The main branches in this repository are:
 
-- `master`: This branch is used for production-ready code.
+- `main`: This branch is used for production-ready code.
   All the code in this branch is deployed to the production environment.
-- `hotfix`: This branch is used for fixing critical problems on the `master`.
+- `hotfix`: This branch is used for fixing critical problems on the `main`.
 - `integration`: This branch is used for the integration of new features.
   After a feature is implemented and unit-tested thoroughly, it gets merged into this branch.
 
-Other branches are created depending on what you are doing (see [workflows](docs/workflows)).
+Other branches are created depending on what you are doing (see [workflows]()).
 
 ### Other good practices
 - Always pull the latest changes from the `integration` branch before starting work on a new feature.
@@ -104,35 +98,88 @@ Other branches are created depending on what you are doing (see [workflows](docs
 ### Documentation
 In order to maintain consistency and clarity across the project, some documentation standards were adopted.
 
-#### React documentation
-TODO
-
 #### Java documentation
 Java code documentation follows [JavaDoc standards](https://developer.atlassian.com/server/confluence/javadoc-standards/)
 For instance:
+
 ```java
-public class MathOperations {
+/**
+ * Represents a collection of basic math operations.
+ * The {@code MathOperation} class provides methods to perform basic arithmetic operations such as addition.
+ * This class demonstrates how to document code using Javadoc, including class, fields, methods documentation, constants, and static methods.
+ *
+ * @author Your Name (from 2023-11-02 to 2024-03-31)
+ * @version 1.1.0 (2024-03-31)
+ * @since 0.1.0 (2023-11-02)
+ */
+public class MathOperation {
+
+  /**
+   * The default value to be added in operations. This constant demonstrates how to declare and document a constant field in Java.
+   *
+   * @since 1.1.0
+   */
+  public static final int DEFAULT_ADD_VALUE = 10;
     
-    /**
-     * Calculates the sum of two integers.
-     * This method provides a quick way to add two integer numbers.
-     *
-     * @param a the first integer to add
-     * @param b the second integer to add
-     * @return the sum of the two integers
-     * @throws IllegalArgumentException if either of the integers is negative
-     */
-    public int add(int a, int b) throws IllegalArgumentException {
-        if (a < 0 || b < 0) {
-            throw new IllegalArgumentException("Both integers must be non-negative.");
-        }
-        return a + b;
+  /**
+   * An example field representing a numeric value. This could be used in future operations.
+   * It's currently demonstrated for documentation purposes.
+   *
+   * @since 0.1.0
+   */
+  private int exampleField;
+
+  /**
+   * Gets the current value of the example field.
+   * This getter method provides the value of the example field, demonstrating field access through a method.
+   *
+   * @return the current value of the example field.
+   * @since 0.1.0
+   */
+  public int getExampleField() {
+    return this.exampleField;
+  }
+
+  /**
+   * Sets the example field with a new value.
+   * This setter method demonstrates how to document a method that updates a field's value.
+   *
+   * @param newValue the new value to assign to the example field.
+   * @since 0.1.0
+   */
+  public void setExampleField(int newValue) {
+    this.exampleField = newValue;
+  }
+  
+  /**
+   * Calculates the sum of two integers.
+   * This method provides a quick way to add two integer numbers.
+   * It demonstrates the use of conditionals to enforce input constraints and exception handling to indicate errors.
+   *
+   * @param a the first integer to add. Must be non-negative.
+   * @param b the second integer to add. Must be non-negative.
+   * @return the sum of {@code a} and {@code b}.
+   * @throws IllegalArgumentException if either {@code a} or {@code b} is negative, with a message specifying that both integers must be non-negative.
+   * @since 0.1.0
+   */
+  public int add(int a, int b) throws IllegalArgumentException {
+    if (a < 0 || b < 0) {
+      throw new IllegalArgumentException("Both integers must be non-negative.");
     }
-    
+    return a + b;
+  }
+
+  /**
+   * Adds the default value ({@value #DEFAULT_ADD_VALUE}) to the given integer.
+   * This static method provides an example of using a class constant in arithmetic operations.
+   * It demonstrates the utility of static methods in performing operations that don't require an instance of the class.
+   *
+   * @param a the integer to which the default value is added.
+   * @return the sum of {@code a} and {@link #DEFAULT_ADD_VALUE}.
+   * @since 1.1.0
+   */
+  public static int addDefaultValue(int a) {
+    return a + DEFAULT_ADD_VALUE;
+  }
 }
 ```
-
-## Communicate with the team
-To talk with the different project contributors,
-a [Discord server](https://discord.com/channels/1157244196332245096)
-is available with dedicated channels, depending on the action to realise.
