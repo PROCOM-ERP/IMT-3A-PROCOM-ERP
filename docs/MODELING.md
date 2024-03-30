@@ -21,6 +21,19 @@ The diagram below illustrates the infrastructure and the different application t
 at the network node scale.
 
 ![See System Schematic Diagram](diagrams/system-schematic-diagram.png)
+<p align="center">System Schematic Diagram</p>
+
+In this distributed system, the SPA Web microservice enables the user to access the app functionalities using an HMI. 
+It is currently the only front-end service. 
+The Gateway API acts as a link between HTTP requests from the Frontend, 
+and routes them to the REST API of the appropriate backend microservice: 
+**Authentication**, **Directory**, **Order** or **Inventory**.
+
+The authentication service manages user access to the application. 
+Using the RBAC pattern, the service generates connection tokens, after a BasicAuth authentication (username, password), 
+enabling the client to access the application for 1 hour. After this time, they must reconnect. 
+If security updates are carried out by the administrators, the tokens may expire earlier than expected. 
+This prevents obsolete access authorisations from being maintained.
 
 
 
