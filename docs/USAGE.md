@@ -1,6 +1,7 @@
 # Use our application as an educational model
 
-Once it has been deployed, see [DEPLOYING.md](DEPLOYING.md), you can use the application freely, 
+Once it has been deployed, see [DEPLOYING.md](DEPLOYING.md), you can use the application freely 
+(see [FEATURES.md](FEATURES.md)), 
 or follow the typical usage scenarios below, which illustrate the concepts of distributed systems.
 Application databases are filled to simulate a textile company named "Text Ile", with 30 employees, 
 3 of whom are administrators.
