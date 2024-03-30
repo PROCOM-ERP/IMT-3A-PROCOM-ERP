@@ -22,12 +22,19 @@ at the network node scale.
 
 ![See the system schematic diagram.](diagrams/system-schematic-diagram.png)
 
+### Web SPA
+
 In this distributed system, the SPA Web microservice enables the user to access the app functionalities using an HMI. 
 It is currently the only front-end service. 
 
-Then, the Gateway API acts as a link between HTTP requests from the Frontend, 
+### API Gateway
+
+Then, the API Gateway acts as a link between HTTP requests from the Frontend, 
 and routes them to the REST API of the appropriate backend microservice: 
-**Authentication**, **Directory**, **Order** or **Inventory**.
+[Authentication](#authentication-service), [Directory](#directory-service),
+[Order](#order-service) or [Inventory](#inventory-service).
+
+### Authentication service
 
 Next, the authentication service manages user access to the application. 
 Using the RBAC pattern, the service generates Jwt connection tokens, after a BasicAuth authentication (username, password), 
@@ -35,11 +42,15 @@ enabling the client to access the application for 1 hour. After this time, they 
 If security updates are carried out by the administrators, the tokens may expire earlier than expected. 
 This prevents obsolete access authorisations from being maintained.
 
+### Directory service
+
 To continue, the purpose of the directory service is to add, retrieve and update user information 
 (contact details, addresses, organisational units and managers). 
 Its functionality is fairly simple, although it becomes important when other services need information about users.
 Some organisational units already exist,
 but the list cannot be modified except by direct interaction with the database.
+
+### Order service
 
 And more, the order service offers only a few basic functions, such as the ability to place orders, 
 view them or modify their progress. Some suppliers already exist, 
@@ -49,7 +60,11 @@ and more specifically their manager, enabling the order approver to be defined.
 It is also designed to notify the network when an order is received, 
 information that the inventory service may need to update stocks automatically.
 
+### Inventory service
+
 About the inventory service, it is still a draft and has no Frontend view for the moment.
+
+### Queues-events management / Message-broker service
 
 Finally, the message brokerage service, implemented with RabbitMQ, 
 manages the exchange of asynchronous messages between microservices when interactions need to be carried out. 
@@ -67,4 +82,38 @@ as well as the channels and modes of communication.
 In the case of this application, the topology diagram below illustrates the exchanges, 
 the queues and the routing patterns, from the senders to the recipients.
 
-![See the message exchange network topology.](diagrams/system-schematic-diagram.png)
+_NOTE: logs are available, in logs dashboard or service container, when a message is sent / received._
+
+![See the message exchange network topology.](diagrams/message-exchange-network-topology.png)
+
+### Direct (unicast) exchanges
+
+- **roles-direct-exchange**: This exchange manages the notifications linked to the roles managing access. 
+  The recipient is always the authentication service, hence its Unicast nature, and the senders can be any other service. 
+  Among the messages that circulate here are those informing of the start-up of a service, 
+  implying that potential role information is available. 
+  Also, the activation of a role in a service triggers a message to be sent to the authentication service to inform it of this.
+- **dead-letter-exchange**: This exchange is used to send a message back to RabbitMQ if it has not been processed successfully. 
+  Depending on the strategy, the message may or may not be returned. 
+  Here, if the authentication service is unable to retrieve the roles from a service that has just started, 
+  it sends the message to that service. 
+  A delay before new processing is then calculated using the exponential backoff principle, 
+  and after 5 failed attempts, the message is destroyed.
+
+### Fanout (broadcast) exchanges
+
+- **roles-fanout-exchange**: This exchange manages the sending of messages when roles are created in the authentication service, 
+  so that other services can create them locally. 
+  In this way, the administrator can set the usefulness (permissions) of the role in each service.
+- **login-profiles-sec-exchange**: This exchange manages the sending of messages linked to users' connection profiles. 
+  When a new user is created, all the services create it locally. 
+  If it is activated / deactivated, the services repeat the authentication service operation. 
+  Finally, if the Jwt tokens of one or more users are due to expire (password change, creation or modification of role activation).
+
+### Topic (multicast) exchanges
+
+- **employees-exchange**: This multicast exchange is used to manage messages relating to user information (contact, etc). 
+  Any service, needing information about users, can subscribe to modifications via this exchange, 
+  or send messages to request them. This is the case for the authentication service, 
+  which would be interested in modifying an email so that, in the future, 
+  it can send emails when passwords are reset (not implemented).
