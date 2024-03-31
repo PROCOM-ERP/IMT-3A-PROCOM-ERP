@@ -8,11 +8,13 @@ for new small businesses of all types (shops, restaurants, etc).
 Depending on their needs, companies can have a package with only the necessary functionalities,
 while being able to add or remove functionality later almost instantaneously.
 
-Here is a sneak peek :
+Here the poster we presented :
 
-![Login](./docs/images/front-login.png "Login")
+![Poster](./docs/images/poster.jpg "Poster")
 
-![Order-Home](./docs/images/order-home.png "Order Page")
+Here is a sneak peak of the Application, here the Directory service's full Users list :
+
+![Directory](./docs/images/directory.png "Directory Page")
 
 For the moment, the modules on offer are:
 
