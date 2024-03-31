@@ -62,7 +62,7 @@
 
 We welcome contributions from students, educators, and professionals. Whether it's by developing new features, 
 enhancing existing ones, or creating educational content, your input is valuable. 
-Please refer to our [CONTRIBUTING.md](./docs/contributing/CONTRIBUTING.md) guide for more details on how to get involved.
+Please refer to our [CONTRIBUTING.md](./contributing/CONTRIBUTING.md) guide for more details on how to get involved.
 
 ## Suggestions
 
