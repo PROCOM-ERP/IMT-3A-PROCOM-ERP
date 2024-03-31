@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
  * and REST functionalities are available for use with RabbitMQ components.
  *
  * @since 0.1.0 (2024-01-15)
- * @author BOPS (from 2023-11-02 to 2024-03-31)
+ * @author maestro-bene (from 2023-11-02 to 2024-03-31)
  * @version 1.1.0 (2024-03-31)
  */
 @Configuration
