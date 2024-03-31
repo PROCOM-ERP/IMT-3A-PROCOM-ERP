@@ -51,7 +51,7 @@ There are multiple scripts you need to have, that are not followed within this r
 >
 > If you're having a problem with \r files and you're on Windows, I invite you to execute this command: `sed -i 's/\r$//' .\*.sh && sed -i 's/\r$//' .\system\mvnw`.
 >
-> See [Security Guide](./security/README.md) if you encounter any issues regarding `.jks`, `.p12`, `.crt` or `.pem` files. Often you'll only need to add options `--clean-sec "CA" --sec` to your deployment.
+> See [Security Guide](./SYSTEM_SECURITY.md) if you encounter any issues regarding `.jks`, `.p12`, `.crt` or `.pem` files. Often you'll only need to add options `--clean-sec "CA" --sec` to your deployment.
 
 ---
 
