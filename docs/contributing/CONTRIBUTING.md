@@ -108,9 +108,9 @@ For instance:
  * The {@code MathOperation} class provides methods to perform basic arithmetic operations such as addition.
  * This class demonstrates how to document code using Javadoc, including class, fields, methods documentation, constants, and static methods.
  *
+ * @since 0.1.0 (2023-11-02)
  * @author Your Name (from 2023-11-02 to 2024-03-31)
  * @version 1.1.0 (2024-03-31)
- * @since 0.1.0 (2023-11-02)
  */
 public class MathOperation {
 
