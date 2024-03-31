@@ -2,6 +2,7 @@ package com.example.directoryservice.controller;
 
 import com.example.directoryservice.dto.AddressCreationRequestDto;
 import com.example.directoryservice.dto.AddressResponseDto;
+import com.example.directoryservice.dto.HttpStatusErrorDto;
 import com.example.directoryservice.model.Path;
 import com.example.directoryservice.service.AddressService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,7 +23,11 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class AddressController {
 
+    /* Service Beans */
+
     private final AddressService addressService;
+
+    /* Endpoints Methods */
 
     @PostMapping
     @Operation(operationId = "createAddress", tags = {"addresses"},
@@ -35,18 +40,24 @@ public class AddressController {
                     content = {@Content(mediaType = "application/json") }),
             @ApiResponse(responseCode = "400", description =
                     "The request body is badly structured or formatted",
-                    content = {@Content(mediaType = "application/json") }),
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = HttpStatusErrorDto.class)) }),
             @ApiResponse(responseCode = "401", description =
                     "Roles in Jwt token are insufficient to authorize the access to this URL",
-                    content = {@Content(mediaType = "application/json") }),
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = HttpStatusErrorDto.class)) }),
             @ApiResponse(responseCode = "422", description =
                     "Attribute values don't respect integrity constraints.",
-                    content = {@Content(mediaType = "application/json")} ),
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = HttpStatusErrorDto.class))} ),
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
-                    content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<String> createAddress(@Valid @RequestBody AddressCreationRequestDto addressDto)
-            throws Exception {
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = HttpStatusErrorDto.class))} )})
+    public ResponseEntity<String> createAddress(
+            @Valid @RequestBody AddressCreationRequestDto addressDto)
+            throws Exception
+    {
         // try to create a new entity
         addressService.createAddress(addressDto);
         // send the response with 201 Http status
@@ -64,11 +75,14 @@ public class AddressController {
                             schema = @Schema(type = "array", implementation = AddressResponseDto.class))} ),
             @ApiResponse(responseCode = "401", description =
                     "Roles in Jwt token are insufficient to authorize the access to this URL",
-                    content = {@Content(mediaType = "application/json")} ),
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = HttpStatusErrorDto.class))} ),
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
-                    content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<Set<AddressResponseDto>> getAllAddresses() {
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = HttpStatusErrorDto.class))} )})
+    public ResponseEntity<Set<AddressResponseDto>> getAllAddresses()
+    {
         return ResponseEntity.ok().body(addressService.getAllAddresses());
     }
 }

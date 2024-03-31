@@ -16,6 +16,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Getter
 @Setter
+@ToString
 @Entity
 @Table(name = "roles", schema = "public")
 @JsonIdentityInfo(
@@ -35,15 +36,17 @@ public class Role {
     @Builder.Default
     @NotNull
     @JsonIgnoreProperties("role")
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "role")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "role", cascade = CascadeType.ALL)
     private Set<RoleActivation> roleActivations = new LinkedHashSet<>();
 
     @Builder.Default
+    @ToString.Exclude
     @JsonIgnoreProperties("roles")
     @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
     private Set<LoginProfile> loginProfiles = new LinkedHashSet<>();
 
     @Builder.Default
+    @ToString.Exclude
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "role_permissions", joinColumns = @JoinColumn(name = "role"))
     @Column(name = "permission")

@@ -204,10 +204,10 @@ function OrderForm() {
           ...(isNumberEmpty && { number: ordererInfo.address.number }),
           ...(isStreetEmpty && { street: ordererInfo.address.street }),
           ...(isCityEmpty && { city: ordererInfo.address.city }),
-          ...(isStateEmpty && { state: ordererInfo.address.state }),
+          ...(isStateEmpty && { state: ordererInfo.address.state || null }),
           ...(isCountryEmpty && { country: ordererInfo.address.country }),
           ...(isZipcodeEmpty && { zipcode: ordererInfo.address.zipcode }),
-          ...(isInfoEmpty && { info: ordererInfo.address.info })
+          ...(isInfoEmpty && { info: ordererInfo.address.info || null })
         }
       };
       switchEmptyStringToNull(updatedOrderData);
@@ -292,7 +292,7 @@ function OrderForm() {
           {
             orderData.products.map((product, index) => (
               <div key={index}>
-                <p>Product {index + 1}</p>
+                <div className='text'>Product {index + 1}</div>
                 <div className='order-line-container'>
                   <label htmlFor={`productReference${index}`}>Reference:</label>
                   <input type="text" id={`productReference${index}`} name="reference" value={product.reference} onChange={(e) => handleProductChange(e, index)} />
@@ -309,7 +309,7 @@ function OrderForm() {
             ))
           }
         </div>
-        <button type="button" onClick={handleAddProduct}>Add Product</button>
+        <button className='user' type="button" onClick={handleAddProduct}>Add Product</button>
 
         {/* Orderer */}
         <div className='title2'>Orderer</div>
@@ -367,7 +367,7 @@ function OrderForm() {
             <input type="text" id="info" name="info" value={orderData.address.info} placeholder={ordererInfo.address ? ordererInfo.address.info : ''} onChange={handleAddressChange} />
           </div>
         </div >
-        <button type="submit">Submit</button>
+        <button className="user" type="submit">Submit</button>
       </form >
 
       {gettingError && (

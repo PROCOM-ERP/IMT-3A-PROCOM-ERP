@@ -24,19 +24,20 @@ Other services, such as an inventory service, are in the pipeline.
 
 **_NB_**: This project is part of the ProCom teaching unit in the 3rd year of the engineering course at IMT Atlantique.
 It is not really intended to be marketed,
-but rather to demonstrate the feasibility of such a system with a Proof Of Concept.
+but rather to serve as a pedagogical model made to showcase to students the challenges of distribued systems and developing one.
 
 ## Using / Deploying our system
 
-You can find a comprehensive [Deployment guide](./docs/DEPLOYING.md) on how to deploy and use our system, in the [documentation section](./docs).
+You can find a comprehensive [Deployment guide](./docs/DEPLOYING.md) on how to deploy our system, in the [documentation section](./docs).
+After having deployed, you can find a comprehensive [Usage guide](./docs/USAGE.md) on how to use our system.
 
 ## Metadata
 
 - **Timestamp**: 2023-11-02
-- **Last update**: 2024-03-21
+- **Last update**: 2024-03-31
 - **Status**: In development
 - **Current Version**: 1.1.0
-- **Supported Platforms**: Windows (Linux and macOS untested)
+- **Supported Platforms**: Windows, Linux and MacOS
 - **Development Environment**:
   - [Intellij IDEA 2023.1](https://www.jetbrains.com/idea/)
   - [Visual Studio Code](https://code.visualstudio.com)
@@ -60,9 +61,8 @@ You can find a comprehensive [Deployment guide](./docs/DEPLOYING.md) on how to d
 ```
 IMT-3A-PROCOM-ERP/                     This repository
 ├── README.md                          This document
-├── BACKLOG.md                         Actions to realise (features, releases, fixes, etc)
-├── CONTRIBUTING.md                    Explains how to contribute to the project, by respecting some rules
-├── CHANGELOG.md                       Tracked changes in the project's lifecycle
+├── CODE_OF_CONDUCT.md                 Code of conduct you have to follow on this project
+├── SECURITY.md                        Security information, such as known vulnerabilities, or how to report them
 ├── LICENSE.md                         License in place for this project
 ├── deploy.sh                          Complete deploy script (available in a .ps1 for Windows devs)
 ├── undeploy.sh                        Undeploy script (available in a .ps1 for Windows devs)
@@ -116,13 +116,20 @@ IMT-3A-PROCOM-ERP/                     This repository
 │   └── docker-compose-swarm.yml       Docker containers build script to simulate the project Swarm mode
 │
 └── docs/                              All technical and GitHub workflows documentation
-    ├── workflows/                     GitHub workflows as sequence diagrams
-    │   └── workflow-git-action.png    Sequence diagram for a specific action to realise
-    ├── security/                      Security documentation for this project
-    │   └── README.md                  Security overview
+    ├── diagrams/                      UML and other diagrams
+    ├── contributing/
+    │   ├── workflow-git-action.png    Sequence diagram for a specific action to realise
+    │   └── CONTRIBUTING.md            Explains how to contribute to the project, by respecting some rules
+    ├── security/                      Security specific files
+    │   └── templates/                 Security templates
     ├── api/                           All APIs for all services are documented here
     │   └── doc-api-xxx-service.json   An API documentation
-    └── DEPLOYING.md                   A comprehensive guide on how to deploy our system
+    ├── CHANGELOG.md                   Tracked changes in the project's lifecycle
+    ├── FEATURES.md                    Brief list of features
+    ├── MODELING.md                    Conception documentation on the ERP's architecture
+    ├── ROADMAP.md                     Next steps ahead, for future contributors
+    ├── DEPLOYING.md                   A comprehensive guide on how to deploy our system
+    └── USAGE.md                       A comprehensive guide on how to use our system once deployed (tailored to educational purposes)
 ```
 
 ## Organisation functioning
@@ -137,7 +144,7 @@ any changes in this directory will need a review acceptation from a member of th
 
 ## Contributing
 
-[CONTRIBUTING.md](CONTRIBUTING.md) file explains how to contribute to the project,
+[CONTRIBUTING.md](./docs/contributing/CONTRIBUTING.md) file explains how to contribute to the project,
 and what are the contributing rules.
 
 We follow a [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md), if you want to contribute, you will _have_ to follow it.
@@ -145,6 +152,8 @@ We follow a [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md), if you want to contribute,
 ## Security
 
 You can verify the versions of this software still maintained to this day, as well as how to report a bug or security issue in the [SECURITY.md](SECURITY.md) section.
+
+For specific internal security documentation, see our security guide at [SYSTEM_SECURITY.md](./docs/SYSTEM_SECURITY.md).
 
 ## Suggestions
 
@@ -168,8 +177,8 @@ Thanks also to external resources for their open-source samples / documentation:
 
 ## Contributors
 
-- BOPS: _Scrum Master_, _Backend Engineer & Developer_, _Head of Security_, _System Support_
-- maestro-bene: _Backend Engineer & Developer_, _System Administrator_, _Security Support_
-- Antoine: _Product Owner_, _Frontend & UI/UX Support_
-- ArthurMaquinImt: _Backend Engineer & Developer_
-- yunea: _Frontend & UI/UX Developer_
+- BOPS (from 2023-10-01 until 2024-03-31): _Project Manager_, _Backend Engineer & Developer_, _Security Support_, _System Support_
+- maestro-bene (from 2023-10-01): _Backend Engineer & Developer_, _System Administrator_, _Head of Security_
+- Antoine (from 2023-10-01 until 2024-03-31): _Product Owner Support_, _Frontend & UI/UX Support_
+- ArthurMaquinImt (from 2023-10-01 until 2024-03-31): _Backend Engineer & Developer_
+- yunea (from 2023-10-01 until 2024-03-31): _Frontend & UI/UX Developer_

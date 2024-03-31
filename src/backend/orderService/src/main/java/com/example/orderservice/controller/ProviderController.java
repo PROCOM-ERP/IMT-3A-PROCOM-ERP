@@ -1,5 +1,6 @@
 package com.example.orderservice.controller;
 
+import com.example.orderservice.dto.HttpStatusErrorDto;
 import com.example.orderservice.model.Path;
 import com.example.orderservice.model.Provider;
 import com.example.orderservice.service.ProviderService;
@@ -21,7 +22,11 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class ProviderController {
 
+    /* Service Beans */
+
     private final ProviderService providerService;
+
+    /* Endpoints Methods */
 
     @GetMapping
     @Operation(operationId = "getAllProviders", tags = {"providers"},
@@ -34,11 +39,14 @@ public class ProviderController {
                             schema = @Schema(type = "array", implementation = Provider.class))} ),
             @ApiResponse(responseCode = "401", description =
                     "Roles in Jwt token are insufficient to authorize the access to this URL",
-                    content = {@Content(mediaType = "application/json")} ),
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = HttpStatusErrorDto.class))} ),
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
-                    content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<Set<Provider>> getAllProviders() {
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = HttpStatusErrorDto.class))} )})
+    public ResponseEntity<Set<Provider>> getAllProviders()
+    {
         return ResponseEntity.ok(providerService.getAllProviders());
     }
 

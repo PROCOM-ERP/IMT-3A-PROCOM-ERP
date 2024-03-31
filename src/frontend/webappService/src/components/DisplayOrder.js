@@ -58,7 +58,7 @@ function DisplayOrder({ orderId }) {
 
   return (
     <>
-      <div className="user-profile-container">
+      <div className="user-profile-container user">
         <div className="title">Order</div>
         <div className="information-container">
           <OrderProgess

@@ -17,10 +17,10 @@ public class MoveItemRequestDto {
     @Min(0)
     @NotNull
     private Integer addressId;
+
     @NotBlank
     @NotNull
     @Size(max=6)
-    @Pattern(regexp = "^[^';\"\\\\]*$")
     @Pattern(regexp = "[A-Z][0-9]{5}")
     private String employee;
 }
