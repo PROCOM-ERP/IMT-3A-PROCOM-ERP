@@ -18,6 +18,7 @@
 
 ### Frontend and Service Expansion
 
+- **UI/UX enhancement**: Harmonising and finalising the site's styling.
 - **Inventory Service Frontend**: Design and develop the frontend for the Inventory Service, 
   enhancing the user experience and system functionality.
 - **New Services Development**: Begin development on additional modules, such as HR, Accounting, Supply Chain or CRM. 
@@ -34,9 +35,10 @@
 - **Security measures**: Implement CORS configuration, CSRF protection, Jwt token encryption,
   secure Jwt session data and storage, and an API rate limiting system.
 - **Backend optimisation**: Study and modify the types of collections returned by GET endpoints, 
-  to optimise processing and add sorting to improve readability.
+  to optimise processing and add sorting to improve readability. 
+  Optimise interaction with the database using pagination and Data Projection.
 - **AMQP message reliability**: Fine-tuned management of AMQP message processing errors in Spring, 
-  including the use of dead-letter queues.
+  including the use of dead-letter queues. An example is available for `roles.init` in the authentication service.
 - **Declaration of AMQP item names**: Harmonise and add the names of RabbitMQ elements (queues, patterns, exchanges), 
   to environment variables (.env) and then inject them into the Java code.
 - **Service Discovery**: Set up a Service Discovery to detect the services up, 
