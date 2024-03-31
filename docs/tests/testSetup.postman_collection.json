@@ -1,0 +1,108 @@
+{
+	"info": {
+		"_postman_id": "bde5e743-f9a4-44c1-9a35-16b5027229b8",
+		"name": "Test environnement",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "32852210"
+	},
+	"item": [
+		{
+			"name": "SET_jwt_test",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"test_token\", pm.response.text());"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"strictSSL": false
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "A00001",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "toto",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:8041/api/authentication/v1/auth/jwt",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "8041",
+					"path": [
+						"api",
+						"authentication",
+						"v1",
+						"auth",
+						"jwt"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_employees",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"strictSSL": false
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{test_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:8041/api/directory/v1/employees",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "8041",
+					"path": [
+						"api",
+						"directory",
+						"v1",
+						"employees"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

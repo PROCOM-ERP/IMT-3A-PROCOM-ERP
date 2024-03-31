@@ -1,0 +1,3028 @@
+{
+	"info": {
+		"_postman_id": "bb20436b-2fcb-4b6c-932b-adbf14d889ac",
+		"name": "Dir service test",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "32852210"
+	},
+	"item": [
+		{
+			"name": "AddressController",
+			"item": [
+				{
+					"name": "createAddress",
+					"item": [
+						{
+							"name": "201-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Add a new address\r",
+											"pm.test(\"Create address with a valid request body\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"number\": 666,\r\n    \"street\": \"Sata Venera\",\r\n    \"city\": \"La Valette\",\r\n    \"state\": \"San Julian\",\r\n    \"country\": \"Malta\",\r\n    \"zipcode\": \"12345\",\r\n    \"info\": \"info\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/directory/v1/addresses",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"directory",
+										"v1",
+										"addresses"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "201-2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Add a new address\r",
+											"pm.test(\"Create role with a valid request body\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"number\": 10,\r\n    \"street\": \"Rue Louis Veuillot\",\r\n    \"city\": \"Brest\",\r\n    \"state\": \"Bretagne\",\r\n    \"country\": \"France\",\r\n    \"zipcode\": \"27000\",\r\n    \"info\": \"Habite le RG\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/directory/v1/addresses",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"directory",
+										"v1",
+										"addresses"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "201-3",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Add a new address\r",
+											"pm.test(\"Create role with a valid request body\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"number\": 10,\r\n    \"street\": \"Rue Louis Veuillot\",\r\n    \"city\": \"Brest\",\r\n    \"state\": \"Bretagne\",\r\n    \"country\": \"France\",\r\n    \"zipcode\": \"27000\" // info should be 'null'\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/directory/v1/addresses",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"directory",
+										"v1",
+										"addresses"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "400-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Add a new address\r",
+											"pm.test(\"Create role with an invalid request body\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"number\": \"10\", //number should be an integer according t othe current API\r\n    \"street\": \"Rue Louis Veuillot\",\r\n    \"city\": \"Brest\",\r\n    \"state\": \"Bretagne\",\r\n    \"country\": \"France\",\r\n    \"zipcode\": \"27000\",\r\n    \"info\": \"Habite le RG\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/directory/v1/addresses",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"directory",
+										"v1",
+										"addresses"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "400-3",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Add a new address\r",
+											"pm.test(\"Create role with an invalid request body\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"number\": \"ten\", //Must be an integer\r\n    \"street\": \"Rue Louis Veuillot\",\r\n    \"city\": \"Brest\",\r\n    \"state\": \"Bretagne\",\r\n    \"country\": \"France\",\r\n    \"zipcode\": \"27000\",\r\n    \"info\": \"Habite le RG\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/directory/v1/addresses",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"directory",
+										"v1",
+										"addresses"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "400-4",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Add a new address\r",
+											"pm.test(\"Create role with an invalid request body\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"number\": 10,\r\n    \"street\": \"Rue Louis Veuillot\",\r\n    \"city\": \"Brest\",\r\n    \"state\": \"Bretagne\",\r\n    \"country\": \"France\",\r\n    \"zipcode\": 27000, //Must be a string according to the current API\r\n    \"info\": \"Habite le RG\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/directory/v1/addresses",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"directory",
+										"v1",
+										"addresses"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "422-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Add a new address\r",
+											"pm.test(\"Create role with an invalid request body\", function () {\r",
+											"    pm.response.to.have.status(422);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"number\": 666,\r\n    \"street\": \"Sata Venera\",\r\n    \"city\": \"La Valette\",\r\n    \"state\": \"\",\r\n    \"country\": \"Malta\",\r\n    \"zipcode\": \"12345\",\r\n    \"info\": \"\"\r\n}\r\n\r\n// Should return a 422 because the address is already created (201-1)",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/directory/v1/addresses",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"directory",
+										"v1",
+										"addresses"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "422-2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Add a new address\r",
+											"pm.test(\"Create role with an invalid request body\", function () {\r",
+											"    pm.response.to.have.status(422);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"number\": 666,\r\n    \"street\": \"Rue de l'inspiration\",\r\n    \"city\": \"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed commodo nibh eu libero varius, ac condimentum sapien molestie. Nullam nec metus nec quam posuere commodo vel nec lectus. Vivamus ac tempor nisi. Fusce auctor, dui nec convallis eleifend, dui elit varius est, a fermentum lacus leo et nibh. Cras nec bibendum nulla. Maecenas vestibulum urna at\",\r\n    \"state\": \"Montcuq\",\r\n    \"country\": \"Groland\",\r\n    \"zipcode\": \"45123\",\r\n    \"info\": \"\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/directory/v1/addresses",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"directory",
+										"v1",
+										"addresses"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "getAllAddresses",
+					"item": [
+						{
+							"name": "200-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// getAllAddresses\r",
+											"pm.test(\"Address list retrieved correctly\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/directory/v1/addresses",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"directory",
+										"v1",
+										"addresses"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "401-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// getAllAddresses\r",
+											"pm.test(\"Address list retrieved correctly\", function () {\r",
+											"    pm.response.to.have.status(401);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "123",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/directory/v1/addresses",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"directory",
+										"v1",
+										"addresses"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "EmployeeController",
+			"item": [
+				{
+					"name": "createEmployee",
+					"item": [
+						{
+							"name": "201-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Add a new employee\r",
+											"pm.test(\"Create employee with a valid request body\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"id\": \"A00001\",\r\n    \"lastName\": \"BOUCHARD\",\r\n    \"firstName\": \"Gérard\",\r\n    \"email\": \"gerard.bouchard@boucherie-du-coin.bzh\",\r\n    \"phoneNumber\": \"(+33) 0612457823\",\r\n    \"job\": \"Boucher/charcutier et chirurgien le weekend\",\r\n    \"orgUnit\": 1\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/directory/v1/employees",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"directory",
+										"v1",
+										"employees"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "201-2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Add a new employee\r",
+											"pm.test(\"Create employee with a valid request body\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"id\": \"A00001\",\r\n    \"lastName\": \"BOUCHARD\",\r\n    \"firstName\": \"Gérard\",\r\n    \"email\": \"gerard.bouchard@boucherie-du-coin.bzh\",\r\n    \"orgUnit\": 1\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/directory/v1/employees",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"directory",
+										"v1",
+										"employees"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "400-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Add a new employee\r",
+											"pm.test(\"Create employee with a bad request body\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"id\": \"A00001\",\r\n    \"lastName\": \"BOUCHARD\",\r\n    \"firstName\": \"Gérard\",\r\n    \"email\": \"gerard.bouchard@boucherie-du-coin.bzh\",\r\n    \"phoneNumber\": \"0612457823\",\r\n    \"job\": \"Boucher/charcutier et chirurgien le weekend\"\r\n    // missing a parameter\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/directory/v1/employees",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"directory",
+										"v1",
+										"employees"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "400-2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Add a new employee\r",
+											"pm.test(\"Create employee with a bad request body\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"id\": \"A00001\",\r\n    \"lastName\": \"BOUCHARD\",\r\n    \"firstName\": \"Gérard\",\r\n    // missing a param\r\n    \"phoneNumber\": \"0612457823\",\r\n    \"job\": \"Boucher/charcutier et chirurgien le weekend\",\r\n    \"orgUnit\": 1\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/directory/v1/employees",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"directory",
+										"v1",
+										"employees"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "422-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Add a new employee\r",
+											"pm.test(\"Create employee with an invalid request body\", function () {\r",
+											"    pm.response.to.have.status(422);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"id\": \"A00001\",\r\n    \"lastName\": \"BOUCHARD\",\r\n    \"firstName\": \"Gérard\",\r\n    \"email\": \"invalid email\",           // invalid address\r\n    \"phoneNumber\": \"0612457823\",\r\n    \"job\": \"Boucher/charcutier et chirurgien le weekend\",\r\n    \"orgUnit\": 1\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/directory/v1/employees",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"directory",
+										"v1",
+										"employees"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "422-2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Add a new employee\r",
+											"pm.test(\"Create employee with an invalid request body\", function () {\r",
+											"    pm.response.to.have.status(422);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"id\": \"A00001\",\r\n    \"lastName\": \"BOUCHARD\",\r\n    \"firstName\": \"Gérard\",\r\n    \"email\": \"gerard.bouchard@boucherie-du-coin.bzh\",\r\n    \"phoneNumber\": \"0612457823\",\r\n    \"job\": \"Boucher/charcutier et chirurgien le weekend\",\r\n    \"orgUnit\": 100 // In the test environnement, this value should never exists\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/directory/v1/employees",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"directory",
+										"v1",
+										"employees"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "422-3",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Add a new employee\r",
+											"pm.test(\"Create employee with an invalid request body\", function () {\r",
+											"    pm.response.to.have.status(422);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"id\": \"A00001\",\r\n    \"lastName\": \"BOUCHARD\",\r\n    \"firstName\": \"Fusce auctor, dui nec convallis eleifend, dui elit varius est, a fermentum lacus leo et nibh. Cras nec bibendum nulla. Maecenas vestibulum urna at nulla ultricies, vitae maximus nunc varius. Donec pretium eros ac libero cursus, id vehicula risus volutpat. Curabitur quis mi mauris. Nullam et ante non dui aliquam gravida. Morbi auctor nisi sit amet justo tristique, at euismod mi fermentum. Aliquam a metus ut nunc suscipit fringilla\", //too long\r\n    \"email\": \"gerard.bouchard@boucherie-du-coin.bzh\",\r\n    \"phoneNumber\": \"0612457823\",\r\n    \"job\": \"Boucher/charcutier et chirurgien le weekend\",\r\n    \"orgUnit\": 1\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/directory/v1/employees",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"directory",
+										"v1",
+										"employees"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "422-4",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Add a new employee\r",
+											"pm.test(\"Create employee with a valid request body\", function () {\r",
+											"    pm.response.to.have.status(422);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"id\": \"test02\",\r\n    \"lastName\": \"BOUCHARD\",\r\n    \"firstName\": \"Gérard\",\r\n    \"email\": \"gerard.bouchard@boucherie-du-coin.bzh\",\r\n    \"phoneNumber\": \"0612457823\",\r\n    \"job\": \"Boucher/charcutier et chirurgien le weekend\",\r\n    \"orgUnit\": 1\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/directory/v1/employees",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"directory",
+										"v1",
+										"employees"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "getAllEmployees",
+					"item": [
+						{
+							"name": "200-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// getEmployeeById\r",
+											"pm.test(\"Employee list retrieved correctly\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/directory/v1/employees",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"directory",
+										"v1",
+										"employees"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "403-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// getAllAddresses\r",
+											"pm.test(\"Employee list retrieved correctly\", function () {\r",
+											"    pm.response.to.have.status(403);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "123",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/directory/v1/employees",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"directory",
+										"v1",
+										"employees"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "getEmployeeById",
+					"item": [
+						{
+							"name": "200-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// getAllAddresses\r",
+											"pm.test(\"Employee list retrieved correctly\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/directory/v1/employees/A00001",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"directory",
+										"v1",
+										"employees",
+										"A00001"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "401-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// getAllAddresses\r",
+											"pm.test(\"Employee list retrieved correctly\", function () {\r",
+											"    pm.response.to.have.status(401);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "123",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/directory/v1/employees/A00001",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"directory",
+										"v1",
+										"employees",
+										"A00001"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "404-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// getAllAddresses\r",
+											"pm.test(\"Employee list retrieved correctly\", function () {\r",
+											"    pm.response.to.have.status(404);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/directory/v1/employees/X00999",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"directory",
+										"v1",
+										"employees",
+										"X00999"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "422-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// getAllAddresses\r",
+											"pm.test(\"Employee list retrieved correctly\", function () {\r",
+											"    pm.response.to.have.status(422);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/directory/v1/employees/xxxxxx",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"directory",
+										"v1",
+										"employees",
+										"xxxxxx"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "RoleController",
+			"item": [
+				{
+					"name": "getAllRoles",
+					"item": [
+						{
+							"name": "200-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// getAllRoles\r",
+											"pm.test(\"Roles list retrieved correctly\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/directory/v1/roles",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"directory",
+										"v1",
+										"roles"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "401-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// getAllAddresses\r",
+											"pm.test(\"Employee list retrieved correctly\", function () {\r",
+											"    pm.response.to.have.status(401);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "123",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/directory/v1/employees",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"directory",
+										"v1",
+										"employees"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "getRoleByName",
+					"item": [
+						{
+							"name": "200-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// getRoleByName\r",
+											"pm.test(\"Roles list retrieved correctly\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/directory/v1/roles/user",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"directory",
+										"v1",
+										"roles",
+										"user"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "401-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// getRoleByName\r",
+											"pm.test(\"Roles list retrieved correctly\", function () {\r",
+											"    pm.response.to.have.status(401);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "123",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/directory/v1/roles/user",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"directory",
+										"v1",
+										"roles",
+										"user"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "404-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// getRoleByName\r",
+											"pm.test(\"Roles list retrieved correctly\", function () {\r",
+											"    pm.response.to.have.status(404);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/directory/v1/roles/NOT-EXISTING",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"directory",
+										"v1",
+										"roles",
+										"NOT-EXISTING"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "404-2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// getRoleByName\r",
+											"pm.test(\"Roles list retrieved correctly\", function () {\r",
+											"    pm.response.to.have.status(404);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/directory/v1/",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"directory",
+										"v1",
+										""
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "getRoleActivationByName",
+					"item": [
+						{
+							"name": "200-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// getRoleActivationByName\r",
+											"pm.test(\"Role activation retrieved correctly\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/directory/v1/roles/user/activation",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"directory",
+										"v1",
+										"roles",
+										"user",
+										"activation"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "401-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// getRoleActivationByName\r",
+											"pm.test(\"Role activation retrieved correctly\", function () {\r",
+											"    pm.response.to.have.status(401);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "123",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/directory/v1/roles/user/activation",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"directory",
+										"v1",
+										"roles",
+										"user",
+										"activation"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "404-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// getRoleActivationByName\r",
+											"pm.test(\"brain not found\", function () {\r",
+											"    pm.response.to.have.status(404);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/directory/v1/brain/FUN/activation",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"directory",
+										"v1",
+										"brain",
+										"FUN",
+										"activation"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "updateRoleByName",
+					"item": [
+						{
+							"name": "204-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// updateRoleByName\r",
+											"pm.test(\"Upadate the role with the name\", function () {\r",
+											"    pm.response.to.have.status(204);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.sendRequest({\r",
+											"    url: \"https://localhost:8041/api/authentication/v1/auth/jwt\",\r",
+											"    method: \"POST\",\r",
+											"    header: {\r",
+											"        \"Authorization\": pm.environment.get(\"basic_token\")\r",
+											"    }\r",
+											"}, function (err, response) {\r",
+											"    if (err) {\r",
+											"        console.error(err);\r",
+											"        return;\r",
+											"    }\r",
+											"    pm.environment.set(\"test_token\", response.text());\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"isEnable\": true,\r\n    \"permissions\": [\r\n        \"CanCreateEmployee\",\r\n        \"CanModifyEmployee\",\r\n        \"CanModifyRole\",\r\n        \"CanReadAddress\",\r\n        \"CanReadEmployee\",\r\n        \"CanReadOrganisation\",\r\n        \"CanReadRole\"]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/directory/v1/roles/user",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"directory",
+										"v1",
+										"roles",
+										"user"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "400-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// updateRoleByName\r",
+											"pm.test(\"Upadate the role with the name\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.sendRequest({\r",
+											"    url: \"https://localhost:8041/api/authentication/v1/auth/jwt\",\r",
+											"    method: \"POST\",\r",
+											"    header: {\r",
+											"        \"Authorization\": pm.environment.get(\"basic_token\")\r",
+											"    }\r",
+											"}, function (err, response) {\r",
+											"    if (err) {\r",
+											"        console.error(err);\r",
+											"        return;\r",
+											"    }\r",
+											"    pm.environment.set(\"test_token\", response.text());\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"isEnable\": true,\r\n    \"wrongField\": [\r\n        \"CanCreateEmployee\",\r\n        \"CanModifyEmployee\",\r\n        \"CanModifyRole\",\r\n        \"CanReadAddress\",\r\n        \"CanReadEmployee\",\r\n        \"CanReadOrganisation\",\r\n        \"CanReadRole\"]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/directory/v1/roles/user",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"directory",
+										"v1",
+										"roles",
+										"user"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "400-2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// updateRoleByName\r",
+											"pm.test(\"Upadate the role with the name\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.sendRequest({\r",
+											"    url: \"https://localhost:8041/api/authentication/v1/auth/jwt\",\r",
+											"    method: \"POST\",\r",
+											"    header: {\r",
+											"        \"Authorization\": pm.environment.get(\"basic_token\")\r",
+											"    }\r",
+											"}, function (err, response) {\r",
+											"    if (err) {\r",
+											"        console.error(err);\r",
+											"        return;\r",
+											"    }\r",
+											"    pm.environment.set(\"test_token\", response.text());\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"wrongField\": true,\r\n    \"permissions\": [\r\n        \"CanCreateEmployee\",\r\n        \"CanModifyEmployee\",\r\n        \"CanModifyRole\",\r\n        \"CanReadAddress\",\r\n        \"CanReadEmployee\",\r\n        \"CanReadOrganisation\",\r\n        \"CanReadRole\"]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/directory/v1/roles/user",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"directory",
+										"v1",
+										"roles",
+										"user"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "400-3",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// updateRoleByName\r",
+											"pm.test(\"Upadate the role with the name\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.sendRequest({\r",
+											"    url: \"https://localhost:8041/api/authentication/v1/auth/jwt\",\r",
+											"    method: \"POST\",\r",
+											"    header: {\r",
+											"        \"Authorization\": pm.environment.get(\"basic_token\")\r",
+											"    }\r",
+											"}, function (err, response) {\r",
+											"    if (err) {\r",
+											"        console.error(err);\r",
+											"        return;\r",
+											"    }\r",
+											"    pm.environment.set(\"test_token\", response.text());\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"isEnable\": true,\r\n    \"permissions\": \"CanReadOrganisation\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/directory/v1/roles/user",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"directory",
+										"v1",
+										"roles",
+										"user"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "400-4",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// updateRoleByName\r",
+											"pm.test(\"Upadate the role with the name\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.sendRequest({\r",
+											"    url: \"https://localhost:8041/api/authentication/v1/auth/jwt\",\r",
+											"    method: \"POST\",\r",
+											"    header: {\r",
+											"        \"Authorization\": pm.environment.get(\"basic_token\")\r",
+											"    }\r",
+											"}, function (err, response) {\r",
+											"    if (err) {\r",
+											"        console.error(err);\r",
+											"        return;\r",
+											"    }\r",
+											"    pm.environment.set(\"test_token\", response.text());\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/directory/v1/roles/user",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"directory",
+										"v1",
+										"roles",
+										"user"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "400-5",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// updateRoleByName\r",
+											"pm.test(\"Upadate the role with the name\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.sendRequest({\r",
+											"    url: \"https://localhost:8041/api/authentication/v1/auth/jwt\",\r",
+											"    method: \"POST\",\r",
+											"    header: {\r",
+											"        \"Authorization\": pm.environment.get(\"basic_token\")\r",
+											"    }\r",
+											"}, function (err, response) {\r",
+											"    if (err) {\r",
+											"        console.error(err);\r",
+											"        return;\r",
+											"    }\r",
+											"    pm.environment.set(\"test_token\", response.text());\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"isEnable\": \"yes\", // Not boolean\r\n    \"permissions\": [\r\n        \"CanCreateEmployee\",\r\n        \"CanModifyEmployee\",\r\n        \"CanModifyRole\",\r\n        \"CanReadAddress\",\r\n        \"CanReadEmployee\",\r\n        \"CanReadOrganisation\",\r\n        \"CanReadRole\"]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/directory/v1/roles/user",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"directory",
+										"v1",
+										"roles",
+										"user"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "401-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// updateRoleByName\r",
+											"pm.test(\"Upadate the role with the name\", function () {\r",
+											"    pm.response.to.have.status(401);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.sendRequest({\r",
+											"    url: \"https://localhost:8041/api/authentication/v1/auth/jwt\",\r",
+											"    method: \"POST\",\r",
+											"    header: {\r",
+											"        \"Authorization\": pm.environment.get(\"basic_token\")\r",
+											"    }\r",
+											"}, function (err, response) {\r",
+											"    if (err) {\r",
+											"        console.error(err);\r",
+											"        return;\r",
+											"    }\r",
+											"    pm.environment.set(\"test_token\", response.text());\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "123",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"isEnable\": true,\r\n    \"permissions\": [\r\n        \"CanCreateEmployee\",\r\n        \"CanModifyEmployee\",\r\n        \"CanModifyRole\",\r\n        \"CanReadAddress\",\r\n        \"CanReadEmployee\",\r\n        \"CanReadOrganisation\",\r\n        \"CanReadRole\"]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/directory/v1/roles/user",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"directory",
+										"v1",
+										"roles",
+										"user"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "404-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// updateRoleByName\r",
+											"pm.test(\"Upadate the role with the name\", function () {\r",
+											"    pm.response.to.have.status(404);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.sendRequest({\r",
+											"    url: \"https://localhost:8041/api/authentication/v1/auth/jwt\",\r",
+											"    method: \"POST\",\r",
+											"    header: {\r",
+											"        \"Authorization\": pm.environment.get(\"basic_token\")\r",
+											"    }\r",
+											"}, function (err, response) {\r",
+											"    if (err) {\r",
+											"        console.error(err);\r",
+											"        return;\r",
+											"    }\r",
+											"    pm.environment.set(\"test_token\", response.text());\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"isEnable\": true,\r\n    \"permissions\": [\r\n        \"CanCreateEmployee\",\r\n        \"CanModifyEmployee\",\r\n        \"CanModifyRole\",\r\n        \"CanReadAddress\",\r\n        \"CanReadEmployee\",\r\n        \"CanReadOrganisation\",\r\n        \"CanReadRole\"]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/directory/v1/roles/invalid user",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"directory",
+										"v1",
+										"roles",
+										"invalid user"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "422-2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// updateRoleByName\r",
+											"pm.test(\"Upadate the role with the name\", function () {\r",
+											"    pm.response.to.have.status(422);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.sendRequest({\r",
+											"    url: \"https://localhost:8041/api/authentication/v1/auth/jwt\",\r",
+											"    method: \"POST\",\r",
+											"    header: {\r",
+											"        \"Authorization\": pm.environment.get(\"basic_token\")\r",
+											"    }\r",
+											"}, function (err, response) {\r",
+											"    if (err) {\r",
+											"        console.error(err);\r",
+											"        return;\r",
+											"    }\r",
+											"    pm.environment.set(\"test_token\", response.text());\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"isEnable\": true,\r\n    \"permissions\": [\r\n        \"invalidRole\",  //invalidRole\r\n        \"CanModifyEmployee\",\r\n        \"CanModifyRole\",\r\n        \"CanReadAddress\",\r\n        \"CanReadEmployee\",\r\n        \"CanReadOrganisation\",\r\n        \"CanReadRole\"]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/directory/v1/roles/user",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"directory",
+										"v1",
+										"roles",
+										"user"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "422-3",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// updateRoleByName\r",
+											"pm.test(\"Upadate the role with the name\", function () {\r",
+											"    pm.response.to.have.status(422);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.sendRequest({\r",
+											"    url: \"https://localhost:8041/api/authentication/v1/auth/jwt\",\r",
+											"    method: \"POST\",\r",
+											"    header: {\r",
+											"        \"Authorization\": pm.environment.get(\"basic_token\")\r",
+											"    }\r",
+											"}, function (err, response) {\r",
+											"    if (err) {\r",
+											"        console.error(err);\r",
+											"        return;\r",
+											"    }\r",
+											"    pm.environment.set(\"test_token\", response.text());\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"isEnable\": true,\r\n    \"permissions\": [\r\n        123,        //invalid  value\r\n        \"CanModifyEmployee\",\r\n        \"CanModifyRole\",\r\n        \"CanReadAddress\",\r\n        \"CanReadEmployee\",\r\n        \"CanReadOrganisation\",\r\n        \"CanReadRole\"]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/directory/v1/roles/user",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"directory",
+										"v1",
+										"roles",
+										"user"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "422-4",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// updateRoleByName\r",
+											"pm.test(\"Upadate the role with the name\", function () {\r",
+											"    pm.response.to.have.status(422);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.sendRequest({\r",
+											"    url: \"https://localhost:8041/api/authentication/v1/auth/jwt\",\r",
+											"    method: \"POST\",\r",
+											"    header: {\r",
+											"        \"Authorization\": pm.environment.get(\"basic_token\")\r",
+											"    }\r",
+											"}, function (err, response) {\r",
+											"    if (err) {\r",
+											"        console.error(err);\r",
+											"        return;\r",
+											"    }\r",
+											"    pm.environment.set(\"test_token\", response.text());\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"isEnable\": true,\r\n    \"permissions\": [\r\n        \"CanCreateEmployee\",\r\n        \"CanModifyEmployee\",\r\n        \"<script>echo('hacked');</script>)\",  //invalid value\r\n        \"CanReadAddress\",\r\n        \"CanReadEmployee\",\r\n        \"CanReadOrganisation\",\r\n        \"CanReadRole\"]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/directory/v1/roles/user",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"directory",
+										"v1",
+										"roles",
+										"user"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "422-5",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// updateRoleByName\r",
+											"pm.test(\"Upadate the role with the name\", function () {\r",
+											"    pm.response.to.have.status(422);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.sendRequest({\r",
+											"    url: \"https://localhost:8041/api/authentication/v1/auth/jwt\",\r",
+											"    method: \"POST\",\r",
+											"    header: {\r",
+											"        \"Authorization\": pm.environment.get(\"basic_token\")\r",
+											"    }\r",
+											"}, function (err, response) {\r",
+											"    if (err) {\r",
+											"        console.error(err);\r",
+											"        return;\r",
+											"    }\r",
+											"    pm.environment.set(\"test_token\", response.text());\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"isEnable\": true,\r\n    \"permissions\": [\r\n        \"CanCreateEmployee\",\r\n        \"CanCreateEmployee\",  // Same field\r\n        \"CanModifyRole\",\r\n        \"CanReadAddress\",\r\n        \"CanReadEmployee\",\r\n        \"CanReadOrganisation\",\r\n        \"CanReadRole\"]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/directory/v1/roles/user",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"directory",
+										"v1",
+										"roles",
+										"user"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "OrganisationController",
+			"item": [
+				{
+					"name": "getAllOrganisations",
+					"item": [
+						{
+							"name": "200-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// getAllOrganisations\r",
+											"pm.test(\"organisation list retrieved correctly\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{test_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/directory/v1/employees",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"directory",
+										"v1",
+										"employees"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "401-1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// getAllOrganisations\r",
+											"pm.test(\"organisation list retrieved correctly\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "123",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:8041/api/directory/v1/employees",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "8041",
+									"path": [
+										"api",
+										"directory",
+										"v1",
+										"employees"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	]
+}
