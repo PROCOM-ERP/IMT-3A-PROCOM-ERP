@@ -34,7 +34,7 @@ After having deployed, you can find a comprehensive [Usage guide](./docs/USAGE.m
 ## Metadata
 
 - **Timestamp**: 2023-11-02
-- **Last update**: 2024-03-29
+- **Last update**: 2024-03-31
 - **Status**: In development
 - **Current Version**: 1.1.0
 - **Supported Platforms**: Windows, Linux and MacOS
@@ -61,7 +61,6 @@ After having deployed, you can find a comprehensive [Usage guide](./docs/USAGE.m
 ```
 IMT-3A-PROCOM-ERP/                     This repository
 ├── README.md                          This document
-├── CHANGELOG.md                       Tracked changes in the project's lifecycle
 ├── CODE_OF_CONDUCT.md                 Code of conduct you have to follow on this project
 ├── SECURITY.md                        Security information, such as known vulnerabilities, or how to report them
 ├── LICENSE.md                         License in place for this project
@@ -117,6 +116,7 @@ IMT-3A-PROCOM-ERP/                     This repository
 │   └── docker-compose-swarm.yml       Docker containers build script to simulate the project Swarm mode
 │
 └── docs/                              All technical and GitHub workflows documentation
+    ├── diagrams/                      UML and other diagrams
     ├── contributing/
     │   ├── workflow-git-action.png    Sequence diagram for a specific action to realise
     │   └── CONTRIBUTING.md            Explains how to contribute to the project, by respecting some rules
@@ -124,6 +124,8 @@ IMT-3A-PROCOM-ERP/                     This repository
     │   └── templates/                 Security templates
     ├── api/                           All APIs for all services are documented here
     │   └── doc-api-xxx-service.json   An API documentation
+    ├── CHANGELOG.md                   Tracked changes in the project's lifecycle
+    ├── FEATURES.md                    Brief list of features
     ├── MODELING.md                    Conception documentation on the ERP's architecture
     ├── ROADMAP.md                     Next steps ahead, for future contributors
     ├── DEPLOYING.md                   A comprehensive guide on how to deploy our system
@@ -175,8 +177,8 @@ Thanks also to external resources for their open-source samples / documentation:
 
 ## Contributors
 
-- BOPS: _Scrum Master_, _Backend Engineer & Developer_, _Head of Security_, _System Support_
-- maestro-bene: _Backend Engineer & Developer_, _System Administrator_, _Security Support_
-- Antoine: _Product Owner_, _Frontend & UI/UX Support_
-- ArthurMaquinImt: _Backend Engineer & Developer_
-- yunea: _Frontend & UI/UX Developer_
+- BOPS (from 2023-10-01 until 2024-03-31): _Project Manager_, _Backend Engineer & Developer_, _Security Support_, _System Support_
+- maestro-bene (from 2023-10-01): _Backend Engineer & Developer_, _System Administrator_, _Head of Security_
+- Antoine (from 2023-10-01 until 2024-03-31): _Product Owner Support_, _Frontend & UI/UX Support_
+- ArthurMaquinImt (from 2023-10-01 until 2024-03-31): _Backend Engineer & Developer_
+- yunea (from 2023-10-01 until 2024-03-31): _Frontend & UI/UX Developer_
