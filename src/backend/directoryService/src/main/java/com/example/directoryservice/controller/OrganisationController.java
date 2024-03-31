@@ -1,5 +1,6 @@
 package com.example.directoryservice.controller;
 
+import com.example.directoryservice.dto.HttpStatusErrorDto;
 import com.example.directoryservice.dto.OrganisationResponseDto;
 import com.example.directoryservice.model.Path;
 import com.example.directoryservice.service.OrganisationService;
@@ -21,7 +22,11 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class OrganisationController {
 
+    /* Service Beans */
+
     private final OrganisationService organisationService;
+
+    /* Endpoints Methods */
 
     @GetMapping
     @Operation(operationId = "getAllOrganisations", tags = {"organisations"},
@@ -34,11 +39,14 @@ public class OrganisationController {
                             schema = @Schema(type = "array", implementation = OrganisationResponseDto.class))} ),
             @ApiResponse(responseCode = "401", description =
                     "Roles in Jwt token are insufficient to authorize the access to this URL",
-                    content = {@Content(mediaType = "application/json")} ),
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = HttpStatusErrorDto.class))} ),
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
-                    content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<Set<OrganisationResponseDto>> getAllOrganisations() {
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = HttpStatusErrorDto.class))} )})
+    public ResponseEntity<Set<OrganisationResponseDto>> getAllOrganisations()
+    {
         return ResponseEntity.ok().body(organisationService.getAllOrganisations());
     }
 }

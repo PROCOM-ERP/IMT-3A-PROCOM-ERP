@@ -1,13 +1,11 @@
 package com.example.directoryservice.controller;
 
-import com.example.directoryservice.dto.EmployeeCreationRequestDto;
-import com.example.directoryservice.dto.EmployeeEmailResponseDto;
-import com.example.directoryservice.dto.EmployeeResponseDto;
-import com.example.directoryservice.dto.EmployeeUpdateRequestDto;
+import com.example.directoryservice.dto.*;
 import com.example.directoryservice.model.Path;
 import com.example.directoryservice.service.EmployeeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -26,7 +24,11 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class EmployeeController {
 
+    /* Service Beans */
+
     private final EmployeeService employeeService;
+
+    /* Endpoints Methods */
 
     @PostMapping
     @Operation(operationId = "createEmployee", tags = {"employees"},
@@ -39,18 +41,24 @@ public class EmployeeController {
                     content = {@Content(mediaType = "application/json") }),
             @ApiResponse(responseCode = "400", description =
                     "The request body is badly structured or formatted",
-                    content = {@Content(mediaType = "application/json") }),
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = HttpStatusErrorDto.class)) }),
             @ApiResponse(responseCode = "401", description =
                     "Roles in Jwt token are insufficient to authorize the access to this URL",
-                    content = {@Content(mediaType = "application/json") }),
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = HttpStatusErrorDto.class)) }),
             @ApiResponse(responseCode = "422", description =
                     "Attribute values don't respect integrity constraints.<br>" +
                     "OrgUnit : retrieve organisations (organisations section) to know which one are available.",
-                    content = {@Content(mediaType = "application/json")} ),
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = HttpStatusErrorDto.class))} ),
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
-                    content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<String> createEmployee(@Valid @RequestBody EmployeeCreationRequestDto employeeDto) {
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = HttpStatusErrorDto.class))} )})
+    public ResponseEntity<String> createEmployee(
+            @Valid @RequestBody EmployeeCreationRequestDto employeeDto)
+    {
         // try to create a new entity
         String idEmployee = employeeService.createEmployee(employeeDto);
         // generate URI location to inform the client how to get information on the new entity
@@ -74,11 +82,14 @@ public class EmployeeController {
                     schema = @Schema(type = "array", implementation = EmployeeResponseDto.class))} ),
             @ApiResponse(responseCode = "401", description =
                     "Roles in Jwt token are insufficient to authorize the access to this URL",
-                    content = {@Content(mediaType = "application/json")} ),
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = HttpStatusErrorDto.class))} ),
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
-                    content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<Set<EmployeeResponseDto>> getAllEmployees() {
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = HttpStatusErrorDto.class))} )})
+    public ResponseEntity<Set<EmployeeResponseDto>> getAllEmployees()
+    {
         return ResponseEntity.ok().body(employeeService.getAllEmployees());
     }
 
@@ -86,7 +97,7 @@ public class EmployeeController {
     @Operation(operationId = "getEmployeeById", tags = {"employees"},
             summary = "Retrieve one employee information", description =
             "Retrieve one employee information, by providing its id.",
-            parameters = {@Parameter(name = "idEmployee", description =
+            parameters = {@Parameter(name = "idEmployee", in = ParameterIn.PATH, description =
                     "The employee username (6 characters identifier)")})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description =
@@ -95,14 +106,19 @@ public class EmployeeController {
                             schema = @Schema(implementation = EmployeeResponseDto.class))} ),
             @ApiResponse(responseCode = "401", description =
                     "Roles in Jwt token are insufficient to authorize the access to this URL",
-                    content = {@Content(mediaType = "application/json")} ),
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = HttpStatusErrorDto.class))} ),
             @ApiResponse(responseCode = "404", description =
                     "Employee not found",
-                    content = {@Content(mediaType = "application/json")} ),
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = HttpStatusErrorDto.class))} ),
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
-                    content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<EmployeeResponseDto> getEmployeeById(@PathVariable String idEmployee) {
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = HttpStatusErrorDto.class))} )})
+    public ResponseEntity<EmployeeResponseDto> getEmployeeById(
+            @PathVariable String idEmployee)
+    {
         return ResponseEntity.ok().body(employeeService.getEmployeeById(idEmployee));
     }
 
@@ -110,7 +126,7 @@ public class EmployeeController {
     @Operation(operationId = "getEmployeeEmailById", tags = {"employees"},
             summary = "Retrieve one employee email", description =
             "Retrieve one employee email, by providing its id.",
-            parameters = {@Parameter(name = "idEmployee", description =
+            parameters = {@Parameter(name = "idEmployee", in = ParameterIn.PATH, description =
                     "The employee username (6 characters identifier)")})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description =
@@ -119,14 +135,19 @@ public class EmployeeController {
                             schema = @Schema(implementation = EmployeeEmailResponseDto.class))} ),
             @ApiResponse(responseCode = "401", description =
                     "Roles in Jwt token are insufficient to authorize the access to this URL",
-                    content = {@Content(mediaType = "application/json")} ),
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = HttpStatusErrorDto.class))} ),
             @ApiResponse(responseCode = "404", description =
                     "Employee not found",
-                    content = {@Content(mediaType = "application/json")} ),
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = HttpStatusErrorDto.class))} ),
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
-                    content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<EmployeeEmailResponseDto> getEmployeeEmailById(@PathVariable String idEmployee) {
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = HttpStatusErrorDto.class))} )})
+    public ResponseEntity<EmployeeEmailResponseDto> getEmployeeEmailById(
+            @PathVariable String idEmployee)
+    {
         return ResponseEntity.ok().body(employeeService.getEmployeeEmailById(idEmployee));
     }
 
@@ -134,7 +155,7 @@ public class EmployeeController {
     @Operation(operationId = "updateEmployeeById", tags = {"employees"},
             summary = "Update an employee information", description =
             "Update an employee information, by providing the new one.",
-            parameters = {@Parameter(name = "idEmployee", description =
+            parameters = {@Parameter(name = "idEmployee", in = ParameterIn.PATH, description =
                     "The employee username (6 characters identifier)")})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description =
@@ -142,19 +163,25 @@ public class EmployeeController {
                     content = {@Content(mediaType = "application/json")} ),
             @ApiResponse(responseCode = "401", description =
                     "Roles in Jwt token are insufficient to authorize the access to this URL",
-                    content = {@Content(mediaType = "application/json")} ),
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = HttpStatusErrorDto.class))} ),
             @ApiResponse(responseCode = "404", description =
                     "Employee not found",
-                    content = {@Content(mediaType = "application/json")} ),
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = HttpStatusErrorDto.class))} ),
             @ApiResponse(responseCode = "422", description =
                     "Attribute values don't respect integrity constraints.<br>" +
                     "OrgUnit : retrieve organisations information (organisations section) to know which one are available.",
-                    content = {@Content(mediaType = "application/json")} ),
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = HttpStatusErrorDto.class))} ),
             @ApiResponse(responseCode = "500", description =
                     "Uncontrolled error appeared",
-                    content = {@Content(mediaType = "application/json")} )})
-    public ResponseEntity<String> updateEmployeeById(@PathVariable String idEmployee,
-                                                     @Valid @RequestBody EmployeeUpdateRequestDto employeeDto) {
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = HttpStatusErrorDto.class))} )})
+    public ResponseEntity<String> updateEmployeeById(
+            @PathVariable String idEmployee,
+            @Valid @RequestBody EmployeeUpdateRequestDto employeeDto)
+    {
         employeeService.updateEmployeeById(idEmployee, employeeDto);
         return ResponseEntity.noContent().build();
     }

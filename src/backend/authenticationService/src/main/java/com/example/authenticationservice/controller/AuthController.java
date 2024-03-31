@@ -33,6 +33,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthController {
 
+    /* Service Beans */
+
     /**
      * Service {@link JwtService} for JWT token operations, including generation
      * It is used here to generate a new JWT token based on the authenticated user's details.
